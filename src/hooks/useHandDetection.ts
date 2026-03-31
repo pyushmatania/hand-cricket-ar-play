@@ -1,7 +1,15 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import type { Move } from "./useHandCricket";
 
-export type GestureStatus = "loading" | "ready" | "no_hand" | "detecting" | "stable";
+export type GestureStatus =
+  | "idle"
+  | "loading_model"
+  | "camera_started"
+  | "tracking_active"
+  | "tracking_unavailable"
+  | "no_hand"
+  | "detecting"
+  | "stable";
 
 export interface HandDetectionState {
   status: GestureStatus;
@@ -12,6 +20,113 @@ export interface HandDetectionState {
   handDetected: boolean;
   rawGesture: string;
   debugInfo: string;
+}
+
+declare global {
+  interface Window {
+    Hands?: any;
+  }
+}
+
+const MEDIAPIPE_SCRIPTS = [
+  "https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js",
+  "https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js",
+  "https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js",
+];
+
+const scriptLoadCache = new Map<string, Promise<void>>();
+
+function loadScriptOnce(src: string): Promise<void> {
+  const cached = scriptLoadCache.get(src);
+  if (cached) return cached;
+
+  const promise = new Promise<void>((resolve, reject) => {
+    const existing = document.querySelector(`script[src="${src}"]`) as HTMLScriptElement | null;
+    const script = existing ?? document.createElement("script");
+
+    const isHandsScript = src.includes("@mediapipe/hands/hands.js");
+
+    if (existing?.dataset.loaded === "1") {
+      resolve();
+      return;
+    }
+
+    if (isHandsScript && window.Hands) {
+      script.dataset.loaded = "1";
+      resolve();
+      return;
+    }
+
+    const cleanup = () => {
+      script.removeEventListener("load", onLoad);
+      script.removeEventListener("error", onError);
+    };
+
+    const onLoad = () => {
+      script.dataset.loaded = "1";
+      cleanup();
+      resolve();
+    };
+
+    const onError = () => {
+      cleanup();
+      reject(new Error(`Failed to load MediaPipe script: ${src}`));
+    };
+
+    script.addEventListener("load", onLoad);
+    script.addEventListener("error", onError);
+
+    if (!existing) {
+      script.src = src;
+      script.async = true;
+      script.crossOrigin = "anonymous";
+      document.head.appendChild(script);
+      return;
+    }
+  });
+
+  scriptLoadCache.set(src, promise);
+  return promise;
+}
+
+async function ensureMediaPipeReady() {
+  await Promise.all(MEDIAPIPE_SCRIPTS.map(loadScriptOnce));
+
+  if (!window.Hands) {
+    throw new Error("MediaPipe Hands global failed to initialize");
+  }
+}
+
+async function ensureVideoPlayable(video: HTMLVideoElement) {
+  if (!video.srcObject) {
+    throw new Error("Camera stream is not attached to video element");
+  }
+
+  if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) {
+    await new Promise<void>((resolve) => {
+      const onReady = () => {
+        cleanup();
+        resolve();
+      };
+
+      const cleanup = () => {
+        video.removeEventListener("loadeddata", onReady);
+        video.removeEventListener("canplay", onReady);
+      };
+
+      video.addEventListener("loadeddata", onReady, { once: true });
+      video.addEventListener("canplay", onReady, { once: true });
+
+      window.setTimeout(() => {
+        cleanup();
+        resolve();
+      }, 1500);
+    });
+  }
+
+  if (video.paused) {
+    await video.play();
+  }
 }
 
 // ── Vector math helpers ──
@@ -82,42 +197,80 @@ function rawGestureToMove(g: RawGesture): Move | null {
   return null;
 }
 
+function rawGestureToFingerCount(g: RawGesture): number {
+  if (g === "def") return 0;
+  if (g === "1" || g === "2" || g === "3" || g === "4" || g === "5") return Number(g);
+  return -1;
+}
+
 const BUFFER_SIZE = 8;
-const STABILITY_THRESHOLD = 4; // need 4 of 8 frames agreeing
+const STABILITY_THRESHOLD = 5;
 
 const HINTS: Record<string, string> = {
-  no_hand: "Center your hand in the camera",
-  detecting: "Hold still — detecting gesture…",
-  stable: "Stable — ready to lock!",
-  unclear: "Show palm/fingers clearly",
+  loading_model: "Loading model…",
+  camera_started: "Camera started",
+  tracking_active: "Hand tracking active",
+  tracking_unavailable: "Hand tracking unavailable",
+  no_hand: "No hand detected",
+  stable: "Stable: ready to lock",
 };
+
+const GUIDANCE_HINTS = [
+  "Center your hand",
+  "Keep full hand visible",
+  "Use brighter light",
+  "Hold still for a moment",
+  "Show palm/fingers clearly",
+];
 
 export function useHandDetection(videoRef: React.RefObject<HTMLVideoElement | null>) {
   const [state, setState] = useState<HandDetectionState>({
-    status: "loading",
+    status: "idle",
     detectedMove: null,
     confidence: 0,
     lockedMove: null,
-    hint: "",
+    hint: "Waiting for camera",
     handDetected: false,
     rawGesture: "no_hand",
-    debugInfo: "",
+    debugInfo: "stage:idle",
   });
 
   const handsRef = useRef<any>(null);
   const animFrameRef = useRef<number>(0);
   const buffer = useRef<RawGesture[]>([]);
   const isRunning = useRef(false);
-  const frameSkip = useRef(0);
+  const isStarting = useRef(false);
+  const sendingRef = useRef(false);
+  const handSeenRef = useRef(false);
+  const unstableHintFrame = useRef(0);
+  const consecutiveSendErrors = useRef(0);
+
+  const stopDetection = useCallback(() => {
+    isRunning.current = false;
+    isStarting.current = false;
+    sendingRef.current = false;
+    consecutiveSendErrors.current = 0;
+
+    if (animFrameRef.current) {
+      cancelAnimationFrame(animFrameRef.current);
+      animFrameRef.current = 0;
+    }
+
+    if (handsRef.current) {
+      handsRef.current.close?.();
+      handsRef.current = null;
+    }
+  }, []);
 
   const onResults = useCallback((results: any) => {
-    const lm = results.multiHandLandmarks?.[0];
+    const lm = results.multiHandLandmarks?.[0] as
+      | Array<{ x: number; y: number; z: number }>
+      | undefined;
+
     const raw = classifyGesture(lm);
 
     // Update rolling buffer
     buffer.current = [...buffer.current.slice(-(BUFFER_SIZE - 1)), raw];
-
-    const hasHand = buffer.current.some((v) => v !== "no_hand");
 
     // Count votes
     const counts: Record<string, number> = {};
@@ -135,9 +288,19 @@ export function useHandDetection(videoRef: React.RefObject<HTMLVideoElement | nu
       }
     }
 
-    const confidence = majorityVotes / BUFFER_SIZE;
+    const hasHand = Boolean(lm);
+    if (hasHand && !handSeenRef.current) {
+      console.log("Hand detected");
+    }
+    handSeenRef.current = hasHand;
+
+    const bufferLen = Math.max(buffer.current.length, 1);
+    const confidence = hasHand ? Math.round((majorityVotes / bufferLen) * 100) / 100 : 0;
     const isStable = VALID_GESTURES.includes(majority) && majorityVotes >= STABILITY_THRESHOLD;
-    const move = isStable ? rawGestureToMove(majority) : null;
+
+    const leadingGesture = majority !== "no_hand" && majority !== "unclear" ? majority : raw;
+    const liveMove = rawGestureToMove(leadingGesture);
+    const stableMove = isStable ? rawGestureToMove(majority) : null;
 
     let status: GestureStatus;
     let hint: string;
@@ -145,22 +308,35 @@ export function useHandDetection(videoRef: React.RefObject<HTMLVideoElement | nu
     if (!hasHand) {
       status = "no_hand";
       hint = HINTS.no_hand;
+      unstableHintFrame.current = 0;
     } else if (isStable) {
       status = "stable";
       hint = HINTS.stable;
+      unstableHintFrame.current = 0;
     } else {
       status = "detecting";
-      hint = majority !== "no_hand" && majority !== "unclear"
-        ? `Detecting ${majority.toUpperCase()}… hold steady`
-        : HINTS.unclear;
+      const guidance = GUIDANCE_HINTS[Math.floor(unstableHintFrame.current / 24) % GUIDANCE_HINTS.length];
+      hint = leadingGesture !== "unclear" && leadingGesture !== "no_hand"
+        ? `Detecting ${leadingGesture.toUpperCase()}… hold steady`
+        : guidance;
+      unstableHintFrame.current += 1;
     }
 
-    const debugInfo = `raw:${raw} maj:${majority}(${majorityVotes}/${BUFFER_SIZE}) buf:[${buffer.current.join(",")}]`;
+    const stableGestureLabel = isStable ? majority : "unclear";
+    const debugInfo = [
+      `hand:${hasHand}`,
+      `landmarks:${lm?.length ?? 0}`,
+      `raw_count:${rawGestureToFingerCount(raw)}`,
+      `raw:${raw}`,
+      `majority:${majority}(${majorityVotes}/${bufferLen})`,
+      `stable:${stableGestureLabel}`,
+      `status:${status}`,
+    ].join(" | ");
 
     setState((s) => ({
       ...s,
       status,
-      detectedMove: move,
+      detectedMove: stableMove ?? liveMove,
       confidence,
       handDetected: hasHand,
       rawGesture: raw,
@@ -170,12 +346,35 @@ export function useHandDetection(videoRef: React.RefObject<HTMLVideoElement | nu
   }, []);
 
   const startDetection = useCallback(async () => {
-    if (isRunning.current || !videoRef.current) return;
+    const video = videoRef.current;
+    if (isRunning.current || isStarting.current || !video) return;
+
+    isStarting.current = true;
+    buffer.current = [];
+    handSeenRef.current = false;
+    unstableHintFrame.current = 0;
+    consecutiveSendErrors.current = 0;
+
+    setState((s) => ({
+      ...s,
+      status: "loading_model",
+      detectedMove: null,
+      confidence: 0,
+      handDetected: false,
+      rawGesture: "no_hand",
+      hint: HINTS.loading_model,
+      debugInfo: "stage:loading_model",
+    }));
 
     try {
-      const { Hands } = await import("@mediapipe/hands");
+      await ensureMediaPipeReady();
 
-      const hands = new Hands({
+      const HandsCtor = window.Hands;
+      if (!HandsCtor) {
+        throw new Error("Hands constructor unavailable");
+      }
+
+      const hands = new HandsCtor({
         locateFile: (file: string) =>
           `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`,
       });
@@ -189,32 +388,87 @@ export function useHandDetection(videoRef: React.RefObject<HTMLVideoElement | nu
 
       hands.onResults(onResults);
       handsRef.current = hands;
-      isRunning.current = true;
-      buffer.current = [];
 
-      setState((s) => ({ ...s, status: "ready", hint: "Show your hand to start" }));
+      setState((s) => ({
+        ...s,
+        status: "camera_started",
+        hint: HINTS.camera_started,
+        debugInfo: "stage:camera_started",
+      }));
+
+      await ensureVideoPlayable(video);
+
+      isRunning.current = true;
+      setState((s) => ({
+        ...s,
+        status: "tracking_active",
+        hint: HINTS.tracking_active,
+        debugInfo: "stage:tracking_active",
+      }));
 
       const processFrame = async () => {
-        if (!isRunning.current || !videoRef.current) return;
+        if (!isRunning.current) return;
 
-        // Process every other frame on mobile for perf
-        frameSkip.current++;
-        if (frameSkip.current % 2 === 0 && videoRef.current.readyState >= 2) {
-          try {
-            await handsRef.current?.send({ image: videoRef.current });
-          } catch {
-            // frame skip
-          }
-        }
         animFrameRef.current = requestAnimationFrame(processFrame);
+
+        const activeVideo = videoRef.current;
+        if (!activeVideo || !handsRef.current || sendingRef.current) return;
+
+        if (
+          activeVideo.readyState < HTMLMediaElement.HAVE_CURRENT_DATA ||
+          activeVideo.videoWidth === 0 ||
+          activeVideo.videoHeight === 0
+        ) {
+          return;
+        }
+
+        try {
+          sendingRef.current = true;
+          await handsRef.current.send({ image: activeVideo });
+          consecutiveSendErrors.current = 0;
+        } catch (error) {
+          consecutiveSendErrors.current += 1;
+
+          if (consecutiveSendErrors.current === 1 || consecutiveSendErrors.current % 10 === 0) {
+            console.error("hands.send failed", error);
+          }
+
+          if (consecutiveSendErrors.current >= 20) {
+            isRunning.current = false;
+            setState((s) => ({
+              ...s,
+              status: "tracking_unavailable",
+              detectedMove: null,
+              confidence: 0,
+              handDetected: false,
+              rawGesture: "no_hand",
+              hint: HINTS.tracking_unavailable,
+              debugInfo: `stage:tracking_unavailable | send_errors:${consecutiveSendErrors.current}`,
+            }));
+          }
+        } finally {
+          sendingRef.current = false;
+        }
       };
 
-      setTimeout(() => processFrame(), 500);
+      processFrame();
     } catch (err) {
       console.error("Hand detection init failed:", err);
-      setState((s) => ({ ...s, status: "ready", hint: "Hand tracking unavailable" }));
+      stopDetection();
+      setState((s) => ({
+        ...s,
+        status: "tracking_unavailable",
+        detectedMove: null,
+        confidence: 0,
+        handDetected: false,
+        rawGesture: "no_hand",
+        hint: HINTS.tracking_unavailable,
+        debugInfo: `stage:tracking_unavailable | reason:${err instanceof Error ? err.message : "unknown_error"}`,
+      }));
+    } finally {
+      isStarting.current = false;
     }
-  }, [videoRef, onResults]);
+  }, [onResults, stopDetection, videoRef]);
 
   const lockMove = useCallback(() => {
     setState((s) => ({
@@ -226,15 +480,6 @@ export function useHandDetection(videoRef: React.RefObject<HTMLVideoElement | nu
 
   const unlockMove = useCallback(() => {
     setState((s) => ({ ...s, lockedMove: null }));
-  }, []);
-
-  const stopDetection = useCallback(() => {
-    isRunning.current = false;
-    if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
-    if (handsRef.current) {
-      handsRef.current.close();
-      handsRef.current = null;
-    }
   }, []);
 
   useEffect(() => {
