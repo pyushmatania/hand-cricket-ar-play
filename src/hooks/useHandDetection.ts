@@ -44,6 +44,19 @@ function loadScriptOnce(src: string): Promise<void> {
     const existing = document.querySelector(`script[src="${src}"]`) as HTMLScriptElement | null;
     const script = existing ?? document.createElement("script");
 
+    const isHandsScript = src.includes("@mediapipe/hands/hands.js");
+
+    if (existing?.dataset.loaded === "1") {
+      resolve();
+      return;
+    }
+
+    if (isHandsScript && window.Hands) {
+      script.dataset.loaded = "1";
+      resolve();
+      return;
+    }
+
     const cleanup = () => {
       script.removeEventListener("load", onLoad);
       script.removeEventListener("error", onError);
@@ -60,11 +73,6 @@ function loadScriptOnce(src: string): Promise<void> {
       reject(new Error(`Failed to load MediaPipe script: ${src}`));
     };
 
-    if (existing?.dataset.loaded === "1") {
-      resolve();
-      return;
-    }
-
     script.addEventListener("load", onLoad);
     script.addEventListener("error", onError);
 
@@ -74,12 +82,6 @@ function loadScriptOnce(src: string): Promise<void> {
       script.crossOrigin = "anonymous";
       document.head.appendChild(script);
       return;
-    }
-
-    if (src.includes("/hands/") ? Boolean(window.Hands) : true) {
-      script.dataset.loaded = "1";
-      cleanup();
-      resolve();
     }
   });
 
