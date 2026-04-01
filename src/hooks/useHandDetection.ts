@@ -324,6 +324,7 @@ export function useHandDetection(videoRef: React.RefObject<HTMLVideoElement | nu
       rawGesture: raw,
       hint,
       debugInfo: `hand:${hasHand} | raw:${raw} | maj:${majority}(${majorityVotes}) | stableFrames:${stableFrameCount.current}`,
+      landmarks: lm ? [...lm] : null,
     }));
   }, []);
 

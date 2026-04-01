@@ -1,168 +1,194 @@
 import { useEffect, useRef, useCallback, useState, forwardRef, useImperativeHandle } from "react";
 
 type FacingMode = "environment" | "user";
+export type CameraFilter = "broadcast" | "stadium_night" | "arcade" | "natural";
 
 interface CameraFeedProps {
   onVideoReady: (video: HTMLVideoElement) => void;
   stadiumMode: boolean;
   fullscreen?: boolean;
+  filter?: CameraFilter;
 }
 
 export interface CameraFeedHandle {
   videoRef: React.RefObject<HTMLVideoElement | null>;
 }
 
-const CameraFeed = forwardRef<CameraFeedHandle, CameraFeedProps>(({ onVideoReady, stadiumMode, fullscreen = false }, ref) => {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [facing, setFacing] = useState<FacingMode>("environment");
-  const [cameraLabel, setCameraLabel] = useState<string>("Starting camera…");
+const FILTER_STYLES: Record<CameraFilter, string> = {
+  natural: "",
+  broadcast: "contrast(1.15) saturate(1.1) brightness(1.05)",
+  stadium_night: "contrast(1.2) saturate(0.9) brightness(0.85) hue-rotate(-10deg)",
+  arcade: "contrast(1.1) saturate(1.6) brightness(1.1)",
+};
 
-  useImperativeHandle(ref, () => ({ videoRef }));
+const CameraFeed = forwardRef<CameraFeedHandle, CameraFeedProps>(
+  ({ onVideoReady, stadiumMode, fullscreen = false, filter = "broadcast" }, ref) => {
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const streamRef = useRef<MediaStream | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [facing, setFacing] = useState<FacingMode>("environment");
+    const [cameraLabel, setCameraLabel] = useState<string>("Starting camera…");
 
-  const stopStream = useCallback(() => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((t) => t.stop());
-      streamRef.current = null;
-    }
-  }, []);
+    useImperativeHandle(ref, () => ({ videoRef }));
 
-  const startCamera = useCallback(async (mode: FacingMode) => {
-    try {
-      stopStream();
-      setLoading(true);
-      setError(null);
+    const stopStream = useCallback(() => {
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((t) => t.stop());
+        streamRef.current = null;
+      }
+    }, []);
 
-      let stream: MediaStream;
+    const startCamera = useCallback(async (mode: FacingMode) => {
       try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: { ideal: mode }, width: { ideal: 640 }, height: { ideal: 480 } },
-          audio: false,
-        });
-      } catch {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: { ideal: 640 }, height: { ideal: 480 } },
-          audio: false,
-        });
-      }
+        stopStream();
+        setLoading(true);
+        setError(null);
 
-      streamRef.current = stream;
-      const track = stream.getVideoTracks()[0];
-      const settings = track.getSettings();
-      const actualFacing = settings.facingMode as FacingMode | undefined;
+        let stream: MediaStream;
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { ideal: mode }, width: { ideal: 640 }, height: { ideal: 480 } },
+            audio: false,
+          });
+        } catch {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: { width: { ideal: 640 }, height: { ideal: 480 } },
+            audio: false,
+          });
+        }
 
-      if (actualFacing === "environment") {
-        setFacing("environment");
-        setCameraLabel("Back Camera");
-      } else if (actualFacing === "user") {
-        setFacing("user");
-        setCameraLabel(mode === "environment" ? "Front (fallback)" : "Front Camera");
-      } else {
-        setFacing(mode);
-        setCameraLabel(mode === "environment" ? "Back Camera" : "Front Camera");
-      }
+        streamRef.current = stream;
+        const track = stream.getVideoTracks()[0];
+        const settings = track.getSettings();
+        const actualFacing = settings.facingMode as FacingMode | undefined;
 
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        videoRef.current.onloadeddata = () => {
-          setLoading(false);
-          if (videoRef.current) onVideoReady(videoRef.current);
-        };
+        if (actualFacing === "environment") {
+          setFacing("environment");
+          setCameraLabel("Back Camera");
+        } else if (actualFacing === "user") {
+          setFacing("user");
+          setCameraLabel(mode === "environment" ? "Front (fallback)" : "Front Camera");
+        } else {
+          setFacing(mode);
+          setCameraLabel(mode === "environment" ? "Back Camera" : "Front Camera");
+        }
+
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          videoRef.current.onloadeddata = () => {
+            setLoading(false);
+            if (videoRef.current) onVideoReady(videoRef.current);
+          };
+        }
+      } catch (err: any) {
+        setLoading(false);
+        if (err.name === "NotAllowedError") {
+          setError("Camera permission denied. Please allow camera access.");
+        } else {
+          setError("Could not access camera.");
+        }
       }
-    } catch (err: any) {
-      setLoading(false);
-      if (err.name === "NotAllowedError") {
-        setError("Camera permission denied. Please allow camera access.");
-      } else {
-        setError("Could not access camera.");
-      }
+    }, [onVideoReady, stopStream]);
+
+    const toggleCamera = useCallback(() => {
+      startCamera(facing === "environment" ? "user" : "environment");
+    }, [facing, startCamera]);
+
+    useEffect(() => {
+      startCamera("environment");
+      return () => stopStream();
+    }, []);
+
+    if (error) {
+      return (
+        <div className={`w-full ${fullscreen ? "h-full" : "aspect-[4/3]"} glass flex flex-col items-center justify-center text-center p-4`}>
+          <span className="text-3xl mb-2">📷</span>
+          <p className="text-destructive font-semibold text-sm">{error}</p>
+          <button onClick={() => startCamera("environment")} className="mt-3 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-bold">
+            Retry
+          </button>
+        </div>
+      );
     }
-  }, [onVideoReady, stopStream]);
 
-  const toggleCamera = useCallback(() => {
-    startCamera(facing === "environment" ? "user" : "environment");
-  }, [facing, startCamera]);
-
-  useEffect(() => {
-    startCamera("environment");
-    return () => stopStream();
-  }, []);
-
-  if (error) {
     return (
-      <div className={`w-full ${fullscreen ? "h-full" : "aspect-[4/3]"} glass flex flex-col items-center justify-center text-center p-4`}>
-        <span className="text-3xl mb-2">📷</span>
-        <p className="text-destructive font-semibold text-sm">{error}</p>
-        <button onClick={() => startCamera("environment")} className="mt-3 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-bold">
-          Retry
+      <div className={`relative w-full ${fullscreen ? "h-full" : "aspect-[4/3]"} rounded-xl overflow-hidden`}>
+        {loading && (
+          <div className="absolute inset-0 bg-card/80 flex items-center justify-center z-10">
+            <div className="text-center">
+              <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">Starting camera…</p>
+            </div>
+          </div>
+        )}
+
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          className={`w-full h-full object-cover ${facing === "user" ? "scale-x-[-1]" : ""}`}
+          style={{ filter: FILTER_STYLES[filter] || undefined }}
+        />
+
+        {/* Stadium overlays */}
+        {stadiumMode && (
+          <>
+            <div className="absolute inset-0 vignette pointer-events-none z-[2]" />
+            <div className="absolute inset-0 stadium-color-grade pointer-events-none z-[2]" />
+            {/* Floodlights */}
+            <div className="absolute -top-4 -left-4 w-36 h-36 rounded-full pointer-events-none z-[2]"
+              style={{ background: "radial-gradient(circle, hsla(45, 100%, 85%, 0.14) 0%, transparent 70%)" }} />
+            <div className="absolute -top-4 -right-4 w-36 h-36 rounded-full pointer-events-none z-[2]"
+              style={{ background: "radial-gradient(circle, hsla(45, 100%, 85%, 0.14) 0%, transparent 70%)" }} />
+            {/* Grass gradient bottom */}
+            <div className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none z-[2]"
+              style={{ background: "linear-gradient(to top, hsla(145, 50%, 18%, 0.4), transparent)" }} />
+            {/* Pitch lines */}
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-12 h-24 border border-dashed pointer-events-none z-[2] rounded-sm"
+              style={{ borderColor: "hsla(145, 30%, 50%, 0.12)" }} />
+            {/* Boundary arc */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[120%] aspect-square rounded-full pointer-events-none z-[2]"
+              style={{ border: "1px solid hsla(45, 80%, 60%, 0.08)", transform: "translateX(-50%) translateY(85%)" }} />
+            {/* Crowd silhouette */}
+            <div className="absolute bottom-0 left-0 right-0 h-10 crowd-silhouette pointer-events-none z-[3]" />
+            {/* Light sweep */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none z-[2]">
+              <div className="absolute top-0 left-0 w-20 h-full light-sweep"
+                style={{ background: "linear-gradient(90deg, transparent, hsla(45, 100%, 90%, 0.03), transparent)" }} />
+            </div>
+            {/* Broadcast corners */}
+            <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-primary/25 pointer-events-none z-[3]" />
+            <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-primary/25 pointer-events-none z-[3]" />
+            <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-primary/25 pointer-events-none z-[3]" />
+            <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-primary/25 pointer-events-none z-[3]" />
+          </>
+        )}
+
+        {/* LIVE badge */}
+        <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-0.5 rounded bg-card/70 backdrop-blur-md z-[5]">
+          <div className="w-1.5 h-1.5 rounded-full bg-out-red animate-pulse" />
+          <span className="text-[9px] font-display font-bold tracking-wider text-foreground/80">LIVE</span>
+        </div>
+
+        {/* Camera label */}
+        <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-card/60 backdrop-blur-md text-[9px] text-muted-foreground font-semibold z-[5]">
+          {cameraLabel}
+        </div>
+
+        {/* Toggle camera */}
+        <button
+          onClick={toggleCamera}
+          className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-card/70 backdrop-blur-md border border-glass flex items-center justify-center z-[5] active:scale-90 transition-transform"
+          aria-label="Switch camera"
+        >
+          <span className="text-sm">🔄</span>
         </button>
       </div>
     );
   }
-
-  return (
-    <div className={`relative w-full ${fullscreen ? "h-full" : "aspect-[4/3]"} rounded-xl overflow-hidden`}>
-      {loading && (
-        <div className="absolute inset-0 bg-card/80 flex items-center justify-center z-10">
-          <div className="text-center">
-            <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">Starting camera…</p>
-          </div>
-        </div>
-      )}
-
-      <video
-        ref={videoRef}
-        autoPlay
-        playsInline
-        muted
-        className={`w-full h-full object-cover ${facing === "user" ? "scale-x-[-1]" : ""}`}
-      />
-
-      {/* Stadium overlays */}
-      {stadiumMode && (
-        <>
-          <div className="absolute inset-0 vignette pointer-events-none z-[2]" />
-          <div className="absolute inset-0 stadium-color-grade pointer-events-none z-[2]" />
-          <div className="absolute -top-4 -left-4 w-32 h-32 rounded-full pointer-events-none z-[2]"
-            style={{ background: "radial-gradient(circle, hsl(45 100% 85% / 0.1) 0%, transparent 70%)" }} />
-          <div className="absolute -top-4 -right-4 w-32 h-32 rounded-full pointer-events-none z-[2]"
-            style={{ background: "radial-gradient(circle, hsl(45 100% 85% / 0.1) 0%, transparent 70%)" }} />
-          <div className="absolute bottom-0 left-0 right-0 h-16 pointer-events-none z-[2]"
-            style={{ background: "linear-gradient(to top, hsl(145 50% 20% / 0.3), transparent)" }} />
-          <div className="absolute bottom-0 left-0 right-0 h-10 crowd-silhouette pointer-events-none z-[3]" />
-          {/* Broadcast corners */}
-          <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-primary/25 pointer-events-none z-[3]" />
-          <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-primary/25 pointer-events-none z-[3]" />
-          <div className="absolute bottom-2 left-2 w-4 h-4 border-b-2 border-l-2 border-primary/25 pointer-events-none z-[3]" />
-          <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-primary/25 pointer-events-none z-[3]" />
-        </>
-      )}
-
-      {/* LIVE badge */}
-      <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2 py-0.5 rounded bg-card/70 backdrop-blur-md z-[5]">
-        <div className="w-1.5 h-1.5 rounded-full bg-out-red animate-pulse" />
-        <span className="text-[9px] font-display font-bold tracking-wider text-foreground/80">LIVE</span>
-      </div>
-
-      {/* Camera label */}
-      <div className="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-card/60 backdrop-blur-md text-[9px] text-muted-foreground font-semibold z-[5]">
-        {cameraLabel}
-      </div>
-
-      {/* Toggle camera */}
-      <button
-        onClick={toggleCamera}
-        className="absolute bottom-2 right-2 w-8 h-8 rounded-full bg-card/70 backdrop-blur-md border border-glass flex items-center justify-center z-[5] active:scale-90 transition-transform"
-        aria-label="Switch camera"
-      >
-        <span className="text-sm">🔄</span>
-      </button>
-    </div>
-  );
-});
+);
 
 CameraFeed.displayName = "CameraFeed";
 export default CameraFeed;
