@@ -55,9 +55,9 @@ export function PreMatchCeremony({ playerName, opponentName, tossWinner, batting
   }, []);
 
   const lines = [
-    PRE_MATCH_LINES[0](playerName, opponentName),
+    PRE_MATCH_LINES[0](playerName, opponentName, tossWinner, battingFirst),
     PRE_MATCH_LINES[1](playerName, opponentName, tossWinner, battingFirst),
-    PRE_MATCH_LINES[2](playerName, opponentName),
+    PRE_MATCH_LINES[2](playerName, opponentName, tossWinner, battingFirst),
     PRE_MATCH_LINES[3](playerName, opponentName, tossWinner, battingFirst),
   ];
 
