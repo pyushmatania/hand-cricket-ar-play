@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/contexts/AuthContext";
-import { useEffect } from "react";
 
 export default function AuthPage() {
   const navigate = useNavigate();
