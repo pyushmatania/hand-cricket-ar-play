@@ -290,7 +290,7 @@ export default function LeaderboardPage() {
           )}
 
           {/* GLOBAL & FRIENDS RANKINGS */}
-          {mainTab !== "rage" && (
+          {(mainTab === "global" || mainTab === "friends") && (
             <motion.div
               key={`${mainTab}-${sortBy}`}
               initial={{ opacity: 0, y: 10 }}
