@@ -73,7 +73,6 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         setTimeout(() => setCommentary(null), 3000);
       }
       if (crowdEnabled) CrowdSFX.ambientMurmur(2);
-      }
     }
   }, [game.phase]);
 
