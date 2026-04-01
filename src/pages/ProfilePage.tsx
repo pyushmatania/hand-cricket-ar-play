@@ -120,7 +120,7 @@ export default function ProfilePage() {
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .limit(50)
-      .then(({ data }) => { if (data) setMatches(data as MatchRecord[]); });
+      .then(({ data }) => { if (data) setMatches(data as unknown as MatchRecord[]); });
   }, [user]);
 
   // Aggregate stats from all match ball-by-ball data
