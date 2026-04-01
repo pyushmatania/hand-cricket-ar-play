@@ -95,12 +95,18 @@ export default function LeaderboardPage() {
   const [friendLeaders, setFriendLeaders] = useState<LeaderEntry[]>([]);
   const [rivalFriends, setRivalFriends] = useState<FriendProfile[]>([]);
   const [myRank, setMyRank] = useState<number | null>(null);
+  const [seasonEntries, setSeasonEntries] = useState<SeasonEntry[]>([]);
+  const [seasonWeeksAgo, setSeasonWeeksAgo] = useState(0);
+  const [archivedSeasons, setArchivedSeasons] = useState<ArchivedSeason[]>([]);
+  const [viewingArchive, setViewingArchive] = useState<string | null>(null);
+  const [archiveEntries, setArchiveEntries] = useState<any[]>([]);
 
   useEffect(() => {
     if (mainTab === "global" || mainTab === "rage") loadGlobal();
     if (mainTab === "friends") loadFriends();
     if (mainTab === "rivalry") loadRivalFriends();
-  }, [mainTab, sortBy]);
+    if (mainTab === "seasons") { loadSeasonData(); loadArchivedSeasons(); }
+  }, [mainTab, sortBy, seasonWeeksAgo]);
 
   const loadGlobal = async () => {
     const col = SORT_OPTIONS[sortBy].key;
