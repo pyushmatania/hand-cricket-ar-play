@@ -112,10 +112,10 @@ export default function ProfilePage() {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("display_name, total_matches, wins, losses, draws, high_score, current_streak, best_streak, abandons")
+      .select("display_name, total_matches, wins, losses, draws, high_score, current_streak, best_streak, abandons, avatar_url, avatar_index")
       .eq("user_id", user.id)
       .single()
-      .then(({ data }) => { if (data) setProfile(data); });
+      .then(({ data }) => { if (data) setProfile(data as unknown as ProfileData); });
 
     supabase
       .from("profiles")
