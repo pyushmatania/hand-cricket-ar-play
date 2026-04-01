@@ -114,6 +114,7 @@ export default function LeaderboardPage() {
   const mainTabs: { key: MainTab; label: string; icon: string }[] = [
     { key: "global", label: "GLOBAL", icon: "🌍" },
     { key: "friends", label: "FRIENDS", icon: "👥" },
+    { key: "rivalry", label: "RIVALRY", icon: "⚔️" },
     { key: "rage", label: "RAGE", icon: "😤" },
   ];
 
