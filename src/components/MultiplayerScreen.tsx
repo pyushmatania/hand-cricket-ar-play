@@ -276,7 +276,18 @@ export default function MultiplayerScreen({ onHome }: Props) {
   };
 
   const loadGames = async () => {
-    const { data } = await supabase.from("multiplayer_games").select("*").eq("status", "waiting").order("created_at", { ascending: false }).limit(20);
+    if (!user) {
+      setGames([]);
+      return;
+    }
+
+    const { data } = await supabase
+      .from("multiplayer_games")
+      .select("*")
+      .eq("status", "waiting")
+      .or(`target_guest_id.is.null,target_guest_id.eq.${user.id}`)
+      .order("created_at", { ascending: false })
+      .limit(20);
     if (!data || !data.length) { setGames([]); return; }
     // Filter expired games
     const now = Date.now();
