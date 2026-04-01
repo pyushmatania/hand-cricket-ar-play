@@ -13,9 +13,9 @@ interface PreMatchCeremonyProps {
 }
 
 const PRE_MATCH_LINES = [
-  (p: string, o: string) => `Ladies and gentlemen, welcome to this exciting match between ${p} and ${o}!`,
+  (p: string, o: string, _tw: string, _bf: string) => `Ladies and gentlemen, welcome to this exciting match between ${p} and ${o}!`,
   (_p: string, _o: string, tw: string, bf: string) => `${tw} has won the toss and elected to ${bf === tw ? "bat" : "bowl"} first!`,
-  (p: string, o: string) => `The stadium is buzzing! ${p} versus ${o} — this is going to be a cracker!`,
+  (p: string, o: string, _tw: string, _bf: string) => `The stadium is buzzing! ${p} versus ${o} — this is going to be a cracker!`,
   (_p: string, _o: string, _tw: string, bf: string) => `${bf} will face the first ball. Let the battle begin!`,
 ];
 
