@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { AVATAR_PRESETS } from "@/lib/avatars";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,6 +19,7 @@ const MOVES: { move: Move; emoji: string; label: string; color: string }[] = [
 
 const BALL_TIMER_MS = 3000;
 const RESERVE_TIMER_MS = 10000;
+const GAME_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
 
 type GameStatus = "waiting" | "toss" | "playing" | "finished" | "abandoned";
 type Phase = "lobby" | "waiting" | "toss" | "playing" | "finished";
@@ -38,6 +40,15 @@ interface MultiplayerGame {
   host_reserve_ms: number;
   guest_reserve_ms: number;
   abandoned_by: string | null;
+  created_at?: string;
+}
+
+interface LobbyGame extends MultiplayerGame {
+  host_name: string;
+  host_avatar_index: number;
+  host_wins: number;
+  host_total_matches: number;
+  time_left_ms: number;
 }
 
 interface Props {
@@ -48,7 +59,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [phase, setPhase] = useState<Phase>("lobby");
-  const [games, setGames] = useState<(MultiplayerGame & { host_name?: string })[]>([]);
+  const [games, setGames] = useState<LobbyGame[]>([]);
+  const [lobbyTab, setLobbyTab] = useState<"join" | "create">("join");
   const [currentGame, setCurrentGame] = useState<MultiplayerGame | null>(null);
   const [opponentName, setOpponentName] = useState("Opponent");
   const [myName, setMyName] = useState("You");
@@ -72,12 +84,19 @@ export default function MultiplayerScreen({ onHome }: Props) {
     }
   }, [user, navigate]);
 
-  // Load lobby
+  // Load lobby & tick timers
   useEffect(() => {
     if (phase !== "lobby") return;
     loadGames();
-    const interval = setInterval(loadGames, 3000);
-    return () => clearInterval(interval);
+    const loadInterval = setInterval(loadGames, 5000);
+    // Tick lobby game timers every second
+    const tickInterval = setInterval(() => {
+      setGames(prev => prev
+        .map(g => ({ ...g, time_left_ms: Math.max(0, GAME_EXPIRY_MS - (Date.now() - new Date(g.created_at || "").getTime())) }))
+        .filter(g => g.time_left_ms > 0)
+      );
+    }, 1000);
+    return () => { clearInterval(loadInterval); clearInterval(tickInterval); };
   }, [phase]);
 
   // Subscribe to game changes
@@ -184,8 +203,29 @@ export default function MultiplayerScreen({ onHome }: Props) {
   };
 
   const loadGames = async () => {
-    const { data } = await supabase.from("multiplayer_games").select("*").eq("status", "waiting").order("created_at", { ascending: false }).limit(10);
-    if (data) setGames(data as unknown as MultiplayerGame[]);
+    const { data } = await supabase.from("multiplayer_games").select("*").eq("status", "waiting").order("created_at", { ascending: false }).limit(20);
+    if (!data || !data.length) { setGames([]); return; }
+    // Filter expired games
+    const now = Date.now();
+    const validGames = (data as any[]).filter(g => {
+      const age = now - new Date(g.created_at).getTime();
+      return age < GAME_EXPIRY_MS;
+    });
+    if (!validGames.length) { setGames([]); return; }
+    // Fetch host profiles
+    const hostIds = [...new Set(validGames.map(g => g.host_id))];
+    const { data: profiles } = await supabase.from("profiles").select("user_id, display_name, avatar_index, wins, total_matches").in("user_id", hostIds);
+    const profileMap: Record<string, any> = {};
+    if (profiles) profiles.forEach((p: any) => { profileMap[p.user_id] = p; });
+    const lobbyGames: LobbyGame[] = validGames.map(g => ({
+      ...g,
+      host_name: profileMap[g.host_id]?.display_name || "Player",
+      host_avatar_index: profileMap[g.host_id]?.avatar_index || 0,
+      host_wins: profileMap[g.host_id]?.wins || 0,
+      host_total_matches: profileMap[g.host_id]?.total_matches || 0,
+      time_left_ms: Math.max(0, GAME_EXPIRY_MS - (now - new Date(g.created_at).getTime())),
+    }));
+    setGames(lobbyGames);
   };
 
   const loadOpponentName = async (game: MultiplayerGame) => {
@@ -334,62 +374,93 @@ export default function MultiplayerScreen({ onHome }: Props) {
       <div className="relative z-10 flex-1 flex flex-col gap-3 px-4 pb-4 max-w-lg mx-auto w-full">
         {/* LOBBY */}
         {phase === "lobby" && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4 mt-4">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3 mt-2">
             <div className="text-center">
-              <span className="text-5xl block mb-3">⚔️</span>
-              <h2 className="font-display text-xl font-black text-foreground tracking-wider">MULTIPLAYER LOBBY</h2>
-              <p className="text-[10px] text-muted-foreground mt-1">Challenge another player in real-time</p>
+              <span className="text-4xl block mb-2">⚔️</span>
+              <h2 className="font-display text-lg font-black text-foreground tracking-wider">MULTIPLAYER LOBBY</h2>
             </div>
 
-            <div className="glass-premium rounded-xl p-3 space-y-1.5">
-              <span className="font-display text-[9px] font-bold text-muted-foreground tracking-widest">⏱️ TIMER RULES</span>
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-md bg-secondary/20 flex items-center justify-center"><span className="text-[8px]">⏳</span></div>
-                <span className="text-[9px] text-muted-foreground"><span className="text-secondary font-bold">3 seconds</span> per ball to pick your shot</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-md bg-out-red/20 flex items-center justify-center"><span className="text-[8px]">🔋</span></div>
-                <span className="text-[9px] text-muted-foreground"><span className="text-out-red font-bold">10 seconds</span> reserve time per match</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-5 h-5 rounded-md bg-primary/20 flex items-center justify-center"><span className="text-[8px]">🚫</span></div>
-                <span className="text-[9px] text-muted-foreground">Reserve runs out → <span className="text-out-red font-bold">Match Abandoned</span></span>
-              </div>
+            {/* Tabs */}
+            <div className="flex gap-1 p-1 glass-premium rounded-xl">
+              <button onClick={() => setLobbyTab("join")}
+                className={`flex-1 py-2.5 rounded-lg font-display text-[10px] font-bold tracking-widest transition-all ${
+                  lobbyTab === "join" ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+                }`}>
+                🎮 JOIN MATCH
+              </button>
+              <button onClick={() => setLobbyTab("create")}
+                className={`flex-1 py-2.5 rounded-lg font-display text-[10px] font-bold tracking-widest transition-all ${
+                  lobbyTab === "create" ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+                }`}>
+                🏏 CREATE
+              </button>
             </div>
 
-            <motion.button whileTap={{ scale: 0.95 }} onClick={createGame}
-              className="w-full py-4 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display font-black text-sm rounded-2xl glow-primary tracking-wider">
-              🏏 CREATE MATCH
-            </motion.button>
-
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-1 h-4 rounded-full bg-accent" />
-                <h3 className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">OPEN MATCHES</h3>
-              </div>
-              {games.length === 0 ? (
-                <div className="glass-score p-6 text-center">
-                  <span className="text-3xl block mb-2">🏟️</span>
-                  <p className="text-xs text-muted-foreground">No open matches — create one!</p>
+            {/* CREATE TAB */}
+            {lobbyTab === "create" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
+                <div className="glass-premium rounded-xl p-3 space-y-1.5">
+                  <span className="font-display text-[9px] font-bold text-muted-foreground tracking-widest">⏱️ TIMER RULES</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-md bg-secondary/20 flex items-center justify-center"><span className="text-[8px]">⏳</span></div>
+                    <span className="text-[9px] text-muted-foreground"><span className="text-secondary font-bold">3s</span> per ball</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-md bg-out-red/20 flex items-center justify-center"><span className="text-[8px]">🔋</span></div>
+                    <span className="text-[9px] text-muted-foreground"><span className="text-out-red font-bold">10s</span> reserve per match</span>
+                  </div>
                 </div>
-              ) : (
-                <div className="space-y-2">
-                  {games.filter(g => g.host_id !== user.id).map((g) => (
-                    <motion.button key={g.id} whileTap={{ scale: 0.97 }} onClick={() => joinGame(g.id)}
-                      className="w-full glass-score p-4 flex items-center gap-3 text-left">
-                      <div className="w-10 h-10 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center">
-                        <span className="text-lg">🏏</span>
-                      </div>
-                      <div className="flex-1">
-                        <span className="font-display text-xs font-bold text-foreground block">Waiting for opponent</span>
-                        <span className="text-[9px] text-muted-foreground">Tap to join</span>
-                      </div>
-                      <span className="text-primary font-display text-xs font-bold">JOIN →</span>
-                    </motion.button>
-                  ))}
-                </div>
-              )}
-            </div>
+                <motion.button whileTap={{ scale: 0.95 }} onClick={createGame}
+                  className="w-full py-4 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display font-black text-sm rounded-2xl glow-primary tracking-wider">
+                  🏏 CREATE MATCH
+                </motion.button>
+              </motion.div>
+            )}
+
+            {/* JOIN TAB */}
+            {lobbyTab === "join" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-2">
+                {(() => {
+                  const joinable = games.filter(g => g.host_id !== user.id);
+                  if (joinable.length === 0) return (
+                    <div className="glass-score p-6 text-center">
+                      <span className="text-3xl block mb-2">🏟️</span>
+                      <p className="text-xs text-muted-foreground">No open matches right now</p>
+                      <p className="text-[9px] text-muted-foreground mt-1">Switch to Create tab to start one!</p>
+                    </div>
+                  );
+                  return joinable.map((g) => {
+                    const avatar = AVATAR_PRESETS[g.host_avatar_index % AVATAR_PRESETS.length];
+                    const winRate = g.host_total_matches > 0 ? Math.round((g.host_wins / g.host_total_matches) * 100) : 0;
+                    const timeLeftSec = Math.ceil(g.time_left_ms / 1000);
+                    const timeMin = Math.floor(timeLeftSec / 60);
+                    const timeSec = timeLeftSec % 60;
+                    const urgent = g.time_left_ms < 60000;
+                    return (
+                      <motion.button key={g.id} whileTap={{ scale: 0.97 }} onClick={() => joinGame(g.id)}
+                        className="w-full glass-score p-3 flex items-center gap-3 text-left rounded-2xl border border-border/30">
+                        <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${avatar.gradient} flex items-center justify-center shadow-lg`}>
+                          <span className="text-lg">{avatar.emoji}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <span className="font-display text-xs font-bold text-foreground block truncate">{g.host_name}</span>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-[8px] text-muted-foreground">{g.host_total_matches} matches</span>
+                            <span className="text-[8px] text-neon-green font-bold">{winRate}% WR</span>
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-1">
+                          <span className="text-primary font-display text-[10px] font-bold">JOIN →</span>
+                          <span className={`font-mono text-[8px] font-bold ${urgent ? "text-out-red" : "text-muted-foreground"}`}>
+                            {timeMin}:{timeSec.toString().padStart(2, "0")}
+                          </span>
+                        </div>
+                      </motion.button>
+                    );
+                  });
+                })()}
+              </motion.div>
+            )}
           </motion.div>
         )}
 
