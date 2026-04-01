@@ -180,6 +180,23 @@ export default function FriendsPage() {
     setTimeout(() => setFeedback(""), 2000);
   };
 
+  const challengeFriend = async (friendId: string) => {
+    if (!user) return;
+    const { data: game } = await supabase
+      .from("multiplayer_games")
+      .insert({ host_id: user.id, target_guest_id: friendId, host_reserve_ms: 10000, guest_reserve_ms: 10000 } as any)
+      .select()
+      .single();
+    if (game) {
+      await supabase.from("match_invites").insert({
+        game_id: (game as any).id,
+        from_user_id: user.id,
+        to_user_id: friendId,
+      } as any);
+      navigate("/game/multiplayer");
+    }
+  };
+
   if (!user) return null;
 
   return (
