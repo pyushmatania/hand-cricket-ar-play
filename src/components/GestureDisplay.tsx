@@ -202,7 +202,7 @@ export default function GestureDisplay({
                 className="w-12 h-12 rounded-full border-2 border-dashed border-glass flex items-center justify-center"
               >
                 <span className="text-[8px] font-display font-bold text-muted-foreground text-center leading-tight">
-                  {status === "detecting" ? "…" : "AUTO"}
+                  AUTO
                 </span>
               </motion.div>
             )}
