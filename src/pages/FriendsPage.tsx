@@ -187,19 +187,26 @@ export default function FriendsPage() {
 
   const challengeFriend = async (friendId: string, gameType: GameType) => {
     if (!user) return;
-    const { data: game } = await supabase
+    const { data: game, error: gameError } = await supabase
       .from("multiplayer_games")
       .insert({ host_id: user.id, target_guest_id: friendId, game_type: gameType, host_reserve_ms: 10000, guest_reserve_ms: 10000 } as any)
       .select()
       .single();
-    if (game) {
-      await supabase.from("match_invites").insert({
+    if (gameError || !game) {
+      setFeedback("Failed to create battle room.");
+      return;
+    }
+    const { error: inviteError } = await supabase.from("match_invites").insert({
         game_id: (game as any).id,
         from_user_id: user.id,
         to_user_id: friendId,
       } as any);
-      navigate(`/game/multiplayer?game=${(game as any).id}`);
+    if (inviteError) {
+      setFeedback("Failed to send invite.");
+      return;
     }
+    setFeedback("Battle invite sent! Waiting for opponent...");
+    navigate(`/game/multiplayer?game=${(game as any).id}`);
   };
 
   if (!user) return null;
@@ -305,9 +312,9 @@ export default function FriendsPage() {
                         <motion.button
                           whileTap={{ scale: 0.85 }}
                           onClick={() => setChallengeTargetId(f.user_id)}
-                          className="px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display text-[7px] font-bold tracking-wider"
+                          className="px-3 py-2 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display text-[8px] font-bold tracking-wider"
                         >
-                          ⚔️
+                          LET'S BATTLE
                         </motion.button>
                         <div className="text-right">
                           <span className="font-display text-sm font-black text-secondary block leading-none">{f.high_score}</span>
@@ -477,9 +484,10 @@ export default function FriendsPage() {
         </AnimatePresence>
       </div>
       {challengeTargetId && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-end justify-center p-4">
-          <div className="w-full max-w-sm glass-premium rounded-2xl p-4 space-y-3">
-            <p className="font-display text-xs text-foreground font-bold tracking-wider">Which game should we play?</p>
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end justify-center p-4">
+          <div className="w-full max-w-sm glass-premium rounded-3xl p-4 space-y-3 border border-primary/30 shadow-[0_0_40px_hsl(217_91%_60%/0.2)]">
+            <p className="font-display text-xs text-foreground font-black tracking-wider">Which game should we play?</p>
+            <p className="text-[9px] text-muted-foreground">Send a battle invite with your chosen format.</p>
             {(["ar", "tap", "tournament"] as GameType[]).map((gt) => (
               <button
                 key={gt}
@@ -487,7 +495,7 @@ export default function FriendsPage() {
                   void challengeFriend(challengeTargetId, gt);
                   setChallengeTargetId(null);
                 }}
-                className="w-full py-2.5 rounded-xl bg-primary/10 border border-primary/30 font-display text-xs font-bold uppercase"
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-primary/20 to-accent/10 border border-primary/30 font-display text-xs font-bold uppercase tracking-wider"
               >
                 {gt}
               </button>

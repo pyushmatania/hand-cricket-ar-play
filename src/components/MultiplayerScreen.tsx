@@ -90,6 +90,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [games, setGames] = useState<LobbyGame[]>([]);
   const [lobbyTab, setLobbyTab] = useState<"join" | "create">("join");
   const [currentGame, setCurrentGame] = useState<MultiplayerGame | null>(null);
+  const [ownHostedGame, setOwnHostedGame] = useState<LobbyGame | null>(null);
   const [opponentName, setOpponentName] = useState("Opponent");
   const [myName, setMyName] = useState("You");
   const [cooldown, setCooldown] = useState(false);
@@ -99,6 +100,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [roomCodeError, setRoomCodeError] = useState<string | null>(null);
   const [selectedGameType, setSelectedGameType] = useState<GameType>("ar");
   const [createModePickerOpen, setCreateModePickerOpen] = useState(false);
+  const [lobbyMessage, setLobbyMessage] = useState<string | null>(null);
 
   // Timer state
   const [ballTimer, setBallTimer] = useState(BALL_TIMER_MS);
@@ -229,6 +231,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
         .maybeSingle();
 
       if (!data) return;
+      if (Date.now() - new Date((data as any).updated_at).getTime() > GAME_EXPIRY_MS) return;
       navigate(`/game/multiplayer?game=${(data as any).id}`, { replace: true });
     };
 
@@ -389,7 +392,15 @@ export default function MultiplayerScreen({ onHome }: Props) {
       .or(`target_guest_id.is.null,target_guest_id.eq.${user.id}`)
       .order("created_at", { ascending: false })
       .limit(20);
-    if (!data || !data.length) { setGames([]); return; }
+    const { data: ownData } = await supabase
+      .from("multiplayer_games")
+      .select("*")
+      .eq("host_id", user.id)
+      .in("status", ["waiting", "toss", "playing"])
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (!data || !data.length) { setGames([]); if (ownData) setOwnHostedGame(ownData as unknown as LobbyGame); return; }
     // Filter expired games
     const now = Date.now();
     const validGames = (data as any[]).filter(g => {
@@ -411,6 +422,19 @@ export default function MultiplayerScreen({ onHome }: Props) {
       time_left_ms: Math.max(0, GAME_EXPIRY_MS - (now - new Date(g.created_at).getTime())),
     }));
     setGames(lobbyGames);
+    if (ownData) {
+      const g = ownData as any;
+      setOwnHostedGame({
+        ...g,
+        host_name: myName,
+        host_avatar_index: 0,
+        host_wins: 0,
+        host_total_matches: 0,
+        time_left_ms: Math.max(0, GAME_EXPIRY_MS - (now - new Date(g.created_at).getTime())),
+      } as LobbyGame);
+    } else {
+      setOwnHostedGame(null);
+    }
   };
 
   const loadOpponentName = async (game: MultiplayerGame) => {
@@ -431,7 +455,18 @@ export default function MultiplayerScreen({ onHome }: Props) {
       setPhase(statusToPhase(g.status));
       setReserveTime(RESERVE_TIMER_MS);
       navigate(`/game/multiplayer?game=${g.id}`, { replace: true });
+      setLobbyMessage("Room created. Waiting for opponent...");
+    } else {
+      setLobbyMessage("Failed to create room.");
     }
+  };
+
+  const cancelOwnRoom = async () => {
+    if (!ownHostedGame || !user || ownHostedGame.host_id !== user.id) return;
+    await supabase.from("multiplayer_games").update({ status: "cancelled" as any, phase: "abandoned" as any }).eq("id", ownHostedGame.id).eq("host_id", user.id);
+    setOwnHostedGame(null);
+    setLobbyMessage("Your room was cancelled.");
+    loadGames();
   };
 
   const joinGame = async (gameId: string) => {
@@ -685,6 +720,21 @@ export default function MultiplayerScreen({ onHome }: Props) {
                   </div>
                   {roomCodeError && <p className="text-[9px] text-out-red">{roomCodeError}</p>}
                 </div>
+                {ownHostedGame && (
+                  <div className="glass-premium rounded-2xl p-3 border border-primary/30">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[8px] font-display font-bold tracking-widest text-primary">YOUR MATCH</span>
+                      <span className="text-[8px] text-muted-foreground uppercase">{ownHostedGame.status}</span>
+                    </div>
+                    <p className="text-[9px] text-muted-foreground">Code: <span className="font-mono text-primary">{ownHostedGame.room_code}</span> • {ownHostedGame.game_type.toUpperCase()}</p>
+                    <div className="flex gap-2 mt-2">
+                      <button onClick={() => navigate(`/game/multiplayer?game=${ownHostedGame.id}`, { replace: true })}
+                        className="flex-1 py-2 rounded-lg bg-primary/15 border border-primary/30 text-[9px] font-display font-bold text-primary">OPEN</button>
+                      <button onClick={cancelOwnRoom}
+                        className="py-2 px-3 rounded-lg bg-out-red/10 border border-out-red/30 text-[9px] font-display font-bold text-out-red">CANCEL</button>
+                    </div>
+                  </div>
+                )}
                 {(() => {
                   const joinable = games.filter(g => g.host_id !== user.id);
                   const joinFeedback =
@@ -736,6 +786,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
                     {joinState === "failed" ? "Failed to join this match." : joinState === "full" ? "Game already full." : "Invite/match expired."}
                   </p>
                 )}
+                {lobbyMessage && <p className="text-[9px] text-center text-muted-foreground">{lobbyMessage}</p>}
               </motion.div>
             )}
           </motion.div>
@@ -971,9 +1022,10 @@ export default function MultiplayerScreen({ onHome }: Props) {
         )}
       </div>
       {createModePickerOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-end justify-center p-4">
-          <div className="w-full max-w-sm glass-premium rounded-2xl p-4 space-y-3">
-            <p className="font-display text-xs text-foreground font-bold tracking-wider">Which game do you want to play?</p>
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end justify-center p-4">
+          <div className="w-full max-w-sm glass-premium rounded-3xl p-4 space-y-3 border border-primary/30 shadow-[0_0_40px_hsl(217_91%_60%/0.2)]">
+            <p className="font-display text-xs text-foreground font-black tracking-wider">Which game do you want to play?</p>
+            <p className="text-[9px] text-muted-foreground">Choose your arena and start a live duel.</p>
             {(["ar", "tap", "tournament"] as GameType[]).map((gt) => (
               <button
                 key={gt}
@@ -982,7 +1034,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
                   setCreateModePickerOpen(false);
                   void createGame(gt);
                 }}
-                className="w-full py-2.5 rounded-xl bg-primary/10 border border-primary/30 font-display text-xs font-bold uppercase"
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-primary/20 to-accent/10 border border-primary/30 font-display text-xs font-bold uppercase tracking-wider"
               >
                 {gt}
               </button>

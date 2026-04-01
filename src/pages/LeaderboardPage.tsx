@@ -719,9 +719,10 @@ export default function LeaderboardPage() {
 
       <BottomNav />
       {challengeTargetId && (
-        <div className="fixed inset-0 z-50 bg-black/60 flex items-end justify-center p-4">
-          <div className="w-full max-w-sm glass-premium rounded-2xl p-4 space-y-3">
-            <p className="font-display text-xs text-foreground font-bold tracking-wider">Which game should we play?</p>
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end justify-center p-4">
+          <div className="w-full max-w-sm glass-premium rounded-3xl p-4 space-y-3 border border-primary/30 shadow-[0_0_40px_hsl(217_91%_60%/0.2)]">
+            <p className="font-display text-xs text-foreground font-black tracking-wider">Which game should we play?</p>
+            <p className="text-[9px] text-muted-foreground">Challenge your rival with the mode you want.</p>
             {(["ar", "tap", "tournament"] as GameType[]).map((gt) => (
               <button
                 key={gt}
@@ -729,7 +730,7 @@ export default function LeaderboardPage() {
                   void challengeFriend(challengeTargetId, gt);
                   setChallengeTargetId(null);
                 }}
-                className="w-full py-2.5 rounded-xl bg-primary/10 border border-primary/30 font-display text-xs font-bold uppercase"
+                className="w-full py-3 rounded-2xl bg-gradient-to-r from-primary/20 to-accent/10 border border-primary/30 font-display text-xs font-bold uppercase tracking-wider"
               >
                 {gt}
               </button>
