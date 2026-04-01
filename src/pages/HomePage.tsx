@@ -17,7 +17,7 @@ interface QuickStat {
 const MODES = [
   { icon: "📸", label: "AR Mode", desc: "Hand gesture tracking", mode: "ar", gradient: "from-primary/20 to-primary/5", border: "border-primary/20" },
   { icon: "👆", label: "Tap Mode", desc: "Quick tap gameplay", mode: "tap", gradient: "from-accent/20 to-accent/5", border: "border-accent/20" },
-  { icon: "⚔️", label: "Multiplayer", desc: "Coming soon", mode: "multiplayer", soon: true, gradient: "from-muted to-muted", border: "border-glass" },
+  { icon: "⚔️", label: "Multiplayer", desc: "Real-time PvP", mode: "multiplayer", gradient: "from-secondary/20 to-secondary/5", border: "border-secondary/20" },
   { icon: "🎯", label: "Practice", desc: "Learn gestures", mode: "practice", gradient: "from-neon-green/20 to-neon-green/5", border: "border-neon-green/20" },
 ];
 
