@@ -66,7 +66,7 @@ export default function FriendsPage() {
     const friendIds = data.map((f: any) => f.friend_id);
     const { data: profiles } = await supabase
       .from("profiles")
-      .select("user_id, display_name, wins, losses, total_matches, high_score, best_streak, invite_code")
+      .select("user_id, display_name, wins, losses, total_matches, high_score, best_streak, invite_code, avatar_url, avatar_index")
       .in("user_id", friendIds);
     if (profiles) setFriends(profiles as unknown as FriendProfile[]);
   };
