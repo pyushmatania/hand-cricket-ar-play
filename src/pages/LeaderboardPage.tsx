@@ -322,6 +322,167 @@ export default function LeaderboardPage() {
         )}
 
         <AnimatePresence mode="wait">
+          {/* SEASONS TAB */}
+          {mainTab === "seasons" && (
+            <motion.div
+              key="seasons"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="space-y-3"
+            >
+              {!viewingArchive ? (
+                <>
+                  {/* Week selector */}
+                  <div className="glass-premium rounded-xl p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <button
+                        onClick={() => setSeasonWeeksAgo(w => w + 1)}
+                        className="w-8 h-8 rounded-lg glass-card flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                      >
+                        ◀
+                      </button>
+                      <div className="text-center">
+                        <span className="font-display text-[9px] font-bold text-secondary tracking-widest block">
+                          {seasonWeeksAgo === 0 ? "🔴 LIVE SEASON" : "PAST SEASON"}
+                        </span>
+                        <span className="font-display text-[8px] text-muted-foreground">{currentSeasonLabel}</span>
+                      </div>
+                      <button
+                        onClick={() => setSeasonWeeksAgo(w => Math.max(0, w - 1))}
+                        disabled={seasonWeeksAgo === 0}
+                        className="w-8 h-8 rounded-lg glass-card flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30"
+                      >
+                        ▶
+                      </button>
+                    </div>
+                    {seasonWeeksAgo === 0 && (
+                      <div className="flex items-center gap-1.5 justify-center">
+                        <span className="w-2 h-2 rounded-full bg-neon-green animate-pulse" />
+                        <span className="text-[7px] text-neon-green font-display tracking-widest">COMPETING NOW</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Season rankings */}
+                  {seasonEntries.length === 0 ? (
+                    <div className="glass-premium rounded-2xl p-8 text-center">
+                      <span className="text-4xl block mb-3">📅</span>
+                      <p className="font-display text-sm font-bold text-foreground">No matches this week</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">Play matches to climb the weekly leaderboard!</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {seasonEntries.map((entry, i) => {
+                        const isMe = user && entry.user_id === user.id;
+                        const winRate = entry.total_matches > 0 ? Math.round((entry.wins / entry.total_matches) * 100) : 0;
+                        return (
+                          <motion.div
+                            key={entry.user_id}
+                            initial={{ opacity: 0, x: -15 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: i * 0.04 }}
+                            className={`glass-premium rounded-xl p-3 flex items-center gap-3 ${isMe ? "border border-primary/25 shadow-[0_0_15px_hsl(217_91%_60%/0.1)]" : ""}`}
+                          >
+                            <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-display font-black text-sm ${
+                              i === 0 ? "bg-gradient-to-br from-score-gold/20 to-score-gold/5 text-score-gold" :
+                              i === 1 ? "bg-gradient-to-br from-accent/20 to-accent/5 text-accent" :
+                              i === 2 ? "bg-gradient-to-br from-secondary/20 to-secondary/5 text-secondary" :
+                              isMe ? "bg-gradient-to-br from-primary/20 to-primary/10 text-primary" : "bg-muted/40 text-muted-foreground"
+                            }`}>
+                              {i < 3 ? getBadge(i + 1) : `#${i + 1}`}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <span className={`font-display text-[11px] font-bold block ${isMe ? "text-primary" : "text-foreground"}`}>
+                                {entry.display_name || "Player"}
+                                {isMe && <span className="text-[7px] text-primary/60 ml-1">(YOU)</span>}
+                              </span>
+                              <span className="text-[8px] text-muted-foreground font-display">
+                                {entry.total_matches} matches • {winRate}% WR • HS: {entry.high_score}
+                              </span>
+                            </div>
+                            <div className="text-right">
+                              <span className="font-display text-lg font-black text-secondary block leading-none">{entry.wins}</span>
+                              <span className="text-[6px] text-muted-foreground font-display tracking-widest">WINS</span>
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {/* Season archives */}
+                  {archivedSeasons.length > 0 && (
+                    <div className="mt-4">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-1 h-4 rounded-full bg-gradient-to-b from-muted-foreground/40 to-transparent" />
+                        <span className="font-display text-[9px] font-bold text-muted-foreground tracking-widest">SEASON ARCHIVES</span>
+                      </div>
+                      <div className="space-y-1.5">
+                        {archivedSeasons.map((s) => (
+                          <button
+                            key={s.season_label}
+                            onClick={() => loadArchive(s.season_label)}
+                            className="w-full glass-card rounded-xl p-3 flex items-center gap-3 text-left hover:bg-primary/5 transition-colors"
+                          >
+                            <span className="text-lg">🏛️</span>
+                            <div className="flex-1">
+                              <span className="font-display text-[10px] font-bold text-foreground block">{s.season_label}</span>
+                            </div>
+                            <span className="text-muted-foreground text-xs">→</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                /* Viewing archived season */
+                <>
+                  <button
+                    onClick={() => { setViewingArchive(null); setArchiveEntries([]); }}
+                    className="glass-card rounded-xl px-4 py-2 font-display text-[9px] font-bold text-muted-foreground tracking-widest hover:text-foreground transition-colors"
+                  >
+                    ← BACK TO SEASONS
+                  </button>
+                  <div className="glass-premium rounded-xl p-3 text-center">
+                    <span className="text-2xl block mb-1">🏛️</span>
+                    <span className="font-display text-[10px] font-bold text-secondary tracking-widest">{viewingArchive}</span>
+                  </div>
+                  <div className="space-y-2">
+                    {archiveEntries.map((entry: any, i: number) => {
+                      const isMe = user && entry.user_id === user.id;
+                      return (
+                        <motion.div
+                          key={entry.id}
+                          initial={{ opacity: 0, x: -15 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.04 }}
+                          className={`glass-premium rounded-xl p-3 flex items-center gap-3 ${isMe ? "border border-primary/25" : ""}`}
+                        >
+                          <div className="w-9 h-9 rounded-xl flex items-center justify-center font-display font-black text-sm bg-muted/40 text-muted-foreground">
+                            {entry.rank <= 3 ? getBadge(entry.rank) : `#${entry.rank}`}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <span className="font-display text-[11px] font-bold text-foreground block">
+                              {isMe ? "YOU" : `Player`}
+                            </span>
+                            <span className="text-[8px] text-muted-foreground font-display">
+                              {entry.total_matches} matches • W{entry.wins} L{entry.losses} D{entry.draws}
+                            </span>
+                          </div>
+                          <div className="text-right">
+                            <span className="font-display text-lg font-black text-secondary block leading-none">{entry.wins}</span>
+                            <span className="text-[6px] text-muted-foreground font-display tracking-widest">WINS</span>
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </motion.div>
+          )}
           {/* RIVALRY TAB */}
           {mainTab === "rivalry" && (
             <motion.div
