@@ -115,13 +115,34 @@ export default function ProfilePage() {
       .then(({ data }) => { if (data) setProfile(data); });
 
     supabase
+      .from("profiles")
+      .select("invite_code")
+      .eq("user_id", user.id)
+      .single()
+      .then(({ data }) => { if (data) setMyCode((data as any).invite_code || ""); });
+
+    supabase
       .from("matches")
       .select("id, mode, user_score, ai_score, result, balls_played, created_at, innings_data")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false })
       .limit(50)
       .then(({ data }) => { if (data) setMatches(data as unknown as MatchRecord[]); });
+
+    loadFriends();
   }, [user]);
+
+  const loadFriends = async () => {
+    if (!user) return;
+    const { data } = await supabase.from("friends").select("friend_id").eq("user_id", user.id);
+    if (!data || !data.length) { setFriends([]); return; }
+    const friendIds = data.map((f: any) => f.friend_id);
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("user_id, display_name, wins, losses, total_matches, high_score, best_streak, invite_code")
+      .in("user_id", friendIds);
+    if (profiles) setFriends(profiles);
+  };
 
   // Aggregate stats from all match ball-by-ball data
   const advancedStats = useMemo(() => {
