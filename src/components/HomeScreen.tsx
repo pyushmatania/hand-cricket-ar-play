@@ -33,7 +33,9 @@ export default function HomeScreen({ onStart }: HomeScreenProps) {
           transition={{ delay: 0.2, duration: 0.5, type: "spring" }}
           className="mb-6"
         >
-          <SpinningCricketBall size={100} className="mx-auto mb-4" />
+          <Suspense fallback={<SpinningCricketBall size={100} className="mx-auto mb-4" />}>
+            <CricketBall3D size={140} className="mx-auto mb-2" />
+          </Suspense>
           <h1 className="font-display text-3xl sm:text-4xl font-black text-foreground text-glow tracking-wider leading-tight">
             <span className="block">AR CRICKET</span>
             <span className="block text-primary">2K26</span>
