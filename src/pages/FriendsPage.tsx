@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import BottomNav from "@/components/BottomNav";
 import TopStatusBar from "@/components/TopStatusBar";
+import PlayerAvatar from "@/components/PlayerAvatar";
 
 interface FriendProfile {
   user_id: string;
@@ -15,6 +16,8 @@ interface FriendProfile {
   high_score: number;
   best_streak: number;
   invite_code: string;
+  avatar_url?: string | null;
+  avatar_index?: number;
 }
 
 interface FriendRequest {
