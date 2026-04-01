@@ -6,6 +6,7 @@ const NAV_ITEMS = [
   { path: "/play", label: "Play", icon: "🏏", activeIcon: "🏏" },
   { path: "/leaderboard", label: "Ranks", icon: "🏆", activeIcon: "🏆" },
   { path: "/profile", label: "Profile", icon: "👤", activeIcon: "👤" },
+  { path: "/settings", label: "Settings", icon: "⚙️", activeIcon: "⚙️" },
 ];
 
 export default function BottomNav() {
