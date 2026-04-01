@@ -328,9 +328,6 @@ export default function HomePage() {
       </div>
 
       <BottomNav />
-      {selectedPlayer && (
-        <PlayerDetailModal player={selectedPlayer} onClose={() => setSelectedPlayer(null)} />
-      )}
     </div>
   );
 }
