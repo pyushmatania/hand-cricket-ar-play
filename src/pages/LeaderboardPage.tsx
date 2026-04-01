@@ -168,8 +168,80 @@ export default function LeaderboardPage() {
     }
   };
 
-  const getBadge = (rank: number) => {
+  const loadSeasonData = async () => {
+    const { start, end } = getWeekRange(seasonWeeksAgo);
+    const { data: matches } = await supabase
+      .from("matches")
+      .select("user_id, result, user_score")
+      .gte("created_at", start.toISOString())
+      .lte("created_at", end.toISOString());
+    if (!matches || !matches.length) { setSeasonEntries([]); return; }
 
+    const statsMap: Record<string, SeasonEntry> = {};
+    for (const m of matches) {
+      if (!statsMap[m.user_id]) statsMap[m.user_id] = { user_id: m.user_id, display_name: "", wins: 0, losses: 0, draws: 0, total_matches: 0, high_score: 0 };
+      const s = statsMap[m.user_id];
+      s.total_matches++;
+      if (m.result === "win") s.wins++;
+      else if (m.result === "loss") s.losses++;
+      else s.draws++;
+      s.high_score = Math.max(s.high_score, m.user_score);
+    }
+
+    const userIds = Object.keys(statsMap);
+    const { data: profiles } = await supabase.from("profiles").select("user_id, display_name").in("user_id", userIds);
+    if (profiles) profiles.forEach((p: any) => { if (statsMap[p.user_id]) statsMap[p.user_id].display_name = p.display_name; });
+
+    const entries = Object.values(statsMap).sort((a, b) => b.wins - a.wins);
+    setSeasonEntries(entries);
+  };
+
+  const loadArchivedSeasons = async () => {
+    const { data } = await supabase
+      .from("season_snapshots")
+      .select("season_label, season_start, season_end")
+      .order("season_start", { ascending: false })
+      .limit(20);
+    if (data) {
+      const unique = data.filter((d: any, i: number, arr: any[]) => arr.findIndex((x: any) => x.season_label === d.season_label) === i);
+      setArchivedSeasons(unique as ArchivedSeason[]);
+    }
+  };
+
+  const loadArchive = async (seasonLabel: string) => {
+    setViewingArchive(seasonLabel);
+    const { data } = await supabase
+      .from("season_snapshots")
+      .select("*")
+      .eq("season_label", seasonLabel)
+      .order("rank", { ascending: true });
+    setArchiveEntries(data || []);
+  };
+
+  const saveCurrentSeason = async () => {
+    if (!user || seasonEntries.length === 0) return;
+    const { start, end } = getWeekRange(seasonWeeksAgo);
+    const label = formatSeasonLabel(start);
+    for (let i = 0; i < seasonEntries.length; i++) {
+      const e = seasonEntries[i];
+      if (e.user_id === user.id) {
+        await supabase.from("season_snapshots").insert({
+          user_id: e.user_id,
+          season_start: start.toISOString().split("T")[0],
+          season_end: end.toISOString().split("T")[0],
+          season_label: label,
+          wins: e.wins,
+          losses: e.losses,
+          draws: e.draws,
+          total_matches: e.total_matches,
+          high_score: e.high_score,
+          rank: i + 1,
+        } as any);
+      }
+    }
+  };
+
+  const getBadge = (rank: number) => {
     if (rank === 1) return "🥇";
     if (rank === 2) return "🥈";
     if (rank === 3) return "🥉";
@@ -185,9 +257,12 @@ export default function LeaderboardPage() {
   const top3 = activeList.slice(0, 3);
   const rest = activeList.slice(3);
 
+  const currentSeasonLabel = formatSeasonLabel(getWeekRange(seasonWeeksAgo).start);
+
   const mainTabs: { key: MainTab; label: string; icon: string }[] = [
     { key: "global", label: "GLOBAL", icon: "🌍" },
     { key: "friends", label: "FRIENDS", icon: "👥" },
+    { key: "seasons", label: "SEASON", icon: "📅" },
     { key: "rivalry", label: "RIVALRY", icon: "⚔️" },
     { key: "rage", label: "RAGE", icon: "😤" },
   ];
