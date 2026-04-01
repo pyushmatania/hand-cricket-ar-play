@@ -170,17 +170,10 @@ export default function HomePage() {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.5 + i * 0.07 }}
-                whileTap={m.soon ? {} : { scale: 0.95 }}
-                onClick={() => !m.soon && navigate(`/game/${m.mode}`)}
-                className={`relative bg-gradient-to-br ${m.gradient} border ${m.border} rounded-2xl p-4 text-left transition-all ${
-                  m.soon ? "opacity-40 cursor-not-allowed" : "active:scale-95"
-                }`}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate(`/game/${m.mode}`)}
+                className={`relative bg-gradient-to-br ${m.gradient} border ${m.border} rounded-2xl p-4 text-left transition-all active:scale-95`}
               >
-                {m.soon && (
-                  <span className="absolute top-2 right-2 text-[6px] font-display font-bold text-secondary bg-secondary/20 px-1.5 py-0.5 rounded-full tracking-wider">
-                    SOON
-                  </span>
-                )}
                 <span className="text-2xl block mb-2">{m.icon}</span>
                 <span className="font-display text-[11px] font-bold text-foreground block tracking-wider">
                   {m.label}
