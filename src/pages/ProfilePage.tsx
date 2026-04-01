@@ -1,9 +1,19 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import BottomNav from "@/components/BottomNav";
+
+interface MatchRecord {
+  id: string;
+  mode: string;
+  user_score: number;
+  ai_score: number;
+  result: string;
+  balls_played: number;
+  created_at: string;
+}
 
 const ACHIEVEMENTS = [
   { icon: "🏏", title: "First Match", desc: "Play your first match", key: "first_match", check: (p: any) => p.total_matches >= 1 },
