@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import { motion } from "framer-motion";
 import SpinningCricketBall from "./SpinningCricketBall";
+import CricketBall3D from "./CricketBall3D";
 
 interface HomeScreenProps {
   onStart: () => void;
