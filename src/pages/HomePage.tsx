@@ -5,10 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import BottomNav from "@/components/BottomNav";
 import TopStatusBar from "@/components/TopStatusBar";
-import ParticleField from "@/components/ParticleField";
 import OnboardingTutorial from "@/components/OnboardingTutorial";
-import { PLAYER_IMAGES, INDIAN_LEGENDS, type PlayerInfo } from "@/components/PlayerCard";
-import PlayerDetailModal from "@/components/PlayerDetailModal";
 
 interface ProfileData {
   total_matches: number;
@@ -27,13 +24,6 @@ interface RecentMatch {
   result: string;
   created_at: string;
 }
-
-const PLAYERS = [
-  { name: "Virat Kohli", number: "18", role: "Batsman", id: "kohli", color: "from-primary/30 to-primary/10" },
-  { name: "MS Dhoni", number: "7", role: "Captain", id: "dhoni", color: "from-secondary/30 to-secondary/10" },
-  { name: "Rohit Sharma", number: "45", role: "Opener", id: "rohit", color: "from-accent/30 to-accent/10" },
-  { name: "Jasprit Bumrah", number: "93", role: "Bowler", id: "bumrah", color: "from-neon-green/30 to-neon-green/10" },
-];
 
 const QUICK_MODES = [
   { icon: "📸", label: "AR Mode", mode: "ar", color: "from-primary/25 to-primary/5", border: "border-primary/25", glow: "shadow-[0_0_15px_hsl(217_91%_60%/0.15)]" },
@@ -55,8 +45,6 @@ export default function HomePage() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [recentMatch, setRecentMatch] = useState<RecentMatch | null>(null);
-  const [activePlayer, setActivePlayer] = useState(0);
-  const [selectedPlayer, setSelectedPlayer] = useState<PlayerInfo | null>(null);
 
   useEffect(() => {
     const seen = localStorage.getItem("hc_onboarding_done");
@@ -81,11 +69,6 @@ export default function HomePage() {
       .then(({ data }) => { if (data?.[0]) setRecentMatch(data[0]); });
   }, [user]);
 
-  // Cycle featured player
-  useEffect(() => {
-    const t = setInterval(() => setActivePlayer(p => (p + 1) % PLAYERS.length), 4000);
-    return () => clearInterval(t);
-  }, []);
 
   const completeOnboarding = () => {
     localStorage.setItem("hc_onboarding_done", "1");
@@ -105,7 +88,7 @@ export default function HomePage() {
       {/* Background layers */}
       <div className="absolute inset-0 stadium-gradient pointer-events-none" />
       <div className="absolute inset-0 vignette pointer-events-none" />
-      <ParticleField />
+      
 
       {/* Top ambient glow */}
       <div
@@ -117,97 +100,6 @@ export default function HomePage() {
       <TopStatusBar />
 
       <div className="relative z-10 max-w-lg mx-auto px-4 pt-4">
-
-        {/* ── Featured Player Hero ────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="glass-premium p-4 mb-4 relative overflow-hidden cursor-pointer"
-          onClick={() => {
-            const legend = INDIAN_LEGENDS.find(l => l.id === PLAYERS[activePlayer].id);
-            if (legend) setSelectedPlayer(legend);
-          }}
-        >
-          {/* Decorative background number */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activePlayer}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 0.04, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.1 }}
-              transition={{ duration: 0.5 }}
-              className="absolute -right-4 -top-4 font-display text-[120px] font-black leading-none text-foreground pointer-events-none select-none"
-            >
-              {PLAYERS[activePlayer].number}
-            </motion.div>
-          </AnimatePresence>
-
-          <div className="flex items-center gap-4 relative z-10">
-            {/* Player avatar */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activePlayer}
-                initial={{ opacity: 0, x: -20, scale: 0.8 }}
-                animate={{ opacity: 1, x: 0, scale: 1 }}
-                exit={{ opacity: 0, x: 20, scale: 0.8 }}
-                transition={{ duration: 0.4 }}
-                className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${PLAYERS[activePlayer].color} border border-primary/20 flex items-center justify-center relative shrink-0 overflow-hidden`}
-              >
-                <img src={PLAYER_IMAGES[PLAYERS[activePlayer].id]} alt={PLAYERS[activePlayer].name} className="w-full h-full object-cover object-top" />
-                {/* Pulse ring */}
-                <motion.div
-                  animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0, 0.3] }}
-                  transition={{ duration: 2.5, repeat: Infinity }}
-                  className="absolute inset-0 rounded-2xl border border-primary/20"
-                />
-              </motion.div>
-            </AnimatePresence>
-
-            <div className="flex-1 min-w-0">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activePlayer}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <p className="font-display text-[8px] text-primary/60 tracking-[0.2em] font-bold">
-                    FEATURED LEGEND
-                  </p>
-                  <h2 className="font-heading text-lg font-bold text-foreground leading-tight mt-0.5">
-                    {PLAYERS[activePlayer].name}
-                  </h2>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="font-display text-[9px] text-muted-foreground tracking-wider">
-                      #{PLAYERS[activePlayer].number}
-                    </span>
-                    <span className="w-1 h-1 rounded-full bg-primary/30" />
-                    <span className="font-display text-[9px] text-primary/70 tracking-wider font-bold">
-                      {PLAYERS[activePlayer].role.toUpperCase()}
-                    </span>
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            </div>
-          </div>
-
-          {/* Player dots indicator */}
-          <div className="flex items-center justify-center gap-2 mt-3">
-            {PLAYERS.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setActivePlayer(i)}
-                className={`transition-all rounded-full ${
-                  i === activePlayer
-                    ? "w-6 h-1.5 bg-primary"
-                    : "w-1.5 h-1.5 bg-muted-foreground/30"
-                }`}
-              />
-            ))}
-          </div>
-        </motion.div>
 
         {/* ── Quick Play Grid ────────────────────── */}
         <motion.div
@@ -436,9 +328,6 @@ export default function HomePage() {
       </div>
 
       <BottomNav />
-      {selectedPlayer && (
-        <PlayerDetailModal player={selectedPlayer} onClose={() => setSelectedPlayer(null)} />
-      )}
     </div>
   );
 }
