@@ -320,11 +320,11 @@ export default function MultiplayerScreen({ onHome }: Props) {
       const isHostMoveMissing = !currentGame.host_move;
       const isGuestMoveMissing = !currentGame.guest_move;
       if (isHostMoveMissing || isGuestMoveMissing) {
-        supabase.from("multiplayer_games").update({
+        (supabase.from("multiplayer_games") as any).update({
           ...(isHostMoveMissing ? { host_move: "DEF", host_move_submitted_at: new Date().toISOString() } : {}),
           ...(isGuestMoveMissing ? { guest_move: "DEF", guest_move_submitted_at: new Date().toISOString() } : {}),
-          phase: "resolving_turn" as any,
-        }).eq("id", currentGame.id).eq("phase" as any, "action_window");
+          phase: "resolving_turn",
+        }).eq("id", currentGame.id).eq("phase", "action_window");
       }
     }
   }, [currentGame?.id, currentGame?.phase, currentGame?.phase_started_at, currentGame?.turn_deadline_at, currentGame?.host_move, currentGame?.guest_move, user?.id]);
