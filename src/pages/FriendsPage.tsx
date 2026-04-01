@@ -110,7 +110,7 @@ export default function FriendsPage() {
     setLoading(true);
     const { data } = await supabase
       .from("profiles")
-      .select("user_id, display_name, wins, losses, total_matches, high_score, best_streak, invite_code")
+      .select("user_id, display_name, wins, losses, total_matches, high_score, best_streak, invite_code, avatar_url, avatar_index")
       .ilike("display_name", `%${searchQuery.trim()}%`)
       .neq("user_id", user.id)
       .limit(10);
