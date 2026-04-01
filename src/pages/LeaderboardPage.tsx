@@ -30,7 +30,41 @@ interface FriendProfile {
   abandons: number;
 }
 
-type MainTab = "global" | "friends" | "rivalry" | "rage";
+type MainTab = "global" | "friends" | "rivalry" | "rage" | "seasons";
+
+interface SeasonEntry {
+  user_id: string;
+  display_name: string;
+  wins: number;
+  losses: number;
+  draws: number;
+  total_matches: number;
+  high_score: number;
+}
+
+interface ArchivedSeason {
+  season_label: string;
+  season_start: string;
+  season_end: string;
+}
+
+const getWeekRange = (weeksAgo = 0) => {
+  const now = new Date();
+  const day = now.getDay();
+  const mondayOffset = day === 0 ? -6 : 1 - day;
+  const monday = new Date(now);
+  monday.setDate(now.getDate() + mondayOffset - weeksAgo * 7);
+  monday.setHours(0, 0, 0, 0);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  sunday.setHours(23, 59, 59, 999);
+  return { start: monday, end: sunday };
+};
+
+const formatSeasonLabel = (start: Date) => {
+  const weekNum = Math.ceil(((start.getTime() - new Date(start.getFullYear(), 0, 1).getTime()) / 86400000 + 1) / 7);
+  return `Week ${weekNum} • ${start.toLocaleDateString("en-US", { month: "short", day: "numeric" })} - ${new Date(start.getTime() + 6 * 86400000).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
+};
 
 const SORT_OPTIONS = [
   { label: "WINS", icon: "🏆", key: "wins" as const },
