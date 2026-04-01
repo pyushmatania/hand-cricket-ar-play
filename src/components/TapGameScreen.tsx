@@ -46,10 +46,13 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
     const prev = prevPhaseRef.current;
     prevPhaseRef.current = game.phase;
     if (prev !== game.phase && game.phase !== "not_started" && game.phase !== "finished") {
-      if (commentaryEnabled) {
-        setCommentary(getInningsChangeCommentary(game));
+    if (commentaryEnabled) {
+        const text = getInningsChangeCommentary(game);
+        setCommentary(text);
+        if (voiceEnabled) speakCommentary(text, true);
         setTimeout(() => setCommentary(null), 3000);
       }
+      if (crowdEnabled) CrowdSFX.ambientMurmur(2);
       if (soundEnabled) SFX.gameStart();
     }
   }, [game.phase]);
