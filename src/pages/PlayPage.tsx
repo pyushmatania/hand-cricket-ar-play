@@ -11,15 +11,21 @@ const MODES = [
     description: "Use your real hand in front of the camera. AI detects your gesture automatically.",
     gradient: "from-primary to-primary/60",
     glow: "glow-primary",
+    accent: "text-primary",
+    bg: "bg-primary/5",
+    border: "border-primary/20",
   },
   {
     id: "tap",
     icon: "👆",
     title: "TAP MODE",
     subtitle: "Tap to Play",
-    description: "Quick gameplay with on-screen buttons. No camera needed. Perfect for on-the-go.",
+    description: "Quick gameplay with on-screen buttons. No camera needed.",
     gradient: "from-accent to-accent/60",
     glow: "glow-accent",
+    accent: "text-accent",
+    bg: "bg-accent/5",
+    border: "border-accent/20",
   },
   {
     id: "practice",
@@ -27,17 +33,23 @@ const MODES = [
     title: "PRACTICE",
     subtitle: "Learn & Improve",
     description: "Practice your gestures without scoring. See what the AI detects in real time.",
-    gradient: "from-secondary to-secondary/60",
-    glow: "glow-secondary",
+    gradient: "from-neon-green to-neon-green/60",
+    glow: "",
+    accent: "text-neon-green",
+    bg: "bg-neon-green/5",
+    border: "border-neon-green/20",
   },
   {
     id: "multiplayer",
     icon: "⚔️",
     title: "MULTIPLAYER",
     subtitle: "Coming Soon",
-    description: "Challenge your friends in real-time hand cricket matches. Stay tuned!",
+    description: "Challenge your friends in real-time hand cricket matches.",
     gradient: "from-muted-foreground to-muted-foreground/60",
     glow: "",
+    accent: "text-muted-foreground",
+    bg: "bg-muted/30",
+    border: "border-glass",
     disabled: true,
   },
 ];
@@ -56,10 +68,13 @@ export default function PlayPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-6"
         >
-          <h1 className="font-display text-xl font-black text-foreground tracking-wider">
-            SELECT MODE
-          </h1>
-          <p className="text-xs text-muted-foreground mt-1">Choose your play style</p>
+          <div className="flex items-center gap-2">
+            <div className="w-1 h-6 rounded-full bg-primary" />
+            <h1 className="font-display text-xl font-black text-foreground tracking-wider">
+              SELECT MODE
+            </h1>
+          </div>
+          <p className="text-xs text-muted-foreground mt-1 ml-3">Choose your play style</p>
         </motion.div>
 
         <div className="space-y-3">
@@ -72,12 +87,12 @@ export default function PlayPage() {
               whileTap={mode.disabled ? {} : { scale: 0.97 }}
               onClick={() => !mode.disabled && navigate(`/game/${mode.id}`)}
               disabled={mode.disabled}
-              className={`w-full glass-score p-4 flex items-start gap-4 text-left transition-all ${
-                mode.disabled ? "opacity-40 cursor-not-allowed" : "active:scale-[0.98]"
+              className={`w-full ${mode.bg} border ${mode.border} rounded-2xl p-4 flex items-start gap-4 text-left transition-all ${
+                mode.disabled ? "opacity-30 cursor-not-allowed" : "active:scale-[0.98]"
               }`}
             >
               <div
-                className={`w-14 h-14 rounded-xl bg-gradient-to-br ${mode.gradient} flex items-center justify-center shrink-0 ${mode.glow}`}
+                className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${mode.gradient} flex items-center justify-center shrink-0 ${mode.glow}`}
               >
                 <span className="text-2xl">{mode.icon}</span>
               </div>
@@ -92,30 +107,38 @@ export default function PlayPage() {
                     </span>
                   )}
                 </div>
-                <span className="text-[10px] text-primary font-display font-bold block mt-0.5">
+                <span className={`text-[10px] ${mode.accent} font-display font-bold block mt-0.5`}>
                   {mode.subtitle}
                 </span>
                 <span className="text-[10px] text-muted-foreground block mt-1 leading-relaxed">
                   {mode.description}
                 </span>
               </div>
+              {!mode.disabled && (
+                <span className="text-muted-foreground/40 mt-3">→</span>
+              )}
             </motion.button>
           ))}
         </div>
 
-        {/* Tournament coming soon */}
+        {/* Tournament teaser */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="mt-6 glass-premium p-4 text-center"
+          className="mt-6 glass-premium p-4 text-center relative overflow-hidden"
         >
-          <span className="text-2xl block mb-2">🏟️</span>
-          <p className="font-display text-xs font-bold text-foreground tracking-wider">
+          <motion.div
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent"
+            animate={{ x: ["-100%", "200%"] }}
+            transition={{ duration: 3, repeat: Infinity }}
+          />
+          <span className="text-2xl block mb-2 relative z-10">🏟️</span>
+          <p className="font-display text-xs font-bold text-foreground tracking-wider relative z-10">
             TOURNAMENT MODE
           </p>
-          <p className="text-[10px] text-muted-foreground mt-1">
-            Best of 3 / Best of 5 series coming in the next update!
+          <p className="text-[10px] text-muted-foreground mt-1 relative z-10">
+            Best of 3 / Best of 5 series — coming next update!
           </p>
         </motion.div>
       </div>

@@ -2,12 +2,12 @@ import { motion } from "framer-motion";
 import BottomNav from "@/components/BottomNav";
 
 const STATS = [
-  { label: "Matches", value: "0" },
-  { label: "Wins", value: "0" },
-  { label: "Losses", value: "0" },
-  { label: "Win Rate", value: "—" },
-  { label: "High Score", value: "—" },
-  { label: "Streak", value: "0" },
+  { label: "Matches", value: "0", icon: "🏏" },
+  { label: "Wins", value: "0", icon: "🏆" },
+  { label: "Losses", value: "0", icon: "💔" },
+  { label: "Win Rate", value: "—", icon: "📊" },
+  { label: "High Score", value: "—", icon: "⭐" },
+  { label: "Streak", value: "0", icon: "🔥" },
 ];
 
 const ACHIEVEMENTS = [
@@ -32,18 +32,26 @@ export default function ProfilePage() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-6"
         >
-          <div className="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/30 to-accent/20 border-2 border-primary/40 flex items-center justify-center mb-3">
-            <span className="text-3xl">👤</span>
+          <div className="relative inline-block">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-accent/20 border-2 border-primary/40 flex items-center justify-center">
+              <span className="text-3xl">👤</span>
+            </div>
+            <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-muted border border-glass flex items-center justify-center">
+              <span className="text-xs">✏️</span>
+            </div>
           </div>
-          <h1 className="font-display text-lg font-black text-foreground tracking-wider">
+          <h1 className="font-display text-lg font-black text-foreground tracking-wider mt-3">
             PLAYER
           </h1>
-          <p className="text-[10px] text-muted-foreground font-display">
+          <p className="text-[10px] text-muted-foreground font-display mt-1">
             Sign in to save your progress
           </p>
-          <button className="mt-3 px-6 py-2 bg-primary/20 text-primary font-display font-bold text-xs rounded-xl border border-primary/30 active:scale-95 transition-transform">
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            className="mt-3 px-6 py-2.5 bg-gradient-to-r from-primary/20 to-accent/10 text-primary font-display font-bold text-xs rounded-xl border border-primary/30 tracking-wider"
+          >
             🔐 SIGN IN
-          </button>
+          </motion.button>
         </motion.div>
 
         {/* Stats grid */}
@@ -53,19 +61,29 @@ export default function ProfilePage() {
           transition={{ delay: 0.1 }}
           className="mb-6"
         >
-          <h2 className="font-display text-[10px] font-bold text-muted-foreground tracking-[0.2em] mb-3">
-            CAREER STATS
-          </h2>
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-1 h-4 rounded-full bg-secondary" />
+            <h2 className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">
+              CAREER STATS
+            </h2>
+          </div>
           <div className="grid grid-cols-3 gap-2">
-            {STATS.map((s) => (
-              <div key={s.label} className="glass-score p-3 text-center">
+            {STATS.map((s, i) => (
+              <motion.div
+                key={s.label}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.15 + i * 0.05 }}
+                className="glass-score p-3 text-center"
+              >
+                <span className="text-sm block mb-0.5">{s.icon}</span>
                 <span className="font-display text-xl font-black text-foreground block leading-none">
                   {s.value}
                 </span>
-                <span className="text-[8px] text-muted-foreground font-display font-bold tracking-wider mt-1 block">
+                <span className="text-[7px] text-muted-foreground font-display font-bold tracking-wider mt-1 block">
                   {s.label.toUpperCase()}
                 </span>
-              </div>
+              </motion.div>
             ))}
           </div>
         </motion.div>
@@ -76,14 +94,23 @@ export default function ProfilePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <h2 className="font-display text-[10px] font-bold text-muted-foreground tracking-[0.2em] mb-3">
-            ACHIEVEMENTS
-          </h2>
+          <div className="flex items-center gap-2 mb-3">
+            <div className="w-1 h-4 rounded-full bg-primary" />
+            <h2 className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">
+              ACHIEVEMENTS
+            </h2>
+            <span className="text-[8px] text-muted-foreground/50 font-display">
+              0 / {ACHIEVEMENTS.length}
+            </span>
+          </div>
           <div className="grid grid-cols-2 gap-2">
-            {ACHIEVEMENTS.map((a) => (
-              <div
+            {ACHIEVEMENTS.map((a, i) => (
+              <motion.div
                 key={a.title}
-                className={`glass-score p-3 ${!a.unlocked ? "opacity-40" : ""}`}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25 + i * 0.05 }}
+                className={`glass-score p-3 relative overflow-hidden ${!a.unlocked ? "opacity-40" : ""}`}
               >
                 <span className="text-xl block mb-1">{a.icon}</span>
                 <span className="font-display text-[10px] font-bold text-foreground block">
@@ -91,11 +118,11 @@ export default function ProfilePage() {
                 </span>
                 <span className="text-[8px] text-muted-foreground">{a.desc}</span>
                 {!a.unlocked && (
-                  <span className="text-[7px] text-muted-foreground/50 font-display block mt-1">
-                    🔒 LOCKED
-                  </span>
+                  <div className="absolute top-2 right-2">
+                    <span className="text-[7px] text-muted-foreground/50 font-display">🔒</span>
+                  </div>
                 )}
-              </div>
+              </motion.div>
             ))}
           </div>
         </motion.div>
