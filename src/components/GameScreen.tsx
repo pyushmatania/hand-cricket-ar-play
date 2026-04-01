@@ -133,7 +133,24 @@ export default function GameScreen({ onHome }: GameScreenProps) {
             mirrored={isFrontCamera}
           />
 
-          {/* Filter / Glove controls floating on camera */}
+          {/* Next Ball overlay on camera during cooldown */}
+          <AnimatePresence>
+            {detection.phase === "cooldown" && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="absolute inset-0 z-[15] flex items-center justify-center pointer-events-none"
+              >
+                <div className="bg-card/80 backdrop-blur-xl rounded-2xl px-6 py-4 border border-primary/30 text-center">
+                  <p className="text-2xl mb-1">🏏</p>
+                  <p className="font-display text-sm font-black text-primary tracking-wider">NEXT BALL</p>
+                  <p className="text-[10px] text-muted-foreground mt-1">Get ready…</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <div className="absolute top-2 right-12 flex gap-1 z-[6]">
             <button
               onClick={() => setShowFilterPicker(!showFilterPicker)}
