@@ -18,6 +18,7 @@ const MOVES: { move: Move; emoji: string; label: string; color: string }[] = [
 
 const BALL_TIMER_MS = 3000;
 const RESERVE_TIMER_MS = 10000;
+const GAME_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
 
 type GameStatus = "waiting" | "toss" | "playing" | "finished" | "abandoned";
 type Phase = "lobby" | "waiting" | "toss" | "playing" | "finished";
