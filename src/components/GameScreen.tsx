@@ -140,6 +140,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     <div className={`min-h-screen bg-background flex flex-col relative overflow-hidden ${immersive ? "immersive-mode" : ""}`}>
       {stadiumMode && <div className="absolute inset-0 stadium-gradient pointer-events-none" />}
       {stadiumMode && <div className="absolute inset-0 vignette pointer-events-none" />}
+      <CelebrationEffects lastResult={game.lastResult} gameResult={game.result} phase={game.phase} />
 
       {/* Top ambient glow */}
       <div
