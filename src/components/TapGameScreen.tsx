@@ -4,6 +4,7 @@ import { useHandCricket, type Move } from "@/hooks/useHandCricket";
 import { useMatchSaver } from "@/hooks/useMatchSaver";
 import { SFX, Haptics } from "@/lib/sounds";
 import { getCommentary, getInningsChangeCommentary } from "@/lib/commentary";
+import { speakCommentary, playCrowdForResult, CrowdSFX } from "@/lib/voiceCommentary";
 import { useSettings } from "@/contexts/SettingsContext";
 import ScoreBoard from "./ScoreBoard";
 import RulesSheet from "./RulesSheet";
@@ -24,7 +25,7 @@ const MOVES: { move: Move; emoji: string; label: string; color: string; glow: st
 export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
-  const { soundEnabled, hapticsEnabled, commentaryEnabled } = useSettings();
+  const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled } = useSettings();
   const [lastPlayed, setLastPlayed] = useState<Move | null>(null);
   const [cooldown, setCooldown] = useState(false);
   const [showExplosion, setShowExplosion] = useState<{ emoji: string; key: number } | null>(null);
@@ -36,8 +37,8 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
     if (game.phase === "finished" && !savedRef.current) {
       savedRef.current = true;
       saveMatch(game, "tap");
-      if (game.result === "win") { if (soundEnabled) SFX.win(); if (hapticsEnabled) Haptics.success(); }
-      else if (game.result === "loss") { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); }
+      if (game.result === "win") { if (soundEnabled) SFX.win(); if (hapticsEnabled) Haptics.success(); if (crowdEnabled) playCrowdForResult(0, true, true, "win"); }
+      else if (game.result === "loss") { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); if (crowdEnabled) playCrowdForResult(0, true, true, "loss"); }
     }
   }, [game.phase, game, saveMatch]);
 
@@ -45,10 +46,13 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
     const prev = prevPhaseRef.current;
     prevPhaseRef.current = game.phase;
     if (prev !== game.phase && game.phase !== "not_started" && game.phase !== "finished") {
-      if (commentaryEnabled) {
-        setCommentary(getInningsChangeCommentary(game));
+    if (commentaryEnabled) {
+        const text = getInningsChangeCommentary(game);
+        setCommentary(text);
+        if (voiceEnabled) speakCommentary(text, true);
         setTimeout(() => setCommentary(null), 3000);
       }
+      if (crowdEnabled) CrowdSFX.ambientMurmur(2);
       if (soundEnabled) SFX.gameStart();
     }
   }, [game.phase]);
@@ -66,8 +70,15 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
       else if (absRuns === 0) { if (soundEnabled) SFX.defence(); if (hapticsEnabled) Haptics.light(); }
       else { if (soundEnabled) SFX.runs(absRuns); if (hapticsEnabled) Haptics.light(); }
     }
+    // Crowd sounds
+    if (crowdEnabled) {
+      playCrowdForResult(r.runs, game.isBatting, false);
+    }
+    // Text + voice commentary
     if (commentaryEnabled) {
-      setCommentary(getCommentary({ game, result: r }));
+      const text = getCommentary({ game, result: r });
+      setCommentary(text);
+      if (voiceEnabled) speakCommentary(text, true);
       setTimeout(() => setCommentary(null), 2500);
     }
   }, [game.lastResult]);

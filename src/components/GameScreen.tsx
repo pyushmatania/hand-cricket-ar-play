@@ -10,6 +10,7 @@ import { useHandDetection } from "@/hooks/useHandDetection";
 import { useMatchSaver } from "@/hooks/useMatchSaver";
 import { SFX, Haptics } from "@/lib/sounds";
 import { getCommentary, getInningsChangeCommentary } from "@/lib/commentary";
+import { speakCommentary, playCrowdForResult, CrowdSFX } from "@/lib/voiceCommentary";
 import { useSettings } from "@/contexts/SettingsContext";
 
 interface GameScreenProps {
@@ -37,7 +38,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
-  const { soundEnabled, hapticsEnabled, commentaryEnabled } = useSettings();
+  const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled } = useSettings();
   const detection = useHandDetection(videoElementRef);
   const [tossChoice, setTossChoice] = useState<null | boolean>(null);
   const [stadiumMode, setStadiumMode] = useState(true);
@@ -54,8 +55,8 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     if (game.phase === "finished" && !savedRef.current) {
       savedRef.current = true;
       saveMatch(game, "ar");
-      if (game.result === "win") { if (soundEnabled) SFX.win(); if (hapticsEnabled) Haptics.success(); }
-      else if (game.result === "loss") { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); }
+      if (game.result === "win") { if (soundEnabled) SFX.win(); if (hapticsEnabled) Haptics.success(); if (crowdEnabled) playCrowdForResult(0, true, true, "win"); }
+      else if (game.result === "loss") { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); if (crowdEnabled) playCrowdForResult(0, true, true, "loss"); }
     }
   }, [game.phase, game, saveMatch]);
 
@@ -66,9 +67,12 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     if (prev !== game.phase && game.phase !== "not_started" && game.phase !== "finished") {
       if (soundEnabled) SFX.gameStart();
       if (commentaryEnabled) {
-        setCommentary(getInningsChangeCommentary(game));
+        const text = getInningsChangeCommentary(game);
+        setCommentary(text);
+        if (voiceEnabled) speakCommentary(text, true);
         setTimeout(() => setCommentary(null), 3000);
       }
+      if (crowdEnabled) CrowdSFX.ambientMurmur(2);
     }
   }, [game.phase]);
 
@@ -85,8 +89,11 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       else if (abs === 4) setTimeout(() => { if (soundEnabled) SFX.four(); if (hapticsEnabled) Haptics.medium(); }, 100);
       else { if (soundEnabled) SFX.runs(abs); if (hapticsEnabled) Haptics.light(); }
     }
+    if (crowdEnabled) playCrowdForResult(r.runs, game.isBatting, false);
     if (commentaryEnabled) {
-      setCommentary(getCommentary({ game, result: r }));
+      const text = getCommentary({ game, result: r });
+      setCommentary(text);
+      if (voiceEnabled) speakCommentary(text, true);
       setTimeout(() => setCommentary(null), 2500);
     }
   }, [game.lastResult]);
