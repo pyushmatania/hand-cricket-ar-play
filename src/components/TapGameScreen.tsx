@@ -4,6 +4,7 @@ import { useHandCricket, type Move } from "@/hooks/useHandCricket";
 import { useMatchSaver } from "@/hooks/useMatchSaver";
 import { SFX, Haptics } from "@/lib/sounds";
 import { getCommentary, getInningsChangeCommentary } from "@/lib/commentary";
+import { useSettings } from "@/contexts/SettingsContext";
 import ScoreBoard from "./ScoreBoard";
 import RulesSheet from "./RulesSheet";
 
@@ -23,6 +24,7 @@ const MOVES: { move: Move; emoji: string; label: string; color: string }[] = [
 export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
+  const { soundEnabled, hapticsEnabled, commentaryEnabled } = useSettings();
   const [lastPlayed, setLastPlayed] = useState<Move | null>(null);
   const [cooldown, setCooldown] = useState(false);
   const [showExplosion, setShowExplosion] = useState<{ emoji: string; key: number } | null>(null);
@@ -35,8 +37,8 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
     if (game.phase === "finished" && !savedRef.current) {
       savedRef.current = true;
       saveMatch(game, "tap");
-      if (game.result === "win") { SFX.win(); Haptics.success(); }
-      else if (game.result === "loss") { SFX.loss(); Haptics.error(); }
+      if (game.result === "win") { if (soundEnabled) SFX.win(); if (hapticsEnabled) Haptics.success(); }
+      else if (game.result === "loss") { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); }
     }
   }, [game.phase, game, saveMatch]);
 
@@ -45,10 +47,11 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
     const prev = prevPhaseRef.current;
     prevPhaseRef.current = game.phase;
     if (prev !== game.phase && game.phase !== "not_started" && game.phase !== "finished") {
-      const msg = getInningsChangeCommentary(game);
-      setCommentary(msg);
-      SFX.gameStart();
-      setTimeout(() => setCommentary(null), 3000);
+      if (commentaryEnabled) {
+        setCommentary(getInningsChangeCommentary(game));
+        setTimeout(() => setCommentary(null), 3000);
+      }
+      if (soundEnabled) SFX.gameStart();
     }
   }, [game.phase]);
 
@@ -56,29 +59,26 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   useEffect(() => {
     if (!game.lastResult) return;
     const r = game.lastResult;
-
-    // Sound effects
-    SFX.batHit();
+    if (soundEnabled) SFX.batHit();
     if (r.runs === "OUT") {
-      setTimeout(() => { SFX.out(); Haptics.out(); }, 150);
+      setTimeout(() => { if (soundEnabled) SFX.out(); if (hapticsEnabled) Haptics.out(); }, 150);
     } else if (typeof r.runs === "number") {
       const absRuns = Math.abs(r.runs);
-      if (absRuns === 6) { setTimeout(() => { SFX.six(); Haptics.heavy(); }, 100); }
-      else if (absRuns === 4) { setTimeout(() => { SFX.four(); Haptics.medium(); }, 100); }
-      else if (absRuns === 0) { SFX.defence(); Haptics.light(); }
-      else { SFX.runs(absRuns); Haptics.light(); }
+      if (absRuns === 6) { setTimeout(() => { if (soundEnabled) SFX.six(); if (hapticsEnabled) Haptics.heavy(); }, 100); }
+      else if (absRuns === 4) { setTimeout(() => { if (soundEnabled) SFX.four(); if (hapticsEnabled) Haptics.medium(); }, 100); }
+      else if (absRuns === 0) { if (soundEnabled) SFX.defence(); if (hapticsEnabled) Haptics.light(); }
+      else { if (soundEnabled) SFX.runs(absRuns); if (hapticsEnabled) Haptics.light(); }
     }
-
-    // Commentary
-    const msg = getCommentary({ game, result: r });
-    setCommentary(msg);
-    setTimeout(() => setCommentary(null), 2500);
+    if (commentaryEnabled) {
+      setCommentary(getCommentary({ game, result: r }));
+      setTimeout(() => setCommentary(null), 2500);
+    }
   }, [game.lastResult]);
 
   const handleMove = (move: Move) => {
     if (cooldown || game.phase === "not_started" || game.phase === "finished") return;
-    SFX.tap();
-    Haptics.light();
+    if (soundEnabled) SFX.tap();
+    if (hapticsEnabled) Haptics.light();
     setLastPlayed(move);
     playBall(move);
     setCooldown(true);
@@ -93,8 +93,8 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   };
 
   const handleStart = (batFirst: boolean) => {
-    SFX.gameStart();
-    Haptics.medium();
+    if (soundEnabled) SFX.gameStart();
+    if (hapticsEnabled) Haptics.medium();
     startGame(batFirst);
   };
 
