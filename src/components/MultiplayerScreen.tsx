@@ -109,7 +109,39 @@ export default function MultiplayerScreen({ onHome }: Props) {
 
       if (!data) return;
 
-      const game = data as unknown as MultiplayerGame;
+      let game = data as unknown as MultiplayerGame;
+
+      const canAutoJoinFromInvite =
+        game.guest_id === null &&
+        game.status === "waiting" &&
+        game.host_id !== user.id &&
+        (game.target_guest_id === null || game.target_guest_id === user.id);
+
+      if (canAutoJoinFromInvite) {
+        const { data: joinedGame } = await supabase
+          .from("multiplayer_games")
+          .update({ guest_id: user.id, status: "toss" } as any)
+          .eq("id", game.id)
+          .is("guest_id", null)
+          .eq("status", "waiting")
+          .select()
+          .maybeSingle();
+
+        if (joinedGame) {
+          game = joinedGame as unknown as MultiplayerGame;
+        } else {
+          const { data: refreshedGame } = await supabase
+            .from("multiplayer_games")
+            .select("*")
+            .eq("id", game.id)
+            .maybeSingle();
+
+          if (refreshedGame) {
+            game = refreshedGame as unknown as MultiplayerGame;
+          }
+        }
+      }
+
       const isParticipant =
         game.host_id === user.id ||
         game.guest_id === user.id ||
