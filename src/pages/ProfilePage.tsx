@@ -77,6 +77,7 @@ interface ProfileData {
   high_score: number;
   current_streak: number;
   best_streak: number;
+  abandons: number;
 }
 
 type TabType = "stats" | "matches" | "squad";
@@ -109,7 +110,7 @@ export default function ProfilePage() {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("display_name, total_matches, wins, losses, draws, high_score, current_streak, best_streak")
+      .select("display_name, total_matches, wins, losses, draws, high_score, current_streak, best_streak, abandons")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => { if (data) setProfile(data); });
@@ -274,7 +275,7 @@ export default function ProfilePage() {
           {activeTab === "stats" && (
             <motion.div key="stats" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} transition={{ duration: 0.2 }}>
               {/* Primary Stats Grid */}
-              <div className="grid grid-cols-3 gap-2 mb-4">
+              <div className="grid grid-cols-4 gap-2 mb-4">
                 {[
                   { icon: "🏏", value: String(profile?.total_matches || 0), label: "MATCHES" },
                   { icon: "⭐", value: String(profile?.high_score || 0), label: "HIGH SCORE" },
@@ -282,6 +283,8 @@ export default function ProfilePage() {
                   { icon: "🏆", value: String(profile?.wins || 0), label: "WINS" },
                   { icon: "💔", value: String(profile?.losses || 0), label: "LOSSES" },
                   { icon: "🤝", value: String(profile?.draws || 0), label: "DRAWS" },
+                  { icon: "🏳️", value: String(profile?.abandons || 0), label: "ABANDONS" },
+                  { icon: "📊", value: `${winRate}%`, label: "WIN RATE" },
                 ].map((s, i) => (
                   <motion.div key={s.label} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.15 + i * 0.05 }} className="glass-premium rounded-xl p-3 text-center relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />

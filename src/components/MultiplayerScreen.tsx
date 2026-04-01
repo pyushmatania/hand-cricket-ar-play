@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,7 +14,10 @@ const MOVES: { move: Move; emoji: string; label: string; color: string }[] = [
   { move: 6, emoji: "👍", label: "6", color: "border-primary/40 bg-primary/10" },
 ];
 
-type GameStatus = "waiting" | "playing" | "finished";
+const BALL_TIMER_MS = 3000; // 3 seconds per ball
+const RESERVE_TIMER_MS = 10000; // 10 seconds reserve per match
+
+type GameStatus = "waiting" | "playing" | "finished" | "abandoned";
 
 interface MultiplayerGame {
   id: string;
@@ -29,6 +32,9 @@ interface MultiplayerGame {
   innings: number;
   host_batting: boolean;
   winner_id: string | null;
+  host_reserve_ms: number;
+  guest_reserve_ms: number;
+  abandoned_by: string | null;
 }
 
 interface Props {
@@ -44,6 +50,14 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [opponentName, setOpponentName] = useState("Opponent");
   const [cooldown, setCooldown] = useState(false);
   const [lastResult, setLastResult] = useState<string | null>(null);
+
+  // Timer state
+  const [ballTimer, setBallTimer] = useState(BALL_TIMER_MS);
+  const [reserveTime, setReserveTime] = useState(RESERVE_TIMER_MS);
+  const [usingReserve, setUsingReserve] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const ballTimerStartRef = useRef<number | null>(null);
+  const reserveUsedRef = useRef(0); // ms used from reserve this ball
 
   // Redirect to auth if not logged in
   useEffect(() => {
@@ -71,7 +85,6 @@ export default function MultiplayerScreen({ onHome }: Props) {
           const updated = payload.new as MultiplayerGame;
           setCurrentGame(updated);
 
-          // Check if both moves submitted
           if (updated.host_move && updated.guest_move) {
             resolveTurn(updated);
           }
@@ -80,8 +93,9 @@ export default function MultiplayerScreen({ onHome }: Props) {
             setPhase("playing");
             loadOpponentName(updated);
           }
-          if (updated.status === "finished") {
+          if (updated.status === "finished" || updated.status === "abandoned") {
             setPhase("finished");
+            stopTimer();
           }
         }
       )
@@ -90,6 +104,105 @@ export default function MultiplayerScreen({ onHome }: Props) {
     return () => { supabase.removeChannel(channel); };
   }, [currentGame?.id, phase]);
 
+  // Start/reset ball timer when it's our turn to pick (not waiting for opponent)
+  const myMove = currentGame ? (user?.id === currentGame.host_id ? currentGame.host_move : currentGame.guest_move) : null;
+  const waitingForOpponent = myMove !== null;
+
+  useEffect(() => {
+    if (phase !== "playing" || !currentGame) return;
+    if (waitingForOpponent) {
+      // We already submitted, stop our timer
+      stopTimer();
+      return;
+    }
+    // Start fresh ball timer
+    startBallTimer();
+    return () => stopTimer();
+  }, [currentGame?.current_turn, waitingForOpponent, phase]);
+
+  // Load my reserve time from game state
+  useEffect(() => {
+    if (!currentGame || !user) return;
+    const isHost = user.id === currentGame.host_id;
+    const myReserve = isHost ? currentGame.host_reserve_ms : currentGame.guest_reserve_ms;
+    setReserveTime(myReserve);
+  }, [currentGame?.id]);
+
+  const startBallTimer = () => {
+    stopTimer();
+    setBallTimer(BALL_TIMER_MS);
+    setUsingReserve(false);
+    reserveUsedRef.current = 0;
+    ballTimerStartRef.current = Date.now();
+
+    timerRef.current = setInterval(() => {
+      const elapsed = Date.now() - (ballTimerStartRef.current || Date.now());
+      const remaining = BALL_TIMER_MS - elapsed;
+
+      if (remaining > 0) {
+        setBallTimer(remaining);
+        setUsingReserve(false);
+      } else {
+        // Ball timer expired, eat into reserve
+        setUsingReserve(true);
+        setBallTimer(0);
+        const reserveElapsed = elapsed - BALL_TIMER_MS;
+        reserveUsedRef.current = reserveElapsed;
+        const newReserve = Math.max(0, reserveTime - reserveElapsed);
+        setReserveTime(newReserve);
+        if (newReserve <= 0) {
+          // ABANDON!
+          handleAbandon();
+        }
+      }
+    }, 50);
+  };
+
+  const stopTimer = () => {
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
+  const handleAbandon = async () => {
+    stopTimer();
+    if (!currentGame || !user) return;
+
+    const isHost = user.id === currentGame.host_id;
+    const winnerId = isHost ? currentGame.guest_id : currentGame.host_id;
+
+    await supabase
+      .from("multiplayer_games")
+      .update({
+        status: "abandoned" as any,
+        abandoned_by: user.id,
+        winner_id: winnerId,
+        ...(isHost ? { host_reserve_ms: 0 } : { guest_reserve_ms: 0 }),
+      })
+      .eq("id", currentGame.id);
+
+    // Update profile abandons
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("abandons, losses, total_matches")
+      .eq("user_id", user.id)
+      .single();
+
+    if (profile) {
+      await supabase
+        .from("profiles")
+        .update({
+          abandons: (profile.abandons ?? 0) + 1,
+          losses: profile.losses + 1,
+          total_matches: profile.total_matches + 1,
+        })
+        .eq("user_id", user.id);
+    }
+
+    setPhase("finished");
+  };
+
   const loadGames = async () => {
     const { data } = await supabase
       .from("multiplayer_games")
@@ -97,7 +210,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
       .eq("status", "waiting")
       .order("created_at", { ascending: false })
       .limit(10);
-    if (data) setGames(data as MultiplayerGame[]);
+    if (data) setGames(data as unknown as MultiplayerGame[]);
   };
 
   const loadOpponentName = async (game: MultiplayerGame) => {
@@ -111,12 +224,13 @@ export default function MultiplayerScreen({ onHome }: Props) {
     if (!user) return;
     const { data } = await supabase
       .from("multiplayer_games")
-      .insert({ host_id: user.id })
+      .insert({ host_id: user.id, host_reserve_ms: RESERVE_TIMER_MS, guest_reserve_ms: RESERVE_TIMER_MS } as any)
       .select()
       .single();
     if (data) {
-      setCurrentGame(data as MultiplayerGame);
+      setCurrentGame(data as unknown as MultiplayerGame);
       setPhase("waiting");
+      setReserveTime(RESERVE_TIMER_MS);
     }
   };
 
@@ -124,14 +238,15 @@ export default function MultiplayerScreen({ onHome }: Props) {
     if (!user) return;
     const { data } = await supabase
       .from("multiplayer_games")
-      .update({ guest_id: user.id, status: "playing" })
+      .update({ guest_id: user.id, status: "playing" } as any)
       .eq("id", gameId)
       .select()
       .single();
     if (data) {
-      const g = data as MultiplayerGame;
+      const g = data as unknown as MultiplayerGame;
       setCurrentGame(g);
       setPhase("playing");
+      setReserveTime(g.guest_reserve_ms);
       loadOpponentName(g);
     }
   };
@@ -139,21 +254,30 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const submitMove = async (move: Move) => {
     if (!currentGame || !user || cooldown) return;
     setCooldown(true);
+    stopTimer();
 
     const moveStr = String(move);
     const isHost = user.id === currentGame.host_id;
-    const updateField = isHost ? { host_move: moveStr } : { guest_move: moveStr };
+
+    // Calculate how much reserve was used this ball
+    const reserveUsed = reserveUsedRef.current;
+    const newReserve = Math.max(0, reserveTime - reserveUsed);
+    setReserveTime(newReserve);
+
+    const updateData: any = isHost
+      ? { host_move: moveStr, host_reserve_ms: newReserve }
+      : { guest_move: moveStr, guest_reserve_ms: newReserve };
 
     await supabase
       .from("multiplayer_games")
-      .update(updateField)
+      .update(updateData)
       .eq("id", currentGame.id);
 
     setTimeout(() => setCooldown(false), 1500);
   };
 
   const resolveTurn = async (game: MultiplayerGame) => {
-    if (!user || user.id !== game.host_id) return; // Only host resolves
+    if (!user || user.id !== game.host_id) return;
 
     const hostMove = game.host_move!;
     const guestMove = game.guest_move!;
@@ -194,7 +318,6 @@ export default function MultiplayerScreen({ onHome }: Props) {
         result = `+${runs} runs to Guest`;
       }
 
-      // Check chase target
       if (game.innings === 2) {
         const target = battingIsHost ? newGuestScore : newHostScore;
         const chaser = battingIsHost ? newHostScore : newGuestScore;
@@ -218,7 +341,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
         current_turn: game.current_turn + 1,
         innings: newInnings,
         host_batting: newHostBatting,
-        status: newStatus,
+        status: newStatus as any,
         winner_id: newWinner,
       })
       .eq("id", game.id);
@@ -230,8 +353,14 @@ export default function MultiplayerScreen({ onHome }: Props) {
     : false;
   const myScore = currentGame ? (isHost ? currentGame.host_score : currentGame.guest_score) : 0;
   const oppScore = currentGame ? (isHost ? currentGame.guest_score : currentGame.host_score) : 0;
-  const myMove = currentGame ? (isHost ? currentGame.host_move : currentGame.guest_move) : null;
-  const waitingForOpponent = myMove !== null;
+
+  // Timer display values
+  const ballTimerSec = (ballTimer / 1000).toFixed(1);
+  const reserveSec = (reserveTime / 1000).toFixed(1);
+  const ballTimerPct = (ballTimer / BALL_TIMER_MS) * 100;
+  const reservePct = (reserveTime / RESERVE_TIMER_MS) * 100;
+  const isAbandoned = currentGame?.status === "abandoned";
+  const abandonedByMe = currentGame?.abandoned_by === user?.id;
 
   if (!user) return null;
 
@@ -260,6 +389,23 @@ export default function MultiplayerScreen({ onHome }: Props) {
               <span className="text-5xl block mb-3">⚔️</span>
               <h2 className="font-display text-xl font-black text-foreground tracking-wider">MULTIPLAYER LOBBY</h2>
               <p className="text-[10px] text-muted-foreground mt-1">Challenge another player in real-time</p>
+            </div>
+
+            {/* Timer rules info */}
+            <div className="glass-premium rounded-xl p-3 space-y-1.5">
+              <span className="font-display text-[9px] font-bold text-muted-foreground tracking-widest">⏱️ TIMER RULES</span>
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-md bg-secondary/20 flex items-center justify-center"><span className="text-[8px]">⏳</span></div>
+                <span className="text-[9px] text-muted-foreground"><span className="text-secondary font-bold">3 seconds</span> per ball to pick your shot</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-md bg-out-red/20 flex items-center justify-center"><span className="text-[8px]">🔋</span></div>
+                <span className="text-[9px] text-muted-foreground"><span className="text-out-red font-bold">10 seconds</span> reserve time per match</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-md bg-primary/20 flex items-center justify-center"><span className="text-[8px]">🚫</span></div>
+                <span className="text-[9px] text-muted-foreground">Reserve runs out → <span className="text-out-red font-bold">Match Abandoned</span></span>
+              </div>
             </div>
 
             <motion.button
@@ -356,6 +502,70 @@ export default function MultiplayerScreen({ onHome }: Props) {
               </div>
             </div>
 
+            {/* Timer HUD - only show when it's our turn */}
+            {!waitingForOpponent && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="glass-premium rounded-xl p-3"
+              >
+                {/* Ball timer */}
+                <div className="flex items-center justify-between mb-1.5">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-sm">⏳</span>
+                    <span className="font-display text-[8px] font-bold text-muted-foreground tracking-widest">SHOT CLOCK</span>
+                  </div>
+                  <span className={`font-display text-lg font-black ${
+                    ballTimer > 1000 ? "text-neon-green" : ballTimer > 0 ? "text-secondary" : "text-out-red"
+                  }`}>
+                    {ballTimer > 0 ? ballTimerSec : "0.0"}s
+                  </span>
+                </div>
+                <div className="w-full h-2 bg-muted/30 rounded-full overflow-hidden mb-2">
+                  <motion.div
+                    className={`h-full rounded-full transition-colors ${
+                      ballTimer > 1000 ? "bg-gradient-to-r from-neon-green to-neon-green/60" :
+                      ballTimer > 0 ? "bg-gradient-to-r from-secondary to-secondary/60" :
+                      "bg-out-red"
+                    }`}
+                    style={{ width: `${ballTimerPct}%` }}
+                  />
+                </div>
+
+                {/* Reserve timer */}
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-sm">🔋</span>
+                    <span className="font-display text-[8px] font-bold text-muted-foreground tracking-widest">RESERVE</span>
+                    {usingReserve && (
+                      <motion.span
+                        animate={{ opacity: [1, 0.3] }}
+                        transition={{ duration: 0.5, repeat: Infinity }}
+                        className="text-[7px] font-display font-bold text-out-red tracking-wider"
+                      >
+                        DRAINING!
+                      </motion.span>
+                    )}
+                  </div>
+                  <span className={`font-display text-sm font-black ${
+                    reserveTime > 5000 ? "text-foreground" : reserveTime > 2000 ? "text-secondary" : "text-out-red"
+                  }`}>
+                    {reserveSec}s
+                  </span>
+                </div>
+                <div className="w-full h-1.5 bg-muted/30 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all ${
+                      reserveTime > 5000 ? "bg-gradient-to-r from-accent to-accent/60" :
+                      reserveTime > 2000 ? "bg-gradient-to-r from-secondary to-secondary/60" :
+                      "bg-gradient-to-r from-out-red to-out-red/60"
+                    }`}
+                    style={{ width: `${reservePct}%` }}
+                  />
+                </div>
+              </motion.div>
+            )}
+
             {/* Result flash */}
             <AnimatePresence>
               {lastResult && (
@@ -419,10 +629,21 @@ export default function MultiplayerScreen({ onHome }: Props) {
         {/* FINISHED */}
         {phase === "finished" && currentGame && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex-1 flex flex-col items-center justify-center gap-4">
-            <span className="text-6xl">{currentGame.winner_id === user.id ? "🏆" : currentGame.winner_id ? "😞" : "🤝"}</span>
+            <span className="text-6xl">
+              {isAbandoned
+                ? (abandonedByMe ? "🏳️" : "🏆")
+                : currentGame.winner_id === user.id ? "🏆" : currentGame.winner_id ? "😞" : "🤝"}
+            </span>
             <h2 className="font-display text-2xl font-black text-foreground tracking-wider">
-              {currentGame.winner_id === user.id ? "YOU WIN!" : currentGame.winner_id ? "YOU LOST" : "DRAW!"}
+              {isAbandoned
+                ? (abandonedByMe ? "ABANDONED" : "OPPONENT ABANDONED")
+                : currentGame.winner_id === user.id ? "YOU WIN!" : currentGame.winner_id ? "YOU LOST" : "DRAW!"}
             </h2>
+            {isAbandoned && (
+              <p className="text-[10px] text-out-red/70 font-display tracking-wider">
+                {abandonedByMe ? "You ran out of time" : "Your opponent ran out of time"}
+              </p>
+            )}
             <div className="glass-score p-4 w-full max-w-xs">
               <div className="flex justify-between">
                 <div className="text-center flex-1">
@@ -438,7 +659,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
             <div className="flex gap-3 w-full max-w-xs">
               <motion.button
                 whileTap={{ scale: 0.95 }}
-                onClick={() => { setPhase("lobby"); setCurrentGame(null); }}
+                onClick={() => { setPhase("lobby"); setCurrentGame(null); setReserveTime(RESERVE_TIMER_MS); }}
                 className="flex-1 py-3.5 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display font-bold rounded-2xl glow-primary tracking-wider"
               >
                 ⚡ PLAY AGAIN
