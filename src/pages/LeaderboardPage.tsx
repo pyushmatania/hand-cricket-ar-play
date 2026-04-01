@@ -155,19 +155,24 @@ export default function LeaderboardPage() {
 
   const challengeFriend = async (friendId: string, gameType: GameType) => {
     if (!user) return;
-    const { data: game } = await supabase
+    const { data: game, error: gameError } = await supabase
       .from("multiplayer_games")
       .insert({ host_id: user.id, target_guest_id: friendId, game_type: gameType, host_reserve_ms: 10000, guest_reserve_ms: 10000 } as any)
       .select()
       .single();
-    if (game) {
-      await supabase.from("match_invites").insert({
+    if (gameError || !game) return;
+    const { error: inviteError } = await supabase.from("match_invites").insert({
         game_id: (game as any).id,
         from_user_id: user.id,
         to_user_id: friendId,
+        game_type: gameType,
+        expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
       } as any);
-      navigate(`/game/multiplayer?game=${(game as any).id}`);
+    if (inviteError) {
+      await supabase.from("multiplayer_games").update({ status: "cancelled" as any, phase: "abandoned" as any }).eq("id", (game as any).id);
+      return;
     }
+    navigate(`/game/multiplayer?game=${(game as any).id}`);
   };
 
   const loadSeasonData = async () => {

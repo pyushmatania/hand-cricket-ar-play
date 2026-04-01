@@ -13,11 +13,19 @@ interface Invite {
   to_user_id: string;
   status: string;
   created_at: string;
+  expires_at?: string;
+  game_type?: string;
   from_name?: string;
 }
 
 function getTimeLeft(createdAt: string): number {
   return Math.max(0, INVITE_EXPIRY_MS - (Date.now() - new Date(createdAt).getTime()));
+}
+function getTimeLeftFromInvite(invite: Invite): number {
+  if (invite.expires_at) {
+    return Math.max(0, new Date(invite.expires_at).getTime() - Date.now());
+  }
+  return getTimeLeft(invite.created_at);
 }
 
 function formatTime(ms: number): string {
@@ -37,6 +45,7 @@ export default function MatchInviteNotification() {
   useEffect(() => {
     if (!user) return;
     loadPendingInvites();
+    const pollInterval = setInterval(() => loadPendingInvites(), 7000);
 
     const channel = supabase
       .channel("my-invites")
@@ -52,7 +61,7 @@ export default function MatchInviteNotification() {
       )
       .subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    return () => { clearInterval(pollInterval); supabase.removeChannel(channel); };
   }, [user]);
 
   // Tick every second for countdown & auto-expire
@@ -62,11 +71,11 @@ export default function MatchInviteNotification() {
       setTick((t) => t + 1);
       // Remove expired invites
       setInvites((prev) => {
-        const alive = prev.filter((inv) => getTimeLeft(inv.created_at) > 0);
+        const alive = prev.filter((inv) => getTimeLeftFromInvite(inv) > 0);
         // Auto-decline expired ones
-        const expired = prev.filter((inv) => getTimeLeft(inv.created_at) <= 0);
+        const expired = prev.filter((inv) => getTimeLeftFromInvite(inv) <= 0);
         expired.forEach((inv) => {
-          supabase.from("match_invites").update({ status: "expired" } as any).eq("id", inv.id);
+          supabase.from("match_invites").update({ status: "expired", cancelled_at: new Date().toISOString() } as any).eq("id", inv.id).eq("status", "pending");
         });
         return alive;
       });
@@ -81,13 +90,14 @@ export default function MatchInviteNotification() {
       .select("*")
       .eq("to_user_id", user.id)
       .eq("status", "pending")
+      .gte("expires_at", new Date().toISOString())
       .order("created_at", { ascending: false })
       .limit(5);
 
     if (!data || !data.length) { setInvites([]); return; }
 
     // Filter out expired invites
-    const validInvites = (data as any[]).filter((d) => getTimeLeft(d.created_at) > 0);
+    const validInvites = (data as any[]).filter((d) => getTimeLeftFromInvite(d as Invite) > 0);
     if (validInvites.length === 0) { setInvites([]); return; }
 
     const fromIds = [...new Set(validInvites.map((d) => d.from_user_id))];
@@ -99,7 +109,8 @@ export default function MatchInviteNotification() {
     const nameMap: Record<string, string> = {};
     if (profiles) profiles.forEach((p: any) => { nameMap[p.user_id] = p.display_name; });
 
-    setInvites(validInvites.map((d) => ({ ...d, from_name: nameMap[d.from_user_id] || "Player" })));
+    const deduped = [...new Map(validInvites.map((d) => [d.id, d])).values()];
+    setInvites(deduped.map((d: any) => ({ ...d, from_name: nameMap[d.from_user_id] || "Player" })));
   };
 
   const acceptInvite = async (invite: Invite) => {
@@ -165,7 +176,7 @@ export default function MatchInviteNotification() {
 
       if (!finalGameId) return;
 
-      await supabase.from("match_invites").update({ status: "accepted" } as any).eq("id", invite.id);
+      await supabase.from("match_invites").update({ status: "accepted", accepted_at: new Date().toISOString() } as any).eq("id", invite.id).eq("status", "pending");
       setInvites((prev) => prev.filter((i) => i.id !== invite.id));
       navigate(`/game/multiplayer?game=${finalGameId}`, { replace: true });
     } finally {
@@ -174,7 +185,7 @@ export default function MatchInviteNotification() {
   };
 
   const declineInvite = async (invite: Invite) => {
-    await supabase.from("match_invites").update({ status: "declined" } as any).eq("id", invite.id);
+    await supabase.from("match_invites").update({ status: "declined", declined_at: new Date().toISOString() } as any).eq("id", invite.id).eq("status", "pending");
     setInvites((prev) => prev.filter((i) => i.id !== invite.id));
   };
 
@@ -184,7 +195,7 @@ export default function MatchInviteNotification() {
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md space-y-2">
       <AnimatePresence>
         {invites.map((inv) => {
-          const timeLeft = getTimeLeft(inv.created_at);
+          const timeLeft = getTimeLeftFromInvite(inv);
           const urgency = timeLeft < 60000;
           return (
             <motion.div
@@ -202,6 +213,9 @@ export default function MatchInviteNotification() {
                   <span className="font-display text-[10px] font-bold text-foreground block">MATCH CHALLENGE!</span>
                   <span className="text-[9px] text-muted-foreground font-display">
                     <span className="text-primary font-bold">{inv.from_name}</span> wants to play
+                  </span>
+                  <span className="text-[8px] text-accent/90 font-display uppercase tracking-wider">
+                    Mode: {inv.game_type?.toUpperCase() || "AR"}
                   </span>
                 </div>
                 <div className={`px-2 py-1 rounded-lg ${urgency ? "bg-out-red/15 border border-out-red/30" : "bg-muted/30 border border-border/30"}`}>
