@@ -67,8 +67,15 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
       else if (absRuns === 0) { if (soundEnabled) SFX.defence(); if (hapticsEnabled) Haptics.light(); }
       else { if (soundEnabled) SFX.runs(absRuns); if (hapticsEnabled) Haptics.light(); }
     }
+    // Crowd sounds
+    if (crowdEnabled) {
+      playCrowdForResult(r.runs, game.isBatting, false);
+    }
+    // Text + voice commentary
     if (commentaryEnabled) {
-      setCommentary(getCommentary({ game, result: r }));
+      const text = getCommentary({ game, result: r });
+      setCommentary(text);
+      if (voiceEnabled) speakCommentary(text, true);
       setTimeout(() => setCommentary(null), 2500);
     }
   }, [game.lastResult]);
