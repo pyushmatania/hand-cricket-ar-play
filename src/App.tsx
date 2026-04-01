@@ -15,6 +15,7 @@ import LeaderboardPage from "./pages/LeaderboardPage";
 import GamePage from "./pages/GamePage";
 import AuthPage from "./pages/AuthPage";
 import SettingsPage from "./pages/SettingsPage";
+import FriendsPage from "./pages/FriendsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
