@@ -251,15 +251,16 @@ export default function LeaderboardPage() {
                 const winner = sorted[0];
                 if (!winner || rt.stat(winner) === 0) return null;
                 const runnerUp = sorted[1];
+                const third = sorted[2];
                 return (
                   <motion.div
                     key={rt.title}
                     initial={{ opacity: 0, x: -15 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.08 }}
+                    transition={{ delay: i * 0.06 }}
                     className="glass-premium rounded-xl p-4 relative overflow-hidden"
                   >
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-secondary/5 to-transparent rounded-bl-full" />
+                    <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl ${rt.color} rounded-bl-full`} />
                     <div className="flex items-center gap-3 mb-2">
                       <span className="text-2xl">{rt.title.split(" ")[0]}</span>
                       <div>
@@ -283,8 +284,22 @@ export default function LeaderboardPage() {
                     {runnerUp && rt.stat(runnerUp) > 0 && (
                       <div className="flex items-center gap-3 px-2.5 py-1.5 opacity-60">
                         <span className="text-sm">🥈</span>
-                        <span className="font-display text-[9px] text-muted-foreground flex-1">{runnerUp.display_name}</span>
+                        <span className="font-display text-[9px] text-muted-foreground flex-1">
+                          {runnerUp.display_name}
+                          {user && runnerUp.user_id === user.id && <span className="text-primary/60 ml-1">(YOU)</span>}
+                        </span>
                         <span className="font-display text-sm font-bold text-muted-foreground">{rt.stat(runnerUp)}</span>
+                      </div>
+                    )}
+                    {/* Third */}
+                    {third && rt.stat(third) > 0 && (
+                      <div className="flex items-center gap-3 px-2.5 py-1 opacity-40">
+                        <span className="text-xs">🥉</span>
+                        <span className="font-display text-[8px] text-muted-foreground flex-1">
+                          {third.display_name}
+                          {user && third.user_id === user.id && <span className="text-primary/60 ml-1">(YOU)</span>}
+                        </span>
+                        <span className="font-display text-xs font-bold text-muted-foreground">{rt.stat(third)}</span>
                       </div>
                     )}
                   </motion.div>
