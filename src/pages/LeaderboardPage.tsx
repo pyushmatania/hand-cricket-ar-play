@@ -40,12 +40,16 @@ const SORT_OPTIONS = [
 ];
 
 const RAGE_TITLES = [
-  { title: "🏆 Comeback King", desc: "Highest best streak", stat: (e: LeaderEntry) => e.best_streak, label: "streak" },
-  { title: "🦆 Duck Master", desc: "Most losses", stat: (e: LeaderEntry) => e.losses, label: "losses" },
-  { title: "🏳️ Rage Quitter", desc: "Most abandoned matches", stat: (e: LeaderEntry) => e.abandons, label: "abandons" },
-  { title: "🏏 Grinder", desc: "Most matches played", stat: (e: LeaderEntry) => e.total_matches, label: "matches" },
-  { title: "💯 Big Hitter", desc: "Highest score ever", stat: (e: LeaderEntry) => e.high_score, label: "runs" },
-  { title: "🤝 Peacemaker", desc: "Most draws", stat: (e: LeaderEntry) => e.draws, label: "draws" },
+  { title: "🏆 Comeback King", desc: "Highest best streak", stat: (e: LeaderEntry) => e.best_streak, label: "streak", color: "from-neon-green/10 to-transparent" },
+  { title: "🦆 Duck Master", desc: "Most losses", stat: (e: LeaderEntry) => e.losses, label: "losses", color: "from-secondary/10 to-transparent" },
+  { title: "🏳️ Rage Quitter", desc: "Most abandoned matches", stat: (e: LeaderEntry) => e.abandons, label: "abandons", color: "from-out-red/10 to-transparent" },
+  { title: "🏏 The Grinder", desc: "Most matches played", stat: (e: LeaderEntry) => e.total_matches, label: "matches", color: "from-primary/10 to-transparent" },
+  { title: "💯 Big Hitter", desc: "Highest score ever", stat: (e: LeaderEntry) => e.high_score, label: "runs", color: "from-score-gold/10 to-transparent" },
+  { title: "🤝 Peacemaker", desc: "Most draws", stat: (e: LeaderEntry) => e.draws, label: "draws", color: "from-accent/10 to-transparent" },
+  { title: "🎯 Hitman", desc: "Best win rate (10+ matches)", stat: (e: LeaderEntry) => e.total_matches >= 10 ? Math.round((e.wins / e.total_matches) * 100) : 0, label: "win%", color: "from-neon-green/10 to-transparent" },
+  { title: "😵 Bottler", desc: "Worst win rate (10+ matches)", stat: (e: LeaderEntry) => e.total_matches >= 10 ? Math.round((e.losses / e.total_matches) * 100) : 0, label: "loss%", color: "from-out-red/10 to-transparent" },
+  { title: "🔥 Run Machine", desc: "Most total wins", stat: (e: LeaderEntry) => e.wins, label: "wins", color: "from-secondary/10 to-transparent" },
+  { title: "🪨 The Wall", desc: "Fewest abandons (10+ matches)", stat: (e: LeaderEntry) => e.total_matches >= 10 ? e.total_matches - e.abandons : 0, label: "completed", color: "from-primary/10 to-transparent" },
 ];
 
 export default function LeaderboardPage() {
