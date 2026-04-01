@@ -76,6 +76,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [cooldown, setCooldown] = useState(false);
   const [lastResult, setLastResult] = useState<string | null>(null);
   const [joinState, setJoinState] = useState<"idle" | "joining" | "failed" | "full" | "expired">("idle");
+  const [roomCodeInput, setRoomCodeInput] = useState("");
+  const [roomCodeError, setRoomCodeError] = useState<string | null>(null);
 
   // Timer state
   const [ballTimer, setBallTimer] = useState(BALL_TIMER_MS);
@@ -190,6 +192,26 @@ export default function MultiplayerScreen({ onHome }: Props) {
 
     void hydrateGame();
   }, [user, gameIdFromQuery, joinExistingGame]);
+
+  useEffect(() => {
+    if (!user || gameIdFromQuery || phase !== "lobby") return;
+
+    const restoreExistingGame = async () => {
+      const { data } = await supabase
+        .from("multiplayer_games")
+        .select("*")
+        .or(`host_id.eq.${user.id},guest_id.eq.${user.id}`)
+        .in("status", ["waiting", "toss", "playing"])
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (!data) return;
+      navigate(`/game/multiplayer?game=${(data as any).id}`, { replace: true });
+    };
+
+    void restoreExistingGame();
+  }, [user, gameIdFromQuery, phase, navigate]);
 
   // Load lobby & tick timers
   useEffect(() => {
@@ -377,6 +399,49 @@ export default function MultiplayerScreen({ onHome }: Props) {
     }
   };
 
+  const joinByRoomCode = async () => {
+    if (!user) return;
+    const normalizedCode = roomCodeInput.trim().toUpperCase();
+    if (!normalizedCode) {
+      setRoomCodeError("Enter a room code.");
+      return;
+    }
+
+    setRoomCodeError(null);
+    setJoinState("joining");
+
+    const { data } = await supabase
+      .from("multiplayer_games")
+      .select("*")
+      .in("status", ["waiting", "toss", "playing"])
+      .or(`target_guest_id.is.null,target_guest_id.eq.${user.id}`)
+      .order("created_at", { ascending: false })
+      .limit(100);
+
+    const matched = (data as any[] | null)?.find((g) => (g.id as string).slice(0, 8).toUpperCase() === normalizedCode);
+    if (!matched) {
+      setJoinState("idle");
+      setRoomCodeError("Invalid code or room expired.");
+      return;
+    }
+
+    if (matched.host_id === user.id) {
+      navigate(`/game/multiplayer?game=${matched.id}`, { replace: true });
+      setJoinState("idle");
+      return;
+    }
+
+    const joined = await joinExistingGame(matched.id);
+    if (!joined) {
+      setRoomCodeError(joinState === "full" ? "Room is already full." : "Failed to join room.");
+      return;
+    }
+
+    setRoomCodeInput("");
+    setRoomCodeError(null);
+    navigate(`/game/multiplayer?game=${joined.id}`, { replace: true });
+  };
+
   const handleTossResult = async (batFirst: boolean) => {
     if (!currentGame || !user) return;
     const isHost = user.id === currentGame.host_id;
@@ -539,6 +604,31 @@ export default function MultiplayerScreen({ onHome }: Props) {
             {/* JOIN TAB */}
             {lobbyTab === "join" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-2">
+                <div className="glass-premium rounded-xl p-3 space-y-2">
+                  <p className="text-[9px] text-muted-foreground font-display tracking-wider">JOIN BY ROOM CODE</p>
+                  <div className="flex gap-2">
+                    <input
+                      value={roomCodeInput}
+                      onChange={(e) => setRoomCodeInput(e.target.value.toUpperCase())}
+                      onPaste={(e) => {
+                        const pasted = e.clipboardData.getData("text");
+                        setRoomCodeInput(pasted.trim().toUpperCase());
+                        e.preventDefault();
+                      }}
+                      placeholder="ENTER CODE"
+                      className="flex-1 bg-background/60 border border-border rounded-lg px-3 py-2 text-xs font-mono tracking-widest uppercase"
+                      maxLength={8}
+                    />
+                    <button
+                      onClick={joinByRoomCode}
+                      disabled={joinState === "joining"}
+                      className="px-3 py-2 rounded-lg bg-primary text-primary-foreground text-[10px] font-display font-bold tracking-wider disabled:opacity-50"
+                    >
+                      JOIN
+                    </button>
+                  </div>
+                  {roomCodeError && <p className="text-[9px] text-out-red">{roomCodeError}</p>}
+                </div>
                 {(() => {
                   const joinable = games.filter(g => g.host_id !== user.id);
                   const joinFeedback =
