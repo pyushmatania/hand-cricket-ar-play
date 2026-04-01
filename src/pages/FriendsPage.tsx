@@ -446,9 +446,7 @@ export default function FriendsPage() {
                       const alreadySent = outgoing.some(o => o.to_user_id === p.user_id);
                       return (
                         <div key={p.user_id} className="flex items-center gap-3 p-2 rounded-xl glass-card">
-                          <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
-                            <span className="text-sm">🏏</span>
-                          </div>
+                          <PlayerAvatar avatarUrl={p.avatar_url} avatarIndex={p.avatar_index ?? 0} size="sm" />
                           <div className="flex-1">
                             <span className="font-display text-[10px] font-bold text-foreground block">{p.display_name}</span>
                             <span className="text-[7px] text-muted-foreground">{p.wins}W • {p.total_matches} matches</span>
