@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { PLAYER_IMAGES } from "@/components/PlayerCard";
 
 interface SplashScreenProps {
   onComplete: () => void;
 }
 
 const PLAYERS = [
-  { name: "VIRAT KOHLI", number: "18", role: "BATSMAN", emoji: "🏏" },
-  { name: "MS DHONI", number: "7", role: "CAPTAIN", emoji: "🧤" },
-  { name: "ROHIT SHARMA", number: "45", role: "OPENER", emoji: "🏏" },
-  { name: "JASPRIT BUMRAH", number: "93", role: "BOWLER", emoji: "🎯" },
+  { name: "VIRAT KOHLI", number: "18", role: "BATSMAN", id: "kohli" },
+  { name: "MS DHONI", number: "7", role: "CAPTAIN", id: "dhoni" },
+  { name: "ROHIT SHARMA", number: "45", role: "OPENER", id: "rohit" },
+  { name: "JASPRIT BUMRAH", number: "93", role: "BOWLER", id: "bumrah" },
 ];
 
 export default function SplashScreen({ onComplete }: SplashScreenProps) {
