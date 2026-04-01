@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import SpinningCricketBall from "./SpinningCricketBall";
 
 interface HomeScreenProps {
   onStart: () => void;
