@@ -1,7 +1,6 @@
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import splashBg from "@/assets/splash-bg.webp";
-import CricketBall3D from "./CricketBall3D";
 import SpinningCricketBall from "./SpinningCricketBall";
 
 interface SplashScreenProps {
@@ -40,7 +39,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-background/40" />
           </motion.div>
 
-          {/* 3D Ball */}
+          {/* 3D Ball - no text */}
           <AnimatePresence>
             {phase >= 1 && (
               <motion.div
@@ -49,9 +48,7 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
                 transition={{ duration: 0.8, type: "spring", damping: 12 }}
                 className="absolute inset-0 flex items-center justify-center"
               >
-                <Suspense fallback={<SpinningCricketBall size={140} />}>
-                  <CricketBall3D size={220} />
-                </Suspense>
+                <SpinningCricketBall size={180} />
               </motion.div>
             )}
           </AnimatePresence>
