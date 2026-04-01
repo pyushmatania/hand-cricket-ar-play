@@ -481,27 +481,97 @@ export default function ProfilePage() {
               )}
 
               {/* Achievements */}
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-1 h-4 rounded-full bg-primary" />
-                <span className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">ACHIEVEMENTS</span>
-                <span className="text-[8px] text-muted-foreground/50 font-display">{unlockedCount}/{ACHIEVEMENTS.length}</span>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-1 h-4 rounded-full bg-primary" />
+                  <span className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">ACHIEVEMENTS</span>
+                  <span className="text-[8px] text-muted-foreground/50 font-display">{unlockedCount}/{ACHIEVEMENTS.length}</span>
+                </div>
               </div>
+
+              {/* Achievement progress bar */}
+              <div className="glass-premium rounded-xl p-3 mb-3">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[8px] text-muted-foreground font-display tracking-wider">COMPLETION</span>
+                  <span className="font-display text-sm font-black text-primary">{Math.round((unlockedCount / ACHIEVEMENTS.length) * 100)}%</span>
+                </div>
+                <div className="w-full h-2 bg-muted/40 rounded-full overflow-hidden">
+                  <motion.div initial={{ width: 0 }} animate={{ width: `${(unlockedCount / ACHIEVEMENTS.length) * 100}%` }} transition={{ delay: 0.3, duration: 0.8 }} className="h-full bg-gradient-to-r from-primary to-accent rounded-full" />
+                </div>
+                <div className="flex justify-between mt-1.5">
+                  {(["bronze", "silver", "gold", "legendary"] as AchievementTier[]).map(tier => {
+                    const count = ACHIEVEMENTS.filter(a => a.tier === tier && a.check(profile!, advancedStats)).length;
+                    const total = ACHIEVEMENTS.filter(a => a.tier === tier).length;
+                    return (
+                      <div key={tier} className="text-center">
+                        <span className="font-display text-[10px] font-black text-foreground">{count}/{total}</span>
+                        <span className="text-[6px] text-muted-foreground font-display tracking-widest block">{TIER_STYLES[tier].label}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Category filter */}
+              {(() => {
+                const categories = ["All", ...Array.from(new Set(ACHIEVEMENTS.map(a => a.category)))];
+                return (
+                  <div className="flex gap-1 mb-3 overflow-x-auto no-scrollbar">
+                    {categories.map(cat => (
+                      <button
+                        key={cat}
+                        onClick={() => setAchieveFilter(cat)}
+                        className={`px-2.5 py-1 rounded-lg font-display text-[7px] font-bold tracking-widest whitespace-nowrap transition-all ${
+                          achieveFilter === cat
+                            ? "bg-primary/15 text-primary border border-primary/20"
+                            : "text-muted-foreground/50"
+                        }`}
+                      >
+                        {cat.toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
+                );
+              })()}
+
               <div className="grid grid-cols-2 gap-2">
-                {ACHIEVEMENTS.map((a, i) => {
-                  const unlocked = profile ? a.check(profile) : false;
+                {ACHIEVEMENTS.filter(a => achieveFilter === "All" || a.category === achieveFilter).map((a, i) => {
+                  const unlocked = profile ? a.check(profile, advancedStats) : false;
+                  const tierStyle = TIER_STYLES[a.tier];
+                  const prog = a.progress && profile ? a.progress(profile, advancedStats) : null;
+                  const progPct = prog ? Math.min(100, Math.round((prog.current / prog.target) * 100)) : 0;
                   return (
-                    <motion.div key={a.title} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 + i * 0.04 }} className={`glass-premium rounded-xl p-3 relative overflow-hidden ${!unlocked ? "opacity-35 grayscale" : ""}`}>
-                      <div className="flex items-start gap-2">
+                    <motion.div
+                      key={a.key}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 + i * 0.03 }}
+                      className={`glass-premium rounded-xl p-3 relative overflow-hidden ${tierStyle.border} border ${unlocked ? tierStyle.glow : "opacity-50 grayscale"}`}
+                    >
+                      <div className={`absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl ${tierStyle.bg} rounded-bl-full`} />
+                      <div className="flex items-start gap-2 relative z-10">
                         <span className="text-xl">{a.icon}</span>
-                        <div>
-                          <span className="font-display text-[10px] font-bold text-foreground block">{a.title}</span>
-                          <span className="text-[7px] text-muted-foreground">{a.desc}</span>
+                        <div className="flex-1 min-w-0">
+                          <span className="font-display text-[10px] font-bold text-foreground block truncate">{a.title}</span>
+                          <span className="text-[7px] text-muted-foreground block">{a.desc}</span>
+                          <span className={`text-[6px] font-display font-bold tracking-widest mt-0.5 block ${
+                            a.tier === "legendary" ? "text-primary" : a.tier === "gold" ? "text-score-gold" : a.tier === "silver" ? "text-muted-foreground" : "text-[hsl(25,60%,50%)]"
+                          }`}>{tierStyle.label}</span>
                         </div>
                       </div>
+                      {/* Progress bar */}
+                      {prog && !unlocked && (
+                        <div className="mt-2 relative z-10">
+                          <div className="w-full h-1.5 bg-muted/30 rounded-full overflow-hidden">
+                            <div className="h-full bg-gradient-to-r from-primary/60 to-primary/30 rounded-full transition-all" style={{ width: `${progPct}%` }} />
+                          </div>
+                          <span className="text-[6px] text-muted-foreground font-display mt-0.5 block">{prog.current}/{prog.target}</span>
+                        </div>
+                      )}
                       {unlocked ? (
-                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-neon-green/20 flex items-center justify-center"><span className="text-[8px]">✅</span></div>
+                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-neon-green/20 flex items-center justify-center z-10"><span className="text-[8px]">✅</span></div>
                       ) : (
-                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-muted/30 flex items-center justify-center"><span className="text-[7px]">🔒</span></div>
+                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-muted/30 flex items-center justify-center z-10"><span className="text-[7px]">🔒</span></div>
                       )}
                       {unlocked && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-neon-green to-neon-green/30" />}
                     </motion.div>
