@@ -119,6 +119,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
     <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
       <div className="absolute inset-0 stadium-gradient pointer-events-none" />
       <div className="absolute inset-0 vignette pointer-events-none" />
+      <CelebrationEffects lastResult={game.lastResult} gameResult={game.result} phase={game.phase} />
 
       {/* Top ambient glow */}
       <div
