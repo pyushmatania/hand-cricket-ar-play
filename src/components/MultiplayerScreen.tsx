@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import OddEvenToss from "./OddEvenToss";
+import SpinningCricketBall from "./SpinningCricketBall";
 import type { Move } from "@/hooks/useHandCricket";
 
 const MOVES: { move: Move; emoji: string; label: string; color: string }[] = [
