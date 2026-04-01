@@ -22,6 +22,7 @@ export interface HandDetectionState {
   handDetected: boolean;
   rawGesture: string;
   debugInfo: string;
+  landmarks: Array<{ x: number; y: number; z: number }> | null;
 }
 
 declare global {
@@ -194,6 +195,7 @@ export function useHandDetection(videoRef: React.RefObject<HTMLVideoElement | nu
     handDetected: false,
     rawGesture: "no_hand",
     debugInfo: "stage:idle",
+    landmarks: null,
   });
 
   const handsRef = useRef<any>(null);
@@ -282,6 +284,7 @@ export function useHandDetection(videoRef: React.RefObject<HTMLVideoElement | nu
           rawGesture: raw,
           hint: "Move captured!",
           debugInfo: `captured:${move}`,
+          landmarks: lm ? [...lm] : null,
         }));
 
         onAutoCaptureRef.current(move);
@@ -321,6 +324,7 @@ export function useHandDetection(videoRef: React.RefObject<HTMLVideoElement | nu
       rawGesture: raw,
       hint,
       debugInfo: `hand:${hasHand} | raw:${raw} | maj:${majority}(${majorityVotes}) | stableFrames:${stableFrameCount.current}`,
+      landmarks: lm ? [...lm] : null,
     }));
   }, []);
 
