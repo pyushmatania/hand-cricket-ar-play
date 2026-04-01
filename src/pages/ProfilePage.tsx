@@ -46,6 +46,7 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [matches, setMatches] = useState<MatchRecord[]>([]);
   const [activeTab, setActiveTab] = useState<TabType>("stats");
+  const [selectedPlayer, setSelectedPlayer] = useState<PlayerInfo | null>(null);
 
   const getTimeAgo = (dateStr: string) => {
     const diff = Date.now() - new Date(dateStr).getTime();
