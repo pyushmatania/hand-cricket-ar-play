@@ -209,7 +209,7 @@ export function classifyHandCricketGesture(landmarks: V3[] | undefined, handedne
     rawGesture = "2";
   } else if (!thumbExtended && indexExtended && middleExtended && ringExtended && !pinkyExtended) {
     rawGesture = "3";
-  } else if (allFourStraight && !thumb.likelyOpen) {
+  } else if (allFourStraight && !thumb.extended) {
     rawGesture = "4";
   } else if (thumbExtended && !indexExtended && !middleExtended && !ringExtended && !pinkyExtended) {
     rawGesture = "6";
