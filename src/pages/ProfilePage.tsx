@@ -384,6 +384,9 @@ export default function ProfilePage() {
       </div>
 
       <BottomNav />
+      {selectedPlayer && (
+        <PlayerDetailModal player={selectedPlayer} onClose={() => setSelectedPlayer(null)} />
+      )}
     </div>
   );
 }
