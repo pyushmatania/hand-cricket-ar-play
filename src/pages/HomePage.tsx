@@ -88,7 +88,7 @@ export default function HomePage() {
       {/* Background layers */}
       <div className="absolute inset-0 stadium-gradient pointer-events-none" />
       <div className="absolute inset-0 vignette pointer-events-none" />
-      <ParticleField />
+      
 
       {/* Top ambient glow */}
       <div
