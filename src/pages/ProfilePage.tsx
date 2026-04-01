@@ -77,6 +77,8 @@ interface ProfileData {
   current_streak: number;
   best_streak: number;
   abandons: number;
+  avatar_url: string | null;
+  avatar_index: number;
 }
 
 type TabType = "stats" | "matches" | "friends";
