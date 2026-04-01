@@ -16,6 +16,8 @@ import { SFX, Haptics } from "@/lib/sounds";
 import { getCommentary, getInningsChangeCommentary } from "@/lib/commentary";
 import { speakCommentary, playCrowdForResult, CrowdSFX } from "@/lib/voiceCommentary";
 import { useSettings } from "@/contexts/SettingsContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 interface GameScreenProps {
   onHome: () => void;
