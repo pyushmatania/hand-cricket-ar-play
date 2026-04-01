@@ -48,6 +48,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     [detection]
   );
 
+  // Wire auto-capture only during active game phases
   useEffect(() => {
     if (game.phase !== "not_started" && game.phase !== "finished") {
       detection.setOnAutoCapture((move) => playBall(move));
@@ -55,6 +56,13 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       detection.setOnAutoCapture(null);
     }
   }, [game.phase, detection.setOnAutoCapture, playBall]);
+
+  // When a new game starts, reset detection to fist-wait
+  useEffect(() => {
+    if (game.phase !== "not_started" && game.phase !== "finished" && detection.resetToFist) {
+      detection.resetToFist();
+    }
+  }, [game.phase === "not_started"]);
 
   const handleStartNew = () => {
     resetGame();
