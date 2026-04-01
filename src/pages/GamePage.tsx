@@ -4,6 +4,7 @@ import TapGameScreen from "@/components/TapGameScreen";
 import PracticeScreen from "@/components/PracticeScreen";
 import MultiplayerScreen from "@/components/MultiplayerScreen";
 import TournamentScreen from "@/components/TournamentScreen";
+import DailyChallengeScreen from "@/components/DailyChallengeScreen";
 
 export default function GamePage() {
   const { mode } = useParams<{ mode: string }>();
@@ -14,6 +15,7 @@ export default function GamePage() {
   if (mode === "practice") return <PracticeScreen onHome={goHome} />;
   if (mode === "multiplayer") return <MultiplayerScreen onHome={goHome} />;
   if (mode === "tournament") return <TournamentScreen onHome={goHome} />;
+  if (mode === "daily") return <DailyChallengeScreen onHome={goHome} />;
 
   return <GameScreen onHome={goHome} />;
 }
