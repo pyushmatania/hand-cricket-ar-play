@@ -1,15 +1,18 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import BottomNav from "@/components/BottomNav";
 import ParticleField from "@/components/ParticleField";
 import OnboardingTutorial from "@/components/OnboardingTutorial";
 
-const QUICK_STATS = [
-  { label: "MATCHES", value: "0", icon: "🏏", color: "text-primary" },
-  { label: "WINS", value: "0", icon: "🏆", color: "text-secondary" },
-  { label: "HIGH SCORE", value: "—", icon: "⭐", color: "text-score-gold" },
-];
+interface QuickStat {
+  label: string;
+  value: string;
+  icon: string;
+  color: string;
+}
 
 const MODES = [
   { icon: "📸", label: "AR Mode", desc: "Hand gesture tracking", mode: "ar", gradient: "from-primary/20 to-primary/5", border: "border-primary/20" },
