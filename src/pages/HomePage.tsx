@@ -69,11 +69,6 @@ export default function HomePage() {
       .then(({ data }) => { if (data?.[0]) setRecentMatch(data[0]); });
   }, [user]);
 
-  // Cycle featured player
-  useEffect(() => {
-    const t = setInterval(() => setActivePlayer(p => (p + 1) % PLAYERS.length), 4000);
-    return () => clearInterval(t);
-  }, []);
 
   const completeOnboarding = () => {
     localStorage.setItem("hc_onboarding_done", "1");
