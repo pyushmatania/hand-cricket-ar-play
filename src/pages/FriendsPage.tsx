@@ -45,7 +45,7 @@ export default function FriendsPage() {
   const [searchResults, setSearchResults] = useState<FriendProfile[]>([]);
   const [myCode, setMyCode] = useState("");
   const [feedback, setFeedback] = useState("");
-  const [challengeGameType, setChallengeGameType] = useState<GameType>("ar");
+  const [challengeTargetId, setChallengeTargetId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -185,11 +185,11 @@ export default function FriendsPage() {
     setTimeout(() => setFeedback(""), 2000);
   };
 
-  const challengeFriend = async (friendId: string) => {
+  const challengeFriend = async (friendId: string, gameType: GameType) => {
     if (!user) return;
     const { data: game } = await supabase
       .from("multiplayer_games")
-      .insert({ host_id: user.id, target_guest_id: friendId, game_type: challengeGameType, host_reserve_ms: 10000, guest_reserve_ms: 10000 } as any)
+      .insert({ host_id: user.id, target_guest_id: friendId, game_type: gameType, host_reserve_ms: 10000, guest_reserve_ms: 10000 } as any)
       .select()
       .single();
     if (game) {
@@ -275,23 +275,6 @@ export default function FriendsPage() {
           )}
         </AnimatePresence>
 
-        <div className="glass-premium rounded-xl p-2.5 mb-3">
-          <p className="text-[8px] text-muted-foreground font-display tracking-widest mb-2">BATTLE GAME TYPE</p>
-          <div className="grid grid-cols-3 gap-1.5">
-            {(["ar", "tap", "tournament"] as GameType[]).map((gt) => (
-              <button
-                key={gt}
-                onClick={() => setChallengeGameType(gt)}
-                className={`py-1.5 rounded-lg text-[8px] font-display font-bold uppercase tracking-wider border ${
-                  challengeGameType === gt ? "bg-primary/20 text-primary border-primary/40" : "bg-muted/30 text-muted-foreground border-border/40"
-                }`}
-              >
-                {gt}
-              </button>
-            ))}
-          </div>
-        </div>
-
         <AnimatePresence mode="wait">
           {/* FRIENDS LIST */}
           {tab === "friends" && (
@@ -321,7 +304,7 @@ export default function FriendsPage() {
                         </div>
                         <motion.button
                           whileTap={{ scale: 0.85 }}
-                          onClick={() => challengeFriend(f.user_id)}
+                          onClick={() => setChallengeTargetId(f.user_id)}
                           className="px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display text-[7px] font-bold tracking-wider"
                         >
                           ⚔️
@@ -493,6 +476,26 @@ export default function FriendsPage() {
           )}
         </AnimatePresence>
       </div>
+      {challengeTargetId && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-end justify-center p-4">
+          <div className="w-full max-w-sm glass-premium rounded-2xl p-4 space-y-3">
+            <p className="font-display text-xs text-foreground font-bold tracking-wider">Which game should we play?</p>
+            {(["ar", "tap", "tournament"] as GameType[]).map((gt) => (
+              <button
+                key={gt}
+                onClick={() => {
+                  void challengeFriend(challengeTargetId, gt);
+                  setChallengeTargetId(null);
+                }}
+                className="w-full py-2.5 rounded-xl bg-primary/10 border border-primary/30 font-display text-xs font-bold uppercase"
+              >
+                {gt}
+              </button>
+            ))}
+            <button onClick={() => setChallengeTargetId(null)} className="w-full py-2 text-xs text-muted-foreground">Cancel</button>
+          </div>
+        </div>
+      )}
 
       <BottomNav />
     </div>

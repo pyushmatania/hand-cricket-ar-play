@@ -29,6 +29,7 @@ const MOVE_SETS: Record<GameType, { move: Move; emoji: string; label: string; co
 type GameStatus = "waiting" | "toss" | "playing" | "finished" | "abandoned" | "cancelled";
 type Phase = "lobby" | "waiting" | "toss" | "playing" | "finished";
 type GameType = "ar" | "tap" | "tournament";
+type MatchPhase = "waiting_for_guest" | "pre_match_intro" | "toss" | "pre_round_countdown" | "action_window" | "resolving_turn" | "round_result" | "innings_break" | "match_finished" | "abandoned";
 
 interface MultiplayerGame {
   id: string;
@@ -47,6 +48,10 @@ interface MultiplayerGame {
   game_type: GameType;
   room_code: string;
   started_at?: string | null;
+  phase?: MatchPhase;
+  phase_started_at?: string | null;
+  turn_deadline_at?: string | null;
+  turn_number?: number;
   host_reserve_ms: number;
   guest_reserve_ms: number;
   abandoned_by: string | null;
@@ -93,6 +98,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [roomCodeInput, setRoomCodeInput] = useState("");
   const [roomCodeError, setRoomCodeError] = useState<string | null>(null);
   const [selectedGameType, setSelectedGameType] = useState<GameType>("ar");
+  const [createModePickerOpen, setCreateModePickerOpen] = useState(false);
 
   // Timer state
   const [ballTimer, setBallTimer] = useState(BALL_TIMER_MS);
@@ -285,6 +291,33 @@ export default function MultiplayerScreen({ onHome }: Props) {
     setReserveTime(myReserve);
   }, [currentGame?.id]);
 
+  useEffect(() => {
+    if (!currentGame || !user) return;
+    if (user.id !== currentGame.host_id) return;
+    if (currentGame.phase === "pre_round_countdown" && currentGame.phase_started_at) {
+      const ms = Date.now() - new Date(currentGame.phase_started_at).getTime();
+      if (ms >= 3000) {
+        supabase.from("multiplayer_games").update({
+          phase: "action_window" as any,
+          phase_started_at: new Date().toISOString(),
+          turn_deadline_at: new Date(Date.now() + RESERVE_TIMER_MS).toISOString(),
+          status: "playing" as any,
+        }).eq("id", currentGame.id).eq("phase", "pre_round_countdown");
+      }
+    }
+    if (currentGame.phase === "action_window" && currentGame.turn_deadline_at && Date.now() >= new Date(currentGame.turn_deadline_at).getTime()) {
+      const isHostMoveMissing = !currentGame.host_move;
+      const isGuestMoveMissing = !currentGame.guest_move;
+      if (isHostMoveMissing || isGuestMoveMissing) {
+        supabase.from("multiplayer_games").update({
+          ...(isHostMoveMissing ? { host_move: "DEF", host_move_submitted_at: new Date().toISOString() } : {}),
+          ...(isGuestMoveMissing ? { guest_move: "DEF", guest_move_submitted_at: new Date().toISOString() } : {}),
+          phase: "resolving_turn" as any,
+        }).eq("id", currentGame.id).eq("phase", "action_window");
+      }
+    }
+  }, [currentGame?.id, currentGame?.phase, currentGame?.phase_started_at, currentGame?.turn_deadline_at, currentGame?.host_move, currentGame?.guest_move, user?.id]);
+
   const startBallTimer = () => {
     stopTimer();
     setBallTimer(BALL_TIMER_MS);
@@ -376,10 +409,10 @@ export default function MultiplayerScreen({ onHome }: Props) {
     if (data) setOpponentName(data.display_name);
   };
 
-  const createGame = async () => {
+  const createGame = async (gameType: GameType = selectedGameType) => {
     if (!user) return;
     const { data } = await supabase.from("multiplayer_games")
-      .insert({ host_id: user.id, game_type: selectedGameType, host_reserve_ms: RESERVE_TIMER_MS, guest_reserve_ms: RESERVE_TIMER_MS } as any)
+      .insert({ host_id: user.id, game_type: gameType, host_reserve_ms: RESERVE_TIMER_MS, guest_reserve_ms: RESERVE_TIMER_MS } as any)
       .select().single();
     if (data) {
       const g = data as unknown as MultiplayerGame;
@@ -455,6 +488,9 @@ export default function MultiplayerScreen({ onHome }: Props) {
     const hostBatting = isHost ? batFirst : !batFirst;
     await supabase.from("multiplayer_games").update({
       status: "playing" as any, host_batting: hostBatting,
+      phase: "pre_round_countdown" as any,
+      phase_started_at: new Date().toISOString(),
+      turn_deadline_at: null,
     }).eq("id", currentGame.id);
     setPhase("playing");
   };
@@ -469,8 +505,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
     const newReserve = Math.max(0, reserveTime - reserveUsed);
     setReserveTime(newReserve);
     const updateData: any = isHost
-      ? { host_move: moveStr, host_reserve_ms: newReserve }
-      : { guest_move: moveStr, guest_reserve_ms: newReserve };
+      ? { host_move: moveStr, host_reserve_ms: newReserve, host_move_submitted_at: new Date().toISOString() }
+      : { guest_move: moveStr, guest_reserve_ms: newReserve, guest_move_submitted_at: new Date().toISOString() };
     await supabase.from("multiplayer_games").update(updateData).eq("id", currentGame.id);
     setTimeout(() => setCooldown(false), 1500);
   };
@@ -525,8 +561,10 @@ export default function MultiplayerScreen({ onHome }: Props) {
 
     await supabase.from("multiplayer_games").update({
       host_score: newHostScore, guest_score: newGuestScore, host_move: null, guest_move: null,
-      current_turn: game.current_turn + 1, innings: newInnings, host_batting: newHostBatting,
-      status: newStatus as any, winner_id: newWinner,
+      current_turn: game.current_turn + 1, turn_number: (game.turn_number ?? game.current_turn) + 1, innings: newInnings, innings_number: newInnings, host_batting: newHostBatting,
+      status: newStatus as any, winner_id: newWinner, phase: newStatus === "finished" ? "match_finished" : "pre_round_countdown",
+      phase_started_at: new Date().toISOString(), turn_deadline_at: null,
+      round_result_payload: { text: result, turn: game.current_turn },
     }).eq("id", game.id).eq("current_turn", game.current_turn).eq("host_move", hostMove).eq("guest_move", guestMove);
   };
 
@@ -591,20 +629,6 @@ export default function MultiplayerScreen({ onHome }: Props) {
             {lobbyTab === "create" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
                 <div className="glass-premium rounded-xl p-3 space-y-1.5">
-                  <span className="font-display text-[9px] font-bold text-muted-foreground tracking-widest">🎮 GAME TYPE</span>
-                  <div className="grid grid-cols-3 gap-1.5">
-                    {(["ar", "tap", "tournament"] as GameType[]).map((gt) => (
-                      <button
-                        key={gt}
-                        onClick={() => setSelectedGameType(gt)}
-                        className={`py-2 rounded-lg text-[9px] font-display font-bold uppercase tracking-wider border ${
-                          selectedGameType === gt ? "bg-primary/20 text-primary border-primary/40" : "bg-muted/30 text-muted-foreground border-border/40"
-                        }`}
-                      >
-                        {gt}
-                      </button>
-                    ))}
-                  </div>
                   <span className="font-display text-[9px] font-bold text-muted-foreground tracking-widest">⏱️ TIMER RULES</span>
                   <div className="flex items-center gap-2">
                     <div className="w-5 h-5 rounded-md bg-secondary/20 flex items-center justify-center"><span className="text-[8px]">⏳</span></div>
@@ -615,7 +639,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
                     <span className="text-[9px] text-muted-foreground"><span className="text-out-red font-bold">10s</span> reserve per match</span>
                   </div>
                 </div>
-                <motion.button whileTap={{ scale: 0.95 }} onClick={createGame}
+                <motion.button whileTap={{ scale: 0.95 }} onClick={() => setCreateModePickerOpen(true)}
                   className="w-full py-4 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display font-black text-sm rounded-2xl glow-primary tracking-wider">
                   🏏 CREATE MATCH
                 </motion.button>
@@ -935,6 +959,27 @@ export default function MultiplayerScreen({ onHome }: Props) {
           </motion.div>
         )}
       </div>
+      {createModePickerOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 flex items-end justify-center p-4">
+          <div className="w-full max-w-sm glass-premium rounded-2xl p-4 space-y-3">
+            <p className="font-display text-xs text-foreground font-bold tracking-wider">Which game do you want to play?</p>
+            {(["ar", "tap", "tournament"] as GameType[]).map((gt) => (
+              <button
+                key={gt}
+                onClick={() => {
+                  setSelectedGameType(gt);
+                  setCreateModePickerOpen(false);
+                  void createGame(gt);
+                }}
+                className="w-full py-2.5 rounded-xl bg-primary/10 border border-primary/30 font-display text-xs font-bold uppercase"
+              >
+                {gt}
+              </button>
+            ))}
+            <button onClick={() => setCreateModePickerOpen(false)} className="w-full py-2 text-xs text-muted-foreground">Cancel</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
