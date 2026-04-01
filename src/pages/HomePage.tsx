@@ -123,7 +123,11 @@ export default function HomePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="glass-premium p-4 mb-4 relative overflow-hidden"
+          className="glass-premium p-4 mb-4 relative overflow-hidden cursor-pointer"
+          onClick={() => {
+            const legend = INDIAN_LEGENDS.find(l => l.id === PLAYERS[activePlayer].id);
+            if (legend) setSelectedPlayer(legend);
+          }}
         >
           {/* Decorative background number */}
           <AnimatePresence mode="wait">
