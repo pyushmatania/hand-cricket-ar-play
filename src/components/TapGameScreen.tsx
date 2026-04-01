@@ -77,8 +77,8 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
 
   const handleMove = (move: Move) => {
     if (cooldown || game.phase === "not_started" || game.phase === "finished") return;
-    SFX.tap();
-    Haptics.light();
+    if (soundEnabled) SFX.tap();
+    if (hapticsEnabled) Haptics.light();
     setLastPlayed(move);
     playBall(move);
     setCooldown(true);
