@@ -299,6 +299,13 @@ export default function FriendsPage() {
                           <span className="font-display text-[11px] font-bold text-foreground block truncate">{f.display_name}</span>
                           <span className="text-[8px] text-muted-foreground">{f.wins}W {f.losses}L • {winRate}% WR</span>
                         </div>
+                        <motion.button
+                          whileTap={{ scale: 0.85 }}
+                          onClick={() => challengeFriend(f.user_id)}
+                          className="px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display text-[7px] font-bold tracking-wider"
+                        >
+                          ⚔️
+                        </motion.button>
                         <div className="text-right">
                           <span className="font-display text-sm font-black text-secondary block leading-none">{f.high_score}</span>
                           <span className="text-[6px] text-muted-foreground font-display tracking-widest">HIGH</span>
