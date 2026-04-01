@@ -324,7 +324,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
           ...(isHostMoveMissing ? { host_move: "DEF", host_move_submitted_at: new Date().toISOString() } : {}),
           ...(isGuestMoveMissing ? { guest_move: "DEF", guest_move_submitted_at: new Date().toISOString() } : {}),
           phase: "resolving_turn" as any,
-        }).eq("id", currentGame.id).eq("phase", "action_window");
+        }).eq("id", currentGame.id).eq("phase" as any, "action_window");
       }
     }
   }, [currentGame?.id, currentGame?.phase, currentGame?.phase_started_at, currentGame?.turn_deadline_at, currentGame?.host_move, currentGame?.guest_move, user?.id]);
