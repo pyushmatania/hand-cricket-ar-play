@@ -50,10 +50,22 @@ export async function speakElevenLabs(text: string, voiceId?: string): Promise<b
         console.warn("[ElevenLabs] Tokens exhausted — switching to fallback");
         elevenLabsAvailable = false;
       }
+      console.warn(`[ElevenLabs] TTS failed with status ${response.status}`);
+      return false;
+    }
+
+    // Verify we got audio, not a JSON error
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.includes("audio")) {
+      console.warn("[ElevenLabs] Response is not audio:", contentType);
       return false;
     }
 
     const blob = await response.blob();
+    if (blob.size < 500) {
+      console.warn("[ElevenLabs] Audio blob too small, likely an error");
+      return false;
+    }
     const url = URL.createObjectURL(blob);
     audioCache.set(key, url);
     return playAudioUrl(url);
