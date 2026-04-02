@@ -25,6 +25,9 @@ interface FriendProfile {
   rank_tier?: string;
   login_streak?: number;
   best_login_streak?: number;
+  total_runs?: number;
+  total_sixes?: number;
+  total_fours?: number;
 }
 
 interface MyProfile {
