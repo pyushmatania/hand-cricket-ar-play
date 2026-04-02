@@ -155,6 +155,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
   const [myMatchStats, setMyMatchStats] = useState<FriendMatchStats | null>(null);
   const [records, setRecords] = useState<RecordBreak[]>([]);
   const [fullFriendProfile, setFullFriendProfile] = useState<FriendProfile | null>(null);
+  const [recentFriendMatches, setRecentFriendMatches] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { pvpRecord: friendPvp } = usePvpStats(friend?.user_id);
 
