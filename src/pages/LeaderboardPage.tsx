@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +14,7 @@ import PlayerAvatar from "@/components/PlayerAvatar";
 import FormSparkline from "@/components/FormSparkline";
 import PlayerOfTheWeek from "@/components/PlayerOfTheWeek";
 import MostActiveTicker from "@/components/MostActiveTicker";
+import CanvasFireworks from "@/components/CanvasFireworks";
 import { getRankTier } from "@/lib/rankTiers";
 import { useWeeklyChallenges } from "@/hooks/useWeeklyChallenges";
 import { toast } from "@/components/ui/use-toast";
@@ -118,6 +119,28 @@ const RAGE_TITLES = [
   { title: "🔥 Run Machine", desc: "Most total wins", stat: (e: LeaderEntry) => e.wins, label: "wins", color: "from-secondary/10 to-transparent" },
   { title: "🪨 The Wall", desc: "Fewest abandons (10+ matches)", stat: (e: LeaderEntry) => e.total_matches >= 10 ? e.total_matches - e.abandons : 0, label: "completed", color: "from-primary/10 to-transparent" },
 ];
+
+function PotwWithConfetti({ player, loading }: { player: any; loading?: boolean }) {
+  const [fireworkType, setFireworkType] = useState<"win" | null>(null);
+  const hasTriggeredRef = useRef(false);
+
+  useEffect(() => {
+    if (player && !loading && !hasTriggeredRef.current) {
+      hasTriggeredRef.current = true;
+      // Small delay so the card animates in first
+      const t = setTimeout(() => setFireworkType("win"), 400);
+      const clear = setTimeout(() => setFireworkType(null), 3500);
+      return () => { clearTimeout(t); clearTimeout(clear); };
+    }
+  }, [player, loading]);
+
+  return (
+    <>
+      <CanvasFireworks type={fireworkType} duration={2800} />
+      <PlayerOfTheWeek player={player} loading={loading} />
+    </>
+  );
+}
 
 export default function LeaderboardPage() {
   const { user } = useAuth();
@@ -641,8 +664,8 @@ export default function LeaderboardPage() {
                 </div>
               ) : (
                 <>
-                  {/* Player of the Week */}
-                  <PlayerOfTheWeek player={playerOfWeek} loading={potwLoading} />
+                  {/* Player of the Week with confetti */}
+                  <PotwWithConfetti player={playerOfWeek} loading={potwLoading} />
 
                   {/* Top 3 podium */}
                   {top3.length >= 3 && (
