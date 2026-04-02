@@ -94,7 +94,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const setAmbientVolume = (v: number) => setSettings((s) => ({ ...s, ambientVolume: v }));
 
   return (
-    <SettingsContext.Provider value={{ ...settings, toggleSound, toggleHaptics, toggleCommentary, toggleVoice, toggleCrowd, toggleMusic, toggleBatSound, toggleVictorySound, setCommentaryVoice, setVoiceEngine, setCommentaryLanguage, toggleCeremonies }}>
+    <SettingsContext.Provider value={{ ...settings, toggleSound, toggleHaptics, toggleCommentary, toggleVoice, toggleCrowd, toggleMusic, toggleBatSound, toggleVictorySound, setCommentaryVoice, setVoiceEngine, setCommentaryLanguage, toggleCeremonies, setAmbientVolume }}>
       {children}
     </SettingsContext.Provider>
   );
