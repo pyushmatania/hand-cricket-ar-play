@@ -145,6 +145,7 @@ export default function ProfilePage() {
   const [myCode, setMyCode] = useState("");
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedFriend, setSelectedFriend] = useState<any>(null);
 
   const getTimeAgo = (dateStr: string) => {
     const diff = Date.now() - new Date(dateStr).getTime();
