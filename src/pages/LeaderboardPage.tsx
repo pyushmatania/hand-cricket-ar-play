@@ -7,6 +7,7 @@ import BottomNav from "@/components/BottomNav";
 import TopStatusBar from "@/components/TopStatusBar";
 import RivalryCard from "@/components/RivalryCard";
 import FriendStatsModal from "@/components/FriendStatsModal";
+import PlayerPreviewCard from "@/components/PlayerPreviewCard";
 import RankBadge from "@/components/RankBadge";
 import WeeklyChallengesCard from "@/components/WeeklyChallengesCard";
 import AchievementFeed from "@/components/AchievementFeed";
@@ -159,6 +160,7 @@ export default function LeaderboardPage() {
   const [archiveEntries, setArchiveEntries] = useState<any[]>([]);
   const [challengeTargetId, setChallengeTargetId] = useState<string | null>(null);
   const [selectedFriendId, setSelectedFriendId] = useState<string | null>(null);
+  const [previewFriendId, setPreviewFriendId] = useState<string | null>(null);
   const [sparklines, setSparklines] = useState<Record<string, ("W" | "L" | "D")[]>>({});
   const [playerOfWeek, setPlayerOfWeek] = useState<any>(null);
   const [potwLoading, setPotwLoading] = useState(false);
@@ -692,7 +694,7 @@ export default function LeaderboardPage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 + i * 0.1 }}
                             className={`flex flex-col items-center ${mainTab === "friends" && !isMe ? "cursor-pointer active:scale-[0.97] transition-transform" : ""}`}
-                            onClick={() => { if (mainTab === "friends" && !isMe) setSelectedFriendId(p.user_id); }}>
+                            onClick={() => { if (mainTab === "friends" && !isMe) setPreviewFriendId(p.user_id); }}>
                             <motion.span
                               animate={{ y: [0, -3, 0] }}
                               transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
@@ -735,7 +737,7 @@ export default function LeaderboardPage() {
                       const tier = getRankTier(player);
                       return (
                         <motion.div key={player.user_id} initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 + i * 0.04 }}
-                          onClick={() => { if (mainTab === "friends" && !isMe) setSelectedFriendId(player.user_id); }}
+                          onClick={() => { if (mainTab === "friends" && !isMe) setPreviewFriendId(player.user_id); }}
                           className={`glass-premium rounded-xl p-3 flex items-center gap-3 ${isMe ? "border border-primary/25 shadow-[0_0_15px_hsl(217_91%_60%/0.1)]" : ""} ${mainTab === "friends" && !isMe ? "cursor-pointer active:scale-[0.98] transition-transform" : ""}`}>
                           <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-display font-black text-xs ${isMe ? "bg-gradient-to-br from-primary/20 to-primary/10 text-primary" : "bg-muted/40 text-muted-foreground"}`}>
                             #{i + 4}
@@ -812,6 +814,18 @@ export default function LeaderboardPage() {
           </div>
         </div>
       )}
+      {previewFriendId && (() => {
+        const fl = friendLeaders.find(f => f.user_id === previewFriendId);
+        if (!fl) return null;
+        return (
+          <PlayerPreviewCard
+            player={{ ...fl, avatar_index: fl.avatar_index ?? 0 }}
+            onClose={() => setPreviewFriendId(null)}
+            onViewFull={() => { setPreviewFriendId(null); setSelectedFriendId(fl.user_id); }}
+            onChallenge={() => { setPreviewFriendId(null); setChallengeTargetId(fl.user_id); }}
+          />
+        );
+      })()}
       {selectedFriendId && (() => {
         const fl = friendLeaders.find(f => f.user_id === selectedFriendId);
         if (!fl) return null;
