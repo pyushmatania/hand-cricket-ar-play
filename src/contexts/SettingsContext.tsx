@@ -43,6 +43,7 @@ const defaults: Settings = {
   voiceEngine: "system" as VoiceEngine,
   commentaryLanguage: "both" as CommentaryLanguage,
   ceremoniesEnabled: false,
+  ambientVolume: 0.25,
 };
 
 const SettingsContext = createContext<SettingsContextType>({
