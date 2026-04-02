@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { Slider } from "@/components/ui/slider";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useSettings } from "@/contexts/SettingsContext";
@@ -226,6 +227,29 @@ export default function SettingsPage() {
                         </motion.div>
                       );
                     })}
+
+                    {/* Ambient Stadium Volume slider inside Audio group */}
+                    {group.title === "AUDIO & SOUND" && settings.musicEnabled && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -5 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="glass-premium rounded-xl p-3.5"
+                      >
+                        <div className="flex items-center gap-2 mb-3">
+                          <span className="text-base">🏟️</span>
+                          <span className="font-display text-[10px] font-bold text-foreground tracking-wider">STADIUM AMBIENCE VOLUME</span>
+                          <span className="text-[9px] text-muted-foreground ml-auto font-mono">{Math.round(settings.ambientVolume * 100)}%</span>
+                        </div>
+                        <Slider
+                          value={[settings.ambientVolume * 100]}
+                          onValueChange={([v]) => settings.setAmbientVolume(v / 100)}
+                          max={100}
+                          min={0}
+                          step={5}
+                          className="w-full"
+                        />
+                      </motion.div>
+                    )}
 
                     {/* Voice Engine selector inside Commentary group */}
                     {group.title === "COMMENTARY" && settings.voiceEnabled && (
