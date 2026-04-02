@@ -52,6 +52,9 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const { commentaryVoice } = useSettings();
   const detection = useHandDetection(videoElementRef);
   const [tossChoice, setTossChoice] = useState<null | boolean>(null);
+  const [matchConfig, setMatchConfig] = useState<import("@/hooks/useHandCricket").MatchConfig | null>(null);
+  const [showOverSelector, setShowOverSelector] = useState(true);
+  const [playerXP, setPlayerXP] = useState(0);
   const [stadiumMode, setStadiumMode] = useState(true);
   const [immersive, setImmersive] = useState(false);
   const [filter, setFilter] = useState<CameraFilter>("broadcast");
