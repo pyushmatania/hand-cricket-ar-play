@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SFX } from "@/lib/sounds";
 import { useSettings } from "@/contexts/SettingsContext";
@@ -18,17 +18,42 @@ interface OddEvenTossProps {
 type OddEven = "odd" | "even";
 
 export default function OddEvenToss({ onResult, playerName = "You", opponentName = "AI", isMultiplayer = false, onTossComplete }: OddEvenTossProps) {
-  const [step, setStep] = useState<"choose_oe" | "choose_number" | "reveal" | "pick_innings">("choose_oe");
+  const [step, setStep] = useState<"assigning" | "choose_number" | "reveal" | "pick_innings">(isMultiplayer ? "assigning" : "choose_oe" as any);
   const [playerChoice, setPlayerChoice] = useState<OddEven | null>(null);
+  const [opponentChoice, setOpponentChoice] = useState<OddEven | null>(null);
   const [playerNumber, setPlayerNumber] = useState<number | null>(null);
   const [aiNumber, setAiNumber] = useState<number | null>(null);
   const [tossWon, setTossWon] = useState<boolean | null>(null);
   const [revealStep, setRevealStep] = useState(0);
   const { soundEnabled } = useSettings();
 
+  // For PvP: randomly assign odd/even
+  useEffect(() => {
+    if (isMultiplayer && step === "assigning") {
+      const random = Math.random() > 0.5;
+      const pChoice: OddEven = random ? "odd" : "even";
+      const oChoice: OddEven = random ? "even" : "odd";
+      setPlayerChoice(pChoice);
+      setOpponentChoice(oChoice);
+      // Show assignment briefly then move to number selection
+      setTimeout(() => {
+        if (soundEnabled) SFX.tossSelect();
+        setStep("choose_number");
+      }, 2000);
+    }
+  }, [isMultiplayer, step]);
+
+  // For solo: start at choose_oe
+  useEffect(() => {
+    if (!isMultiplayer) {
+      setStep("choose_oe" as any);
+    }
+  }, [isMultiplayer]);
+
   const handleChooseOddEven = (choice: OddEven) => {
     if (soundEnabled) SFX.tossSelect();
     setPlayerChoice(choice);
+    setOpponentChoice(choice === "odd" ? "even" : "odd");
     setStep("choose_number");
   };
 
@@ -46,7 +71,6 @@ export default function OddEvenToss({ onResult, playerName = "You", opponentName
     setStep("reveal");
     setRevealStep(0);
 
-    // Dramatic reveal sequence with sounds
     setTimeout(() => {
       if (soundEnabled) SFX.tossRevealBuild();
     }, 200);
@@ -96,9 +120,22 @@ export default function OddEvenToss({ onResult, playerName = "You", opponentName
       <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-bl from-primary/10 to-transparent rounded-bl-full" />
       <div className="absolute bottom-0 left-0 w-16 h-16 bg-gradient-to-tr from-accent/10 to-transparent rounded-tr-full" />
 
-      {/* Step: Choose Odd/Even */}
       <AnimatePresence mode="wait">
-        {step === "choose_oe" && (
+        {/* PvP: Random assignment screen */}
+        {step === "assigning" && isMultiplayer && (
+          <motion.div key="assigning" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
+            <p className="font-display text-xs font-black text-foreground tracking-wider">🎲 TOSS ASSIGNMENT</p>
+            <motion.div
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 0.8, repeat: Infinity }}
+              className="text-4xl"
+            >🎰</motion.div>
+            <p className="text-[11px] text-muted-foreground font-display">Randomly assigning Odd/Even...</p>
+          </motion.div>
+        )}
+
+        {/* Step: Choose Odd/Even (solo only) */}
+        {(step as string) === "choose_oe" && !isMultiplayer && (
           <motion.div key="oe" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
             <div className="flex items-center justify-center gap-2 mb-1">
               <div className="w-8 h-0.5 bg-gradient-to-r from-transparent to-primary/50" />
@@ -115,13 +152,7 @@ export default function OddEvenToss({ onResult, playerName = "You", opponentName
               >
                 <span className="text-3xl">✌️</span>
               </motion.div>
-              <motion.span
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 1, repeat: Infinity }}
-                className="text-lg font-black text-muted-foreground"
-              >
-                VS
-              </motion.span>
+              <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1, repeat: Infinity }} className="text-lg font-black text-muted-foreground">VS</motion.span>
               <motion.div
                 animate={{ y: [0, -8, 0], rotate: [5, -5, 5] }}
                 transition={{ duration: 1.2, repeat: Infinity, delay: 0.2 }}
@@ -132,18 +163,12 @@ export default function OddEvenToss({ onResult, playerName = "You", opponentName
             </div>
 
             <div className="flex gap-3">
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                onClick={() => handleChooseOddEven("odd")}
-                className="flex-1 py-3.5 bg-gradient-to-br from-primary to-primary/70 text-primary-foreground font-display font-bold rounded-2xl text-sm shadow-[0_0_25px_hsl(217_91%_60%/0.25)] border border-primary/30"
-              >
+              <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleChooseOddEven("odd")}
+                className="flex-1 py-3.5 bg-gradient-to-br from-primary to-primary/70 text-primary-foreground font-display font-bold rounded-2xl text-sm shadow-[0_0_25px_hsl(217_91%_60%/0.25)] border border-primary/30">
                 <span className="text-lg mr-1">☝️</span> ODD
               </motion.button>
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                onClick={() => handleChooseOddEven("even")}
-                className="flex-1 py-3.5 bg-gradient-to-br from-accent to-accent/70 text-accent-foreground font-display font-bold rounded-2xl text-sm shadow-[0_0_25px_hsl(168_80%_50%/0.2)] border border-accent/30"
-              >
+              <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleChooseOddEven("even")}
+                className="flex-1 py-3.5 bg-gradient-to-br from-accent to-accent/70 text-accent-foreground font-display font-bold rounded-2xl text-sm shadow-[0_0_25px_hsl(168_80%_50%/0.2)] border border-accent/30">
                 <span className="text-lg mr-1">✌️</span> EVEN
               </motion.button>
             </div>
@@ -158,8 +183,26 @@ export default function OddEvenToss({ onResult, playerName = "You", opponentName
               <p className="font-display text-xs font-black text-foreground tracking-wider">PLAY YOUR HAND</p>
               <div className="w-8 h-0.5 bg-gradient-to-l from-transparent to-primary/50" />
             </div>
+
+            {/* Show assignment for PvP */}
+            {isMultiplayer && playerChoice && opponentChoice && (
+              <div className="flex items-center justify-center gap-3 mb-1">
+                <div className="px-3 py-1.5 rounded-xl bg-primary/10 border border-primary/25">
+                  <span className="text-[9px] font-display font-bold text-primary tracking-wider">
+                    {playerName}: {playerChoice.toUpperCase()}
+                  </span>
+                </div>
+                <span className="text-[8px] text-muted-foreground">vs</span>
+                <div className="px-3 py-1.5 rounded-xl bg-accent/10 border border-accent/25">
+                  <span className="text-[9px] font-display font-bold text-accent tracking-wider">
+                    {opponentName}: {opponentChoice.toUpperCase()}
+                  </span>
+                </div>
+              </div>
+            )}
+
             <p className="text-[11px] text-muted-foreground">
-              You chose <span className="text-primary font-bold uppercase">{playerChoice}</span>. Show your hand!
+              You are <span className="text-primary font-bold uppercase">{playerChoice}</span>. Show your hand!
             </p>
             <div className="grid grid-cols-3 gap-2">
               {[1, 2, 3, 4, 6].map((n) => (
@@ -184,7 +227,6 @@ export default function OddEvenToss({ onResult, playerName = "You", opponentName
             <p className="font-display text-xs font-black text-foreground tracking-wider">TOSS RESULT</p>
 
             <div className="flex items-center justify-center gap-4">
-              {/* Player hand */}
               <div className="text-center">
                 <p className="text-[8px] text-muted-foreground font-display font-bold tracking-widest mb-1">
                   {playerName.toUpperCase().slice(0, 10)}
@@ -199,16 +241,8 @@ export default function OddEvenToss({ onResult, playerName = "You", opponentName
                 </motion.div>
               </div>
 
-              <motion.span
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.3 }}
-                className="text-xl font-black text-muted-foreground"
-              >
-                +
-              </motion.span>
+              <motion.span initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.3 }} className="text-xl font-black text-muted-foreground">+</motion.span>
 
-              {/* Opponent hand */}
               <div className="text-center">
                 <p className="text-[8px] text-muted-foreground font-display font-bold tracking-widest mb-1">
                   {opponentName.toUpperCase().slice(0, 10)}
@@ -229,9 +263,7 @@ export default function OddEvenToss({ onResult, playerName = "You", opponentName
                         animate={{ rotate: [0, -20, 20, 0], y: [0, -5, 0] }}
                         transition={{ duration: 0.4, repeat: Infinity }}
                         className="text-2xl"
-                      >
-                        ✊
-                      </motion.span>
+                      >✊</motion.span>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -241,12 +273,8 @@ export default function OddEvenToss({ onResult, playerName = "You", opponentName
             {/* Total */}
             <AnimatePresence>
               {revealStep >= 2 && playerNumber !== null && aiNumber !== null && (
-                <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: "spring", damping: 10 }}
-                  className="flex items-center justify-center gap-3"
-                >
+                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", damping: 10 }}
+                  className="flex items-center justify-center gap-3">
                   <div className="w-8 h-0.5 bg-gradient-to-r from-transparent to-secondary/50" />
                   <div className="px-4 py-2 rounded-xl bg-gradient-to-br from-secondary/20 to-secondary/5 border border-secondary/30">
                     <span className="font-display text-sm font-black text-secondary tracking-wider">
@@ -258,19 +286,15 @@ export default function OddEvenToss({ onResult, playerName = "You", opponentName
               )}
             </AnimatePresence>
 
-            {/* Win/Loss result with player name */}
+            {/* Win/Loss result */}
             <AnimatePresence>
               {revealStep >= 3 && (
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  transition={{ type: "spring", damping: 12 }}
+                <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", damping: 12 }}
                   className={`py-3 px-4 rounded-2xl font-display font-black text-sm tracking-wider ${
                     tossWon
                       ? "bg-gradient-to-r from-neon-green/15 to-neon-green/5 border border-neon-green/30 text-neon-green"
                       : "bg-gradient-to-r from-out-red/15 to-out-red/5 border border-out-red/30 text-out-red"
-                  }`}
-                >
+                  }`}>
                   🏆 {winnerName.toUpperCase()} WON THE TOSS!
                 </motion.div>
               )}
@@ -279,26 +303,15 @@ export default function OddEvenToss({ onResult, playerName = "You", opponentName
             {/* Pick innings if won */}
             <AnimatePresence>
               {revealStep >= 3 && tossWon && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="space-y-3"
-                >
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="space-y-3">
                   <p className="text-[11px] text-muted-foreground">Select your choice</p>
                   <div className="flex gap-3">
-                    <motion.button
-                      whileTap={{ scale: 0.9 }}
-                      onClick={() => handleInningsChoice(true)}
-                      className="flex-1 py-3.5 bg-gradient-to-br from-primary to-primary/70 text-primary-foreground font-display font-bold rounded-2xl text-sm shadow-[0_0_25px_hsl(217_91%_60%/0.25)] border border-primary/30"
-                    >
+                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleInningsChoice(true)}
+                      className="flex-1 py-3.5 bg-gradient-to-br from-primary to-primary/70 text-primary-foreground font-display font-bold rounded-2xl text-sm shadow-[0_0_25px_hsl(217_91%_60%/0.25)] border border-primary/30">
                       🏏 BAT FIRST
                     </motion.button>
-                    <motion.button
-                      whileTap={{ scale: 0.9 }}
-                      onClick={() => handleInningsChoice(false)}
-                      className="flex-1 py-3.5 bg-gradient-to-br from-accent to-accent/70 text-accent-foreground font-display font-bold rounded-2xl text-sm shadow-[0_0_25px_hsl(217_91%_60%/0.2)] border border-accent/30"
-                    >
+                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleInningsChoice(false)}
+                      className="flex-1 py-3.5 bg-gradient-to-br from-accent to-accent/70 text-accent-foreground font-display font-bold rounded-2xl text-sm shadow-[0_0_25px_hsl(217_91%_60%/0.2)] border border-accent/30">
                       🎯 BOWL FIRST
                     </motion.button>
                   </div>
@@ -309,11 +322,7 @@ export default function OddEvenToss({ onResult, playerName = "You", opponentName
             {/* AI chose message */}
             <AnimatePresence>
               {revealStep >= 3 && !tossWon && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                >
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
                   <p className="text-[10px] text-muted-foreground font-display tracking-wider">
                     {opponentName} is choosing...
                   </p>
