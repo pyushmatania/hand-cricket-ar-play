@@ -862,6 +862,12 @@ export default function ProfilePage() {
       </div>
 
       <BottomNav />
+      {selectedFriend && (
+        <FriendStatsModal
+          friend={selectedFriend}
+          onClose={() => setSelectedFriend(null)}
+        />
+      )}
     </div>
   );
 }

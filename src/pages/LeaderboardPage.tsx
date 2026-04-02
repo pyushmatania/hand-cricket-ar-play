@@ -586,6 +586,7 @@ export default function LeaderboardPage() {
                                 {player.display_name}{isMe && <span className="text-[7px] text-primary/60 ml-1">(YOU)</span>}
                               </span>
                               <span className={`text-[7px] ${tier.color} font-display`}>{tier.emoji}</span>
+                              {mainTab === "friends" && !isMe && <span className="text-[7px] text-primary/40 font-display">›</span>}
                             </div>
                             <span className="text-[8px] text-muted-foreground font-display">{player.total_matches} matches • {winRate}% WR</span>
                           </div>
