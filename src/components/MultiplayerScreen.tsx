@@ -1385,7 +1385,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
                               const g = gameData as unknown as MultiplayerGame;
                               setCurrentGame(g);
                               setPhase(statusToPhase(g.status));
-                              setCountdownMs(COUNTDOWN_MS);
+                              setTurnCountdownMs(TURN_TIMER_MS);
                               setCooldown(false);
                               setLastResult(null);
                               setLastBallResult(null);
