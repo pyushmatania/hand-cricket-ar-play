@@ -84,7 +84,7 @@ interface FriendMatchStats {
   strikeRate: number;
 }
 
-type Tab = "overview" | "vsai" | "rivalry" | "records";
+type Tab = "overview" | "individual" | "vsai" | "rivalry" | "records";
 
 interface Props {
   friend: FriendProfile | null;
