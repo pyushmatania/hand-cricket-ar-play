@@ -139,6 +139,9 @@ export default function HomePage() {
           </div>
         </motion.div>
 
+        {/* ── Daily Streak ───────────────────────── */}
+        <DailyStreakWidget />
+
         {/* ── Play Now CTA ───────────────────────── */}
         <motion.button
           initial={{ opacity: 0, scale: 0.95 }}
