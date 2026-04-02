@@ -347,7 +347,7 @@ export default function FriendsPage() {
                         </div>
                         <motion.button
                           whileTap={{ scale: 0.85 }}
-                          onClick={() => setChallengeTargetId(f.user_id)}
+                          onClick={(e) => { e.stopPropagation(); setChallengeTargetId(f.user_id); }}
                           className="px-3 py-2 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display text-[8px] font-bold tracking-wider"
                         >
                           LET'S BATTLE
