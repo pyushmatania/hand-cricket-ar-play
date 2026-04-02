@@ -836,11 +836,15 @@ export default function ProfilePage() {
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.05 }}
-                        className="glass-premium rounded-xl p-3 flex items-center gap-3"
+                        className="glass-premium rounded-xl p-3 flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform"
+                        onClick={() => setSelectedFriend(f)}
                       >
                         <PlayerAvatar avatarUrl={f.avatar_url} avatarIndex={f.avatar_index ?? 0} size="sm" />
                         <div className="flex-1 min-w-0">
-                          <span className="font-display text-[11px] font-bold text-foreground block truncate">{f.display_name}</span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-display text-[11px] font-bold text-foreground block truncate">{f.display_name}</span>
+                            <span className="text-[7px] text-primary/40 font-display">›</span>
+                          </div>
                           <span className="text-[8px] text-muted-foreground">{f.wins}W {f.losses}L • {winRate}% WR</span>
                         </div>
                         <div className="text-right">
