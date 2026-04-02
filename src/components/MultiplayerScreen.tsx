@@ -528,7 +528,6 @@ export default function MultiplayerScreen({ onHome }: Props) {
 
     const joined = await joinExistingGame(matched.id);
     if (!joined) {
-      setRoomCodeError("Failed to join room.");
       return;
     }
 
