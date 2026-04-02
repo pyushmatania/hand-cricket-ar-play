@@ -520,7 +520,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
       const g = game as MultiplayerGame;
       setCurrentGame(g);
       setPhase(statusToPhase(g.status));
-      setReserveTime(g.guest_reserve_ms);
+      // Timer resets happen automatically
       loadOpponentName(g);
       navigate(`/game/multiplayer?game=${g.id}`, { replace: true });
     }
