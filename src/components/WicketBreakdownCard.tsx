@@ -31,6 +31,15 @@ export interface WicketBreakdownData {
   inningsRR?: string;
   newTarget?: number;
   dismissalType?: string;
+  // Over break merged data (when wicket falls on end of over)
+  overBreakStats?: {
+    overRuns: number;
+    thisOverBalls: { runs: number | "OUT" }[];
+    crr: string;
+    rrr: string;
+    oversCompleted: number;
+    totalOvers: number | null;
+  };
 }
 
 interface WicketBreakdownCardProps {
