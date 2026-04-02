@@ -1094,6 +1094,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
             onComplete={() => setShowPvPPostMatch(false)}
             isPvP={true}
             rivalryStats={rivalryStats}
+            commentators={matchCommentators}
           />
         )}
 
