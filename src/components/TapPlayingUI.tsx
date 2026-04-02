@@ -10,7 +10,7 @@ import { pickMatchCommentators, getDuoCommentary, getOverBreakCommentary, type C
 import ScoreBoard from "./ScoreBoard";
 import CelebrationEffects from "./CelebrationEffects";
 import OverBreakScreen from "./OverBreakScreen";
-import cricketGround from "@/assets/cricket-ground.jpg";
+import pitchStrips from "@/assets/pitch-strips.jpg";
 import { pickConfiguredMatchCommentators } from "@/lib/commentaryDuo";
 
 const MOVES_CONFIG: { move: Move; emoji: string; label: string; color: string; glow: string }[] = [
