@@ -53,20 +53,18 @@ function computeStats(ballHistory: BallResult[], isBatting: boolean) {
   return { sixes, fours, threes, twos, singles, dots, biggestShot, totalBalls, strikeRate, boundaryPct, battingBalls };
 }
 
-const POST_WIN = [
-  (p: string, ps: number, os: number) => `What a magnificent victory by ${p}! Scoring ${ps} against ${os}!`,
-  (p: string) => `${p} takes the match! The crowd is on their feet! Absolutely sensational!`,
-];
+import {
+  POST_WIN_EXPANDED, POST_LOSS_EXPANDED, POST_DRAW_EXPANDED,
+  PVP_RAGE_WIN, PVP_RAGE_LOSS, PVP_RAGE_DRAW, PVP_CLOSING,
+  STATS_SIXES, STATS_FOURS, STATS_SR, STATS_BDRY_PCT, STATS_BIGGEST,
+  PRE_MATCH_INTROS, PRE_MATCH_RIVALRY, PRE_MATCH_TOSS, PRE_MATCH_GO,
+} from "@/lib/commentary";
 
-const POST_LOSS = [
-  (_p: string, o: string, ps: number, os: number) => `${o} wins the match with ${os} runs against ${ps}! What a performance!`,
-  (p: string) => `${p} fought hard but couldn't pull it off. Head held high, though!`,
-];
+function pick<T>(arr: T[]): T { return arr[Math.floor(Math.random() * arr.length)]; }
 
-const POST_DRAW = [
-  (p: string, o: string) => `It's a tie! ${p} and ${o} couldn't be separated! What drama!`,
-  (_p: string, _o: string) => `Incredible! Neither side gives in! A match for the ages!`,
-];
+const POST_WIN = POST_WIN_EXPANDED;
+const POST_LOSS = POST_LOSS_EXPANDED;
+const POST_DRAW = POST_DRAW_EXPANDED;
 
 export function PostMatchCeremony({ playerName, opponentName, result, playerScore, opponentScore, ballHistory, onComplete, isPvP = false }: PostMatchProps) {
   const [stage, setStage] = useState<Stage>("result");
@@ -83,11 +81,11 @@ export function PostMatchCeremony({ playerName, opponentName, result, playerScor
   // Generate stats commentary
   const statsLines = useMemo(() => {
     const l: string[] = [];
-    if (stats.sixes > 0) l.push(`${playerName} smashed ${stats.sixes} massive sixes! 💥`);
-    if (stats.fours > 0) l.push(`${stats.fours} boundaries found the fence! 🏏`);
-    l.push(`Strike rate of ${stats.strikeRate} off ${stats.battingBalls} balls faced!`);
-    if (stats.biggestShot === 6) l.push(`The biggest shot of the innings — a towering SIX! ☄️`);
-    if (stats.boundaryPct > 50) l.push(`Over ${stats.boundaryPct}% boundaries — pure aggression! 🔥`);
+    if (stats.sixes > 0) l.push(pick(STATS_SIXES)(playerName, stats.sixes));
+    if (stats.fours > 0) l.push(pick(STATS_FOURS)(playerName, stats.fours));
+    l.push(pick(STATS_SR)(playerName, stats.strikeRate, stats.battingBalls));
+    if (stats.biggestShot === 6) l.push(pick(STATS_BIGGEST));
+    if (stats.boundaryPct > 50) l.push(pick(STATS_BDRY_PCT)(playerName, stats.boundaryPct));
     return l;
   }, [stats, playerName]);
 
@@ -95,19 +93,15 @@ export function PostMatchCeremony({ playerName, opponentName, result, playerScor
   const pvpLines = useMemo(() => {
     if (!isPvP) return [];
     const l: string[] = [];
-    if (result === "win") {
-      l.push(`${opponentName} got absolutely cooked! 🍳 What a demolition!`);
-      l.push(`${playerName} said "sit down" and meant it! 💀🪑`);
-      if (playerScore > opponentScore * 2) l.push(`Double the score?! ${opponentName} needs to uninstall! 📵`);
-    } else if (result === "loss") {
-      l.push(`${playerName} thought they had it... NOPE! 🤡`);
-      l.push(`${opponentName} made ${playerName} look like a rookie! 😂`);
-      if (opponentScore > playerScore * 2) l.push(`Getting doubled?! Time to practice more! 📉`);
-    } else {
-      l.push(`Neither could finish the job! Both equally mid! 😐`);
-      l.push(`A draw? In THIS economy? Play again! ⚔️`);
+    const ragePool = result === "win" ? PVP_RAGE_WIN : result === "loss" ? PVP_RAGE_LOSS : PVP_RAGE_DRAW;
+    // Pick 3 unique rage lines
+    const shuffled = [...ragePool].sort(() => Math.random() - 0.5);
+    for (let i = 0; i < Math.min(3, shuffled.length); i++) {
+      l.push(shuffled[i](playerName, opponentName));
     }
-    l.push(`GGs only... or is it? 😈 REMATCH?`);
+    if (playerScore > opponentScore * 2 && result === "win") l.push(`Double the score?! ${opponentName} needs to uninstall! 📵`);
+    if (opponentScore > playerScore * 2 && result === "loss") l.push(`Getting doubled?! Time to practice more! 📉`);
+    l.push(pick(PVP_CLOSING));
     return l;
   }, [isPvP, result, playerName, opponentName, playerScore, opponentScore]);
 
@@ -396,37 +390,39 @@ export function PreMatchCeremony({ playerName, opponentName, tossWinner, batting
 
     // Stage 1: Players intro
     commentaryLines.push({
-      text: `Welcome to this exciting match! ${playerName} versus ${opponentName}!`,
+      text: pick(PRE_MATCH_INTROS)(playerName, opponentName),
       delay: t,
     });
-    t += 2200;
+    t += 3500;
 
     // Stage 2: Rivalry (if exists)
     if (hasRivalry) {
+      const pool = rivalryStats.myWins > rivalryStats.theirWins
+        ? PRE_MATCH_RIVALRY.leading
+        : rivalryStats.theirWins > rivalryStats.myWins
+        ? PRE_MATCH_RIVALRY.trailing
+        : PRE_MATCH_RIVALRY.even;
       commentaryLines.push({
-        text: rivalryStats.myWins > rivalryStats.theirWins
-          ? `${playerName} leads the head-to-head ${rivalryStats.myWins}-${rivalryStats.theirWins}! Can they extend the dominance?`
-          : rivalryStats.theirWins > rivalryStats.myWins
-          ? `${opponentName} leads ${rivalryStats.theirWins}-${rivalryStats.myWins}! ${playerName} is desperate for revenge!`
-          : `These two are locked at ${rivalryStats.myWins}-${rivalryStats.theirWins}! Who breaks the deadlock?`,
+        text: pick(pool)(playerName, opponentName, rivalryStats.myWins, rivalryStats.theirWins),
         delay: t,
       });
-      t += 2800;
+      t += 4000;
     }
 
     // Stage 3: Toss
+    const tossChoice = battingFirst === tossWinner ? "bat" : "bowl";
     commentaryLines.push({
-      text: `${tossWinner} wins the toss and elects to ${battingFirst === tossWinner ? "bat" : "bowl"} first!`,
+      text: pick(PRE_MATCH_TOSS)(tossWinner, tossChoice),
       delay: t,
     });
-    t += 2200;
+    t += 3500;
 
     // Stage 4: Go
     commentaryLines.push({
-      text: `${battingFirst} faces the first ball. Let the battle begin!`,
+      text: pick(PRE_MATCH_GO)(battingFirst),
       delay: t,
     });
-    t += 2000;
+    t += 2500;
 
     // Schedule voice and stage transitions
     const timers: NodeJS.Timeout[] = [];
