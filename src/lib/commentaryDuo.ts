@@ -509,18 +509,21 @@ export function getPostMatchResultLines(
         { commentatorId: c2, text: `${p} TAKES IT! A stunning win by ${playerScore - opponentScore} runs!`, isKeyMoment: true },
         { commentatorId: c1, text: `That's how legends play! ${p} absolutely dominated today!`, isKeyMoment: true },
       ],
+      ...HINDI_POST_MATCH_WIN,
     ],
     loss: [
       (c1, c2, p, o) => [
         { commentatorId: c1, text: `And ${o} takes the victory! ${p} fought hard but it wasn't enough today.`, isKeyMoment: true },
         { commentatorId: c2, text: `Heartbreak for ${p}! But as they say, haar ke jeetne wale ko baazigar kehte hain! Come back stronger!`, isKeyMoment: true },
       ],
+      ...HINDI_POST_MATCH_LOSS,
     ],
     draw: [
       (c1, c2, p, o) => [
         { commentatorId: c1, text: `IT'S A TIE! Both teams level! What a finish!`, isKeyMoment: true },
         { commentatorId: c2, text: `Cricket ka asli mazaa! Neither side deserved to lose today!`, isKeyMoment: true },
       ],
+      ...HINDI_POST_MATCH_DRAW,
     ],
   };
   const pool = pools[result];
@@ -546,7 +549,7 @@ export function getPostMatchVerdictLines(
   c1Name: string, c2Name: string, playerName: string, opponentName: string, result: "win" | "loss" | "draw"
 ): CommentaryLine[] {
   const motm = result === "win" ? playerName : result === "loss" ? opponentName : "Shared";
-  const pools: DuoGen[] = [
+  const enPools: DuoGen[] = [
     (c1, c2, p, o) => [
       { commentatorId: c1, text: `Man of the Match goes to ${motm}! Well deserved!`, isKeyMoment: true },
       { commentatorId: c2, text: `${result === "win" ? `${p}, take a bow! Kya performance tha!` : result === "loss" ? `Credit to ${o}. ${p} will bounce back, I'm sure!` : `Both players share the honors! Kya contest tha!`}`, isKeyMoment: true },
@@ -558,7 +561,47 @@ export function getPostMatchVerdictLines(
       { commentatorId: c2, text: `Until next time, cricket lovers! ${c2} and ${c1} signing off! Jai Cricket!`, isKeyMoment: false },
     ],
   ];
-  return pools[Math.floor(Math.random() * pools.length)](c1Name, c2Name, playerName, opponentName);
+  const hiVerdicts: DuoGen[] = [
+    (c1, c2, p, o) => [
+      { commentatorId: c1, text: `Man of the Match: ${motm}! 🏆 "Mogambo khush hua!"`, isKeyMoment: true },
+      { commentatorId: c2, text: `${result === "win" ? `${p} — tu toh 'Sultan' hai bhai! 🤼 Champion!` : result === "loss" ? `${p} — "Zindagi mein aur bhi gham hain" toh ye match bhool ja! 😂` : `Dono champion! "Dosti" ka jeet hai ye! 🤝`}`, isKeyMoment: true },
+      { commentatorId: c1, text: `Alvida dosto! ${c1} aur ${c2} — "Phir milenge chalte chalte!" 🎬`, isKeyMoment: false },
+    ],
+    (c1, c2, p, o) => [
+      { commentatorId: c2, text: `MOTM: ${motm}! "Ye banda form mein hai!" 🔥`, isKeyMoment: true },
+      { commentatorId: c1, text: `${result === "win" ? `${p} — IPL auction mein tera price ab 20 crore! 💰` : result === "loss" ? `${p} — "Unsold" ho gaya bhai auction mein! 😂 Practice kar!` : `Dono ko 10-10 crore! Fair deal! 🤝`}`, isKeyMoment: true },
+      { commentatorId: c2, text: `Tata bye bye! ${c2} aur ${c1} — "Kal ho na ho, aaj hand cricket khelo!" 🏏`, isKeyMoment: false },
+    ],
+    (c1, c2, p, o) => [
+      { commentatorId: c1, text: `Award ceremony! ${motm} ko 'Filmfare' nahi, 'Cricketfare' award! 🏅`, isKeyMoment: true },
+      { commentatorId: c2, text: `${result === "win" ? `${p} ka acceptance speech: "Main sabka shukriya ada karta hoon — especially opponent jo haar gaya!" 😂` : result === "loss" ? `${p} bhai next time "Tiger Zinda Hai" bolke aana — abhi toh Tiger mar gaya! 🐯💀` : `Dono ne dil jeet liya! "Kuch Kuch Hota Hai" — aur aaj tie hua! ❤️`}`, isKeyMoment: true },
+      { commentatorId: c1, text: `"THE END" — credits roll! Next episode mein milte hain! 🎬🍿`, isKeyMoment: false },
+    ],
+  ];
+  const combined = [...enPools, ...hiVerdicts];
+  return combined[Math.floor(Math.random() * combined.length)](c1Name, c2Name, playerName, opponentName);
+}
+
+export function getPostMatchRivalryLines(
+  c1Name: string, c2Name: string, playerName: string, opponentName: string,
+  result: "win" | "loss" | "draw", rivalryStats: { myWins: number; theirWins: number; totalGames: number }
+): CommentaryLine[] {
+  const updatedWins = rivalryStats.myWins + (result === "win" ? 1 : 0);
+  const updatedLosses = rivalryStats.theirWins + (result === "loss" ? 1 : 0);
+  const enLines: DuoGen[] = [
+    (c1, c2, p, o) => [
+      { commentatorId: c1, text: `Head-to-head update: ${p} ${updatedWins} - ${updatedLosses} ${o}! ${updatedWins > updatedLosses ? `${p} extending the lead!` : updatedLosses > updatedWins ? `${o} still on top!` : "All square now!"}`, isKeyMoment: false },
+      { commentatorId: c2, text: `${result === "win" ? `${p} ka jalwa! Dominance!` : result === "loss" ? `${o} says "main abhi zinda hoon!" Rivalry is ON!` : `This rivalry refuses to die! REMATCH when?!`}`, isKeyMoment: false },
+    ],
+  ];
+  const hiLines: DuoGen[] = [
+    (c1, c2, p, o) => [
+      { commentatorId: c1, text: `Rivalry update: ${p} ${updatedWins} - ${updatedLosses} ${o}! ${updatedWins > updatedLosses ? `"Baap baap hota hai!" 👨` : updatedLosses > updatedWins ? `"Beta beta hota hai!" 😂` : `"Barabar ka takkar!" ⚔️`}`, isKeyMoment: false },
+      { commentatorId: c2, text: `${result === "win" ? `Ye toh 'India vs Pakistan' jaisa one-sided ho gaya! 🇮🇳` : result === "loss" ? `"Wapas aayenge" — ${p} ka 'Terminator' dialogue! 🤖` : `"Katti batti" — na tujhe na mujhe! REMATCH! 🔁`}`, isKeyMoment: false },
+    ],
+  ];
+  const pool = [...enLines, ...hiLines];
+  return pool[Math.floor(Math.random() * pool.length)](c1Name, c2Name, playerName, opponentName);
 }
 
 export function getPostMatchRivalryLines(
