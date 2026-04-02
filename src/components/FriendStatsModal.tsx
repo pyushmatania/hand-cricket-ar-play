@@ -242,6 +242,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
     const { data: myMatches } = await supabase
       .from("matches").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(1000);
 
+    setRecentFriendMatches((friendMatches || []).slice(0, 15));
     setFriendMatchStats(computeMatchStats(friendMatches || []));
     setMyMatchStats(computeMatchStats(myMatches || []));
   };
