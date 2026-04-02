@@ -80,7 +80,6 @@ interface FriendMatchStats {
   totalRuns: number;
   sixes: number;
   fours: number;
-  dots: number;
   avgScore: number;
   strikeRate: number;
 }
