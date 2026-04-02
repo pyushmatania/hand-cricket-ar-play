@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { GameState, BallResult } from "@/hooks/useHandCricket";
 import pitchStrips from "@/assets/pitch-strips.jpg";
