@@ -1226,8 +1226,141 @@ export default function MultiplayerScreen({ onHome }: Props) {
           </motion.div>
         )}
 
+        {/* Post-toss Role Card */}
+        <AnimatePresence>
+          {showRoleCard && roleCardData && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-md"
+            >
+              <motion.div
+                initial={{ y: 30 }}
+                animate={{ y: 0 }}
+                className="glass-premium rounded-3xl p-8 text-center space-y-4 border border-primary/30 shadow-[0_0_60px_hsl(217_91%_60%/0.2)] max-w-xs w-full mx-4"
+              >
+                <motion.span
+                  animate={{ scale: [1, 1.2, 1], rotate: [0, 5, -5, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-6xl block"
+                >
+                  {roleCardData.isBatting ? "🏏" : "🎯"}
+                </motion.span>
+                <h2 className="font-display text-2xl font-black text-foreground tracking-wider">
+                  YOU ARE {roleCardData.isBatting ? "BATTING" : "BOWLING"}
+                </h2>
+                <div className="flex items-center justify-center gap-3">
+                  <div className="px-4 py-2 rounded-xl bg-primary/15 border border-primary/30">
+                    <span className="text-[10px] font-display font-bold text-primary tracking-wider">
+                      {myName}: {roleCardData.isBatting ? "🏏 BAT" : "🎯 BOWL"}
+                    </span>
+                  </div>
+                  <span className="text-xs text-muted-foreground font-black">VS</span>
+                  <div className="px-4 py-2 rounded-xl bg-accent/15 border border-accent/30">
+                    <span className="text-[10px] font-display font-bold text-accent tracking-wider">
+                      {opponentName}: {roleCardData.isBatting ? "🎯 BOWL" : "🏏 BAT"}
+                    </span>
+                  </div>
+                </div>
+                <p className="text-[10px] text-muted-foreground font-display tracking-wider">
+                  {roleCardData.isBatting ? "Score big! Your opponent will bowl." : "Get them out! Your opponent will bat."}
+                </p>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Innings Break Overlay with Ready-Up */}
+        <AnimatePresence>
+          {showInningsBreak && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-background/85 backdrop-blur-lg"
+            >
+              <motion.div
+                initial={{ scale: 0.8, y: 30 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: -20 }}
+                className="glass-premium rounded-3xl p-6 text-center space-y-4 border border-secondary/40 shadow-[0_0_60px_hsl(45_93%_58%/0.2)] max-w-sm w-full mx-4"
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", damping: 10, delay: 0.2 }}
+                >
+                  <span className="text-5xl block mb-2">🔄</span>
+                  <h2 className="font-display text-xl font-black text-secondary tracking-wider">INNINGS SWITCH</h2>
+                </motion.div>
+
+                {/* Score summary */}
+                <div className="glass-card rounded-xl p-4 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="font-display text-[9px] font-bold text-muted-foreground tracking-widest">1ST INNINGS SCORE</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-4">
+                    <div className="text-center">
+                      <span className="text-[8px] text-muted-foreground font-display block">{myName.toUpperCase()}</span>
+                      <span className="font-display text-2xl font-black text-score-gold">{myScore}</span>
+                    </div>
+                    <span className="text-muted-foreground font-black">—</span>
+                    <div className="text-center">
+                      <span className="text-[8px] text-muted-foreground font-display block">{opponentName.toUpperCase()}</span>
+                      <span className="font-display text-2xl font-black text-accent">{oppScore}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Role swap info */}
+                <div className="flex items-center justify-center gap-3">
+                  <div className="px-3 py-2 rounded-xl bg-primary/15 border border-primary/30">
+                    <span className="text-[10px] font-display font-bold text-primary tracking-wider">
+                      {myName}: {isBatting ? "🎯 NOW BOWLING" : "🏏 NOW BATTING"}
+                    </span>
+                  </div>
+                </div>
+
+                {isBatting ? (
+                  <p className="text-[10px] text-muted-foreground font-display">
+                    Target: <span className="text-secondary font-black text-sm">{oppScore + 1}</span> runs to win
+                  </p>
+                ) : (
+                  <p className="text-[10px] text-muted-foreground font-display">
+                    Defend <span className="text-secondary font-black text-sm">{myScore}</span> runs
+                  </p>
+                )}
+
+                {/* Ready button */}
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={async () => {
+                    if (!currentGame || !user || inningsBreakReady) return;
+                    setInningsBreakReady(true);
+                    const isHostLocal = user.id === currentGame.host_id;
+                    await supabase.from("multiplayer_games").update(
+                      isHostLocal
+                        ? { host_move: "READY", host_move_submitted_at: new Date().toISOString() }
+                        : { guest_move: "READY", guest_move_submitted_at: new Date().toISOString() }
+                    ).eq("id", currentGame.id);
+                  }}
+                  disabled={inningsBreakReady}
+                  className={`w-full py-4 font-display font-black text-sm rounded-2xl tracking-wider transition-all ${
+                    inningsBreakReady
+                      ? "bg-muted/50 text-muted-foreground border border-border"
+                      : "bg-gradient-to-r from-neon-green to-neon-green/70 text-background shadow-[0_0_30px_hsl(142_71%_45%/0.3)] border border-neon-green/40"
+                  }`}
+                >
+                  {inningsBreakReady ? "⏳ WAITING FOR OPPONENT..." : "✅ READY TO PLAY"}
+                </motion.button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* PLAYING — uses shared TapPlayingUI */}
-        {phase === "playing" && currentGame && (
+        {phase === "playing" && currentGame && !showRoleCard && (
           <TapPlayingUI
             phase={isBatting ? (currentGame.innings === 1 ? "first_batting" : "second_batting") : (currentGame.innings === 1 ? "first_bowling" : "second_bowling")}
             userScore={myScore}
@@ -1251,7 +1384,16 @@ export default function MultiplayerScreen({ onHome }: Props) {
             modeLabel={modeLabel}
             extraContent={
               <>
-                {/* 5s Synced Countdown Timer — always visible during action */}
+                {/* POV Role indicator */}
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <div className={`px-3 py-1.5 rounded-full ${isBatting ? "bg-primary/15 border border-primary/25" : "bg-accent/15 border border-accent/25"}`}>
+                    <span className={`font-display text-[9px] font-bold tracking-wider ${isBatting ? "text-primary" : "text-accent"}`}>
+                      {isBatting ? "🏏 YOU ARE BATTING" : "🎯 YOU ARE BOWLING"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 10s Synced Countdown Timer — always visible during action */}
                 <AnimatePresence>
                   {!waitingForOpponent && phase === "playing" && (
                     <motion.div initial={{ opacity: 0, y: -10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0 }}
