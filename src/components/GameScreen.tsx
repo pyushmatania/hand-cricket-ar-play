@@ -216,7 +216,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         }
         if (hapticsEnabled) setTimeout(() => Haptics.firework(), 800);
       } else if (abs === 4) {
-        setTimeout(() => { if (soundEnabled) SFX.four(); if (hapticsEnabled) Haptics.medium(); }, 100);
+        setTimeout(() => { if (soundEnabled) SFX.four(); if (hapticsEnabled) Haptics.medium(); crowdRoar("four"); }, 100);
         setFireworkType("four");
         if (soundEnabled) setTimeout(() => SFX.fireworkPop(), 400);
       } else {
