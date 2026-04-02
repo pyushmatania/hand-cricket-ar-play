@@ -68,6 +68,7 @@ export default function TapPlayingUI({
   const [overBreakData, setOverBreakData] = useState<any>(null);
   const [showWicketBreakdown, setShowWicketBreakdown] = useState(false);
   const [wicketBreakdownData, setWicketBreakdownData] = useState<WicketBreakdownData | null>(null);
+  const [floodlightFlicker, setFloodlightFlicker] = useState(false);
   const prevPhaseRef = useRef(phase);
   const prevBallCountRef = useRef(0);
   const prevWicketsRef = useRef({ user: 0, ai: 0 });
@@ -121,6 +122,14 @@ export default function TapPlayingUI({
       const remainingBalls = config.overs ? (config.overs * 6 - totalBalls) : 999;
       const remaining = target ? Math.max(0, target - score) : 0;
       const rrr = remainingBalls > 0 && target ? (remaining / (remainingBalls / 6)).toFixed(1) : "0.0";
+
+      const overBreakMerge = { overRuns, thisOverBalls, crr, rrr, oversCompleted, totalOvers: config.overs };
+
+      // If wicket fell on this ball, merge into wicket breakdown card instead
+      if (lastResult && lastResult.runs === "OUT") {
+        setWicketBreakdownData(prev => prev ? { ...prev, overBreakStats: overBreakMerge } : prev);
+        return; // Don't show separate over break
+      }
 
       const stats = {
         overRuns, score, wickets, opponentScore, opponentWickets,
@@ -227,6 +236,10 @@ export default function TapPlayingUI({
     // Reset partnership tracking for next batsman
     partnershipStartRef.current = { score: currentScore, balls: inningsBalls };
 
+    // Trigger floodlight flicker on wickets
+    setFloodlightFlicker(true);
+    setTimeout(() => setFloodlightFlicker(false), 2000);
+
     // Don't show if game is finished (post-match handles that)
     if (phase !== "finished") {
       setWicketBreakdownData(breakdownData);
@@ -312,6 +325,29 @@ export default function TapPlayingUI({
           <div className="absolute inset-0 boundary-glow" />
         </div>
       )}
+
+      {/* Floodlight flicker on wickets — warm pulse */}
+      <AnimatePresence>
+        {floodlightFlicker && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0.3, 0.05, 0.25, 0.08, 0.2, 0] }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.8, times: [0, 0.1, 0.2, 0.35, 0.5, 0.7, 1] }}
+            className="fixed inset-0 z-[5] pointer-events-none"
+          >
+            {/* Top-left floodlight */}
+            <div className="absolute top-0 left-0 w-40 h-40 rounded-full"
+              style={{ background: "radial-gradient(circle, hsl(45 93% 58% / 0.4) 0%, transparent 70%)", filter: "blur(20px)" }} />
+            {/* Top-right floodlight */}
+            <div className="absolute top-0 right-0 w-40 h-40 rounded-full"
+              style={{ background: "radial-gradient(circle, hsl(45 93% 58% / 0.35) 0%, transparent 70%)", filter: "blur(20px)" }} />
+            {/* Center warm wash */}
+            <div className="absolute inset-0"
+              style={{ background: "radial-gradient(ellipse at 50% 20%, hsl(40 80% 60% / 0.08) 0%, transparent 60%)" }} />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Over break screen */}
       <AnimatePresence>
@@ -459,7 +495,7 @@ export default function TapPlayingUI({
 
       {/* Tap buttons grid */}
       {phase !== "not_started" && phase !== "finished" && !waitingForOpponent && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative pb-1">
           <AnimatePresence>
             {showExplosion && (
               <motion.div
@@ -485,7 +521,7 @@ export default function TapPlayingUI({
                 whileTap={{ scale: 0.8 }}
                 onClick={() => handleMove(m.move)}
                 disabled={effectiveCooldown}
-                className={`relative py-2.5 rounded-xl font-display font-bold text-sm flex flex-col items-center gap-0.5 transition-all border backdrop-blur-sm ${
+                className={`relative py-2 rounded-xl font-display font-bold text-sm flex flex-col items-center gap-0.5 transition-all border backdrop-blur-sm ${
                   effectiveCooldown
                     ? "opacity-30 cursor-not-allowed border-transparent bg-muted/20"
                     : lastPlayed === m.move
