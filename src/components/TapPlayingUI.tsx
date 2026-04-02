@@ -149,11 +149,7 @@ export default function TapPlayingUI({
 
       // Speak key moment lines
       if (voiceEnabled && commentaryEnabled) {
-        const keyLines = lines.filter(l => l.isKeyMoment).map(l => ({
-          text: l.text,
-          voiceId: (matchCommentators.find(c => c.name === l.commentatorId || c.id === l.commentatorId) || matchCommentators[0]).voiceId,
-        }));
-        speakDuoLines(keyLines);
+        speakDuoCommentary(lines, matchCommentators, voiceEngine);
       }
     }
   }, [ballHistory.length]);
