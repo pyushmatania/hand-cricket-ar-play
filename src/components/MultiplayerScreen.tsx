@@ -514,6 +514,47 @@ export default function MultiplayerScreen({ onHome }: Props) {
       setOpponentName(data.display_name);
       setOpponentAvatarIndex((data as any).avatar_index ?? 1);
     }
+    // Load rivalry stats
+    if (user) {
+      const { data: games } = await supabase
+        .from("multiplayer_games")
+        .select("host_id, guest_id, host_score, guest_score, winner_id, status")
+        .or(`and(host_id.eq.${user.id},guest_id.eq.${oppId}),and(host_id.eq.${oppId},guest_id.eq.${user.id})`)
+        .in("status", ["finished", "abandoned"])
+        .order("created_at", { ascending: false })
+        .limit(100);
+      if (games && games.length > 0) {
+        let myWins = 0, theirWins = 0, myHighScore = 0, theirHighScore = 0;
+        let myTotalScore = 0, theirTotalScore = 0;
+        let winStreak = 0, loseStreak = 0, lastResult: "win" | "loss" | "draw" = "draw";
+        games.forEach((g: any, i: number) => {
+          const isHost = g.host_id === user.id;
+          const myS = isHost ? g.host_score : g.guest_score;
+          const theirS = isHost ? g.guest_score : g.host_score;
+          myTotalScore += myS; theirTotalScore += theirS;
+          if (myS > myHighScore) myHighScore = myS;
+          if (theirS > theirHighScore) theirHighScore = theirS;
+          if (g.winner_id === user.id) { myWins++; if (i === 0) lastResult = "win"; }
+          else if (g.winner_id) { theirWins++; if (i === 0) lastResult = "loss"; }
+          else if (i === 0) lastResult = "draw";
+        });
+        // Calculate streaks from most recent
+        for (const g of games) {
+          if ((g as any).winner_id === user.id) { if (loseStreak === 0) winStreak++; else break; }
+          else if ((g as any).winner_id) { if (winStreak === 0) loseStreak++; else break; }
+          else break;
+        }
+        setRivalryStats({
+          myWins, theirWins, totalGames: games.length,
+          myHighScore, theirHighScore,
+          myAvgScore: Math.round(myTotalScore / games.length),
+          theirAvgScore: Math.round(theirTotalScore / games.length),
+          lastResult, winStreak, loseStreak,
+        });
+      } else {
+        setRivalryStats(null);
+      }
+    }
   };
 
   const createGame = async (gameType: GameType = selectedGameType) => {
