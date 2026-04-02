@@ -220,6 +220,71 @@ export function useMatchSaver() {
           }
         } catch (e) { console.error("[Challenges] update failed", e); }
 
+        // ── SMART NUDGE NOTIFICATIONS ──
+
+        // 1. Challenge proximity nudge
+        try {
+          const { getWeekBounds } = await import("@/lib/weeklyChallenges");
+          const { start, end } = getWeekBounds();
+          const { data: activeChallenges } = await supabase
+            .from("weekly_challenges")
+            .select("id, challenge_type, target_value, title")
+            .gte("week_start", start.toISOString().split("T")[0])
+            .lte("week_end", end.toISOString().split("T")[0]) as any;
+
+          if (activeChallenges) {
+            for (const c of activeChallenges as any[]) {
+              const { data: prog } = await supabase
+                .from("challenge_progress")
+                .select("current_value, completed")
+                .eq("user_id", user.id)
+                .eq("challenge_id", c.id)
+                .maybeSingle() as any;
+
+              if (prog?.completed) continue;
+              const current = prog?.current_value || 0;
+              const remaining = c.target_value - current;
+
+              if (remaining > 0 && remaining <= 3) {
+                await supabase.from("notifications").insert({
+                  user_id: user.id,
+                  type: "nudge",
+                  title: `Almost there! 🔥`,
+                  message: remaining === 1
+                    ? `Just 1 more to complete "${c.title}"! Go for it! 🎯`
+                    : `${remaining} more to complete "${c.title}"! Keep pushing! 💪`,
+                  data: { challenge_id: c.id },
+                } as any);
+              }
+            }
+          }
+        } catch (e) { console.error("[Nudge] challenge proximity failed", e); }
+
+        // 2. Rank tier proximity nudge
+        try {
+          const { getNextTier } = await import("@/lib/rankTiers");
+          const nextTierInfo = getNextTier({
+            wins: updatedStats.wins,
+            total_matches: updatedStats.total_matches,
+            high_score: updatedStats.high_score,
+            best_streak: Math.max(profile.best_streak, updatedStats.current_streak),
+          });
+
+          if (nextTierInfo.next && nextTierInfo.progress >= 80) {
+            const tierEmoji = nextTierInfo.next.emoji;
+            const ptsLeft = nextTierInfo.pointsNeeded;
+            await supabase.from("notifications").insert({
+              user_id: user.id,
+              type: "nudge",
+              title: `${tierEmoji} ${nextTierInfo.next.name} is close!`,
+              message: ptsLeft <= 10
+                ? `You're just ${ptsLeft} points from ${nextTierInfo.next.name}! One more win could do it! 🚀`
+                : `${ptsLeft} points to ${nextTierInfo.next.name}! Keep winning! 🔥`,
+              data: { target_tier: nextTierInfo.next.name },
+            } as any);
+          }
+        } catch (e) { console.error("[Nudge] rank proximity failed", e); }
+
         // Rivalry notifications after multiplayer matches
         if (mode === "multiplayer" || mode === "tap") {
           try {
