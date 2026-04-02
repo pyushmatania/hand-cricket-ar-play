@@ -77,6 +77,9 @@ export async function speakDuoCommentary(
   const keyLines = lines.filter(l => l.isKeyMoment);
   if (keyLines.length === 0) return;
 
+  // Stop any ongoing speech first
+  stopVoice();
+
   const useElevenLabs = engine === "elevenlabs" || (engine === "auto" && isElevenLabsAvailable());
 
   if (useElevenLabs) {
@@ -85,11 +88,10 @@ export async function speakDuoCommentary(
       voiceId: (commentators.find(c => c.name === l.commentatorId || c.id === l.commentatorId) || commentators[0]).voiceId,
     }));
     await speakDuoLines(ttsLines);
-    // If ElevenLabs didn't fail midway, we're done
     if (isElevenLabsAvailable() || engine === "elevenlabs") return;
   }
 
-  // System duo voices
+  // System duo voices — don't cancel again, we already did above
   const systemLines = keyLines.map(l => ({
     text: l.text,
     personaId: getSystemPersonaForCommentator(l.commentatorId).id,
