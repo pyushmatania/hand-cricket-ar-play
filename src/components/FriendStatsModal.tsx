@@ -543,6 +543,107 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                       </div>
                     </div>
 
+                    {/* Form Chart - Last 10 Results */}
+                    {recentFriendMatches.length > 0 && (
+                      <div className="glass-card rounded-xl p-3">
+                        <span className="text-[6px] font-display text-muted-foreground tracking-widest block mb-2">RECENT FORM (LAST 10)</span>
+                        <div className="flex items-center gap-1.5 justify-center mb-2">
+                          {recentFriendMatches.slice(0, 10).map((m, i) => {
+                            const won = m.result === "win";
+                            const lost = m.result === "loss";
+                            return (
+                              <motion.div
+                                key={m.id}
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ delay: i * 0.05 }}
+                                className={`w-6 h-6 rounded-lg flex items-center justify-center text-[8px] font-display font-black border ${
+                                  won ? "bg-neon-green/15 border-neon-green/30 text-neon-green" :
+                                  lost ? "bg-out-red/15 border-out-red/30 text-out-red" :
+                                  "bg-secondary/15 border-secondary/30 text-secondary"
+                                }`}
+                              >
+                                {won ? "W" : lost ? "L" : "D"}
+                              </motion.div>
+                            );
+                          })}
+                        </div>
+                        <div className="flex items-center justify-center gap-3">
+                          {(() => {
+                            const last10 = recentFriendMatches.slice(0, 10);
+                            const w = last10.filter((m: any) => m.result === "win").length;
+                            const l = last10.filter((m: any) => m.result === "loss").length;
+                            const d = last10.length - w - l;
+                            return (
+                              <>
+                                <span className="text-[7px] font-display font-bold text-neon-green">{w}W</span>
+                                <span className="text-[7px] font-display font-bold text-out-red">{l}L</span>
+                                {d > 0 && <span className="text-[7px] font-display font-bold text-secondary">{d}D</span>}
+                              </>
+                            );
+                          })()}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Streak History */}
+                    {recentFriendMatches.length > 0 && (
+                      <div className="glass-card rounded-xl p-3">
+                        <span className="text-[6px] font-display text-muted-foreground tracking-widest block mb-2">STREAK HISTORY</span>
+                        {(() => {
+                          const streaks: { type: "W" | "L" | "D"; count: number }[] = [];
+                          for (const m of recentFriendMatches) {
+                            const r = m.result === "win" ? "W" : m.result === "loss" ? "L" : "D";
+                            if (streaks.length > 0 && streaks[streaks.length - 1].type === r) {
+                              streaks[streaks.length - 1].count++;
+                            } else {
+                              streaks.push({ type: r, count: 1 });
+                            }
+                          }
+                          const maxStreak = Math.max(...streaks.map(s => s.count), 1);
+                          return (
+                            <div className="space-y-1">
+                              {streaks.slice(0, 8).map((s, i) => (
+                                <div key={i} className="flex items-center gap-2">
+                                  <span className={`text-[7px] font-display font-black w-6 text-right ${
+                                    s.type === "W" ? "text-neon-green" : s.type === "L" ? "text-out-red" : "text-secondary"
+                                  }`}>{s.count}{s.type}</span>
+                                  <div className="flex-1 h-2 rounded-full bg-muted/20 overflow-hidden">
+                                    <motion.div
+                                      initial={{ width: 0 }}
+                                      animate={{ width: `${(s.count / maxStreak) * 100}%` }}
+                                      transition={{ delay: i * 0.08, duration: 0.4 }}
+                                      className={`h-full rounded-full ${
+                                        s.type === "W" ? "bg-gradient-to-r from-neon-green to-neon-green/60" :
+                                        s.type === "L" ? "bg-gradient-to-r from-out-red to-out-red/60" :
+                                        "bg-gradient-to-r from-secondary to-secondary/60"
+                                      }`}
+                                    />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          );
+                        })()}
+                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-muted/10">
+                          <div className="flex items-center gap-1">
+                            <span className="text-xs">🔥</span>
+                            <span className="text-[6px] font-display text-muted-foreground tracking-widest">BEST WIN STREAK</span>
+                          </div>
+                          <span className="font-display text-sm font-black text-score-gold">{fp.best_streak}</span>
+                        </div>
+                        <div className="flex items-center justify-between mt-1">
+                          <div className="flex items-center gap-1">
+                            <span className="text-xs">⚡</span>
+                            <span className="text-[6px] font-display text-muted-foreground tracking-widest">CURRENT STREAK</span>
+                          </div>
+                          <span className={`font-display text-sm font-black ${(fp.current_streak ?? 0) > 0 ? "text-neon-green" : "text-foreground"}`}>
+                            {(fp.current_streak ?? 0) > 0 ? `${fp.current_streak}W` : fp.current_streak === 0 ? "—" : `${Math.abs(fp.current_streak ?? 0)}L`}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+
                     {/* Performance metrics */}
                     {friendMatchStats && (
                       <div className="glass-card rounded-xl p-3">
