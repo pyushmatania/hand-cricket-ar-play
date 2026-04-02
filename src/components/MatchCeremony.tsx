@@ -390,37 +390,39 @@ export function PreMatchCeremony({ playerName, opponentName, tossWinner, batting
 
     // Stage 1: Players intro
     commentaryLines.push({
-      text: `Welcome to this exciting match! ${playerName} versus ${opponentName}!`,
+      text: pick(PRE_MATCH_INTROS)(playerName, opponentName),
       delay: t,
     });
-    t += 2200;
+    t += 3500;
 
     // Stage 2: Rivalry (if exists)
     if (hasRivalry) {
+      const pool = rivalryStats.myWins > rivalryStats.theirWins
+        ? PRE_MATCH_RIVALRY.leading
+        : rivalryStats.theirWins > rivalryStats.myWins
+        ? PRE_MATCH_RIVALRY.trailing
+        : PRE_MATCH_RIVALRY.even;
       commentaryLines.push({
-        text: rivalryStats.myWins > rivalryStats.theirWins
-          ? `${playerName} leads the head-to-head ${rivalryStats.myWins}-${rivalryStats.theirWins}! Can they extend the dominance?`
-          : rivalryStats.theirWins > rivalryStats.myWins
-          ? `${opponentName} leads ${rivalryStats.theirWins}-${rivalryStats.myWins}! ${playerName} is desperate for revenge!`
-          : `These two are locked at ${rivalryStats.myWins}-${rivalryStats.theirWins}! Who breaks the deadlock?`,
+        text: pick(pool)(playerName, opponentName, rivalryStats.myWins, rivalryStats.theirWins),
         delay: t,
       });
-      t += 2800;
+      t += 4000;
     }
 
     // Stage 3: Toss
+    const tossChoice = battingFirst === tossWinner ? "bat" : "bowl";
     commentaryLines.push({
-      text: `${tossWinner} wins the toss and elects to ${battingFirst === tossWinner ? "bat" : "bowl"} first!`,
+      text: pick(PRE_MATCH_TOSS)(tossWinner, tossChoice),
       delay: t,
     });
-    t += 2200;
+    t += 3500;
 
     // Stage 4: Go
     commentaryLines.push({
-      text: `${battingFirst} faces the first ball. Let the battle begin!`,
+      text: pick(PRE_MATCH_GO)(battingFirst),
       delay: t,
     });
-    t += 2000;
+    t += 2500;
 
     // Schedule voice and stage transitions
     const timers: NodeJS.Timeout[] = [];
