@@ -298,13 +298,21 @@ export default function MultiplayerScreen({ onHome }: Props) {
         { event: "UPDATE", schema: "public", table: "multiplayer_games", filter: `id=eq.${currentGame.id}` },
         (payload) => {
           const updated = payload.new as MultiplayerGame;
-          setCurrentGame(updated);
-
+          const prevPhase = phase;
           const nextPhase = statusToPhase(updated.status);
-          setPhase(nextPhase);
+          
+          setCurrentGame(updated);
 
           if (updated.guest_id) {
             loadOpponentName(updated);
+          }
+
+          // Show VS intro when transitioning from waiting to toss
+          if (prevPhase === "waiting" && nextPhase === "toss" && !showVSIntro) {
+            setShowVSIntro(true);
+            // Phase will be set after VS intro completes
+          } else {
+            setPhase(nextPhase);
           }
 
           if (updated.host_move && updated.guest_move) {
