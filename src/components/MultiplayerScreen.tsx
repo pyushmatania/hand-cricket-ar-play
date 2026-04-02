@@ -32,9 +32,9 @@ const MOVES: { move: Move; emoji: string; label: string; color: string }[] = [
   { move: 6, emoji: "👍", label: "6", color: "border-primary/40 bg-primary/10" },
 ];
 
-const IDLE_THRESHOLD_MS = 15000; // 15s before countdown appears
-const COUNTDOWN_MS = 30000; // 30s countdown to auto-lose
+const TURN_TIMER_MS = 5000; // 5s per turn
 const GAME_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
+const MAX_CONSECUTIVE_MISSES = 3; // 3 missed turns = forfeit
 const MOVE_SETS: Record<GameType, { move: Move; emoji: string; label: string; color: string }[]> = {
   ar: MOVES,
   tap: MOVES.filter((m) => m.move !== "DEF"),
@@ -122,12 +122,12 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [createModePickerOpen, setCreateModePickerOpen] = useState(false);
   const [lobbyMessage, setLobbyMessage] = useState<string | null>(null);
 
-  // Timer state — idle detection + countdown
-  const [idleMs, setIdleMs] = useState(0);
-  const [countdownMs, setCountdownMs] = useState(COUNTDOWN_MS);
-  const [showCountdown, setShowCountdown] = useState(false);
+  // Timer state — 5s per turn countdown
+  const [turnCountdownMs, setTurnCountdownMs] = useState(TURN_TIMER_MS);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const turnStartRef = useRef<number>(Date.now());
+  const [myConsecutiveMisses, setMyConsecutiveMisses] = useState(0);
+  const [oppConsecutiveMisses, setOppConsecutiveMisses] = useState(0);
   
   // Tease messages
   const TEASE_MESSAGES = [
@@ -531,44 +531,54 @@ export default function MultiplayerScreen({ onHome }: Props) {
     return () => clearInterval(interval);
   }, [incomingRematch?.inviteId]);
 
-  // Timer management — idle detection + countdown
+  // Timer management — 5s synced countdown per turn
   const myMove = currentGame ? (user?.id === currentGame.host_id ? currentGame.host_move : currentGame.guest_move) : null;
   const waitingForOpponent = myMove !== null;
+  const autoSubmitRef = useRef(false);
 
   useEffect(() => {
     if (phase !== "playing" || !currentGame) return;
-    if (waitingForOpponent) { stopTimer(); setShowCountdown(false); setIdleMs(0); return; }
-    // Reset and start idle tracking
+    if (waitingForOpponent) { stopTimer(); return; }
+    // Reset countdown for new turn
+    autoSubmitRef.current = false;
     turnStartRef.current = Date.now();
-    setIdleMs(0);
-    setShowCountdown(false);
-    setCountdownMs(COUNTDOWN_MS);
+    setTurnCountdownMs(TURN_TIMER_MS);
     
     timerRef.current = setInterval(() => {
       const elapsed = Date.now() - turnStartRef.current;
-      setIdleMs(elapsed);
-      if (elapsed >= IDLE_THRESHOLD_MS) {
-        setShowCountdown(true);
-        const countdownElapsed = elapsed - IDLE_THRESHOLD_MS;
-        const remaining = Math.max(0, COUNTDOWN_MS - countdownElapsed);
-        setCountdownMs(remaining);
-        if (remaining <= 0) handleAbandon();
+      const remaining = Math.max(0, TURN_TIMER_MS - elapsed);
+      setTurnCountdownMs(remaining);
+      if (remaining <= 0 && !autoSubmitRef.current) {
+        autoSubmitRef.current = true;
+        // Auto-submit random move
+        const randomMoves: Move[] = [1, 2, 3, 4, 6];
+        const randomMove = randomMoves[Math.floor(Math.random() * randomMoves.length)];
+        setMyConsecutiveMisses(prev => {
+          const newMisses = prev + 1;
+          if (newMisses >= MAX_CONSECUTIVE_MISSES) {
+            // Forfeit after 3 consecutive misses
+            handleAbandon();
+          }
+          return newMisses;
+        });
+        submitMove(randomMove);
+        stopTimer();
       }
-    }, 100);
+    }, 50);
     return () => stopTimer();
   }, [currentGame?.current_turn, waitingForOpponent, phase]);
 
+  // Host-side phase transition (pre_round_countdown -> action_window)
   useEffect(() => {
     if (!currentGame || !user) return;
     if (user.id !== currentGame.host_id) return;
     if (currentGame.phase === "pre_round_countdown" && currentGame.phase_started_at) {
       const ms = Date.now() - new Date(currentGame.phase_started_at).getTime();
-      if (ms >= 3000) {
-        const totalTimeout = IDLE_THRESHOLD_MS + COUNTDOWN_MS;
+      if (ms >= 1500) {
         (supabase.from("multiplayer_games") as any).update({
           phase: "action_window",
           phase_started_at: new Date().toISOString(),
-          turn_deadline_at: new Date(Date.now() + totalTimeout).toISOString(),
+          turn_deadline_at: new Date(Date.now() + TURN_TIMER_MS).toISOString(),
           status: "playing",
         }).eq("id", currentGame.id).eq("phase", "pre_round_countdown");
       }
@@ -577,9 +587,12 @@ export default function MultiplayerScreen({ onHome }: Props) {
       const isHostMoveMissing = !currentGame.host_move;
       const isGuestMoveMissing = !currentGame.guest_move;
       if (isHostMoveMissing || isGuestMoveMissing) {
+        const randomMoves: Move[] = [1, 2, 3, 4, 6];
+        const rndHost = randomMoves[Math.floor(Math.random() * randomMoves.length)];
+        const rndGuest = randomMoves[Math.floor(Math.random() * randomMoves.length)];
         (supabase.from("multiplayer_games") as any).update({
-          ...(isHostMoveMissing ? { host_move: "DEF", host_move_submitted_at: new Date().toISOString() } : {}),
-          ...(isGuestMoveMissing ? { guest_move: "DEF", guest_move_submitted_at: new Date().toISOString() } : {}),
+          ...(isHostMoveMissing ? { host_move: String(rndHost), host_move_submitted_at: new Date().toISOString() } : {}),
+          ...(isGuestMoveMissing ? { guest_move: String(rndGuest), guest_move_submitted_at: new Date().toISOString() } : {}),
           phase: "resolving_turn",
         }).eq("id", currentGame.id).eq("phase", "action_window");
       }
@@ -816,8 +829,10 @@ export default function MultiplayerScreen({ onHome }: Props) {
     if (!currentGame || !user || cooldown) return;
     setCooldown(true);
     stopTimer();
-    setShowCountdown(false);
-    setIdleMs(0);
+    // Reset consecutive misses on manual move (auto-submit sets misses before calling this)
+    if (!autoSubmitRef.current) {
+      setMyConsecutiveMisses(0);
+    }
     const moveStr = String(move);
     const isHost = user.id === currentGame.host_id;
     const updateData: any = isHost
@@ -930,8 +945,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const isBatting = currentGame ? (isHost ? currentGame.host_batting : !currentGame.host_batting) : false;
   const myScore = currentGame ? (isHost ? currentGame.host_score : currentGame.guest_score) : 0;
   const oppScore = currentGame ? (isHost ? currentGame.guest_score : currentGame.host_score) : 0;
-  const countdownSec = Math.ceil(countdownMs / 1000);
-  const countdownPct = (countdownMs / COUNTDOWN_MS) * 100;
+  const countdownSec = Math.ceil(turnCountdownMs / 1000);
+  const countdownPct = (turnCountdownMs / TURN_TIMER_MS) * 100;
   const isAbandoned = currentGame?.status === "abandoned";
   const abandonedByMe = currentGame?.abandoned_by === user?.id;
   const modeLabel = currentGame ? gameTypeLabel(currentGame.game_type) : "DUEL";
@@ -987,12 +1002,16 @@ export default function MultiplayerScreen({ onHome }: Props) {
                 <div className="glass-premium rounded-xl p-3 space-y-1.5">
                   <span className="font-display text-[9px] font-bold text-muted-foreground tracking-widest">⏱️ TIMER RULES</span>
                   <div className="flex items-center gap-2">
-                    <div className="w-5 h-5 rounded-md bg-secondary/20 flex items-center justify-center"><span className="text-[8px]">😴</span></div>
-                    <span className="text-[9px] text-muted-foreground"><span className="text-secondary font-bold">15s</span> idle grace period</span>
+                    <div className="w-5 h-5 rounded-md bg-neon-green/20 flex items-center justify-center"><span className="text-[8px]">⚡</span></div>
+                    <span className="text-[9px] text-muted-foreground"><span className="text-neon-green font-bold">5s</span> per turn — pick fast!</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 rounded-md bg-secondary/20 flex items-center justify-center"><span className="text-[8px]">🎲</span></div>
+                    <span className="text-[9px] text-muted-foreground">Miss a turn = <span className="text-secondary font-bold">random move</span></span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-5 h-5 rounded-md bg-out-red/20 flex items-center justify-center"><span className="text-[8px]">⚠️</span></div>
-                    <span className="text-[9px] text-muted-foreground"><span className="text-out-red font-bold">30s</span> countdown or auto-forfeit</span>
+                    <span className="text-[9px] text-muted-foreground"><span className="text-out-red font-bold">3 misses</span> in a row = auto-forfeit</span>
                   </div>
                 </div>
                 <motion.button whileTap={{ scale: 0.95 }} onClick={() => setCreateModePickerOpen(true)}
@@ -1153,29 +1172,44 @@ export default function MultiplayerScreen({ onHome }: Props) {
             modeLabel={modeLabel}
             extraContent={
               <>
-                {/* Countdown Timer — only shows after 15s idle */}
+                {/* 5s Synced Countdown Timer — always visible during action */}
                 <AnimatePresence>
-                  {!waitingForOpponent && showCountdown && (
+                  {!waitingForOpponent && phase === "playing" && (
                     <motion.div initial={{ opacity: 0, y: -10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0 }}
-                      className="glass-premium rounded-xl p-3 border border-out-red/30">
+                      className={`glass-premium rounded-xl p-3 border ${countdownSec <= 2 ? "border-out-red/50 shadow-[0_0_20px_hsl(var(--out-red)/0.3)]" : "border-secondary/30"}`}>
                       <div className="flex items-center justify-between mb-1.5">
                         <div className="flex items-center gap-1.5">
-                          <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 0.5, repeat: Infinity }} className="text-sm">⚠️</motion.span>
-                          <span className="font-display text-[8px] font-bold text-out-red tracking-widest">MAKE YOUR MOVE!</span>
+                          <motion.span animate={countdownSec <= 2 ? { scale: [1, 1.3, 1] } : {}} transition={{ duration: 0.4, repeat: Infinity }} className="text-sm">
+                            {countdownSec <= 2 ? "🔥" : "⏱️"}
+                          </motion.span>
+                          <span className={`font-display text-[8px] font-bold tracking-widest ${countdownSec <= 2 ? "text-out-red" : "text-secondary"}`}>
+                            {countdownSec <= 2 ? "HURRY!" : "PICK YOUR MOVE"}
+                          </span>
                         </div>
-                        <span className={`font-display text-lg font-black ${countdownSec > 15 ? "text-secondary" : countdownSec > 5 ? "text-out-red" : "text-out-red animate-pulse"}`}>
-                          {countdownSec}s
-                        </span>
+                        <motion.span 
+                          key={countdownSec}
+                          initial={{ scale: 1.5, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          className={`font-display text-xl font-black tabular-nums ${
+                            countdownSec <= 1 ? "text-out-red animate-pulse" : countdownSec <= 2 ? "text-out-red" : countdownSec <= 3 ? "text-secondary" : "text-neon-green"
+                          }`}
+                        >
+                          {countdownSec}
+                        </motion.span>
                       </div>
                       <div className="w-full h-2.5 bg-muted/30 rounded-full overflow-hidden">
                         <motion.div
-                          className={`h-full rounded-full ${countdownSec > 15 ? "bg-gradient-to-r from-secondary to-secondary/60" : "bg-gradient-to-r from-out-red to-out-red/60"}`}
+                          className={`h-full rounded-full transition-colors ${
+                            countdownSec <= 2 ? "bg-gradient-to-r from-out-red to-out-red/60" : countdownSec <= 3 ? "bg-gradient-to-r from-secondary to-secondary/60" : "bg-gradient-to-r from-neon-green to-neon-green/60"
+                          }`}
                           style={{ width: `${countdownPct}%` }}
                         />
                       </div>
-                      <p className="text-[7px] text-out-red/60 font-display tracking-wider mt-1 text-center">
-                        Auto-forfeit if you don't play!
-                      </p>
+                      {myConsecutiveMisses > 0 && (
+                        <p className="text-[7px] text-out-red/80 font-display tracking-wider mt-1 text-center">
+                          ⚠️ {myConsecutiveMisses}/{MAX_CONSECUTIVE_MISSES} missed — {MAX_CONSECUTIVE_MISSES - myConsecutiveMisses} more = FORFEIT
+                        </p>
+                      )}
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -1355,11 +1389,12 @@ export default function MultiplayerScreen({ onHome }: Props) {
                               const g = gameData as unknown as MultiplayerGame;
                               setCurrentGame(g);
                               setPhase(statusToPhase(g.status));
-                              setCountdownMs(COUNTDOWN_MS);
+                              setTurnCountdownMs(TURN_TIMER_MS);
                               setCooldown(false);
                               setLastResult(null);
                               setLastBallResult(null);
                               setPvpBallHistory([]);
+                    setMyConsecutiveMisses(0);
                               pvpPostMatchShownRef.current = false;
                               pvpPreMatchShownRef.current = false;
                               setShowPvPPreMatch(false);
@@ -1430,11 +1465,12 @@ export default function MultiplayerScreen({ onHome }: Props) {
                     setRematchExpiredMsg(null);
                     setCurrentGame(newGame as unknown as MultiplayerGame);
                     setPhase("waiting");
-                    setCountdownMs(COUNTDOWN_MS);
+                    setTurnCountdownMs(TURN_TIMER_MS);
                     setCooldown(false);
                     setLastResult(null);
                     setLastBallResult(null);
                     setPvpBallHistory([]);
+                    setMyConsecutiveMisses(0);
                     pvpPostMatchShownRef.current = false;
                     pvpPreMatchShownRef.current = false;
                     setShowPvPPreMatch(false);
@@ -1468,8 +1504,9 @@ export default function MultiplayerScreen({ onHome }: Props) {
                 onClick={() => {
                   setPhase("lobby");
                   setCurrentGame(null);
-                  setCountdownMs(COUNTDOWN_MS);
+                  setTurnCountdownMs(TURN_TIMER_MS);
                   setPvpBallHistory([]);
+                    setMyConsecutiveMisses(0);
                   pvpPostMatchShownRef.current = false;
                   pvpPreMatchShownRef.current = false;
                   setRivalryStats(null);
