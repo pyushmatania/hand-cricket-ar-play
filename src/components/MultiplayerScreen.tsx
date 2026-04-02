@@ -894,203 +894,174 @@ export default function MultiplayerScreen({ onHome }: Props) {
           </motion.div>
         )}
 
-        {/* PLAYING */}
+        {/* PLAYING — uses shared TapPlayingUI */}
         {phase === "playing" && currentGame && (
-          <>
-            <div className="glass-score p-4">
-              <div className="flex items-center justify-between">
-                <div className="text-center flex-1">
-                  <span className="text-[7px] text-muted-foreground font-bold tracking-widest block">
-                    {isHost ? myName.toUpperCase() : opponentName.toUpperCase()}
-                  </span>
-                  <span className="font-display text-2xl font-black text-score-gold text-glow-gold leading-none">
-                    {currentGame.host_score}
-                  </span>
-                </div>
-                <div className="px-4">
-                  <span className="text-[8px] font-display text-muted-foreground font-bold">VS</span>
-                  <p className="text-[7px] text-accent font-display mt-1">INN {currentGame.innings}</p>
-                </div>
-                <div className="text-center flex-1">
-                  <span className="text-[7px] text-muted-foreground font-bold tracking-widest block">
-                    {isHost ? opponentName.toUpperCase() : myName.toUpperCase()}
-                  </span>
-                  <span className="font-display text-2xl font-black text-accent leading-none">
-                    {currentGame.guest_score}
-                  </span>
-                </div>
-              </div>
-              <div className="mt-2 text-center">
-                <span className={`text-[9px] font-display font-bold tracking-wider ${isBatting ? "text-secondary" : "text-primary"}`}>
-                  {isBatting ? "🏏 YOU'RE BATTING" : "🎯 YOU'RE BOWLING"}
-                </span>
-              </div>
-            </div>
-
-            {/* Countdown Timer — only shows after 15s idle */}
-            <AnimatePresence>
-              {!waitingForOpponent && showCountdown && (
-                <motion.div initial={{ opacity: 0, y: -10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0 }}
-                  className="glass-premium rounded-xl p-3 border border-out-red/30">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <div className="flex items-center gap-1.5">
-                      <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 0.5, repeat: Infinity }} className="text-sm">⚠️</motion.span>
-                      <span className="font-display text-[8px] font-bold text-out-red tracking-widest">MAKE YOUR MOVE!</span>
-                    </div>
-                    <span className={`font-display text-lg font-black ${countdownSec > 15 ? "text-secondary" : countdownSec > 5 ? "text-out-red" : "text-out-red animate-pulse"}`}>
-                      {countdownSec}s
-                    </span>
-                  </div>
-                  <div className="w-full h-2.5 bg-muted/30 rounded-full overflow-hidden">
-                    <motion.div
-                      className={`h-full rounded-full ${countdownSec > 15 ? "bg-gradient-to-r from-secondary to-secondary/60" : "bg-gradient-to-r from-out-red to-out-red/60"}`}
-                      style={{ width: `${countdownPct}%` }}
-                    />
-                  </div>
-                  <p className="text-[7px] text-out-red/60 font-display tracking-wider mt-1 text-center">
-                    Auto-forfeit if you don't play!
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Tease button & received tease */}
-            <AnimatePresence>
-              {receivedTease && (
-                <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
-                  className="glass-card rounded-xl p-2.5 border border-out-red/20">
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg">😈</span>
-                    <div className="flex-1">
-                      <span className="text-[7px] text-out-red font-display tracking-widest block">OPPONENT SAYS:</span>
-                      <span className="text-[10px] text-foreground font-display font-bold">{receivedTease}</span>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {waitingForOpponent && (
-              <div className="flex justify-center">
-                <motion.button whileTap={{ scale: 0.9 }} onClick={() => setShowTeasePanel(!showTeasePanel)}
-                  className="px-4 py-2 rounded-xl glass-card border border-secondary/20 text-[9px] font-display font-bold text-secondary tracking-wider">
-                  😈 SEND TEASE
-                </motion.button>
-              </div>
-            )}
-
-            <AnimatePresence>
-              {showTeasePanel && waitingForOpponent && (
-                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
-                  className="glass-premium rounded-xl p-3 space-y-1.5 overflow-hidden">
-                  <span className="text-[7px] font-display text-muted-foreground tracking-widest">TEASE MESSAGES</span>
-                  {TEASE_MESSAGES.map((t, i) => (
-                    <motion.button key={i} whileTap={t.unlocked ? { scale: 0.95 } : undefined}
-                      onClick={() => {
-                        if (!t.unlocked || !currentGame) return;
-                        setSentTease(t.text);
-                        setShowTeasePanel(false);
-                        // Store tease in round_result_payload for opponent to see
-                        supabase.from("multiplayer_games").update({
-                          round_result_payload: { tease: t.text, from: user?.id, turn: currentGame.current_turn },
-                        }).eq("id", currentGame.id);
-                        setTimeout(() => setSentTease(null), 3000);
-                      }}
-                      className={`w-full text-left p-2 rounded-lg transition-all ${
-                        t.unlocked
-                          ? "glass-card border border-secondary/15 active:bg-secondary/10"
-                          : "bg-muted/20 border border-muted/10 relative overflow-hidden"
-                      }`}>
-                      <div className="flex items-center gap-2">
-                        <span className={`text-[10px] font-display ${t.unlocked ? "text-foreground" : "text-muted-foreground/30 blur-[3px] select-none"}`}>
-                          {t.text}
+          <TapPlayingUI
+            phase={isBatting ? (currentGame.innings === 1 ? "first_batting" : "second_batting") : (currentGame.innings === 1 ? "first_bowling" : "second_bowling")}
+            userScore={myScore}
+            aiScore={oppScore}
+            userWickets={0}
+            aiWickets={0}
+            target={currentGame.innings === 2 ? (isBatting ? oppScore + 1 : myScore + 1) : null}
+            currentInnings={currentGame.innings as 1 | 2}
+            isBatting={isBatting}
+            lastResult={lastBallResult}
+            result={null}
+            ballHistory={pvpBallHistory}
+            playerName={myName}
+            opponentName={opponentName}
+            onMove={submitMove}
+            onReset={() => {}}
+            onHome={onHome}
+            isPvP={true}
+            waitingForOpponent={waitingForOpponent}
+            cooldownOverride={cooldown}
+            modeLabel={modeLabel}
+            extraContent={
+              <>
+                {/* Countdown Timer — only shows after 15s idle */}
+                <AnimatePresence>
+                  {!waitingForOpponent && showCountdown && (
+                    <motion.div initial={{ opacity: 0, y: -10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0 }}
+                      className="glass-premium rounded-xl p-3 border border-out-red/30">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <div className="flex items-center gap-1.5">
+                          <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 0.5, repeat: Infinity }} className="text-sm">⚠️</motion.span>
+                          <span className="font-display text-[8px] font-bold text-out-red tracking-widest">MAKE YOUR MOVE!</span>
+                        </div>
+                        <span className={`font-display text-lg font-black ${countdownSec > 15 ? "text-secondary" : countdownSec > 5 ? "text-out-red" : "text-out-red animate-pulse"}`}>
+                          {countdownSec}s
                         </span>
-                        {!t.unlocked && (
-                          <span className="text-[7px] font-display text-secondary/60 tracking-wider whitespace-nowrap ml-auto">
-                            🔒 {t.cost} 🪙
-                          </span>
-                        )}
                       </div>
+                      <div className="w-full h-2.5 bg-muted/30 rounded-full overflow-hidden">
+                        <motion.div
+                          className={`h-full rounded-full ${countdownSec > 15 ? "bg-gradient-to-r from-secondary to-secondary/60" : "bg-gradient-to-r from-out-red to-out-red/60"}`}
+                          style={{ width: `${countdownPct}%` }}
+                        />
+                      </div>
+                      <p className="text-[7px] text-out-red/60 font-display tracking-wider mt-1 text-center">
+                        Auto-forfeit if you don't play!
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Received tease */}
+                <AnimatePresence>
+                  {receivedTease && (
+                    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
+                      className="glass-card rounded-xl p-2.5 border border-out-red/20">
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg">😈</span>
+                        <div className="flex-1">
+                          <span className="text-[7px] text-out-red font-display tracking-widest block">OPPONENT SAYS:</span>
+                          <span className="text-[10px] text-foreground font-display font-bold">{receivedTease}</span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Tease button */}
+                {waitingForOpponent && (
+                  <div className="flex justify-center">
+                    <motion.button whileTap={{ scale: 0.9 }} onClick={() => setShowTeasePanel(!showTeasePanel)}
+                      className="px-4 py-2 rounded-xl glass-card border border-secondary/20 text-[9px] font-display font-bold text-secondary tracking-wider">
+                      😈 SEND TEASE
                     </motion.button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  </div>
+                )}
 
-            {/* Result flash */}
-            <AnimatePresence>
-              {lastResult && (
-                <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="glass-score p-3 text-center">
-                  <span className="font-display text-sm font-bold text-foreground">{lastResult}</span>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                {/* Tease panel */}
+                <AnimatePresence>
+                  {showTeasePanel && waitingForOpponent && (
+                    <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
+                      className="glass-premium rounded-xl p-3 space-y-1.5 overflow-hidden">
+                      <span className="text-[7px] font-display text-muted-foreground tracking-widest">TEASE MESSAGES</span>
+                      {TEASE_MESSAGES.map((t, i) => (
+                        <motion.button key={i} whileTap={t.unlocked ? { scale: 0.95 } : undefined}
+                          onClick={() => {
+                            if (!t.unlocked || !currentGame) return;
+                            setSentTease(t.text);
+                            setShowTeasePanel(false);
+                            supabase.from("multiplayer_games").update({
+                              round_result_payload: { tease: t.text, from: user?.id, turn: currentGame.current_turn },
+                            }).eq("id", currentGame.id);
+                            setTimeout(() => setSentTease(null), 3000);
+                          }}
+                          className={`w-full text-left p-2 rounded-lg transition-all ${
+                            t.unlocked
+                              ? "glass-card border border-secondary/15 active:bg-secondary/10"
+                              : "bg-muted/20 border border-muted/10 relative overflow-hidden"
+                          }`}>
+                          <div className="flex items-center gap-2">
+                            <span className={`text-[10px] font-display ${t.unlocked ? "text-foreground" : "text-muted-foreground/30 blur-[3px] select-none"}`}>
+                              {t.text}
+                            </span>
+                            {!t.unlocked && (
+                              <span className="text-[7px] font-display text-secondary/60 tracking-wider whitespace-nowrap ml-auto">
+                                🔒 {t.cost} 🪙
+                              </span>
+                            )}
+                          </div>
+                        </motion.button>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
 
-            {/* Waiting for opponent */}
-            {waitingForOpponent && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-score p-4 text-center">
-                <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 1.5, repeat: Infinity }}>
-                  <span className="text-3xl block mb-2">⏳</span>
-                </motion.div>
-                <p className="font-display text-xs font-bold text-muted-foreground tracking-wider">
-                  WAITING FOR {opponentName.toUpperCase()}...
-                </p>
-              </motion.div>
-            )}
+                {sentTease && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                    className="glass-card rounded-lg p-2 text-center text-[9px] text-secondary font-display">
+                    ✅ Sent: "{sentTease}"
+                  </motion.div>
+                )}
+              </>
+            }
+          />
+        )}
 
-            {/* Move buttons */}
-            {!waitingForOpponent && (
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-auto">
-                <p className="text-center text-[8px] text-muted-foreground font-display mb-2 tracking-widest">
-                  {isBatting ? "⚡ CHOOSE YOUR SHOT" : "🎯 CHOOSE YOUR BOWL"}
-                </p>
-                <div className="grid grid-cols-3 gap-2">
-                  {currentMoves.map((m) => (
-                    <motion.button key={m.label} whileTap={{ scale: 0.8 }} onClick={() => submitMove(m.move)} disabled={cooldown}
-                      className={`py-5 rounded-2xl font-display font-bold text-sm flex flex-col items-center gap-1.5 transition-all border ${
-                        cooldown ? "opacity-30 cursor-not-allowed border-transparent bg-muted/30" : `${m.color} text-foreground`
-                      }`}>
-                      <span className="text-3xl">{m.emoji}</span>
-                      <span className="text-[10px] tracking-wider">{m.label}</span>
-                    </motion.button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </>
+        {/* PvP Post-match ceremony overlay */}
+        {showPvPPostMatch && currentGame && (
+          <PostMatchCeremony
+            playerName={myName}
+            opponentName={opponentName}
+            result={currentGame.winner_id === user?.id ? "win" : currentGame.winner_id ? "loss" : "draw"}
+            playerScore={myScore}
+            opponentScore={oppScore}
+            ballHistory={pvpBallHistory}
+            onComplete={() => setShowPvPPostMatch(false)}
+            isPvP={true}
+          />
         )}
 
         {/* FINISHED */}
-        {phase === "finished" && currentGame && (
+        {phase === "finished" && currentGame && !showPvPPostMatch && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex-1 flex flex-col items-center justify-center gap-4">
             <span className="text-6xl">
-              {isAbandoned ? (abandonedByMe ? "🏳️" : "🏆") : currentGame.winner_id === user.id ? "🏆" : currentGame.winner_id ? "😞" : "🤝"}
+              {isAbandoned ? (abandonedByMe ? "🏳️" : "🏆") : currentGame.winner_id === user?.id ? "🏆" : currentGame.winner_id ? "😞" : "🤝"}
             </span>
             <h2 className="font-display text-2xl font-black text-foreground tracking-wider">
-              {isAbandoned ? (abandonedByMe ? "ABANDONED" : "OPPONENT ABANDONED") : currentGame.winner_id === user.id ? "YOU WIN!" : currentGame.winner_id ? "YOU LOST" : "DRAW!"}
+              {isAbandoned ? (abandonedByMe ? "ABANDONED" : "OPPONENT ABANDONED") : currentGame.winner_id === user?.id ? "YOU WIN!" : currentGame.winner_id ? "YOU LOST" : "DRAW!"}
             </h2>
             {isAbandoned && (
               <p className="text-[10px] text-out-red/70 font-display tracking-wider">
                 {abandonedByMe ? "You ran out of time" : "Your opponent ran out of time"}
               </p>
             )}
-            <p className="text-[10px] text-muted-foreground font-display tracking-wider">
-              POST-MATCH WRAP • {modeLabel}
-            </p>
             <div className="glass-score p-4 w-full max-w-xs">
               <div className="flex justify-between">
                 <div className="text-center flex-1">
-                  <span className="text-[8px] text-muted-foreground font-display block">{isHost ? myName.toUpperCase() : opponentName.toUpperCase()}</span>
-                  <span className="font-display text-2xl font-black text-score-gold">{currentGame.host_score}</span>
+                  <span className="text-[8px] text-muted-foreground font-display block">{myName.toUpperCase()}</span>
+                  <span className="font-display text-2xl font-black text-score-gold">{myScore}</span>
                 </div>
                 <div className="text-center flex-1">
-                  <span className="text-[8px] text-muted-foreground font-display block">{isHost ? opponentName.toUpperCase() : myName.toUpperCase()}</span>
-                  <span className="font-display text-2xl font-black text-accent">{currentGame.guest_score}</span>
+                  <span className="text-[8px] text-muted-foreground font-display block">{opponentName.toUpperCase()}</span>
+                  <span className="font-display text-2xl font-black text-accent">{oppScore}</span>
                 </div>
               </div>
             </div>
             <div className="flex gap-3 w-full max-w-xs">
-              {/* Rematch button - creates new room with same opponent */}
               <motion.button whileTap={{ scale: 0.95 }}
                 onClick={async () => {
                   if (!user || !currentGame) return;
@@ -1104,10 +1075,13 @@ export default function MultiplayerScreen({ onHome }: Props) {
                     setCountdownMs(COUNTDOWN_MS);
                     setCooldown(false);
                     setLastResult(null);
+                    setLastBallResult(null);
+                    setPvpBallHistory([]);
+                    pvpPostMatchShownRef.current = false;
                     navigate(`/game/multiplayer?game=${newGame.id}`, { replace: true });
                   }
                 }}
-                className="flex-1 py-3.5 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-display font-bold rounded-2xl tracking-wider shadow-[0_0_20px_hsl(38_100%_50%/0.3)] border border-yellow-400/40">
+                className="flex-1 py-3.5 bg-gradient-to-r from-secondary to-secondary/70 text-secondary-foreground font-display font-bold rounded-2xl tracking-wider shadow-[0_0_20px_hsl(45_93%_58%/0.3)] border border-secondary/40">
                 🔄 REMATCH
               </motion.button>
               <motion.button whileTap={{ scale: 0.95 }}
@@ -1115,6 +1089,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
                   setPhase("lobby");
                   setCurrentGame(null);
                   setCountdownMs(COUNTDOWN_MS);
+                  setPvpBallHistory([]);
+                  pvpPostMatchShownRef.current = false;
                   navigate("/game/multiplayer", { replace: true });
                 }}
                 className="flex-1 py-3.5 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display font-bold rounded-2xl glow-primary tracking-wider">
