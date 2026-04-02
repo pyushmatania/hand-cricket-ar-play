@@ -697,6 +697,16 @@ export default function LeaderboardPage() {
             </motion.div>
           )}
 
+          {/* FRIENDS NETWORK */}
+          {mainTab === "network" && (
+            <motion.div key="network" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+              <FriendsNetworkGraph onSelectFriend={(fid) => {
+                const fp = friendLeaders.find(f => f.user_id === fid);
+                if (fp) setSelectedFriendId(fid);
+              }} />
+            </motion.div>
+          )}
+
           {/* GLOBAL & FRIENDS RANKINGS */}
           {(mainTab === "global" || mainTab === "friends") && (
             <motion.div key={`${mainTab}-${sortBy}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
