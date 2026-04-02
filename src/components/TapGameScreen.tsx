@@ -42,6 +42,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const postMatchShownRef = useRef(false);
 
   const [playerName, setPlayerName] = useState("You");
+  const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickMatchCommentators());
 
   useEffect(() => {
     if (!user) return;
