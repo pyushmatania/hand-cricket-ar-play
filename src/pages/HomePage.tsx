@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import BottomNav from "@/components/BottomNav";
 import TopStatusBar from "@/components/TopStatusBar";
 import OnboardingTutorial from "@/components/OnboardingTutorial";
+import RivalrySection from "@/components/RivalrySection";
+import { useRivals } from "@/hooks/useRivals";
 
 interface ProfileData {
   total_matches: number;
