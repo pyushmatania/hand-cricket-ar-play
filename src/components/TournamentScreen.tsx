@@ -52,6 +52,7 @@ export default function TournamentScreen({ onHome }: Props) {
   const [matchConfig, setMatchConfig] = useState<MatchConfig>({ overs: 5, wickets: 3 });
   const [tossInfo, setTossInfo] = useState<{ winner: string; battingFirst: string } | null>(null);
   const [pendingBatFirst, setPendingBatFirst] = useState<boolean | null>(null);
+  const [matchCommentators, setMatchCommentators] = useState<[Commentator, Commentator]>(() => pickMatchCommentators());
 
   useEffect(() => {
     if (!user) return;
