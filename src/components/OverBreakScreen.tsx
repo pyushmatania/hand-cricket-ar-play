@@ -201,7 +201,7 @@ export default function OverBreakScreen({ stats, commentaryLines, commentators, 
       </div>
 
       {/* Commentary Conversation */}
-      <div className="flex-1 px-4 overflow-y-auto no-scrollbar">
+      <div className="relative z-10 flex-1 px-4 overflow-y-auto no-scrollbar">
         <div className="space-y-2">
           {commentaryLines.slice(0, visibleLines).map((line, i) => {
             const comm = getCommentator(line.commentatorId);
