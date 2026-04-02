@@ -1222,6 +1222,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
               playerName={myName}
               opponentName={opponentName}
               isMultiplayer={true}
+              playerAvatarIndex={myAvatarIndex}
+              opponentAvatarIndex={opponentAvatarIndex}
             />
           </motion.div>
         )}
