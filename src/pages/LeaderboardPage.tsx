@@ -33,6 +33,11 @@ interface LeaderEntry {
   abandons: number;
   user_id: string;
   avatar_index?: number;
+  xp?: number;
+  coins?: number;
+  rank_tier?: string;
+  current_streak?: number;
+  avatar_url?: string | null;
 }
 
 interface FriendProfile {
