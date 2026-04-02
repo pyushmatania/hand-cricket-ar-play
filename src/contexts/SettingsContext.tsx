@@ -32,6 +32,7 @@ interface SettingsContextType extends Settings {
   setVoiceEngine: (engine: VoiceEngine) => void;
   setCommentaryLanguage: (lang: CommentaryLanguage) => void;
   toggleCeremonies: () => void;
+  setAmbientVolume: (v: number) => void;
 }
 
 const defaults: Settings = {
