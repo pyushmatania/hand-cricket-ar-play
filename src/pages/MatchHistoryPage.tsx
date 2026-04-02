@@ -272,10 +272,11 @@ export default function MatchHistoryPage() {
               const balls = (m.innings_data && Array.isArray(m.innings_data)) ? m.innings_data as BallRecord[] : [];
 
               return (
+                <div className="pb-2.5">
                 <motion.div key={m.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.03 }}
+                  transition={{ delay: Math.min(i * 0.03, 0.3) }}
                   className="glass-premium rounded-xl relative overflow-hidden"
                 >
                   <div className={`absolute inset-0 bg-gradient-to-r ${resultBg} to-transparent opacity-40`} />
