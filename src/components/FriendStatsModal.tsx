@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import PlayerAvatar from "./PlayerAvatar";
+import { usePvpStats } from "@/hooks/usePvpStats";
 import RankBadge from "./RankBadge";
 import { getRankTier, calculateRankPoints } from "@/lib/rankTiers";
 
