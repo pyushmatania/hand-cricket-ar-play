@@ -255,7 +255,7 @@ export default function MatchHistoryPage() {
             )}
           </div>
         ) : (
-          <div className="space-y-2.5">
+          <div style={{ height: "calc(100vh - 340px)", minHeight: 300 }}>
             {filtered.map((m, i) => {
               const modeMeta = MODE_META[m.mode] || MODE_META.tap;
               const resultColor = m.result === "win" ? "text-neon-green" : m.result === "loss" ? "text-out-red" : "text-secondary";
