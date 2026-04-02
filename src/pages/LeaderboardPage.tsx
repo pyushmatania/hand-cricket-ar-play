@@ -617,7 +617,7 @@ export default function LeaderboardPage() {
                           <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-display font-black text-xs ${isMe ? "bg-gradient-to-br from-primary/20 to-primary/10 text-primary" : "bg-muted/40 text-muted-foreground"}`}>
                             #{i + 4}
                           </div>
-                          <PlayerAvatar avatarIndex={player.avatar_index ?? 0} size="sm" />
+                          <PlayerAvatar avatarUrl={player.avatar_url} avatarIndex={player.avatar_index ?? 0} size="sm" />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5">
                               <span className={`font-display text-[11px] font-bold ${isMe ? "text-primary" : "text-foreground"}`}>
@@ -626,7 +626,10 @@ export default function LeaderboardPage() {
                               <span className={`text-[7px] ${tier.color} font-display`}>{tier.emoji}</span>
                               {mainTab === "friends" && !isMe && <span className="text-[7px] text-primary/40 font-display">›</span>}
                             </div>
-                            <span className="text-[8px] text-muted-foreground font-display">{player.total_matches} matches • {winRate}% WR</span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[8px] text-muted-foreground font-display">{player.total_matches} matches • {winRate}% WR</span>
+                              {(player.xp ?? 0) > 0 && <span className="text-[6px] text-primary/60 font-display">✨{player.xp}</span>}
+                            </div>
                           </div>
                           <div className="text-right">
                             <span className="font-display text-lg font-black text-secondary block leading-none">{getScore(player)}</span>
