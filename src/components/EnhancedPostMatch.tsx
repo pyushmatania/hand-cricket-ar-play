@@ -156,7 +156,7 @@ export default function EnhancedPostMatch({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[70] flex flex-col items-center justify-center overflow-hidden cursor-pointer"
+          className="fixed inset-0 z-[70] flex flex-col overflow-hidden cursor-pointer"
           onClick={handleTap}
         >
           {/* Background — podium ceremony style */}
@@ -172,24 +172,29 @@ export default function EnhancedPostMatch({
                   initial={{ y: -20, x: Math.random() * 400, opacity: 1, rotate: 0 }}
                   animate={{ y: 700, rotate: 360 * (Math.random() > 0.5 ? 1 : -1), opacity: [1, 1, 0] }}
                   transition={{ duration: 3 + Math.random() * 3, repeat: Infinity, delay: Math.random() * 2 }}
-                  className="absolute w-2 h-2 rounded-sm"
+                  className="absolute w-2.5 h-2.5 rounded-sm"
                   style={{ background: ["hsl(var(--secondary))", "hsl(var(--primary))", "hsl(var(--accent))", "hsl(var(--neon-green))"][i % 4], left: `${Math.random() * 100}%` }}
                 />
               ))}
             </div>
           )}
 
-          <div className="relative z-10 max-w-sm mx-4 w-full text-center space-y-3">
-            {/* Commentator badges */}
-            <div className="flex items-center justify-center gap-2 mb-1">
-              {duo.map((c, i) => (
-                <div key={c.id} className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[8px] font-display font-bold tracking-wider backdrop-blur-sm ${
-                  i === 0 ? "bg-primary/20 text-primary border border-primary/20" : "bg-accent/20 text-accent border border-accent/20"
-                }`}>
-                  <span className="text-xs">{c.avatar}</span> {c.name}
-                </div>
-              ))}
-            </div>
+          {/* Commentator badges - top */}
+          <div className="relative z-10 flex items-center justify-center gap-2 pt-14 pb-2">
+            {duo.map((c, i) => (
+              <div key={c.id} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-display font-bold tracking-wider backdrop-blur-md ${
+                i === 0 ? "bg-primary/20 text-primary border border-primary/25" : "bg-accent/20 text-accent border border-accent/25"
+              }`}>
+                <span className="text-sm">{c.avatar}</span> {c.name}
+              </div>
+            ))}
+          </div>
+
+          {/* Full-screen card */}
+          <div className="relative z-10 flex-1 flex flex-col mx-3 mb-3 rounded-2xl backdrop-blur-md bg-black/40 border border-white/10 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-secondary/5 pointer-events-none" />
+
+            <div className="flex-1 flex flex-col items-center justify-center px-5 relative z-10">
 
             {/* Page content with fade+scale */}
             <AnimatePresence mode="wait">
