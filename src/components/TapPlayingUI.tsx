@@ -521,7 +521,7 @@ export default function TapPlayingUI({
                 whileTap={{ scale: 0.8 }}
                 onClick={() => handleMove(m.move)}
                 disabled={effectiveCooldown}
-                className={`relative py-2.5 rounded-xl font-display font-bold text-sm flex flex-col items-center gap-0.5 transition-all border backdrop-blur-sm ${
+                className={`relative py-2 rounded-xl font-display font-bold text-sm flex flex-col items-center gap-0.5 transition-all border backdrop-blur-sm ${
                   effectiveCooldown
                     ? "opacity-30 cursor-not-allowed border-transparent bg-muted/20"
                     : lastPlayed === m.move
