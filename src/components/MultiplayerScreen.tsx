@@ -11,6 +11,7 @@ import VSIntroScreen from "./VSIntroScreen";
 import TapPlayingUI from "./TapPlayingUI";
 import EnhancedPreMatch from "./EnhancedPreMatch";
 import EnhancedPostMatch from "./EnhancedPostMatch";
+import { pickMatchCommentators, type Commentator } from "@/lib/commentaryDuo";
 import type { Move, BallResult } from "@/hooks/useHandCricket";
 import {
   claimMultiplayerGame,
@@ -143,6 +144,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [showPvPPostMatch, setShowPvPPostMatch] = useState(false);
   const [showPvPPreMatch, setShowPvPPreMatch] = useState(false);
   const [pvpBallHistory, setPvpBallHistory] = useState<BallResult[]>([]);
+  const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickMatchCommentators());
   const pvpPostMatchShownRef = useRef(false);
   const pvpPreMatchShownRef = useRef(false);
   const [rivalryStats, setRivalryStats] = useState<{
@@ -1092,6 +1094,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
             onComplete={() => setShowPvPPostMatch(false)}
             isPvP={true}
             rivalryStats={rivalryStats}
+            commentators={matchCommentators}
           />
         )}
 
@@ -1231,6 +1234,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
           battingFirst={currentGame.host_batting ? (isHost ? myName : opponentName) : (isHost ? opponentName : myName)}
           rivalryStats={rivalryStats}
           isPvP={true}
+          commentators={matchCommentators}
           onComplete={() => {
             setShowPvPPreMatch(false);
             if (currentGame) {

@@ -7,6 +7,7 @@ import { playCrowdForResult } from "@/lib/voiceCommentary";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { pickMatchCommentators, type Commentator } from "@/lib/commentaryDuo";
 import RulesSheet from "./RulesSheet";
 import OddEvenToss from "./OddEvenToss";
 import EnhancedPreMatch from "./EnhancedPreMatch";
@@ -41,6 +42,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const postMatchShownRef = useRef(false);
 
   const [playerName, setPlayerName] = useState("You");
+  const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickMatchCommentators());
 
   useEffect(() => {
     if (!user) return;
@@ -119,6 +121,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
           opponentName={AI_NAME}
           tossWinner={tossInfo.winner}
           battingFirst={tossInfo.battingFirst}
+          commentators={matchCommentators}
           onComplete={handlePreMatchComplete}
         />
       )}
@@ -134,6 +137,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
           playerWickets={game.userWickets}
           opponentWickets={game.aiWickets}
           ballHistory={game.ballHistory}
+          commentators={matchCommentators}
           onComplete={() => setShowPostMatch(false)}
         />
       )}

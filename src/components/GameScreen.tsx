@@ -17,6 +17,7 @@ import { SFX, Haptics } from "@/lib/sounds";
 import { getCommentary, getInningsChangeCommentary } from "@/lib/commentary";
 import { speakCommentary, playCrowdForResult, CrowdSFX } from "@/lib/voiceCommentary";
 import { useSettings } from "@/contexts/SettingsContext";
+import { pickMatchCommentators, type Commentator } from "@/lib/commentaryDuo";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -55,6 +56,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const [showFilterPicker, setShowFilterPicker] = useState(false);
   const [commentary, setCommentary] = useState<string | null>(null);
   const savedRef = useRef(false);
+  const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickMatchCommentators());
   const prevPhaseRef = useRef(game.phase);
 
   // Fireworks state
@@ -256,6 +258,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
           opponentName={opponentName}
           tossWinner={tossInfo.winner}
           battingFirst={tossInfo.battingFirst}
+          commentators={matchCommentators}
           onComplete={handlePreMatchComplete}
         />
       )}
@@ -269,6 +272,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
           playerScore={game.userScore}
           opponentScore={game.aiScore}
           ballHistory={game.ballHistory}
+          commentators={matchCommentators}
           onComplete={() => setShowPostMatch(false)}
         />
       )}

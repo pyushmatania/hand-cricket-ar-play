@@ -7,6 +7,7 @@ import { useHandCricket, type Move, type MatchConfig } from "@/hooks/useHandCric
 import { useMatchSaver } from "@/hooks/useMatchSaver";
 import { SFX, Haptics } from "@/lib/sounds";
 import { useSettings } from "@/contexts/SettingsContext";
+import { pickMatchCommentators, type Commentator } from "@/lib/commentaryDuo";
 import RulesSheet from "./RulesSheet";
 import EnhancedPreMatch from "./EnhancedPreMatch";
 import EnhancedPostMatch from "./EnhancedPostMatch";
@@ -51,6 +52,7 @@ export default function TournamentScreen({ onHome }: Props) {
   const [matchConfig, setMatchConfig] = useState<MatchConfig>({ overs: 5, wickets: 3 });
   const [tossInfo, setTossInfo] = useState<{ winner: string; battingFirst: string } | null>(null);
   const [pendingBatFirst, setPendingBatFirst] = useState<boolean | null>(null);
+  const [matchCommentators, setMatchCommentators] = useState<[Commentator, Commentator]>(() => pickMatchCommentators());
 
   useEffect(() => {
     if (!user) return;
@@ -86,6 +88,7 @@ export default function TournamentScreen({ onHome }: Props) {
 
   const handleTossResult = (batFirst: boolean) => {
     setPendingBatFirst(batFirst);
+    setMatchCommentators(pickMatchCommentators()); // Fresh commentators per round
     setTimeout(() => setShowPreMatch(true), 500);
   };
 
@@ -354,6 +357,7 @@ export default function TournamentScreen({ onHome }: Props) {
           opponentName={opp.name}
           tossWinner={tossInfo.winner}
           battingFirst={tossInfo.battingFirst}
+          commentators={matchCommentators}
           onComplete={handlePreMatchComplete}
         />
       )}
@@ -369,6 +373,7 @@ export default function TournamentScreen({ onHome }: Props) {
           playerWickets={game.userWickets}
           opponentWickets={game.aiWickets}
           ballHistory={game.ballHistory}
+          commentators={matchCommentators}
           onComplete={() => {
             setShowPostMatch(false);
             if (game.result !== "win") setEliminated(true);
