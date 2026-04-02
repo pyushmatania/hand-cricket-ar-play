@@ -162,6 +162,9 @@ export default function ScoreBoard({ game, playerName = "You", aiName = "Rohit A
               </span>
             </div>
             <div className="flex items-center gap-1">
+              <span className="text-[7px] text-muted-foreground/60 font-display">SR</span>
+              <span className="text-[8px] font-display font-bold text-primary tracking-wider">{strikeRate}</span>
+              <span className="text-[5px] text-muted-foreground/30">|</span>
               <span className="text-[7px] text-muted-foreground/60 font-display">RR</span>
               <span className="text-[8px] font-display font-bold text-accent tracking-wider">{runRate}</span>
             </div>
