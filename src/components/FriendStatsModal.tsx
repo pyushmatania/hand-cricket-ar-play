@@ -210,7 +210,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
   };
 
   const computeMatchStats = (matches: any[]): FriendMatchStats => {
-    let wins = 0, losses = 0, draws = 0, totalRuns = 0, sixes = 0, fours = 0, dots = 0;
+    let wins = 0, losses = 0, draws = 0, totalRuns = 0, sixes = 0, fours = 0;
     let highScore = 0;
     for (const m of matches) {
       if (m.result === "win") wins++;
@@ -220,13 +220,12 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
       const parsed = parseBalls(m.innings_data);
       sixes += parsed.sixes;
       fours += parsed.fours;
-      dots += parsed.dots;
       totalRuns += m.user_score;
     }
     const totalBalls = matches.reduce((s, m) => s + (m.balls_played || 0), 0);
     return {
       totalMatches: matches.length, wins, losses, draws, highScore, totalRuns,
-      sixes, fours, dots,
+      sixes, fours,
       avgScore: matches.length > 0 ? Math.round(totalRuns / matches.length) : 0,
       strikeRate: totalBalls > 0 ? Math.round((totalRuns / totalBalls) * 100) : 0,
     };
