@@ -268,29 +268,165 @@ export function getChaseTensionCommentary(
 }
 
 // Pre-match intro conversations
+// ─── Pre-match ceremony pages ─────────────────────────────────
+
 export function getPreMatchDuoIntro(
-  c1Name: string,
-  c2Name: string,
-  playerName: string,
-  opponentName: string
+  c1Name: string, c2Name: string, playerName: string, opponentName: string
 ): CommentaryLine[] {
   const intros: DuoGen[] = [
     (c1, c2, p, o) => [
       { commentatorId: c1, text: `Welcome everyone! I'm ${c1} and joining me is the wonderful ${c2}!`, isKeyMoment: true },
       { commentatorId: c2, text: `Thanks ${c1}! What a match we have today — ${p} takes on ${o}!`, isKeyMoment: true },
-      { commentatorId: c1, text: `The stadium is packed, the crowd is buzzing! Let's get this started!`, isKeyMoment: false },
     ],
     (c1, c2, p, o) => [
       { commentatorId: c2, text: `Namaste and welcome! ${c2} here with ${c1} for this blockbuster!`, isKeyMoment: true },
       { commentatorId: c1, text: `${p} versus ${o}! The IPL couldn't write a better script!`, isKeyMoment: true },
-      { commentatorId: c2, text: `Aaj ka match toh zabardast hone wala hai! Let's GO!`, isKeyMoment: false },
     ],
     (c1, c2, p, o) => [
       { commentatorId: c1, text: `Good evening cricket fans! It's ${p} versus ${o} and what a lineup!`, isKeyMoment: true },
       { commentatorId: c2, text: `${c1}, I've been waiting for this all day! Both players are fired up!`, isKeyMoment: true },
     ],
   ];
-  
-  const pick = intros[Math.floor(Math.random() * intros.length)];
-  return pick(c1Name, c2Name, playerName, opponentName);
+  return intros[Math.floor(Math.random() * intros.length)](c1Name, c2Name, playerName, opponentName);
+}
+
+export function getPreMatchStadiumLines(c1Name: string, c2Name: string, playerName: string): CommentaryLine[] {
+  const pools: DuoGen[] = [
+    (c1, c2, p) => [
+      { commentatorId: c1, text: `The stadium is absolutely buzzing! Floodlights on, crowd packed to the rafters!`, isKeyMoment: false },
+      { commentatorId: c2, text: `Aaj ka mahaul toh alag hi hai! The atmosphere is electric, ${c1}!`, isKeyMoment: false },
+    ],
+    (c1, c2, p) => [
+      { commentatorId: c2, text: `Look at this crowd! Every seat filled! ${p} must be feeling the energy!`, isKeyMoment: false },
+      { commentatorId: c1, text: `Goosebumps! This is what cricket dreams are made of!`, isKeyMoment: false },
+    ],
+  ];
+  return pools[Math.floor(Math.random() * pools.length)](c1Name, c2Name, playerName, "");
+}
+
+export function getPreMatchTossLines(
+  c1Name: string, c2Name: string, tossWinner: string, battingFirst: string, tossWinnerName: string
+): CommentaryLine[] {
+  const electedTo = battingFirst === tossWinnerName ? "bat" : "bowl";
+  const pools: DuoGen[] = [
+    (c1, c2) => [
+      { commentatorId: c1, text: `${tossWinner} wins the toss and elects to ${electedTo} first!`, isKeyMoment: true },
+      { commentatorId: c2, text: `${electedTo === "bat" ? "Aggressive mindset! Set a big target and put pressure!" : "Bowl first mentality! Restrict and chase! Smart!"}`, isKeyMoment: true },
+    ],
+    (c1, c2) => [
+      { commentatorId: c2, text: `Toss goes to ${tossWinner}! They choose to ${electedTo}!`, isKeyMoment: true },
+      { commentatorId: c1, text: `${electedTo === "bat" ? "Intent™ from ball one! Love to see it!" : "Chasers mentality! Knowing the target is always an advantage!"}`, isKeyMoment: true },
+    ],
+  ];
+  return pools[Math.floor(Math.random() * pools.length)](c1Name, c2Name, "", "");
+}
+
+export function getPreMatchStrategyLines(
+  c1Name: string, c2Name: string, playerName: string, opponentName: string, isBattingFirst: boolean
+): CommentaryLine[] {
+  const pools: DuoGen[] = [
+    (c1, c2, p, o) => [
+      { commentatorId: c1, text: isBattingFirst
+        ? `${p} will bat first! The plan should be — powerplay aggression, then accelerate!`
+        : `${p} bowls first! Restrict ${o} early, dot ball pressure!`, isKeyMoment: false },
+      { commentatorId: c2, text: isBattingFirst
+        ? `Rohit Sharma style — start slow, then EXPLODE! Let's see if ${p} can do it!`
+        : `Bowl tight lines, take wickets, and then chase like Kohli! Simple!`, isKeyMoment: false },
+    ],
+  ];
+  return pools[0](c1Name, c2Name, playerName, opponentName);
+}
+
+export function getPreMatchGameOnLines(c1Name: string, c2Name: string, battingFirst: string): CommentaryLine[] {
+  const pools: DuoGen[] = [
+    (c1, c2) => [
+      { commentatorId: c1, text: `${battingFirst} takes strike! Here we go! GAME ON!`, isKeyMoment: true },
+      { commentatorId: c2, text: `Let the cricket begin! Aaj ka din hai — make it count!`, isKeyMoment: true },
+    ],
+    (c1, c2) => [
+      { commentatorId: c2, text: `GAME ON! The umpire signals play! This is it!`, isKeyMoment: true },
+      { commentatorId: c1, text: `Bowler marks his run-up… crowd holds its breath… HERE WE GO!`, isKeyMoment: true },
+    ],
+  ];
+  return pools[Math.floor(Math.random() * pools.length)](c1Name, c2Name, "", "");
+}
+
+// ─── Post-match ceremony pages ────────────────────────────────
+
+export function getPostMatchResultLines(
+  c1Name: string, c2Name: string, playerName: string, opponentName: string,
+  result: "win" | "loss" | "draw", playerScore: number, opponentScore: number
+): CommentaryLine[] {
+  const pools: Record<string, DuoGen[]> = {
+    win: [
+      (c1, c2, p, o) => [
+        { commentatorId: c1, text: `WHAT A VICTORY! ${p} wins with ${playerScore} against ${opponentScore}!`, isKeyMoment: true },
+        { commentatorId: c2, text: `Jeet gaye bhai! ${p} ne kya game khela! Champion performance!`, isKeyMoment: true },
+      ],
+      (c1, c2, p, o) => [
+        { commentatorId: c2, text: `${p} TAKES IT! A stunning win by ${playerScore - opponentScore} runs!`, isKeyMoment: true },
+        { commentatorId: c1, text: `That's how legends play! ${p} absolutely dominated today!`, isKeyMoment: true },
+      ],
+    ],
+    loss: [
+      (c1, c2, p, o) => [
+        { commentatorId: c1, text: `And ${o} takes the victory! ${p} fought hard but it wasn't enough today.`, isKeyMoment: true },
+        { commentatorId: c2, text: `Heartbreak for ${p}! But as they say, haar ke jeetne wale ko baazigar kehte hain! Come back stronger!`, isKeyMoment: true },
+      ],
+    ],
+    draw: [
+      (c1, c2, p, o) => [
+        { commentatorId: c1, text: `IT'S A TIE! Both teams level! What a finish!`, isKeyMoment: true },
+        { commentatorId: c2, text: `Cricket ka asli mazaa! Neither side deserved to lose today!`, isKeyMoment: true },
+      ],
+    ],
+  };
+  const pool = pools[result];
+  return pool[Math.floor(Math.random() * pool.length)](c1Name, c2Name, playerName, opponentName);
+}
+
+export function getPostMatchStatsLines(
+  c1Name: string, c2Name: string, playerName: string,
+  stats: { sixes: number; fours: number; strikeRate: number; boundaryPct: number; bestPartnership: number }
+): CommentaryLine[] {
+  const lines: CommentaryLine[] = [];
+  if (stats.sixes > 0) {
+    lines.push({ commentatorId: c1Name, text: `${stats.sixes} sixes! ${playerName} was hitting them out of the park today!`, isKeyMoment: false });
+    lines.push({ commentatorId: c2Name, text: `${stats.sixes >= 3 ? "Yuvraj Singh would be proud!" : "Clean hitting!"} Strike rate of ${stats.strikeRate}!`, isKeyMoment: false });
+  } else {
+    lines.push({ commentatorId: c1Name, text: `Strike rate of ${stats.strikeRate} with ${stats.fours} fours. ${stats.strikeRate > 120 ? "Aggressive!" : "Steady innings."}`, isKeyMoment: false });
+    lines.push({ commentatorId: c2Name, text: `${stats.boundaryPct}% runs came from boundaries. ${stats.boundaryPct > 50 ? "Boundary merchant!" : "Good rotation of strike too."}`, isKeyMoment: false });
+  }
+  return lines;
+}
+
+export function getPostMatchVerdictLines(
+  c1Name: string, c2Name: string, playerName: string, opponentName: string, result: "win" | "loss" | "draw"
+): CommentaryLine[] {
+  const motm = result === "win" ? playerName : result === "loss" ? opponentName : "Shared";
+  const pools: DuoGen[] = [
+    (c1, c2, p, o) => [
+      { commentatorId: c1, text: `Man of the Match goes to ${motm}! Well deserved!`, isKeyMoment: true },
+      { commentatorId: c2, text: `${result === "win" ? `${p}, take a bow! Kya performance tha!` : result === "loss" ? `Credit to ${o}. ${p} will bounce back, I'm sure!` : `Both players share the honors! Kya contest tha!`}`, isKeyMoment: true },
+      { commentatorId: c1, text: `That's it from us! I'm ${c1}, with ${c2}, signing off! See you next match!`, isKeyMoment: false },
+    ],
+    (c1, c2, p, o) => [
+      { commentatorId: c2, text: `Player of the Match: ${motm}! Outstanding!`, isKeyMoment: true },
+      { commentatorId: c1, text: `${result === "win" ? `${p} showed champion mentality today!` : result === "loss" ? `${p} will learn from this. The best always do!` : `A tie that both sides will remember!`}`, isKeyMoment: true },
+      { commentatorId: c2, text: `Until next time, cricket lovers! ${c2} and ${c1} signing off! Jai Cricket!`, isKeyMoment: false },
+    ],
+  ];
+  return pools[Math.floor(Math.random() * pools.length)](c1Name, c2Name, playerName, opponentName);
+}
+
+export function getPostMatchRivalryLines(
+  c1Name: string, c2Name: string, playerName: string, opponentName: string,
+  result: "win" | "loss" | "draw", rivalryStats: { myWins: number; theirWins: number; totalGames: number }
+): CommentaryLine[] {
+  const updatedWins = rivalryStats.myWins + (result === "win" ? 1 : 0);
+  const updatedLosses = rivalryStats.theirWins + (result === "loss" ? 1 : 0);
+  return [
+    { commentatorId: c1Name, text: `Head-to-head update: ${playerName} ${updatedWins} - ${updatedLosses} ${opponentName}! ${updatedWins > updatedLosses ? `${playerName} extending the lead!` : updatedLosses > updatedWins ? `${opponentName} still on top!` : "All square now!"}`, isKeyMoment: false },
+    { commentatorId: c2Name, text: `${result === "win" ? `${playerName} ka jalwa! Dominance!` : result === "loss" ? `${opponentName} says "main abhi zinda hoon!" Rivalry is ON!` : `This rivalry refuses to die! REMATCH when?!`}`, isKeyMoment: false },
+  ];
 }
