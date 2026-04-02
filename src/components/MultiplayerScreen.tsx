@@ -1138,6 +1138,9 @@ export default function MultiplayerScreen({ onHome }: Props) {
                     setLastBallResult(null);
                     setPvpBallHistory([]);
                     pvpPostMatchShownRef.current = false;
+                    pvpPreMatchShownRef.current = false;
+                    setShowPvPPreMatch(false);
+                    setRivalryStats(null);
                     navigate(`/game/multiplayer?game=${newGame.id}`, { replace: true });
                   }
                 }}
