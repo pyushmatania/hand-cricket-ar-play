@@ -325,7 +325,17 @@ export default function TapPlayingUI({
         )}
       </AnimatePresence>
 
-      {/* Commentator badges */}
+      {/* Wicket / Innings breakdown card */}
+      <AnimatePresence>
+        {showWicketBreakdown && wicketBreakdownData && (
+          <WicketBreakdownCard
+            data={wicketBreakdownData}
+            onContinue={handleWicketBreakdownContinue}
+          />
+        )}
+      </AnimatePresence>
+
+
       {phase !== "not_started" && phase !== "finished" && (
         <div className="flex items-center justify-center gap-2 mb-1">
           {matchCommentators.map((c, i) => (
