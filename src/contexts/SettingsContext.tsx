@@ -15,6 +15,7 @@ interface Settings {
   commentaryVoice: string;
   voiceEngine: VoiceEngine;
   commentaryLanguage: CommentaryLanguage;
+  ceremoniesEnabled: boolean;
 }
 
 interface SettingsContextType extends Settings {
