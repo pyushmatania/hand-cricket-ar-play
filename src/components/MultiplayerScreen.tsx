@@ -383,12 +383,49 @@ export default function MultiplayerScreen({ onHome }: Props) {
             setTimeout(() => setReceivedTease(null), 4000);
           }
 
+          // Guest-side innings break detection
+          if ((updated as any).phase === "innings_break" && user?.id !== updated.host_id && !showInningsBreak) {
+            const localWasBatting = !updated.host_batting; // After switch, guest batting is !host_batting, but before switch it was opposite
+            // The payload tells us what happened
+            if (payload_data?.isInningsChange) {
+              setInningsBreakStats({
+                batter: localWasBatting ? opponentName : myName,
+                bowler: localWasBatting ? myName : opponentName,
+                score: localWasBatting ? updated.guest_score : updated.host_score,
+                lastMove: String(payload_data.guestMove || ""),
+                opponentLastMove: String(payload_data.hostMove || ""),
+              });
+              setShowInningsBreak(true);
+              setInningsBreakReady(false);
+              stopTimer();
+            }
+          }
+
+          // Handle ready-up: when both players have readied during innings_break, host transitions
+          if ((updated as any).phase === "innings_break" && updated.host_move === "READY" && updated.guest_move === "READY" && user?.id === updated.host_id) {
+            // Both ready — transition to playing
+            supabase.from("multiplayer_games").update({
+              host_move: null, guest_move: null,
+              phase: "pre_round_countdown" as any,
+              phase_started_at: new Date().toISOString(),
+              turn_deadline_at: null,
+            }).eq("id", updated.id).eq("phase", "innings_break");
+          }
+
+          // When phase transitions from innings_break to pre_round_countdown, dismiss the overlay
+          if ((updated as any).phase === "pre_round_countdown" && showInningsBreak) {
+            setShowInningsBreak(false);
+            setInningsBreakReady(false);
+            setTurnCountdownMs(TURN_TIMER_MS); // Full reset
+          }
+
           if (nextPhase === "finished") {
             stopTimer();
-            // Trigger PvP post-match ceremony
             if (!pvpPostMatchShownRef.current) {
               pvpPostMatchShownRef.current = true;
-              setTimeout(() => setShowPvPPostMatch(true), 1000);
+              if (ceremoniesEnabled) {
+                setTimeout(() => setShowPvPPostMatch(true), 1000);
+              }
             }
           }
         }
