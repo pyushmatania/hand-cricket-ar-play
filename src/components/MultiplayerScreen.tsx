@@ -446,6 +446,91 @@ export default function MultiplayerScreen({ onHome }: Props) {
     };
   }, [user?.id, currentGame?.id, currentGame?.status, opponentName]);
 
+  // ─── Gaslighting messages when rematch expires ──────────────────
+  const GASLIGHT_WINNER = [
+    `${opponentName} ghosted you... guess one beating was enough 💀`,
+    `They saw your score and chose peace. Smart move honestly 😏`,
+    `${opponentName} is probably still crying. Give them time 🥲`,
+    `No response. Your dominance broke their spirit 👑`,
+    `${opponentName} left the chat. Championship mentality can't be matched 🏆`,
+    `Radio silence. They know they can't handle the heat 🔥`,
+    `${opponentName} chose self-care over self-destruction. Wise 🧘`,
+    `Timeout! ${opponentName} is still recovering from that last over 😂`,
+  ];
+  const GASLIGHT_LOSER = [
+    `${opponentName} didn't even bother... you're not worth their time apparently 💅`,
+    `Ghosted. Even ${opponentName} thinks you need more practice 📚`,
+    `No response. Maybe they felt bad about destroying you again 🤷`,
+    `${opponentName} said "too easy, next" without even clicking 😬`,
+    `Timeout! ${opponentName} probably forgot you exist already 👻`,
+    `They're celebrating their win, not thinking about you 🎉`,
+    `${opponentName} moved on faster than your batting collapse 📉`,
+    `No rematch needed when the outcome is already decided 🗑️`,
+  ];
+
+  // Rematch countdown — 45s timer for sent rematch invites
+  useEffect(() => {
+    if (!rematchSent) { setRematchCountdown(null); return; }
+    setRematchCountdown(45);
+    const interval = setInterval(() => {
+      setRematchCountdown(prev => {
+        if (prev === null || prev <= 1) {
+          clearInterval(interval);
+          setRematchSent(false);
+          setRematchCountdown(null);
+          const didWin = currentGame?.winner_id === user?.id;
+          const pool = didWin ? GASLIGHT_WINNER : GASLIGHT_LOSER;
+          setRematchExpiredMsg(pool[Math.floor(Math.random() * pool.length)]);
+          setTimeout(() => setRematchExpiredMsg(null), 6000);
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [rematchSent]);
+
+  // Incoming rematch countdown — 45s for the receiver
+  useEffect(() => {
+    if (!incomingRematch) { setIncomingRematchCountdown(null); return; }
+    // Notification chime
+    try {
+      const ctx = new AudioContext();
+      if (ctx.state === "suspended") ctx.resume();
+      [880, 1100].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.15, ctx.currentTime + i * 0.15);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.4);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(ctx.currentTime + i * 0.15);
+        osc.stop(ctx.currentTime + i * 0.15 + 0.4);
+      });
+      navigator.vibrate?.([100, 50, 150]);
+    } catch {}
+    setIncomingRematchCountdown(45);
+    const interval = setInterval(() => {
+      setIncomingRematchCountdown(prev => {
+        if (prev === null || prev <= 1) {
+          clearInterval(interval);
+          if (incomingRematch) {
+            supabase.from("match_invites").update({
+              status: "expired", declined_at: new Date().toISOString(),
+            }).eq("id", incomingRematch.inviteId).then(() => {});
+          }
+          setIncomingRematch(null);
+          setIncomingRematchCountdown(null);
+          return null;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [incomingRematch?.inviteId]);
+
   // Timer management — idle detection + countdown
   const myMove = currentGame ? (user?.id === currentGame.host_id ? currentGame.host_move : currentGame.guest_move) : null;
   const waitingForOpponent = myMove !== null;
