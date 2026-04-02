@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Move, BallResult, GameResult, InningsPhase } from "@/hooks/useHandCricket";
 import { SFX, Haptics } from "@/lib/sounds";
@@ -18,7 +18,6 @@ const MOVES_CONFIG: { move: Move; emoji: string; label: string; color: string; g
 ];
 
 export interface TapPlayingUIProps {
-  // Game state
   phase: InningsPhase;
   userScore: number;
   aiScore: number;
@@ -30,24 +29,16 @@ export interface TapPlayingUIProps {
   lastResult: BallResult | null;
   result: GameResult;
   ballHistory: BallResult[];
-
-  // Names
   playerName: string;
   opponentName: string;
   opponentEmoji?: string;
-
-  // Callbacks
   onMove: (move: Move) => void;
   onReset: () => void;
   onHome: () => void;
-
-  // PvP extras
   isPvP?: boolean;
   waitingForOpponent?: boolean;
   cooldownOverride?: boolean;
-  extraContent?: React.ReactNode; // For tease panel, countdown timer, etc.
-
-  // Mode label
+  extraContent?: React.ReactNode;
   modeLabel?: string;
 }
 
@@ -68,7 +59,6 @@ export default function TapPlayingUI({
 
   const effectiveCooldown = cooldownOverride !== undefined ? cooldownOverride : cooldown;
 
-  // Game state object for ScoreBoard and commentary
   const gameStateForScoreboard = {
     phase, userScore, aiScore, userWickets, aiWickets,
     target, currentInnings, isBatting, lastResult, result, ballHistory,
@@ -124,7 +114,6 @@ export default function TapPlayingUI({
       setCooldown(true);
       setTimeout(() => setCooldown(false), 800);
     }
-
     const moveData = MOVES_CONFIG.find(m => m.move === move);
     if (moveData) {
       setShowExplosion({ emoji: moveData.emoji, key: Date.now() });
@@ -141,19 +130,6 @@ export default function TapPlayingUI({
         <ScoreBoard game={gameStateForScoreboard as any} playerName={playerName} aiName={opponentName} aiEmoji={opponentEmoji} />
       )}
 
-      {/* Batting/Bowling indicator */}
-      {phase !== "not_started" && phase !== "finished" && (
-        <div className="flex items-center justify-center">
-          <div className={`px-3 py-1 rounded-lg font-display text-[9px] font-black tracking-[0.15em] border ${
-            isBatting
-              ? "bg-secondary/10 border-secondary/25 text-secondary"
-              : "bg-primary/10 border-primary/25 text-primary"
-          }`}>
-            {isBatting ? "⚡ YOU ARE BATTING" : "🎯 YOU ARE BOWLING"}
-          </div>
-        </div>
-      )}
-
       {/* Commentary bar */}
       <AnimatePresence>
         {commentary && (
@@ -161,17 +137,17 @@ export default function TapPlayingUI({
             initial={{ opacity: 0, y: -5 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -5 }}
-            className="glass-card rounded-lg px-3 py-1.5 text-center flex items-center justify-center gap-1.5"
+            className="glass-card rounded-lg px-3 py-1 text-center flex items-center justify-center gap-1.5"
           >
-            <span className="text-[10px]">📢</span>
-            <p className="font-display text-[9px] font-bold text-foreground tracking-wider line-clamp-1">
+            <span className="text-[9px]">📢</span>
+            <p className="font-display text-[8px] font-bold text-foreground tracking-wider line-clamp-1">
               {commentary}
             </p>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Last result display */}
+      {/* Last result — compact inline */}
       <AnimatePresence mode="wait">
         {lastResult && phase !== "not_started" && phase !== "finished" && !waitingForOpponent && (
           <motion.div
@@ -179,7 +155,7 @@ export default function TapPlayingUI({
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="glass-premium rounded-xl p-2.5 text-center relative overflow-hidden"
+            className="glass-premium rounded-lg p-2 relative overflow-hidden"
           >
             <motion.div
               initial={{ opacity: 0.4 }}
@@ -187,17 +163,17 @@ export default function TapPlayingUI({
               transition={{ duration: 0.6 }}
               className={`absolute inset-0 ${lastResult.runs === "OUT" ? "bg-out-red/15" : "bg-primary/10"}`}
             />
-            <div className="flex items-center justify-center gap-5 relative z-10">
+            <div className="flex items-center justify-center gap-4 relative z-10">
               <div className="text-center">
                 <p className="text-[6px] text-muted-foreground font-bold tracking-[0.2em] mb-0.5">{playerName.toUpperCase().slice(0, 8)}</p>
                 <motion.div
                   initial={{ rotateY: 90 }}
                   animate={{ rotateY: 0 }}
-                  className="w-11 h-11 rounded-lg bg-gradient-to-br from-primary/15 to-primary/5 border border-primary/20 flex items-center justify-center mx-auto"
+                  className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary/15 to-primary/5 border border-primary/20 flex items-center justify-center mx-auto"
                 >
-                  <span className="text-2xl">{MOVES_CONFIG.find((m) => m.move === lastResult?.userMove)?.emoji || "❓"}</span>
+                  <span className="text-lg">{MOVES_CONFIG.find((m) => m.move === lastResult?.userMove)?.emoji || "❓"}</span>
                 </motion.div>
-                <p className="text-[9px] font-display font-bold text-primary mt-1 tracking-wider">
+                <p className="text-[8px] font-display font-bold text-primary mt-0.5 tracking-wider">
                   {lastResult.userMove === "DEF" ? "DEF" : lastResult.userMove}
                 </p>
               </div>
@@ -205,7 +181,7 @@ export default function TapPlayingUI({
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", delay: 0.15 }}
-                className={`w-11 h-11 rounded-xl flex items-center justify-center font-display font-black text-xs ${
+                className={`w-9 h-9 rounded-lg flex items-center justify-center font-display font-black text-[10px] ${
                   lastResult.runs === "OUT"
                     ? "bg-gradient-to-br from-out-red/20 to-out-red/10 border-2 border-out-red/30 text-out-red"
                     : "bg-gradient-to-br from-neon-green/20 to-neon-green/10 border-2 border-neon-green/30 text-neon-green"
@@ -220,11 +196,11 @@ export default function TapPlayingUI({
                   initial={{ rotateY: -90 }}
                   animate={{ rotateY: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="w-11 h-11 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 border border-accent/20 flex items-center justify-center mx-auto relative"
+                  className="w-9 h-9 rounded-lg bg-gradient-to-br from-accent/15 to-accent/5 border border-accent/20 flex items-center justify-center mx-auto"
                 >
-                  <span className="text-2xl">{MOVES_CONFIG.find((m) => m.move === lastResult?.aiMove)?.emoji || opponentEmoji}</span>
+                  <span className="text-lg">{MOVES_CONFIG.find((m) => m.move === lastResult?.aiMove)?.emoji || opponentEmoji}</span>
                 </motion.div>
-                <p className="text-[9px] font-display font-bold text-accent mt-1 tracking-wider">
+                <p className="text-[8px] font-display font-bold text-accent mt-0.5 tracking-wider">
                   {lastResult.aiMove === "DEF" ? "DEF" : lastResult.aiMove}
                 </p>
               </div>
@@ -233,7 +209,7 @@ export default function TapPlayingUI({
         )}
       </AnimatePresence>
 
-      {/* PvP extra content slot (tease panel, countdown, waiting indicator) */}
+      {/* PvP extra content slot */}
       {extraContent}
 
       {/* Spacer */}
@@ -252,12 +228,12 @@ export default function TapPlayingUI({
                 transition={{ duration: 0.6 }}
                 className="absolute inset-0 flex items-center justify-center pointer-events-none z-20"
               >
-                <span className="text-6xl">{showExplosion.emoji}</span>
+                <span className="text-5xl">{showExplosion.emoji}</span>
               </motion.div>
             )}
           </AnimatePresence>
 
-          <p className="text-center text-[8px] text-muted-foreground font-display mb-1.5 tracking-[0.2em]">
+          <p className="text-center text-[7px] text-muted-foreground font-display mb-1 tracking-[0.2em]">
             {isBatting ? "⚡ TAP YOUR SHOT" : "🎯 TAP YOUR BOWL"}
           </p>
           <div className="grid grid-cols-3 gap-1.5">
@@ -267,7 +243,7 @@ export default function TapPlayingUI({
                 whileTap={{ scale: 0.8 }}
                 onClick={() => handleMove(m.move)}
                 disabled={effectiveCooldown}
-                className={`relative py-3 rounded-xl font-display font-bold text-sm flex flex-col items-center gap-0.5 transition-all border backdrop-blur-sm ${
+                className={`relative py-2.5 rounded-xl font-display font-bold text-sm flex flex-col items-center gap-0.5 transition-all border backdrop-blur-sm ${
                   effectiveCooldown
                     ? "opacity-30 cursor-not-allowed border-transparent bg-muted/20"
                     : lastPlayed === m.move
@@ -276,7 +252,7 @@ export default function TapPlayingUI({
                 }`}
               >
                 <span className="text-xl">{m.emoji}</span>
-                <span className="text-[8px] tracking-wider">{m.label}</span>
+                <span className="text-[7px] tracking-wider">{m.label}</span>
                 {effectiveCooldown && lastPlayed === m.move && (
                   <motion.div
                     initial={{ scaleX: 1 }}
@@ -290,7 +266,7 @@ export default function TapPlayingUI({
           </div>
           {!isPvP && (
             <button onClick={onReset}
-              className="text-[9px] text-muted-foreground/40 underline self-center mt-1.5 active:scale-95 font-display tracking-wider w-full text-center">
+              className="text-[8px] text-muted-foreground/40 underline self-center mt-1 active:scale-95 font-display tracking-wider w-full text-center">
               Reset Match
             </button>
           )}
@@ -299,11 +275,11 @@ export default function TapPlayingUI({
 
       {/* Waiting for opponent (PvP) */}
       {isPvP && waitingForOpponent && phase !== "finished" && phase !== "not_started" && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-score p-4 text-center">
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-score p-3 text-center">
           <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 1.5, repeat: Infinity }}>
-            <span className="text-3xl block mb-2">⏳</span>
+            <span className="text-2xl block mb-1">⏳</span>
           </motion.div>
-          <p className="font-display text-xs font-bold text-muted-foreground tracking-wider">
+          <p className="font-display text-[10px] font-bold text-muted-foreground tracking-wider">
             WAITING FOR {opponentName.toUpperCase()}...
           </p>
         </motion.div>
@@ -312,19 +288,19 @@ export default function TapPlayingUI({
       {/* Game over */}
       {phase === "finished" && (
         <div className="mt-auto">
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-            <div className="glass-card rounded-xl px-4 py-3 text-center">
-              <p className="font-display text-xs font-bold text-foreground tracking-wider">
-                {result === "win" ? `🏆 ${playerName.toUpperCase()} WINS! What a performance!` : result === "loss" ? `${opponentName} wins! Better luck next time!` : "🤝 A TIE! What a match!"}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
+            <div className="glass-card rounded-xl px-3 py-2 text-center">
+              <p className="font-display text-[10px] font-bold text-foreground tracking-wider">
+                {result === "win" ? `🏆 ${playerName.toUpperCase()} WINS!` : result === "loss" ? `${opponentName} wins!` : "🤝 A TIE!"}
               </p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-2">
               <motion.button whileTap={{ scale: 0.95 }} onClick={onReset}
-                className="flex-1 py-3.5 bg-gradient-to-r from-primary to-primary/70 text-primary-foreground font-display font-bold rounded-2xl tracking-wider shadow-[0_0_20px_hsl(217_91%_60%/0.2)] border border-primary/30">
+                className="flex-1 py-3 bg-gradient-to-r from-primary to-primary/70 text-primary-foreground font-display font-bold rounded-2xl tracking-wider shadow-[0_0_20px_hsl(217_91%_60%/0.2)] border border-primary/30 text-sm">
                 {isPvP ? "🔄 REMATCH" : "⚡ NEW MATCH"}
               </motion.button>
               <motion.button whileTap={{ scale: 0.95 }} onClick={onHome}
-                className="flex-1 py-3.5 glass-premium text-foreground font-display font-bold rounded-2xl tracking-wider border border-primary/10">
+                className="flex-1 py-3 glass-premium text-foreground font-display font-bold rounded-2xl tracking-wider border border-primary/10 text-sm">
                 HOME
               </motion.button>
             </div>
