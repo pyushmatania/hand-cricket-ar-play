@@ -472,7 +472,6 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                           { label: "TOTAL RUNS", mine: myMatchStats.totalRuns, theirs: friendMatchStats.totalRuns, emoji: "🏃" },
                           { label: "SIXES", mine: myMatchStats.sixes, theirs: friendMatchStats.sixes, emoji: "💥" },
                           { label: "FOURS", mine: myMatchStats.fours, theirs: friendMatchStats.fours, emoji: "🎯" },
-                          { label: "DOTS", mine: myMatchStats.dots, theirs: friendMatchStats.dots, emoji: "⚪" },
                         ].map((row) => {
                           const mN = typeof row.mine === "number" ? row.mine : (row as any).mineNum ?? 0;
                           const tN = typeof row.theirs === "number" ? row.theirs : (row as any).theirsNum ?? 0;
