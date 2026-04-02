@@ -42,6 +42,7 @@ interface Props { onHome: () => void; }
 
 export default function TournamentScreen({ onHome }: Props) {
   const { soundEnabled, hapticsEnabled, commentaryEnabled } = useSettings();
+  const { user } = useAuth();
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
   const [phase, setPhase] = useState<"bracket" | "playing" | "result">("bracket");
@@ -61,11 +62,10 @@ export default function TournamentScreen({ onHome }: Props) {
   const [playerName, setPlayerName] = useState("You");
 
   useEffect(() => {
-    const { user } = useAuth();
     if (!user) return;
     supabase.from("profiles").select("display_name").eq("user_id", user.id).maybeSingle()
       .then(({ data }) => { if (data?.display_name) setPlayerName(data.display_name); });
-  }, []);
+  }, [user]);
 
   const startTournament = () => {
     const r: Round[] = AI_OPPONENTS.map((opp, i) => ({ round: i + 1, opponent: opp.name, result: "pending" }));
