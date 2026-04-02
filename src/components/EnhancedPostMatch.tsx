@@ -110,7 +110,7 @@ export default function EnhancedPostMatch({
 
     // Result commentary
     const resultPool = result === "win" ? POST_WIN_EXPANDED : result === "loss" ? POST_LOSS_EXPANDED : POST_DRAW_EXPANDED;
-    const line1 = resultPool[0](playerName, opponentName, playerScore, opponentScore);
+    const line1 = (resultPool[0] as any)(playerName, opponentName, playerScore, opponentScore) as string;
     setCommentary(line1);
     if (voiceEnabled) speakCommentary(line1, true);
     t += 5000;
@@ -118,7 +118,7 @@ export default function EnhancedPostMatch({
     // Scorecard
     timers.push(setTimeout(() => {
       setStage("scorecard");
-      const line = resultPool[1](playerName, opponentName, playerScore, opponentScore);
+      const line = (resultPool[1] as any)(playerName, opponentName, playerScore, opponentScore) as string;
       setCommentary(line);
       if (voiceEnabled) speakCommentary(line, true);
     }, t));

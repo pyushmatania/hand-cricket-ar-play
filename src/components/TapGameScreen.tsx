@@ -9,7 +9,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import RulesSheet from "./RulesSheet";
 import OddEvenToss from "./OddEvenToss";
-import { PreMatchCeremony, PostMatchCeremony } from "./MatchCeremony";
+import EnhancedPreMatch from "./EnhancedPreMatch";
+import EnhancedPostMatch from "./EnhancedPostMatch";
 import TapPlayingUI from "./TapPlayingUI";
 
 const AI_NAME = "Rohit AI";
