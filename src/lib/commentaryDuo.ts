@@ -67,6 +67,29 @@ export function pickMatchCommentators(): [Commentator, Commentator] {
   return [shuffled[0], shuffled[1]];
 }
 
+export function applyPreferredVoiceToCommentators(
+  duo: [Commentator, Commentator],
+  preferredVoiceId?: string
+): [Commentator, Commentator] {
+  if (!preferredVoiceId) return duo;
+
+  const lead = { ...duo[0], voiceId: preferredVoiceId };
+  if (duo[1].voiceId !== preferredVoiceId) {
+    return [lead, duo[1]];
+  }
+
+  const alternateVoice = COMMENTATOR_PANEL.find((commentator) => commentator.voiceId !== preferredVoiceId)?.voiceId;
+
+  return [
+    lead,
+    { ...duo[1], voiceId: alternateVoice || duo[1].voiceId },
+  ];
+}
+
+export function pickConfiguredMatchCommentators(preferredVoiceId?: string): [Commentator, Commentator] {
+  return applyPreferredVoiceToCommentators(pickMatchCommentators(), preferredVoiceId);
+}
+
 // ─── Duo Conversation Templates ─────────────────────────────────
 
 type DuoGen = (c1: string, c2: string, playerName: string, opponentName: string, extra?: any) => CommentaryLine[];
