@@ -6,6 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import BottomNav from "@/components/BottomNav";
 import TopStatusBar from "@/components/TopStatusBar";
 import RivalryCard from "@/components/RivalryCard";
+import FriendStatsModal from "@/components/FriendStatsModal";
 import { toast } from "@/components/ui/use-toast";
 import {
   createMultiplayerRoom,
