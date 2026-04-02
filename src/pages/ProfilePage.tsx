@@ -147,6 +147,7 @@ export default function ProfilePage() {
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFriend, setSelectedFriend] = useState<any>(null);
+  const { pvpRecord } = usePvpStats(user?.id);
 
   const getTimeAgo = (dateStr: string) => {
     const diff = Date.now() - new Date(dateStr).getTime();
