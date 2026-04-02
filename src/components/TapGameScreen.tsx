@@ -336,9 +336,12 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
           )}
         </AnimatePresence>
 
-        {/* Tap buttons grid */}
+        {/* Spacer to push buttons down */}
+        <div className="flex-1 min-h-0" />
+
+        {/* Tap buttons grid - always at bottom */}
         {game.phase !== "not_started" && game.phase !== "finished" && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mt-auto relative">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative">
             <AnimatePresence>
               {showExplosion && (
                 <motion.div
@@ -354,17 +357,17 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
               )}
             </AnimatePresence>
 
-            <p className="text-center text-[8px] text-muted-foreground font-display mb-2 tracking-[0.2em]">
+            <p className="text-center text-[8px] text-muted-foreground font-display mb-1.5 tracking-[0.2em]">
               {game.isBatting ? "⚡ TAP YOUR SHOT" : "🎯 TAP YOUR BOWL"}
             </p>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-1.5">
               {MOVES.map((m) => (
                 <motion.button
                   key={m.label}
                   whileTap={{ scale: 0.8 }}
                   onClick={() => handleMove(m.move)}
                   disabled={cooldown}
-                  className={`relative py-5 rounded-2xl font-display font-bold text-sm flex flex-col items-center gap-1.5 transition-all border backdrop-blur-sm ${
+                  className={`relative py-4 rounded-2xl font-display font-bold text-sm flex flex-col items-center gap-1 transition-all border backdrop-blur-sm ${
                     cooldown
                       ? "opacity-30 cursor-not-allowed border-transparent bg-muted/20"
                       : lastPlayed === m.move
@@ -372,49 +375,47 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
                       : `bg-gradient-to-br ${m.color} text-foreground ${m.glow}`
                   }`}
                 >
-                  <span className="text-3xl">{m.emoji}</span>
-                  <span className="text-[10px] tracking-wider">{m.label}</span>
+                  <span className="text-2xl">{m.emoji}</span>
+                  <span className="text-[9px] tracking-wider">{m.label}</span>
                   {cooldown && lastPlayed === m.move && (
                     <motion.div
                       initial={{ scaleX: 1 }}
                       animate={{ scaleX: 0 }}
                       transition={{ duration: 0.8, ease: "linear" }}
-                      className="absolute bottom-1.5 left-4 right-4 h-0.5 bg-primary rounded-full origin-left"
+                      className="absolute bottom-1 left-3 right-3 h-0.5 bg-primary rounded-full origin-left"
                     />
                   )}
                 </motion.button>
               ))}
             </div>
+            <button onClick={handleStartNew}
+              className="text-[9px] text-muted-foreground/40 underline self-center mt-1.5 active:scale-95 font-display tracking-wider w-full text-center">
+              Reset Match
+            </button>
           </motion.div>
         )}
 
-        {/* Game over */}
+        {/* Game over - fixed bottom */}
         {game.phase === "finished" && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-3 mt-4">
-            <div className="glass-card rounded-xl px-4 py-3 text-center">
-              <p className="font-display text-xs font-bold text-foreground tracking-wider">
-                {game.result === "win" ? `🏆 ${playerName.toUpperCase()} WINS! What a performance!` : game.result === "loss" ? `${AI_NAME} wins! Better luck next time!` : "🤝 A TIE! What a match!"}
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <motion.button whileTap={{ scale: 0.95 }} onClick={handleStartNew}
-                className="flex-1 py-3.5 bg-gradient-to-r from-primary to-primary/70 text-primary-foreground font-display font-bold rounded-2xl tracking-wider shadow-[0_0_20px_hsl(217_91%_60%/0.2)] border border-primary/30">
-                ⚡ NEW MATCH
-              </motion.button>
-              <motion.button whileTap={{ scale: 0.95 }} onClick={onHome}
-                className="flex-1 py-3.5 glass-premium text-foreground font-display font-bold rounded-2xl tracking-wider border border-primary/10">
-                HOME
-              </motion.button>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Reset */}
-        {game.phase !== "not_started" && game.phase !== "finished" && (
-          <button onClick={handleStartNew}
-            className="text-[10px] text-muted-foreground/40 underline self-center mt-1 active:scale-95 font-display tracking-wider">
-            Reset Match
-          </button>
+          <div className="mt-auto">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
+              <div className="glass-card rounded-xl px-4 py-3 text-center">
+                <p className="font-display text-xs font-bold text-foreground tracking-wider">
+                  {game.result === "win" ? `🏆 ${playerName.toUpperCase()} WINS! What a performance!` : game.result === "loss" ? `${AI_NAME} wins! Better luck next time!` : "🤝 A TIE! What a match!"}
+                </p>
+              </div>
+              <div className="flex gap-3">
+                <motion.button whileTap={{ scale: 0.95 }} onClick={handleStartNew}
+                  className="flex-1 py-3.5 bg-gradient-to-r from-primary to-primary/70 text-primary-foreground font-display font-bold rounded-2xl tracking-wider shadow-[0_0_20px_hsl(217_91%_60%/0.2)] border border-primary/30">
+                  ⚡ NEW MATCH
+                </motion.button>
+                <motion.button whileTap={{ scale: 0.95 }} onClick={onHome}
+                  className="flex-1 py-3.5 glass-premium text-foreground font-display font-bold rounded-2xl tracking-wider border border-primary/10">
+                  HOME
+                </motion.button>
+              </div>
+            </motion.div>
+          </div>
         )}
       </div>
     </div>
