@@ -14,10 +14,11 @@ import { useHandCricket } from "@/hooks/useHandCricket";
 import { useHandDetection } from "@/hooks/useHandDetection";
 import { useMatchSaver } from "@/hooks/useMatchSaver";
 import { SFX, Haptics } from "@/lib/sounds";
-import { getCommentary, getInningsChangeCommentary } from "@/lib/commentary";
-import { speakCommentary, playCrowdForResult, CrowdSFX } from "@/lib/voiceCommentary";
+import { getInningsChangeCommentary } from "@/lib/commentary";
+import { playCrowdForResult, CrowdSFX } from "@/lib/voiceCommentary";
+import { speakDuoLines } from "@/lib/elevenLabsAudio";
 import { useSettings } from "@/contexts/SettingsContext";
-import { pickMatchCommentators, type Commentator } from "@/lib/commentaryDuo";
+import { pickConfiguredMatchCommentators, getDuoCommentary, type Commentator, type CommentaryLine } from "@/lib/commentaryDuo";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -47,6 +48,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
   const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled } = useSettings();
+  const { commentaryVoice } = useSettings();
   const detection = useHandDetection(videoElementRef);
   const [tossChoice, setTossChoice] = useState<null | boolean>(null);
   const [stadiumMode, setStadiumMode] = useState(true);
@@ -54,9 +56,9 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const [filter, setFilter] = useState<CameraFilter>("broadcast");
   const [gloveStyle, setGloveStyle] = useState<GloveStyle>("cricket");
   const [showFilterPicker, setShowFilterPicker] = useState(false);
-  const [commentary, setCommentary] = useState<string | null>(null);
+  const [commentary, setCommentary] = useState<CommentaryLine[] | null>(null);
   const savedRef = useRef(false);
-  const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickMatchCommentators());
+  const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickConfiguredMatchCommentators(commentaryVoice));
   const prevPhaseRef = useRef(game.phase);
 
   // Fireworks state
@@ -156,8 +158,13 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       if (soundEnabled) SFX.gameStart();
       if (commentaryEnabled) {
         const text = getInningsChangeCommentary(game);
-        setCommentary(text);
-        if (voiceEnabled) speakCommentary(text, true);
+        const lines: CommentaryLine[] = [
+          { commentatorId: matchCommentators[0].name, text, isKeyMoment: true },
+        ];
+        setCommentary(lines);
+        if (voiceEnabled) {
+          speakDuoLines([{ text, voiceId: matchCommentators[0].voiceId }]);
+        }
         setTimeout(() => setCommentary(null), 3000);
       }
       if (crowdEnabled) CrowdSFX.ambientMurmur(2);
@@ -195,9 +202,20 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     }
     if (crowdEnabled) playCrowdForResult(r.runs, game.isBatting, false);
     if (commentaryEnabled) {
-      const text = getCommentary({ game, result: r });
-      setCommentary(text);
-      if (voiceEnabled) speakCommentary(text, true);
+      const duoLines = getDuoCommentary(
+        matchCommentators[0].name, matchCommentators[1].name,
+        r.runs, game.isBatting, playerName, opponentName
+      );
+      setCommentary(duoLines);
+      if (voiceEnabled) {
+        const keyLines = duoLines.filter(l => l.isKeyMoment);
+        if (keyLines.length > 0) {
+          speakDuoLines(keyLines.map(l => ({
+            text: l.text,
+            voiceId: (matchCommentators.find(c => c.name === l.commentatorId || c.id === l.commentatorId) || matchCommentators[0]).voiceId,
+          })));
+        }
+      }
       setTimeout(() => setCommentary(null), 2500);
     }
   }, [game.lastResult]);

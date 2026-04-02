@@ -12,6 +12,7 @@ const BRIAN_VOICE_ID = "nPczCjzI2devNBz1zQrb";
 const audioCache = new Map<string, string>(); // text:voiceId → blobURL
 let elevenLabsAvailable = true; // flips false on 402 (tokens exhausted)
 let currentAudio: HTMLAudioElement | null = null;
+let currentSfxAudio: HTMLAudioElement | null = null;
 
 function getCacheKey(text: string, voiceId?: string): string {
   return `${(voiceId || BRIAN_VOICE_ID)}:${text.trim().toLowerCase().slice(0, 200)}`;
@@ -94,14 +95,23 @@ function speakWebSpeech(text: string): Promise<void> {
   });
 }
 
-function playAudioUrl(url: string): Promise<boolean> {
+function playAudioUrl(url: string, channel: "tts" | "sfx" = "tts"): Promise<boolean> {
   return new Promise((resolve) => {
-    stopCurrentAudio();
-    const audio = new Audio(url);
-    currentAudio = audio;
-    audio.onended = () => { currentAudio = null; resolve(true); };
-    audio.onerror = () => { currentAudio = null; resolve(false); };
-    audio.play().catch(() => resolve(false));
+    if (channel === "sfx") {
+      stopSfxAudio();
+      const audio = new Audio(url);
+      currentSfxAudio = audio;
+      audio.onended = () => { currentSfxAudio = null; resolve(true); };
+      audio.onerror = () => { currentSfxAudio = null; resolve(false); };
+      audio.play().catch(() => resolve(false));
+    } else {
+      stopCurrentAudio();
+      const audio = new Audio(url);
+      currentAudio = audio;
+      audio.onended = () => { currentAudio = null; resolve(true); };
+      audio.onerror = () => { currentAudio = null; resolve(false); };
+      audio.play().catch(() => resolve(false));
+    }
   });
 }
 
@@ -110,6 +120,14 @@ export function stopCurrentAudio() {
     currentAudio.pause();
     currentAudio.currentTime = 0;
     currentAudio = null;
+  }
+}
+
+export function stopSfxAudio() {
+  if (currentSfxAudio) {
+    currentSfxAudio.pause();
+    currentSfxAudio.currentTime = 0;
+    currentSfxAudio = null;
   }
 }
 
@@ -122,7 +140,7 @@ export async function playElevenLabsSFX(prompt: string, duration = 3): Promise<b
 
   const key = `sfx:${prompt}:${duration}`;
   if (sfxCache.has(key)) {
-    return playAudioUrl(sfxCache.get(key)!);
+    return playAudioUrl(sfxCache.get(key)!, "sfx");
   }
 
   try {
@@ -147,7 +165,7 @@ export async function playElevenLabsSFX(prompt: string, duration = 3): Promise<b
     const blob = await response.blob();
     const url = URL.createObjectURL(blob);
     sfxCache.set(key, url);
-    return playAudioUrl(url);
+    return playAudioUrl(url, "sfx");
   } catch {
     return false;
   }
