@@ -495,7 +495,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
       const g = data as unknown as MultiplayerGame;
       setCurrentGame(g);
       setPhase(statusToPhase(g.status));
-      setReserveTime(RESERVE_TIMER_MS);
+      // Timer resets happen automatically via useEffect
       navigate(`/game/multiplayer?game=${g.id}`, { replace: true });
       setLobbyMessage("Room created. Waiting for opponent...");
     } else {
