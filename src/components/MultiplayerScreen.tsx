@@ -881,11 +881,13 @@ export default function MultiplayerScreen({ onHome }: Props) {
     // Same move = OUT (including DEF+DEF)
     const isOut = hostMove === guestMove || isBothDef;
 
+    let isInningsChange = false;
     if (isOut) {
       result = isBothDef ? "Both played DEF — OUT!" : `Both played ${hostMove} — OUT!`;
       if (game.innings === 1) {
         newInnings = 2;
         newHostBatting = !game.host_batting;
+        isInningsChange = true;
       } else {
         newStatus = "finished";
         if (battingIsHost) {
