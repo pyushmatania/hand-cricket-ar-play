@@ -814,6 +814,18 @@ export default function LeaderboardPage() {
           </div>
         </div>
       )}
+      {previewFriendId && (() => {
+        const fl = friendLeaders.find(f => f.user_id === previewFriendId);
+        if (!fl) return null;
+        return (
+          <PlayerPreviewCard
+            player={{ ...fl, avatar_index: fl.avatar_index ?? 0 }}
+            onClose={() => setPreviewFriendId(null)}
+            onViewFull={() => { setPreviewFriendId(null); setSelectedFriendId(fl.user_id); }}
+            onChallenge={() => { setPreviewFriendId(null); setChallengeTargetId(fl.user_id); }}
+          />
+        );
+      })()}
       {selectedFriendId && (() => {
         const fl = friendLeaders.find(f => f.user_id === selectedFriendId);
         if (!fl) return null;
