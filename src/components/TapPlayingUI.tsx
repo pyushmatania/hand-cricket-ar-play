@@ -59,7 +59,7 @@ export default function TapPlayingUI({
   isPvP = false, waitingForOpponent = false, cooldownOverride,
   extraContent, modeLabel = "TAP MODE", matchConfig, innings1Balls, commentators,
 }: TapPlayingUIProps) {
-  const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, commentaryVoice, voiceEngine } = useSettings();
+  const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, commentaryVoice, voiceEngine, commentaryLanguage } = useSettings();
   const [lastPlayed, setLastPlayed] = useState<Move | null>(null);
   const [cooldown, setCooldown] = useState(false);
   const [showExplosion, setShowExplosion] = useState<{ emoji: string; key: number } | null>(null);
@@ -262,7 +262,8 @@ export default function TapPlayingUI({
     if (commentaryEnabled) {
       const duoLines = getDuoCommentary(
         matchCommentators[0].name, matchCommentators[1].name,
-        r.runs, isBatting, playerName, opponentName
+        r.runs, isBatting, playerName, opponentName,
+        undefined, commentaryLanguage
       );
       setCommentary(duoLines);
 

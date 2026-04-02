@@ -48,8 +48,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
-  const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, voiceEngine } = useSettings();
-  const { commentaryVoice } = useSettings();
+  const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, voiceEngine, commentaryVoice, commentaryLanguage } = useSettings();
   const detection = useHandDetection(videoElementRef);
   const [tossChoice, setTossChoice] = useState<null | boolean>(null);
   const [matchConfig, setMatchConfig] = useState<import("@/hooks/useHandCricket").MatchConfig | null>(null);
@@ -214,7 +213,8 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     if (commentaryEnabled) {
       const duoLines = getDuoCommentary(
         matchCommentators[0].name, matchCommentators[1].name,
-        r.runs, game.isBatting, playerName, opponentName
+        r.runs, game.isBatting, playerName, opponentName,
+        undefined, commentaryLanguage
       );
       setCommentary(duoLines);
       if (voiceEnabled) {
