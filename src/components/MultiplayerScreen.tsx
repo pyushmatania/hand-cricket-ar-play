@@ -149,6 +149,15 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickConfiguredMatchCommentators(commentaryVoice));
   const pvpPostMatchShownRef = useRef(false);
   const pvpPreMatchShownRef = useRef(false);
+  
+  // Innings break ready-up state
+  const [showInningsBreak, setShowInningsBreak] = useState(false);
+  const [inningsBreakReady, setInningsBreakReady] = useState(false);
+  const [inningsBreakStats, setInningsBreakStats] = useState<{ batter: string; bowler: string; score: number; lastMove: string; opponentLastMove: string } | null>(null);
+  
+  // Post-toss role card
+  const [showRoleCard, setShowRoleCard] = useState(false);
+  const [roleCardData, setRoleCardData] = useState<{ isBatting: boolean; playerName: string; opponentName: string } | null>(null);
   const [rivalryStats, setRivalryStats] = useState<{
     myWins: number; theirWins: number; totalGames: number;
     myHighScore: number; theirHighScore: number;
