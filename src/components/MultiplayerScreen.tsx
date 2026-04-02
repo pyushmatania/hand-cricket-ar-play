@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import OddEvenToss from "./OddEvenToss";
 import SpinningCricketBall from "./SpinningCricketBall";
+import WaitingRoom from "./WaitingRoom";
+import VSIntroScreen from "./VSIntroScreen";
 import type { Move } from "@/hooks/useHandCricket";
 import {
   claimMultiplayerGame,
