@@ -36,7 +36,7 @@ const defaults: Settings = {
   voiceEnabled: true, crowdEnabled: true, musicEnabled: true,
   batSoundEnabled: true, victorySoundEnabled: true,
   commentaryVoice: "nPczCjzI2devNBz1zQrb", // Brian (default)
-  voiceEngine: "auto" as VoiceEngine,
+  voiceEngine: "system" as VoiceEngine,
   commentaryLanguage: "both" as CommentaryLanguage,
 };
 
