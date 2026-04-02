@@ -890,49 +890,95 @@ export default function MultiplayerScreen({ onHome }: Props) {
               </div>
             </div>
 
-            {/* Timer HUD */}
-            {!waitingForOpponent && (
-              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="glass-premium rounded-xl p-3">
-                <div className="flex items-center justify-between mb-1.5">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-sm">⏳</span>
-                    <span className="font-display text-[8px] font-bold text-muted-foreground tracking-widest">SHOT CLOCK</span>
+            {/* Countdown Timer — only shows after 15s idle */}
+            <AnimatePresence>
+              {!waitingForOpponent && showCountdown && (
+                <motion.div initial={{ opacity: 0, y: -10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0 }}
+                  className="glass-premium rounded-xl p-3 border border-out-red/30">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 0.5, repeat: Infinity }} className="text-sm">⚠️</motion.span>
+                      <span className="font-display text-[8px] font-bold text-out-red tracking-widest">MAKE YOUR MOVE!</span>
+                    </div>
+                    <span className={`font-display text-lg font-black ${countdownSec > 15 ? "text-secondary" : countdownSec > 5 ? "text-out-red" : "text-out-red animate-pulse"}`}>
+                      {countdownSec}s
+                    </span>
                   </div>
-                  <span className={`font-display text-lg font-black ${ballTimer > 1000 ? "text-neon-green" : ballTimer > 0 ? "text-secondary" : "text-out-red"}`}>
-                    {ballTimer > 0 ? ballTimerSec : "0.0"}s
-                  </span>
-                </div>
-                <div className="w-full h-2 bg-muted/30 rounded-full overflow-hidden mb-2">
-                  <motion.div
-                    className={`h-full rounded-full transition-colors ${
-                      ballTimer > 1000 ? "bg-gradient-to-r from-neon-green to-neon-green/60" :
-                      ballTimer > 0 ? "bg-gradient-to-r from-secondary to-secondary/60" : "bg-out-red"
-                    }`}
-                    style={{ width: `${ballTimerPct}%` }}
-                  />
-                </div>
-                <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-sm">🔋</span>
-                    <span className="font-display text-[8px] font-bold text-muted-foreground tracking-widest">RESERVE</span>
-                    {usingReserve && (
-                      <motion.span animate={{ opacity: [1, 0.3] }} transition={{ duration: 0.5, repeat: Infinity }}
-                        className="text-[7px] font-display font-bold text-out-red tracking-wider">DRAINING!</motion.span>
-                    )}
+                  <div className="w-full h-2.5 bg-muted/30 rounded-full overflow-hidden">
+                    <motion.div
+                      className={`h-full rounded-full ${countdownSec > 15 ? "bg-gradient-to-r from-secondary to-secondary/60" : "bg-gradient-to-r from-out-red to-out-red/60"}`}
+                      style={{ width: `${countdownPct}%` }}
+                    />
                   </div>
-                  <span className={`font-display text-sm font-black ${reserveTime > 5000 ? "text-foreground" : reserveTime > 2000 ? "text-secondary" : "text-out-red"}`}>
-                    {reserveSec}s
-                  </span>
-                </div>
-                <div className="w-full h-1.5 bg-muted/30 rounded-full overflow-hidden">
-                  <div className={`h-full rounded-full transition-all ${
-                    reserveTime > 5000 ? "bg-gradient-to-r from-accent to-accent/60" :
-                    reserveTime > 2000 ? "bg-gradient-to-r from-secondary to-secondary/60" :
-                    "bg-gradient-to-r from-out-red to-out-red/60"
-                  }`} style={{ width: `${reservePct}%` }} />
-                </div>
-              </motion.div>
+                  <p className="text-[7px] text-out-red/60 font-display tracking-wider mt-1 text-center">
+                    Auto-forfeit if you don't play!
+                  </p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Tease button & received tease */}
+            <AnimatePresence>
+              {receivedTease && (
+                <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
+                  className="glass-card rounded-xl p-2.5 border border-out-red/20">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">😈</span>
+                    <div className="flex-1">
+                      <span className="text-[7px] text-out-red font-display tracking-widest block">OPPONENT SAYS:</span>
+                      <span className="text-[10px] text-foreground font-display font-bold">{receivedTease}</span>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {waitingForOpponent && (
+              <div className="flex justify-center">
+                <motion.button whileTap={{ scale: 0.9 }} onClick={() => setShowTeasePanel(!showTeasePanel)}
+                  className="px-4 py-2 rounded-xl glass-card border border-secondary/20 text-[9px] font-display font-bold text-secondary tracking-wider">
+                  😈 SEND TEASE
+                </motion.button>
+              </div>
             )}
+
+            <AnimatePresence>
+              {showTeasePanel && waitingForOpponent && (
+                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}
+                  className="glass-premium rounded-xl p-3 space-y-1.5 overflow-hidden">
+                  <span className="text-[7px] font-display text-muted-foreground tracking-widest">TEASE MESSAGES</span>
+                  {TEASE_MESSAGES.map((t, i) => (
+                    <motion.button key={i} whileTap={t.unlocked ? { scale: 0.95 } : undefined}
+                      onClick={() => {
+                        if (!t.unlocked || !currentGame) return;
+                        setSentTease(t.text);
+                        setShowTeasePanel(false);
+                        // Store tease in round_result_payload for opponent to see
+                        supabase.from("multiplayer_games").update({
+                          round_result_payload: { tease: t.text, from: user?.id, turn: currentGame.current_turn },
+                        }).eq("id", currentGame.id);
+                        setTimeout(() => setSentTease(null), 3000);
+                      }}
+                      className={`w-full text-left p-2 rounded-lg transition-all ${
+                        t.unlocked
+                          ? "glass-card border border-secondary/15 active:bg-secondary/10"
+                          : "bg-muted/20 border border-muted/10 relative overflow-hidden"
+                      }`}>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-[10px] font-display ${t.unlocked ? "text-foreground" : "text-muted-foreground/30 blur-[3px] select-none"}`}>
+                          {t.text}
+                        </span>
+                        {!t.unlocked && (
+                          <span className="text-[7px] font-display text-secondary/60 tracking-wider whitespace-nowrap ml-auto">
+                            🔒 {t.cost} 🪙
+                          </span>
+                        )}
+                      </div>
+                    </motion.button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Result flash */}
             <AnimatePresence>
