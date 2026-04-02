@@ -531,44 +531,54 @@ export default function MultiplayerScreen({ onHome }: Props) {
     return () => clearInterval(interval);
   }, [incomingRematch?.inviteId]);
 
-  // Timer management — idle detection + countdown
+  // Timer management — 5s synced countdown per turn
   const myMove = currentGame ? (user?.id === currentGame.host_id ? currentGame.host_move : currentGame.guest_move) : null;
   const waitingForOpponent = myMove !== null;
+  const autoSubmitRef = useRef(false);
 
   useEffect(() => {
     if (phase !== "playing" || !currentGame) return;
-    if (waitingForOpponent) { stopTimer(); setShowCountdown(false); setIdleMs(0); return; }
-    // Reset and start idle tracking
+    if (waitingForOpponent) { stopTimer(); return; }
+    // Reset countdown for new turn
+    autoSubmitRef.current = false;
     turnStartRef.current = Date.now();
-    setIdleMs(0);
-    setShowCountdown(false);
-    setCountdownMs(COUNTDOWN_MS);
+    setTurnCountdownMs(TURN_TIMER_MS);
     
     timerRef.current = setInterval(() => {
       const elapsed = Date.now() - turnStartRef.current;
-      setIdleMs(elapsed);
-      if (elapsed >= IDLE_THRESHOLD_MS) {
-        setShowCountdown(true);
-        const countdownElapsed = elapsed - IDLE_THRESHOLD_MS;
-        const remaining = Math.max(0, COUNTDOWN_MS - countdownElapsed);
-        setCountdownMs(remaining);
-        if (remaining <= 0) handleAbandon();
+      const remaining = Math.max(0, TURN_TIMER_MS - elapsed);
+      setTurnCountdownMs(remaining);
+      if (remaining <= 0 && !autoSubmitRef.current) {
+        autoSubmitRef.current = true;
+        // Auto-submit random move
+        const randomMoves: Move[] = [1, 2, 3, 4, 6];
+        const randomMove = randomMoves[Math.floor(Math.random() * randomMoves.length)];
+        setMyConsecutiveMisses(prev => {
+          const newMisses = prev + 1;
+          if (newMisses >= MAX_CONSECUTIVE_MISSES) {
+            // Forfeit after 3 consecutive misses
+            handleAbandon();
+          }
+          return newMisses;
+        });
+        submitMove(randomMove);
+        stopTimer();
       }
-    }, 100);
+    }, 50);
     return () => stopTimer();
   }, [currentGame?.current_turn, waitingForOpponent, phase]);
 
+  // Host-side phase transition (pre_round_countdown -> action_window)
   useEffect(() => {
     if (!currentGame || !user) return;
     if (user.id !== currentGame.host_id) return;
     if (currentGame.phase === "pre_round_countdown" && currentGame.phase_started_at) {
       const ms = Date.now() - new Date(currentGame.phase_started_at).getTime();
-      if (ms >= 3000) {
-        const totalTimeout = IDLE_THRESHOLD_MS + COUNTDOWN_MS;
+      if (ms >= 1500) {
         (supabase.from("multiplayer_games") as any).update({
           phase: "action_window",
           phase_started_at: new Date().toISOString(),
-          turn_deadline_at: new Date(Date.now() + totalTimeout).toISOString(),
+          turn_deadline_at: new Date(Date.now() + TURN_TIMER_MS).toISOString(),
           status: "playing",
         }).eq("id", currentGame.id).eq("phase", "pre_round_countdown");
       }
@@ -577,9 +587,12 @@ export default function MultiplayerScreen({ onHome }: Props) {
       const isHostMoveMissing = !currentGame.host_move;
       const isGuestMoveMissing = !currentGame.guest_move;
       if (isHostMoveMissing || isGuestMoveMissing) {
+        const randomMoves: Move[] = [1, 2, 3, 4, 6];
+        const rndHost = randomMoves[Math.floor(Math.random() * randomMoves.length)];
+        const rndGuest = randomMoves[Math.floor(Math.random() * randomMoves.length)];
         (supabase.from("multiplayer_games") as any).update({
-          ...(isHostMoveMissing ? { host_move: "DEF", host_move_submitted_at: new Date().toISOString() } : {}),
-          ...(isGuestMoveMissing ? { guest_move: "DEF", guest_move_submitted_at: new Date().toISOString() } : {}),
+          ...(isHostMoveMissing ? { host_move: String(rndHost), host_move_submitted_at: new Date().toISOString() } : {}),
+          ...(isGuestMoveMissing ? { guest_move: String(rndGuest), guest_move_submitted_at: new Date().toISOString() } : {}),
           phase: "resolving_turn",
         }).eq("id", currentGame.id).eq("phase", "action_window");
       }
