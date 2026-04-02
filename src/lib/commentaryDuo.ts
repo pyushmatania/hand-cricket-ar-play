@@ -2,7 +2,24 @@
  * Multi-Commentator System — 5 personas, 2 randomly assigned per match.
  * Indian cricket culture mix with natural conversations.
  * Key moments get TTS, regular balls get text-only.
+ * Supports English, Hindi, and Mixed commentary modes.
  */
+
+import type { CommentaryLanguage } from "@/contexts/SettingsContext";
+import {
+  HINDI_SIX_CONVERSATIONS,
+  HINDI_FOUR_CONVERSATIONS,
+  HINDI_WICKET_CONVERSATIONS,
+  HINDI_DOT_BALL_CONVERSATIONS,
+  HINDI_SINGLE_CONVERSATIONS,
+  HINDI_OVER_BREAK_BATTING,
+  HINDI_OVER_BREAK_BOWLING,
+  HINDI_POST_MATCH_WIN,
+  HINDI_POST_MATCH_LOSS,
+  HINDI_POST_MATCH_DRAW,
+  HINDI_PRE_MATCH_INTRO,
+  getRandomHindiDuoConversation,
+} from "@/lib/commentaryHindi";
 
 export interface Commentator {
   id: string;
