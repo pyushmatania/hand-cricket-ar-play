@@ -84,11 +84,12 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("display_name")
+      .select("display_name, xp")
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data }) => {
         if (data?.display_name) setPlayerName(data.display_name);
+        if ((data as any)?.xp) setPlayerXP((data as any).xp);
       });
   }, [user]);
 
