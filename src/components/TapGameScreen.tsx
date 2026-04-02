@@ -98,7 +98,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
 
       {/* Pre-match ceremony */}
       {showPreMatch && tossInfo && (
-        <PreMatchCeremony
+        <EnhancedPreMatch
           playerName={playerName}
           opponentName={AI_NAME}
           tossWinner={tossInfo.winner}
