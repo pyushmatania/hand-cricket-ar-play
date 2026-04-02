@@ -102,7 +102,11 @@ export default function TournamentScreen({ onHome }: Props) {
       const newRounds = [...rounds];
       newRounds[currentRound] = { ...newRounds[currentRound], result: game.result === "win" ? "win" : "loss", userScore: game.userScore, oppScore: game.aiScore };
       setRounds(newRounds);
-      setTimeout(() => { if (game.result !== "win") setEliminated(true); setPhase("result"); }, 1500);
+      // Show post-match ceremony
+      if (!postMatchShownRef.current) {
+        postMatchShownRef.current = true;
+        setTimeout(() => setShowPostMatch(true), 1000);
+      }
     }
   }, [game.phase]);
 
