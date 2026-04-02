@@ -9,28 +9,41 @@ interface ProfileStats {
   wins: number;
   current_streak: number;
   display_name: string;
+  xp?: number;
+  coins?: number;
 }
 
 export default function TopStatusBar() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [stats, setStats] = useState<ProfileStats | null>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("total_matches, wins, current_streak, display_name")
+      .select("total_matches, wins, current_streak, display_name, xp, coins")
       .eq("user_id", user.id)
       .single()
       .then(({ data }) => {
-        if (data) setStats(data);
+        if (data) setStats(data as unknown as ProfileStats);
+      });
+
+    // Fetch unread notification count
+    supabase
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", user.id)
+      .eq("read", false)
+      .then(({ count }) => {
+        setUnreadCount(count || 0);
       });
   }, [user]);
 
   const level = stats ? Math.floor(stats.total_matches / 5) + 1 : 1;
   const xpProgress = stats ? ((stats.total_matches % 5) / 5) * 100 : 0;
-  const coins = stats ? stats.wins * 50 : 0;
+  const coins = stats?.coins ?? (stats ? stats.wins * 50 : 0);
 
   return (
     <div className="relative z-20 px-3 pt-3">
@@ -87,6 +100,19 @@ export default function TopStatusBar() {
             {coins >= 1000 ? `${(coins / 1000).toFixed(1)}K` : coins}
           </span>
         </div>
+
+        {/* Notifications */}
+        <button
+          onClick={() => navigate("/notifications")}
+          className="relative w-9 h-9 rounded-full glass-card flex items-center justify-center active:scale-90 transition-transform"
+        >
+          <span className="text-sm">🔔</span>
+          {unreadCount > 0 && (
+            <div className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-out-red flex items-center justify-center">
+              <span className="text-[7px] font-display font-bold text-white">{unreadCount > 9 ? "9+" : unreadCount}</span>
+            </div>
+          )}
+        </button>
 
         {/* Settings */}
         <button

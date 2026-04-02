@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import BottomNav from "@/components/BottomNav";
 import TopStatusBar from "@/components/TopStatusBar";
 import PlayerAvatar from "@/components/PlayerAvatar";
+import TrophyCase from "@/components/TrophyCase";
 
 interface BallRecord {
   userMove: string | number;
@@ -130,7 +131,7 @@ interface ProfileData {
   avatar_index: number;
 }
 
-type TabType = "stats" | "matches" | "friends";
+type TabType = "stats" | "matches" | "friends" | "trophy";
 
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
@@ -259,6 +260,7 @@ export default function ProfilePage() {
 
   const tabs: { key: TabType; label: string; icon: string }[] = [
     { key: "stats", label: "STATS", icon: "📊" },
+    { key: "trophy", label: "TROPHY", icon: "🏆" },
     { key: "matches", label: "MATCHES", icon: "🏏" },
     { key: "friends", label: "FRIENDS", icon: "👥" },
   ];
@@ -578,6 +580,13 @@ export default function ProfilePage() {
                   );
                 })}
               </div>
+            </motion.div>
+          )}
+
+          {/* ========== TROPHY CASE TAB ========== */}
+          {activeTab === "trophy" && (
+            <motion.div key="trophy" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} transition={{ duration: 0.2 }}>
+              <TrophyCase />
             </motion.div>
           )}
 
