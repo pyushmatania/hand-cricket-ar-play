@@ -86,6 +86,7 @@ export default function CelebrationEffects({ lastResult, gameResult, phase }: Ce
       setParticles(fireworks);
       setFlashColor("primary");
       setShowFlash(true);
+      setCrowdWave({ active: true, intensity: "massive" });
       setTimeout(() => setShowFlash(false), 600);
       
       // Multiple waves
