@@ -156,6 +156,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
   const [records, setRecords] = useState<RecordBreak[]>([]);
   const [fullFriendProfile, setFullFriendProfile] = useState<FriendProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const { pvpRecord: friendPvp } = usePvpStats(friend?.user_id);
 
   useEffect(() => {
     if (!friend || !user) return;
