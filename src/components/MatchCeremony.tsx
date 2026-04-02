@@ -427,7 +427,7 @@ export function PreMatchCeremony({ playerName, opponentName, tossWinner, batting
     // Schedule voice and stage transitions
     const timers: NodeJS.Timeout[] = [];
 
-    if (voiceEnabled) speakCommentary(commentaryLines[0].text, true);
+    if (voiceEnabled) speakCommentary(commentaryLines[0].text, true, voiceEngine);
 
     let stageIdx = 0;
     const stages: PreStage[] = hasRivalry ? ["players", "rivalry", "toss", "go"] : ["players", "toss", "go"];
