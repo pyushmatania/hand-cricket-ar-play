@@ -267,7 +267,7 @@ export default function TapPlayingUI({
                 whileTap={{ scale: 0.8 }}
                 onClick={() => handleMove(m.move)}
                 disabled={effectiveCooldown}
-                className={`relative py-4 rounded-2xl font-display font-bold text-sm flex flex-col items-center gap-1 transition-all border backdrop-blur-sm ${
+                className={`relative py-3 rounded-xl font-display font-bold text-sm flex flex-col items-center gap-0.5 transition-all border backdrop-blur-sm ${
                   effectiveCooldown
                     ? "opacity-30 cursor-not-allowed border-transparent bg-muted/20"
                     : lastPlayed === m.move
@@ -275,14 +275,14 @@ export default function TapPlayingUI({
                     : `bg-gradient-to-br ${m.color} text-foreground ${m.glow}`
                 }`}
               >
-                <span className="text-2xl">{m.emoji}</span>
-                <span className="text-[9px] tracking-wider">{m.label}</span>
+                <span className="text-xl">{m.emoji}</span>
+                <span className="text-[8px] tracking-wider">{m.label}</span>
                 {effectiveCooldown && lastPlayed === m.move && (
                   <motion.div
                     initial={{ scaleX: 1 }}
                     animate={{ scaleX: 0 }}
                     transition={{ duration: 0.8, ease: "linear" }}
-                    className="absolute bottom-1 left-3 right-3 h-0.5 bg-primary rounded-full origin-left"
+                    className="absolute bottom-0.5 left-2 right-2 h-0.5 bg-primary rounded-full origin-left"
                   />
                 )}
               </motion.button>
