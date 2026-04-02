@@ -105,7 +105,7 @@ export default function TrophyCase() {
       <div className={`glass-premium rounded-2xl p-4 relative overflow-hidden border ${currentTier.borderColor}`}>
         <div className={`absolute inset-0 ${currentTier.bgColor}`} />
         <div className="relative z-10 flex items-center gap-4">
-          <RankBadge stats={stats} size="lg" />
+          <RankBadge stats={stats} />
           <div className="flex-1">
             <span className="text-[7px] text-muted-foreground font-display tracking-widest block">CURRENT RANK</span>
             <span className={`font-display text-lg font-black ${currentTier.color} tracking-wider`}>{currentTier.name}</span>
