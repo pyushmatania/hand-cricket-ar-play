@@ -144,6 +144,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [showPvPPostMatch, setShowPvPPostMatch] = useState(false);
   const [showPvPPreMatch, setShowPvPPreMatch] = useState(false);
   const [pvpBallHistory, setPvpBallHistory] = useState<BallResult[]>([]);
+  const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickMatchCommentators());
   const pvpPostMatchShownRef = useRef(false);
   const pvpPreMatchShownRef = useRef(false);
   const [rivalryStats, setRivalryStats] = useState<{
