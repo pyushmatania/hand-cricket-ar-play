@@ -474,8 +474,11 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const loadOpponentName = async (game: MultiplayerGame) => {
     const oppId = user?.id === game.host_id ? game.guest_id : game.host_id;
     if (!oppId) return;
-    const { data } = await supabase.from("profiles").select("display_name").eq("user_id", oppId).single();
-    if (data) setOpponentName(data.display_name);
+    const { data } = await supabase.from("profiles").select("display_name, avatar_index").eq("user_id", oppId).single();
+    if (data) {
+      setOpponentName(data.display_name);
+      setOpponentAvatarIndex((data as any).avatar_index ?? 1);
+    }
   };
 
   const createGame = async (gameType: GameType = selectedGameType) => {
