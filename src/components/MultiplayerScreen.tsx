@@ -587,14 +587,13 @@ export default function MultiplayerScreen({ onHome }: Props) {
     if (!currentGame || !user || cooldown) return;
     setCooldown(true);
     stopTimer();
+    setShowCountdown(false);
+    setIdleMs(0);
     const moveStr = String(move);
     const isHost = user.id === currentGame.host_id;
-    const reserveUsed = reserveUsedRef.current;
-    const newReserve = Math.max(0, reserveTime - reserveUsed);
-    setReserveTime(newReserve);
     const updateData: any = isHost
-      ? { host_move: moveStr, host_reserve_ms: newReserve, host_move_submitted_at: new Date().toISOString() }
-      : { guest_move: moveStr, guest_reserve_ms: newReserve, guest_move_submitted_at: new Date().toISOString() };
+      ? { host_move: moveStr, host_move_submitted_at: new Date().toISOString() }
+      : { guest_move: moveStr, guest_move_submitted_at: new Date().toISOString() };
     await supabase.from("multiplayer_games").update(updateData).eq("id", currentGame.id);
     setTimeout(() => setCooldown(false), 1500);
   };
