@@ -163,7 +163,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         ];
         setCommentary(lines);
         if (voiceEnabled) {
-          speakDuoLines([{ text, voiceId: matchCommentators[0].voiceId }]);
+          speakDuoCommentary(lines, matchCommentators, voiceEngine);
         }
         setTimeout(() => setCommentary(null), 3000);
       }
