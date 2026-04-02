@@ -41,7 +41,7 @@ const MOVE_SETS: Record<GameType, { move: Move; emoji: string; label: string; co
   tournament: MOVES,
 };
 
-type GameStatus = "waiting" | "toss" | "playing" | "finished" | "abandoned" | "cancelled";
+type GameStatus = "waiting" | "toss" | "playing" | "finished" | "abandoned";
 type Phase = "lobby" | "waiting" | "toss" | "playing" | "finished";
 type GameType = "ar" | "tap" | "tournament";
 type MatchPhase = "waiting_for_guest" | "pre_match_intro" | "toss" | "pre_round_countdown" | "action_window" | "resolving_turn" | "round_result" | "innings_break" | "match_finished" | "abandoned";
@@ -205,7 +205,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
 
     const game = existingGame as unknown as MultiplayerGame;
 
-    if (["finished", "abandoned", "cancelled"].includes(game.status)) {
+    if (["finished", "abandoned"].includes(game.status)) {
       setJoinState("expired");
       setLobbyMessage("Match expired or already ended.");
       return null;
@@ -374,7 +374,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
             setPhase(nextPhase);
           }
 
-          if (updated.host_move && updated.guest_move) {
+          // Only the host resolves turns to prevent double-execution
+          if (updated.host_move && updated.guest_move && user?.id === updated.host_id) {
             resolveTurn(updated);
           }
 
@@ -387,7 +388,10 @@ export default function MultiplayerScreen({ onHome }: Props) {
 
           // Guest-side innings break detection
           if ((updated as any).phase === "innings_break" && user?.id !== updated.host_id && !showInningsBreak) {
-            const localWasBatting = !updated.host_batting; // After switch, guest batting is !host_batting, but before switch it was opposite
+            // updated.host_batting is already the NEW value (post-flip).
+            // Pre-flip: old_host_batting = !updated.host_batting
+            // Guest was batting in innings 1 iff host was NOT batting = !old_host_batting = updated.host_batting
+            const localWasBatting = updated.host_batting;
             // The payload tells us what happened
             if (payload_data?.isInningsChange) {
               setInningsBreakStats({
@@ -796,7 +800,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
 
   const cancelOwnRoom = async () => {
     if (!ownHostedGame || !user || ownHostedGame.host_id !== user.id) return;
-    await supabase.from("multiplayer_games").update({ status: "cancelled" as any, phase: "abandoned" as any }).eq("id", ownHostedGame.id).eq("host_id", user.id);
+    await supabase.from("multiplayer_games").update({ status: "abandoned" as any, phase: "abandoned" as any, abandoned_by: user.id }).eq("id", ownHostedGame.id).eq("host_id", user.id);
     setOwnHostedGame(null);
     setLobbyMessage("Your room was cancelled.");
     loadGames();
@@ -863,18 +867,23 @@ export default function MultiplayerScreen({ onHome }: Props) {
     const isHost = user.id === currentGame.host_id;
     const hostBatting = isHost ? batFirst : !batFirst;
     const localBatting = batFirst;
-    
-    // Show role card after toss
+
+    // Show role card after toss (both players show it locally)
     setRoleCardData({ isBatting: localBatting, playerName: myName, opponentName });
     setShowRoleCard(true);
-    
-    await supabase.from("multiplayer_games").update({
-      status: "playing" as any, host_batting: hostBatting,
-      phase: "pre_round_countdown" as any,
-      phase_started_at: new Date().toISOString(),
-      turn_deadline_at: null,
-    }).eq("id", currentGame.id);
-    
+
+    // Only the host writes the toss result to the DB.
+    // The guest's local UI is already updated; the realtime update will
+    // carry the final host_batting value to both clients.
+    if (isHost) {
+      await supabase.from("multiplayer_games").update({
+        status: "playing" as any, host_batting: hostBatting,
+        phase: "pre_round_countdown" as any,
+        phase_started_at: new Date().toISOString(),
+        turn_deadline_at: null,
+      }).eq("id", currentGame.id).eq("phase", "toss" as any);
+    }
+
     // Auto-dismiss role card after 3s and transition
     setTimeout(() => {
       setShowRoleCard(false);
@@ -1321,7 +1330,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
                 <div className="flex items-center justify-center gap-3">
                   <div className="px-3 py-2 rounded-xl bg-primary/15 border border-primary/30">
                     <span className="text-[10px] font-display font-bold text-primary tracking-wider">
-                      {myName}: {isBatting ? "🎯 NOW BOWLING" : "🏏 NOW BATTING"}
+                      {myName}: {isBatting ? "🏏 NOW BATTING" : "🎯 NOW BOWLING"}
                     </span>
                   </div>
                 </div>
@@ -1477,8 +1486,12 @@ export default function MultiplayerScreen({ onHome }: Props) {
                             if (!t.unlocked || !currentGame) return;
                             setSentTease(t.text);
                             setShowTeasePanel(false);
+                            // Merge tease into the existing payload so we don't
+                            // destroy fields like isInningsChange that the
+                            // guest-side realtime handler depends on.
+                            const existingPayload = (currentGame as any).round_result_payload || {};
                             supabase.from("multiplayer_games").update({
-                              round_result_payload: { tease: t.text, from: user?.id, turn: currentGame.current_turn },
+                              round_result_payload: { ...existingPayload, tease: t.text, from: user?.id, tease_turn: currentGame.current_turn },
                             }).eq("id", currentGame.id);
                             setTimeout(() => setSentTease(null), 3000);
                           }}

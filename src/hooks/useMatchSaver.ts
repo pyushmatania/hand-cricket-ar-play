@@ -161,6 +161,13 @@ export function useMatchSaver() {
             .lte("week_end", end.toISOString().split("T")[0]) as any;
 
           if (challenges) {
+            // Accumulate rewards for all completed challenges this match,
+            // then apply in a single update to avoid double-crediting.
+            let totalChallengeXp = 0;
+            let totalChallengeCoins = 0;
+            const completedChallengeNotifications: any[] = [];
+            const friendNotificationsForChallenges: any[] = [];
+
             for (const c of challenges as any[]) {
               let shouldIncrement = false;
               if (c.challenge_type === "win_5" && game.result === "win") shouldIncrement = true;
@@ -196,39 +203,48 @@ export function useMatchSaver() {
                   } as any);
                 }
 
-                // Notify on challenge completion
                 if (done) {
-                  // XP/coins for challenge
-                  await supabase.from("profiles").update({
-                    xp: updatedStats.xp + CHALLENGE_XP,
-                    coins: updatedStats.coins + CHALLENGE_COINS,
-                  } as any).eq("user_id", user.id);
+                  totalChallengeXp += CHALLENGE_XP;
+                  totalChallengeCoins += CHALLENGE_COINS;
 
-                  await supabase.from("notifications").insert({
+                  completedChallengeNotifications.push({
                     user_id: user.id,
                     type: "challenge_complete",
                     title: "Challenge Complete! 🎯",
                     message: `You completed a weekly challenge! +${CHALLENGE_XP} XP +${CHALLENGE_COINS} coins`,
-                  } as any);
+                  });
 
-                  // Notify friends
                   const { data: friends2 } = await supabase
                     .from("friends")
                     .select("friend_id")
                     .eq("user_id", user.id);
                   if (friends2?.length) {
-                    await supabase.from("notifications").insert(
-                      friends2.map((f: any) => ({
+                    friends2.forEach((f: any) => {
+                      friendNotificationsForChallenges.push({
                         user_id: f.friend_id,
                         type: "friend_achievement",
                         title: `${profile.display_name} completed a challenge!`,
                         message: `${profile.display_name} just completed a weekly challenge 🎯`,
                         data: { from_user_id: user.id },
-                      })) as any
-                    );
+                      });
+                    });
                   }
                 }
               }
+            }
+
+            // Single profile update for all completed challenges combined
+            if (totalChallengeXp > 0) {
+              await supabase.from("profiles").update({
+                xp: updatedStats.xp + totalChallengeXp,
+                coins: updatedStats.coins + totalChallengeCoins,
+              } as any).eq("user_id", user.id);
+            }
+            if (completedChallengeNotifications.length > 0) {
+              await supabase.from("notifications").insert(completedChallengeNotifications as any);
+            }
+            if (friendNotificationsForChallenges.length > 0) {
+              await supabase.from("notifications").insert(friendNotificationsForChallenges as any);
             }
           }
         } catch (e) { console.error("[Challenges] update failed", e); }
