@@ -135,6 +135,9 @@ export default function LeaderboardPage() {
   const [archiveEntries, setArchiveEntries] = useState<any[]>([]);
   const [challengeTargetId, setChallengeTargetId] = useState<string | null>(null);
   const [selectedFriendId, setSelectedFriendId] = useState<string | null>(null);
+  const [sparklines, setSparklines] = useState<Record<string, ("W" | "L" | "D")[]>>({});
+  const [playerOfWeek, setPlayerOfWeek] = useState<any>(null);
+  const [potwLoading, setPotwLoading] = useState(false);
 
   const { challenges, friendRankings, loading: challengesLoading } = useWeeklyChallenges();
 
@@ -148,6 +151,17 @@ export default function LeaderboardPage() {
     if (mainTab === "rivalry") loadRivalFriends();
     if (mainTab === "seasons") { loadSeasonData(); loadArchivedSeasons(); }
   }, [mainTab, sortBy, seasonWeeksAgo]);
+
+  // Load sparklines when active list changes
+  useEffect(() => {
+    const list = mainTab === "friends" ? friendLeaders : mainTab === "global" ? leaders : [];
+    if (list.length > 0) loadSparklines(list.map(l => l.user_id));
+  }, [friendLeaders, leaders, mainTab]);
+
+  // Load player of the week when on friends or global tab
+  useEffect(() => {
+    if (mainTab === "friends" || mainTab === "global") loadPlayerOfWeek();
+  }, [mainTab]);
 
   const loadMyStats = async () => {
     if (!user) return;
