@@ -131,6 +131,23 @@ export default function OddEvenToss({ onResult, playerName = "You", opponentName
               className="text-4xl"
             >🎰</motion.div>
             <p className="text-[11px] text-muted-foreground font-display">Randomly assigning Odd/Even...</p>
+            {playerChoice && opponentChoice && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
+                <div className="flex items-center justify-center gap-3">
+                  <div className="px-4 py-2 rounded-xl bg-primary/15 border border-primary/30">
+                    <span className="text-[10px] font-display font-bold text-primary">
+                      {playerName}: {playerChoice.toUpperCase()}
+                    </span>
+                  </div>
+                  <span className="text-xs text-muted-foreground font-black">VS</span>
+                  <div className="px-4 py-2 rounded-xl bg-accent/15 border border-accent/30">
+                    <span className="text-[10px] font-display font-bold text-accent">
+                      {opponentName}: {opponentChoice.toUpperCase()}
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </motion.div>
         )}
 
