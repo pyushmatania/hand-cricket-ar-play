@@ -35,6 +35,22 @@ function getRunRate(score: number, balls: number): string {
   return ((score / balls) * 6).toFixed(2);
 }
 
+function getStrikeRate(score: number, balls: number): string {
+  if (balls === 0) return "0.0";
+  return ((score / balls) * 100).toFixed(1);
+}
+
+function getPartnershipRuns(balls: BallResult[], isBatting: boolean): number {
+  let partnership = 0;
+  for (let i = balls.length - 1; i >= 0; i--) {
+    if (balls[i].runs === "OUT") break;
+    const r = typeof balls[i].runs === "number" ? (balls[i].runs as number) : 0;
+    if (isBatting ? r > 0 : r < 0) partnership += Math.abs(r);
+    else if (r === 0) continue;
+  }
+  return partnership;
+}
+
 function getRequiredRate(needed: number, ballsBowled: number): string | null {
   // Assume unlimited overs in hand cricket, so RRR isn't super meaningful
   // but show it for fun
