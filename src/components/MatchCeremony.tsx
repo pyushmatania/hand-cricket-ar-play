@@ -123,7 +123,7 @@ export function PostMatchCeremony({ playerName, opponentName, result, playerScor
 
     timers.push(setTimeout(() => {
       setStage("commentary");
-      if (voiceEnabled && lines[1]) speakCommentary(lines[1], true);
+      if (voiceEnabled && lines[1]) speakCommentary(lines[1], true, voiceEngine);
       setLineIndex(1);
     }, t));
 
