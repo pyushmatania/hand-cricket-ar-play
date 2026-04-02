@@ -260,6 +260,7 @@ export default function ProfilePage() {
 
   const tabs: { key: TabType; label: string; icon: string }[] = [
     { key: "stats", label: "STATS", icon: "📊" },
+    { key: "trophy", label: "TROPHY", icon: "🏆" },
     { key: "matches", label: "MATCHES", icon: "🏏" },
     { key: "friends", label: "FRIENDS", icon: "👥" },
   ];
