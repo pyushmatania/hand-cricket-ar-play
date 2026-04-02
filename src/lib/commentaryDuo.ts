@@ -604,14 +604,3 @@ export function getPostMatchRivalryLines(
   return pool[Math.floor(Math.random() * pool.length)](c1Name, c2Name, playerName, opponentName);
 }
 
-export function getPostMatchRivalryLines(
-  c1Name: string, c2Name: string, playerName: string, opponentName: string,
-  result: "win" | "loss" | "draw", rivalryStats: { myWins: number; theirWins: number; totalGames: number }
-): CommentaryLine[] {
-  const updatedWins = rivalryStats.myWins + (result === "win" ? 1 : 0);
-  const updatedLosses = rivalryStats.theirWins + (result === "loss" ? 1 : 0);
-  return [
-    { commentatorId: c1Name, text: `Head-to-head update: ${playerName} ${updatedWins} - ${updatedLosses} ${opponentName}! ${updatedWins > updatedLosses ? `${playerName} extending the lead!` : updatedLosses > updatedWins ? `${opponentName} still on top!` : "All square now!"}`, isKeyMoment: false },
-    { commentatorId: c2Name, text: `${result === "win" ? `${playerName} ka jalwa! Dominance!` : result === "loss" ? `${opponentName} says "main abhi zinda hoon!" Rivalry is ON!` : `This rivalry refuses to die! REMATCH when?!`}`, isKeyMoment: false },
-  ];
-}
