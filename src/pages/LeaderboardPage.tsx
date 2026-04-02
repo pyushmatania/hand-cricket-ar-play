@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +11,8 @@ import RankBadge from "@/components/RankBadge";
 import WeeklyChallengesCard from "@/components/WeeklyChallengesCard";
 import AchievementFeed from "@/components/AchievementFeed";
 import PlayerAvatar from "@/components/PlayerAvatar";
+import FormSparkline from "@/components/FormSparkline";
+import PlayerOfTheWeek from "@/components/PlayerOfTheWeek";
 import { getRankTier } from "@/lib/rankTiers";
 import { useWeeklyChallenges } from "@/hooks/useWeeklyChallenges";
 import { toast } from "@/components/ui/use-toast";
@@ -133,6 +135,9 @@ export default function LeaderboardPage() {
   const [archiveEntries, setArchiveEntries] = useState<any[]>([]);
   const [challengeTargetId, setChallengeTargetId] = useState<string | null>(null);
   const [selectedFriendId, setSelectedFriendId] = useState<string | null>(null);
+  const [sparklines, setSparklines] = useState<Record<string, ("W" | "L" | "D")[]>>({});
+  const [playerOfWeek, setPlayerOfWeek] = useState<any>(null);
+  const [potwLoading, setPotwLoading] = useState(false);
 
   const { challenges, friendRankings, loading: challengesLoading } = useWeeklyChallenges();
 
@@ -146,6 +151,17 @@ export default function LeaderboardPage() {
     if (mainTab === "rivalry") loadRivalFriends();
     if (mainTab === "seasons") { loadSeasonData(); loadArchivedSeasons(); }
   }, [mainTab, sortBy, seasonWeeksAgo]);
+
+  // Load sparklines when active list changes
+  useEffect(() => {
+    const list = mainTab === "friends" ? friendLeaders : mainTab === "global" ? leaders : [];
+    if (list.length > 0) loadSparklines(list.map(l => l.user_id));
+  }, [friendLeaders, leaders, mainTab]);
+
+  // Load player of the week when on friends or global tab
+  useEffect(() => {
+    if (mainTab === "friends" || mainTab === "global") loadPlayerOfWeek();
+  }, [mainTab]);
 
   const loadMyStats = async () => {
     if (!user) return;
@@ -194,6 +210,84 @@ export default function LeaderboardPage() {
       .select("user_id, display_name, wins, losses, draws, total_matches, high_score, best_streak, abandons, current_streak, avatar_url, avatar_index, xp, coins, rank_tier")
       .in("user_id", ids);
     if (data) setRivalFriends(data as unknown as FriendProfile[]);
+  };
+
+  const loadSparklines = async (userIds: string[]) => {
+    if (!userIds.length) return;
+    const { data } = await supabase
+      .from("matches")
+      .select("user_id, result, created_at")
+      .in("user_id", userIds)
+      .order("created_at", { ascending: false })
+      .limit(userIds.length * 10);
+    if (!data) return;
+    const map: Record<string, ("W" | "L" | "D")[]> = {};
+    for (const m of data) {
+      if (!map[m.user_id]) map[m.user_id] = [];
+      if (map[m.user_id].length < 10) {
+        map[m.user_id].push(m.result === "win" ? "W" : m.result === "loss" ? "L" : "D");
+      }
+    }
+    for (const uid of Object.keys(map)) {
+      map[uid] = map[uid].reverse();
+    }
+    setSparklines(map);
+  };
+
+  const loadPlayerOfWeek = async () => {
+    setPotwLoading(true);
+    try {
+      const { start: thisStart, end: thisEnd } = getWeekRange(0);
+      const { start: lastStart, end: lastEnd } = getWeekRange(1);
+      const [thisWeekRes, lastWeekRes] = await Promise.all([
+        supabase.from("matches").select("user_id, result, user_score").gte("created_at", thisStart.toISOString()).lte("created_at", thisEnd.toISOString()),
+        supabase.from("matches").select("user_id, result, user_score").gte("created_at", lastStart.toISOString()).lte("created_at", lastEnd.toISOString()),
+      ]);
+      const thisWeek = thisWeekRes.data || [];
+      const lastWeek = lastWeekRes.data || [];
+      const twStats: Record<string, { wins: number; matches: number; highScore: number }> = {};
+      for (const m of thisWeek) {
+        if (!twStats[m.user_id]) twStats[m.user_id] = { wins: 0, matches: 0, highScore: 0 };
+        twStats[m.user_id].matches++;
+        if (m.result === "win") twStats[m.user_id].wins++;
+        twStats[m.user_id].highScore = Math.max(twStats[m.user_id].highScore, m.user_score);
+      }
+      const lwStats: Record<string, { wins: number; matches: number }> = {};
+      for (const m of lastWeek) {
+        if (!lwStats[m.user_id]) lwStats[m.user_id] = { wins: 0, matches: 0 };
+        lwStats[m.user_id].matches++;
+        if (m.result === "win") lwStats[m.user_id].wins++;
+      }
+      let bestPlayer: string | null = null;
+      let bestImprovement = -Infinity;
+      let bestData: any = null;
+      for (const [uid, tw] of Object.entries(twStats)) {
+        if (tw.matches < 3) continue;
+        const twWinRate = Math.round((tw.wins / tw.matches) * 100);
+        const lw = lwStats[uid];
+        const lwWinRate = lw && lw.matches >= 3 ? Math.round((lw.wins / lw.matches) * 100) : 0;
+        const improvement = twWinRate - lwWinRate;
+        if (improvement > bestImprovement || (improvement === bestImprovement && tw.wins > (bestData?.weekWins ?? 0))) {
+          bestImprovement = improvement;
+          bestPlayer = uid;
+          bestData = { weekWins: tw.wins, weekMatches: tw.matches, weekHighScore: tw.highScore, weekWinRate: twWinRate, improvement: Math.max(0, improvement) };
+        }
+      }
+      if (bestPlayer && bestData) {
+        const { data: profile } = await supabase.from("profiles")
+          .select("display_name, avatar_url, avatar_index")
+          .eq("user_id", bestPlayer).single();
+        if (profile) {
+          setPlayerOfWeek({ ...bestData, user_id: bestPlayer, display_name: (profile as any).display_name, avatar_url: (profile as any).avatar_url, avatar_index: (profile as any).avatar_index });
+        }
+      } else {
+        setPlayerOfWeek(null);
+      }
+    } catch {
+      setPlayerOfWeek(null);
+    } finally {
+      setPotwLoading(false);
+    }
   };
 
   const challengeFriend = async (friendId: string, gameType: GameType) => {
@@ -544,6 +638,9 @@ export default function LeaderboardPage() {
                 </div>
               ) : (
                 <>
+                  {/* Player of the Week */}
+                  <PlayerOfTheWeek player={playerOfWeek} loading={potwLoading} />
+
                   {/* Top 3 podium */}
                   {top3.length >= 3 && (
                     <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="flex items-end justify-center gap-3 mb-5">
@@ -631,6 +728,9 @@ export default function LeaderboardPage() {
                               {(player.xp ?? 0) > 0 && <span className="text-[6px] text-primary/60 font-display">✨{player.xp}</span>}
                             </div>
                           </div>
+                          {sparklines[player.user_id]?.length > 0 && (
+                            <FormSparkline results={sparklines[player.user_id]} />
+                          )}
                           <div className="text-right">
                             <span className="font-display text-lg font-black text-secondary block leading-none">{getScore(player)}</span>
                             <span className="text-[6px] text-muted-foreground font-display tracking-widest">{SORT_OPTIONS[sortBy].label}</span>
