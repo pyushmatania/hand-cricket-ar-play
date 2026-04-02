@@ -551,6 +551,17 @@ export default function FriendsPage() {
         </div>
       )}
 
+      {selectedFriend && (
+        <FriendStatsModal
+          friend={selectedFriend}
+          onClose={() => setSelectedFriend(null)}
+          onChallenge={(friendId) => {
+            setSelectedFriend(null);
+            setChallengeTargetId(friendId);
+          }}
+        />
+      )}
+
       <BottomNav />
     </div>
   );

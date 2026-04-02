@@ -98,7 +98,7 @@ const RAGE_TITLES = [
 export default function LeaderboardPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [mainTab, setMainTab] = useState<MainTab>("global");
+  const [mainTab, setMainTab] = useState<MainTab>("friends");
   const [sortBy, setSortBy] = useState(0);
   const [leaders, setLeaders] = useState<LeaderEntry[]>([]);
   const [friendLeaders, setFriendLeaders] = useState<LeaderEntry[]>([]);
