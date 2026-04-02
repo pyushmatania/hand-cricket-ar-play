@@ -7,6 +7,7 @@ import { playCrowdForResult } from "@/lib/voiceCommentary";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { pickMatchCommentators, type Commentator } from "@/lib/commentaryDuo";
 import RulesSheet from "./RulesSheet";
 import OddEvenToss from "./OddEvenToss";
 import EnhancedPreMatch from "./EnhancedPreMatch";
