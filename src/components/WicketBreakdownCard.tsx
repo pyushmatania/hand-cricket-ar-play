@@ -225,11 +225,53 @@ export default function WicketBreakdownCard({ data, onContinue }: WicketBreakdow
           </div>
         </motion.div>
 
+        {/* Over Summary (when wicket fell on end of over) */}
+        {data.overBreakStats && (
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.55 }}
+            className="glass-card rounded-2xl p-3.5 relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent" />
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-xs">🏏</span>
+                <span className="font-display text-[8px] font-bold text-secondary tracking-[0.2em]">
+                  OVER {data.overBreakStats.oversCompleted} SUMMARY
+                </span>
+              </div>
+              <div className="flex items-center justify-center gap-1.5 mb-2">
+                {data.overBreakStats.thisOverBalls.map((ball, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.6 + i * 0.08 }}
+                    className={`w-6 h-6 rounded-full flex items-center justify-center text-[8px] font-display font-bold ${
+                      ball.runs === "OUT" ? "bg-destructive/20 text-destructive border border-destructive/30" :
+                      typeof ball.runs === "number" && ball.runs >= 4 ? "bg-secondary/20 text-secondary border border-secondary/30" :
+                      "bg-muted/15 text-muted-foreground border border-border/20"
+                    }`}
+                  >
+                    {ball.runs === "OUT" ? "W" : ball.runs}
+                  </motion.div>
+                ))}
+              </div>
+              <div className="flex items-center justify-center gap-4">
+                <StatPill label="RUNS" value={String(data.overBreakStats.overRuns)} color="secondary" />
+                <StatPill label="CRR" value={data.overBreakStats.crr} color="primary" />
+                {data.target && <StatPill label="RRR" value={data.overBreakStats.rrr} color="accent" />}
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Match Situation */}
         <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.6 }}
+          transition={{ delay: data.overBreakStats ? 0.75 : 0.6 }}
           className="glass-card rounded-2xl p-3 relative overflow-hidden"
         >
           <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 to-transparent" />
@@ -245,7 +287,7 @@ export default function WicketBreakdownCard({ data, onContinue }: WicketBreakdow
               <p className="font-display text-lg font-black text-foreground">{data.currentOver}</p>
               <p className="text-[7px] text-muted-foreground font-display tracking-wider">OVERS</p>
             </div>
-            {data.target && (
+            {data.target && !data.isInningsChange && (
               <>
                 <div className="w-px h-8 bg-border/20" />
                 <div className="text-center">
