@@ -131,7 +131,7 @@ export function PostMatchCeremony({ playerName, opponentName, result, playerScor
 
     timers.push(setTimeout(() => {
       setStage("stats");
-      if (voiceEnabled && statsLines[0]) speakCommentary(statsLines[0], true);
+      if (voiceEnabled && statsLines[0]) speakCommentary(statsLines[0], true, voiceEngine);
     }, t));
 
     // Auto-advance stats lines
