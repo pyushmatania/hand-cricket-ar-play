@@ -258,6 +258,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
           opponentName={opponentName}
           tossWinner={tossInfo.winner}
           battingFirst={tossInfo.battingFirst}
+          commentators={matchCommentators}
           onComplete={handlePreMatchComplete}
         />
       )}
