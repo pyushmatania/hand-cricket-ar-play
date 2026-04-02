@@ -15,6 +15,7 @@ interface Settings {
   commentaryVoice: string;
   voiceEngine: VoiceEngine;
   commentaryLanguage: CommentaryLanguage;
+  ceremoniesEnabled: boolean;
 }
 
 interface SettingsContextType extends Settings {
@@ -29,6 +30,7 @@ interface SettingsContextType extends Settings {
   setCommentaryVoice: (voice: string) => void;
   setVoiceEngine: (engine: VoiceEngine) => void;
   setCommentaryLanguage: (lang: CommentaryLanguage) => void;
+  toggleCeremonies: () => void;
 }
 
 const defaults: Settings = {
@@ -38,6 +40,7 @@ const defaults: Settings = {
   commentaryVoice: "nPczCjzI2devNBz1zQrb", // Brian (default)
   voiceEngine: "system" as VoiceEngine,
   commentaryLanguage: "both" as CommentaryLanguage,
+  ceremoniesEnabled: false,
 };
 
 const SettingsContext = createContext<SettingsContextType>({
@@ -53,6 +56,7 @@ const SettingsContext = createContext<SettingsContextType>({
   setCommentaryVoice: () => {},
   setVoiceEngine: () => {},
   setCommentaryLanguage: () => {},
+  toggleCeremonies: () => {},
 });
 
 export const useSettings = () => useContext(SettingsContext);
@@ -82,9 +86,10 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const setCommentaryVoice = (voice: string) => setSettings((s) => ({ ...s, commentaryVoice: voice }));
   const setVoiceEngine = (engine: VoiceEngine) => setSettings((s) => ({ ...s, voiceEngine: engine }));
   const setCommentaryLanguage = (lang: CommentaryLanguage) => setSettings((s) => ({ ...s, commentaryLanguage: lang }));
+  const toggleCeremonies = () => setSettings((s) => ({ ...s, ceremoniesEnabled: !s.ceremoniesEnabled }));
 
   return (
-    <SettingsContext.Provider value={{ ...settings, toggleSound, toggleHaptics, toggleCommentary, toggleVoice, toggleCrowd, toggleMusic, toggleBatSound, toggleVictorySound, setCommentaryVoice, setVoiceEngine, setCommentaryLanguage }}>
+    <SettingsContext.Provider value={{ ...settings, toggleSound, toggleHaptics, toggleCommentary, toggleVoice, toggleCrowd, toggleMusic, toggleBatSound, toggleVictorySound, setCommentaryVoice, setVoiceEngine, setCommentaryLanguage, toggleCeremonies }}>
       {children}
     </SettingsContext.Provider>
   );

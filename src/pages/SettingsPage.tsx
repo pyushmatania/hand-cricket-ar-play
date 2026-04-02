@@ -124,6 +124,7 @@ export default function SettingsPage() {
       items: [
         { key: "crowdEnabled", icon: "🏟️", label: "CROWD SOUNDS", desc: "Cheers, gasps & applause", toggle: "toggleCrowd" },
         { key: "hapticsEnabled", icon: "📳", label: "HAPTIC FEEDBACK", desc: "Vibrations on actions", toggle: "toggleHaptics" },
+        { key: "ceremoniesEnabled", icon: "🎬", label: "MATCH CEREMONIES", desc: "Pre/post match, innings break, toss animations", toggle: "toggleCeremonies" },
       ],
     },
   ];

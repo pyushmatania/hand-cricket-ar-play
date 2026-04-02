@@ -32,7 +32,7 @@ const MOVES: { move: Move; emoji: string; label: string; color: string }[] = [
   { move: 6, emoji: "👍", label: "6", color: "border-primary/40 bg-primary/10" },
 ];
 
-const TURN_TIMER_MS = 5000; // 5s per turn
+const TURN_TIMER_MS = 10000; // 10s per turn
 const GAME_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
 const MAX_CONSECUTIVE_MISSES = 3; // 3 missed turns = forfeit
 const MOVE_SETS: Record<GameType, { move: Move; emoji: string; label: string; color: string }[]> = {
@@ -99,7 +99,7 @@ function gameTypeLabel(gameType: GameType): string {
 
 export default function MultiplayerScreen({ onHome }: Props) {
   const { user } = useAuth();
-  const { commentaryVoice } = useSettings();
+  const { commentaryVoice, ceremoniesEnabled } = useSettings();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [phase, setPhase] = useState<Phase>("lobby");
@@ -149,6 +149,15 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickConfiguredMatchCommentators(commentaryVoice));
   const pvpPostMatchShownRef = useRef(false);
   const pvpPreMatchShownRef = useRef(false);
+  
+  // Innings break ready-up state
+  const [showInningsBreak, setShowInningsBreak] = useState(false);
+  const [inningsBreakReady, setInningsBreakReady] = useState(false);
+  const [inningsBreakStats, setInningsBreakStats] = useState<{ batter: string; bowler: string; score: number; lastMove: string; opponentLastMove: string } | null>(null);
+  
+  // Post-toss role card
+  const [showRoleCard, setShowRoleCard] = useState(false);
+  const [roleCardData, setRoleCardData] = useState<{ isBatting: boolean; playerName: string; opponentName: string } | null>(null);
   const [rivalryStats, setRivalryStats] = useState<{
     myWins: number; theirWins: number; totalGames: number;
     myHighScore: number; theirHighScore: number;
@@ -374,12 +383,49 @@ export default function MultiplayerScreen({ onHome }: Props) {
             setTimeout(() => setReceivedTease(null), 4000);
           }
 
+          // Guest-side innings break detection
+          if ((updated as any).phase === "innings_break" && user?.id !== updated.host_id && !showInningsBreak) {
+            const localWasBatting = !updated.host_batting; // After switch, guest batting is !host_batting, but before switch it was opposite
+            // The payload tells us what happened
+            if (payload_data?.isInningsChange) {
+              setInningsBreakStats({
+                batter: localWasBatting ? opponentName : myName,
+                bowler: localWasBatting ? myName : opponentName,
+                score: localWasBatting ? updated.guest_score : updated.host_score,
+                lastMove: String(payload_data.guestMove || ""),
+                opponentLastMove: String(payload_data.hostMove || ""),
+              });
+              setShowInningsBreak(true);
+              setInningsBreakReady(false);
+              stopTimer();
+            }
+          }
+
+          // Handle ready-up: when both players have readied during innings_break, host transitions
+          if ((updated as any).phase === "innings_break" && updated.host_move === "READY" && updated.guest_move === "READY" && user?.id === updated.host_id) {
+            // Both ready — transition to playing
+            supabase.from("multiplayer_games").update({
+              host_move: null, guest_move: null,
+              phase: "pre_round_countdown" as any,
+              phase_started_at: new Date().toISOString(),
+              turn_deadline_at: null,
+            }).eq("id", updated.id).eq("phase", "innings_break");
+          }
+
+          // When phase transitions from innings_break to pre_round_countdown, dismiss the overlay
+          if ((updated as any).phase === "pre_round_countdown" && showInningsBreak) {
+            setShowInningsBreak(false);
+            setInningsBreakReady(false);
+            setTurnCountdownMs(TURN_TIMER_MS); // Full reset
+          }
+
           if (nextPhase === "finished") {
             stopTimer();
-            // Trigger PvP post-match ceremony
             if (!pvpPostMatchShownRef.current) {
               pvpPostMatchShownRef.current = true;
-              setTimeout(() => setShowPvPPostMatch(true), 1000);
+              if (ceremoniesEnabled) {
+                setTimeout(() => setShowPvPPostMatch(true), 1000);
+              }
             }
           }
         }
@@ -813,16 +859,25 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const handleTossResult = async (batFirst: boolean) => {
     if (!currentGame || !user) return;
     const isHost = user.id === currentGame.host_id;
-    // Host batting = batFirst if host did toss, or !batFirst if guest did toss
-    // For simplicity: host always does the toss, so host_batting = batFirst
     const hostBatting = isHost ? batFirst : !batFirst;
+    const localBatting = batFirst;
+    
+    // Show role card after toss
+    setRoleCardData({ isBatting: localBatting, playerName: myName, opponentName });
+    setShowRoleCard(true);
+    
     await supabase.from("multiplayer_games").update({
       status: "playing" as any, host_batting: hostBatting,
       phase: "pre_round_countdown" as any,
       phase_started_at: new Date().toISOString(),
       turn_deadline_at: null,
     }).eq("id", currentGame.id);
-    setPhase("playing");
+    
+    // Auto-dismiss role card after 3s and transition
+    setTimeout(() => {
+      setShowRoleCard(false);
+      setPhase("playing");
+    }, 3000);
   };
 
   const submitMove = async (move: Move) => {
@@ -863,11 +918,13 @@ export default function MultiplayerScreen({ onHome }: Props) {
     // Same move = OUT (including DEF+DEF)
     const isOut = hostMove === guestMove || isBothDef;
 
+    let isInningsChange = false;
     if (isOut) {
       result = isBothDef ? "Both played DEF — OUT!" : `Both played ${hostMove} — OUT!`;
       if (game.innings === 1) {
         newInnings = 2;
         newHostBatting = !game.host_batting;
+        isInningsChange = true;
       } else {
         newStatus = "finished";
         if (battingIsHost) {
@@ -930,15 +987,37 @@ export default function MultiplayerScreen({ onHome }: Props) {
     setPvpBallHistory(prev => [...prev, ballResult]);
 
     setLastResult(result);
-    setTimeout(() => { setLastResult(null); setLastBallResult(null); }, 2000);
+    setTimeout(() => { setLastResult(null); setLastBallResult(null); }, 2500);
+
+    // Determine next phase
+    const nextPhaseValue = newStatus === "finished" 
+      ? "match_finished" 
+      : isInningsChange 
+        ? "innings_break" 
+        : "pre_round_countdown";
 
     await supabase.from("multiplayer_games").update({
       host_score: newHostScore, guest_score: newGuestScore, host_move: null, guest_move: null,
       current_turn: game.current_turn + 1, turn_number: (game.turn_number ?? game.current_turn) + 1, innings: newInnings, innings_number: newInnings, host_batting: newHostBatting,
-      status: newStatus as any, winner_id: newWinner, phase: newStatus === "finished" ? "match_finished" : "pre_round_countdown",
+      status: newStatus as any, winner_id: newWinner, phase: nextPhaseValue,
       phase_started_at: new Date().toISOString(), turn_deadline_at: null,
-      round_result_payload: { text: result, turn: game.current_turn },
+      round_result_payload: { text: result, turn: game.current_turn, isInningsChange, hostMove, guestMove },
     }).eq("id", game.id).eq("current_turn", game.current_turn).eq("host_move", hostMove).eq("guest_move", guestMove);
+
+    // Show innings break overlay locally
+    if (isInningsChange) {
+      const localBatting = user.id === game.host_id ? battingIsHost : !battingIsHost;
+      setInningsBreakStats({
+        batter: localBatting ? myName : opponentName,
+        bowler: localBatting ? opponentName : myName,
+        score: localBatting ? (user.id === game.host_id ? newHostScore : newGuestScore) : (user.id === game.host_id ? newGuestScore : newHostScore),
+        lastMove: String(hostMove),
+        opponentLastMove: String(guestMove),
+      });
+      setShowInningsBreak(true);
+      setInningsBreakReady(false);
+      stopTimer();
+    }
   };
 
   const isHost = currentGame && user?.id === currentGame.host_id;
@@ -1003,7 +1082,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
                   <span className="font-display text-[9px] font-bold text-muted-foreground tracking-widest">⏱️ TIMER RULES</span>
                   <div className="flex items-center gap-2">
                     <div className="w-5 h-5 rounded-md bg-neon-green/20 flex items-center justify-center"><span className="text-[8px]">⚡</span></div>
-                    <span className="text-[9px] text-muted-foreground"><span className="text-neon-green font-bold">5s</span> per turn — pick fast!</span>
+                    <span className="text-[9px] text-muted-foreground"><span className="text-neon-green font-bold">10s</span> per turn — pick fast!</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-5 h-5 rounded-md bg-secondary/20 flex items-center justify-center"><span className="text-[8px]">🎲</span></div>
@@ -1143,12 +1222,147 @@ export default function MultiplayerScreen({ onHome }: Props) {
               playerName={myName}
               opponentName={opponentName}
               isMultiplayer={true}
+              playerAvatarIndex={myAvatarIndex}
+              opponentAvatarIndex={opponentAvatarIndex}
             />
           </motion.div>
         )}
 
+        {/* Post-toss Role Card */}
+        <AnimatePresence>
+          {showRoleCard && roleCardData && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-md"
+            >
+              <motion.div
+                initial={{ y: 30 }}
+                animate={{ y: 0 }}
+                className="glass-premium rounded-3xl p-8 text-center space-y-4 border border-primary/30 shadow-[0_0_60px_hsl(217_91%_60%/0.2)] max-w-xs w-full mx-4"
+              >
+                <motion.span
+                  animate={{ scale: [1, 1.2, 1], rotate: [0, 5, -5, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                  className="text-6xl block"
+                >
+                  {roleCardData.isBatting ? "🏏" : "🎯"}
+                </motion.span>
+                <h2 className="font-display text-2xl font-black text-foreground tracking-wider">
+                  YOU ARE {roleCardData.isBatting ? "BATTING" : "BOWLING"}
+                </h2>
+                <div className="flex items-center justify-center gap-3">
+                  <div className="px-4 py-2 rounded-xl bg-primary/15 border border-primary/30">
+                    <span className="text-[10px] font-display font-bold text-primary tracking-wider">
+                      {myName}: {roleCardData.isBatting ? "🏏 BAT" : "🎯 BOWL"}
+                    </span>
+                  </div>
+                  <span className="text-xs text-muted-foreground font-black">VS</span>
+                  <div className="px-4 py-2 rounded-xl bg-accent/15 border border-accent/30">
+                    <span className="text-[10px] font-display font-bold text-accent tracking-wider">
+                      {opponentName}: {roleCardData.isBatting ? "🎯 BOWL" : "🏏 BAT"}
+                    </span>
+                  </div>
+                </div>
+                <p className="text-[10px] text-muted-foreground font-display tracking-wider">
+                  {roleCardData.isBatting ? "Score big! Your opponent will bowl." : "Get them out! Your opponent will bat."}
+                </p>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Innings Break Overlay with Ready-Up */}
+        <AnimatePresence>
+          {showInningsBreak && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-background/85 backdrop-blur-lg"
+            >
+              <motion.div
+                initial={{ scale: 0.8, y: 30 }}
+                animate={{ scale: 1, y: 0 }}
+                exit={{ scale: 0.9, y: -20 }}
+                className="glass-premium rounded-3xl p-6 text-center space-y-4 border border-secondary/40 shadow-[0_0_60px_hsl(45_93%_58%/0.2)] max-w-sm w-full mx-4"
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", damping: 10, delay: 0.2 }}
+                >
+                  <span className="text-5xl block mb-2">🔄</span>
+                  <h2 className="font-display text-xl font-black text-secondary tracking-wider">INNINGS SWITCH</h2>
+                </motion.div>
+
+                {/* Score summary */}
+                <div className="glass-card rounded-xl p-4 space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="font-display text-[9px] font-bold text-muted-foreground tracking-widest">1ST INNINGS SCORE</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-4">
+                    <div className="text-center">
+                      <span className="text-[8px] text-muted-foreground font-display block">{myName.toUpperCase()}</span>
+                      <span className="font-display text-2xl font-black text-score-gold">{myScore}</span>
+                    </div>
+                    <span className="text-muted-foreground font-black">—</span>
+                    <div className="text-center">
+                      <span className="text-[8px] text-muted-foreground font-display block">{opponentName.toUpperCase()}</span>
+                      <span className="font-display text-2xl font-black text-accent">{oppScore}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Role swap info */}
+                <div className="flex items-center justify-center gap-3">
+                  <div className="px-3 py-2 rounded-xl bg-primary/15 border border-primary/30">
+                    <span className="text-[10px] font-display font-bold text-primary tracking-wider">
+                      {myName}: {isBatting ? "🎯 NOW BOWLING" : "🏏 NOW BATTING"}
+                    </span>
+                  </div>
+                </div>
+
+                {isBatting ? (
+                  <p className="text-[10px] text-muted-foreground font-display">
+                    Target: <span className="text-secondary font-black text-sm">{oppScore + 1}</span> runs to win
+                  </p>
+                ) : (
+                  <p className="text-[10px] text-muted-foreground font-display">
+                    Defend <span className="text-secondary font-black text-sm">{myScore}</span> runs
+                  </p>
+                )}
+
+                {/* Ready button */}
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={async () => {
+                    if (!currentGame || !user || inningsBreakReady) return;
+                    setInningsBreakReady(true);
+                    const isHostLocal = user.id === currentGame.host_id;
+                    await supabase.from("multiplayer_games").update(
+                      isHostLocal
+                        ? { host_move: "READY", host_move_submitted_at: new Date().toISOString() }
+                        : { guest_move: "READY", guest_move_submitted_at: new Date().toISOString() }
+                    ).eq("id", currentGame.id);
+                  }}
+                  disabled={inningsBreakReady}
+                  className={`w-full py-4 font-display font-black text-sm rounded-2xl tracking-wider transition-all ${
+                    inningsBreakReady
+                      ? "bg-muted/50 text-muted-foreground border border-border"
+                      : "bg-gradient-to-r from-neon-green to-neon-green/70 text-background shadow-[0_0_30px_hsl(142_71%_45%/0.3)] border border-neon-green/40"
+                  }`}
+                >
+                  {inningsBreakReady ? "⏳ WAITING FOR OPPONENT..." : "✅ READY TO PLAY"}
+                </motion.button>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* PLAYING — uses shared TapPlayingUI */}
-        {phase === "playing" && currentGame && (
+        {phase === "playing" && currentGame && !showRoleCard && (
           <TapPlayingUI
             phase={isBatting ? (currentGame.innings === 1 ? "first_batting" : "second_batting") : (currentGame.innings === 1 ? "first_bowling" : "second_bowling")}
             userScore={myScore}
@@ -1172,7 +1386,16 @@ export default function MultiplayerScreen({ onHome }: Props) {
             modeLabel={modeLabel}
             extraContent={
               <>
-                {/* 5s Synced Countdown Timer — always visible during action */}
+                {/* POV Role indicator */}
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <div className={`px-3 py-1.5 rounded-full ${isBatting ? "bg-primary/15 border border-primary/25" : "bg-accent/15 border border-accent/25"}`}>
+                    <span className={`font-display text-[9px] font-bold tracking-wider ${isBatting ? "text-primary" : "text-accent"}`}>
+                      {isBatting ? "🏏 YOU ARE BATTING" : "🎯 YOU ARE BOWLING"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* 10s Synced Countdown Timer — always visible during action */}
                 <AnimatePresence>
                   {!waitingForOpponent && phase === "playing" && (
                     <motion.div initial={{ opacity: 0, y: -10, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0 }}

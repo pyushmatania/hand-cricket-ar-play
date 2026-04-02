@@ -418,7 +418,7 @@ export default function TapPlayingUI({
 
       {/* Last result — compact inline with both moves shown */}
       <AnimatePresence mode="wait">
-        {lastResult && phase !== "not_started" && phase !== "finished" && !waitingForOpponent && (
+        {lastResult && phase !== "not_started" && phase !== "finished" && (
           <motion.div
             key={lastResult.description}
             initial={{ opacity: 0, scale: 0.9 }}
