@@ -83,6 +83,8 @@ export default function ScoreBoard({ game, playerName = "You", aiName = "Rohit A
   const battingName = game.isBatting ? playerName : aiName;
   const bowlingName = game.isBatting ? aiName : playerName;
   const runRate = getRunRate(battingScore, inningsBallCount);
+  const strikeRate = getStrikeRate(battingScore, inningsBallCount);
+  const partnership = getPartnershipRuns(currentInningsBalls, game.isBatting);
 
   const needRuns = game.target && game.isBatting && game.phase !== "finished"
     ? Math.max(0, game.target - game.userScore)
