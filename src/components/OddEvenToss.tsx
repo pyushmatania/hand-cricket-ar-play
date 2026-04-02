@@ -321,7 +321,9 @@ export default function OddEvenToss({ onResult, playerName = "You", opponentName
             <AnimatePresence>
               {revealStep >= 3 && tossWon && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="space-y-3">
-                  <p className="text-[11px] text-muted-foreground">Select your choice</p>
+                  <p className="text-[11px] text-foreground font-display font-bold">
+                    {playerName}, you won! What do you want to do?
+                  </p>
                   <div className="flex gap-3">
                     <motion.button whileTap={{ scale: 0.9 }} onClick={() => handleInningsChoice(true)}
                       className="flex-1 py-3.5 bg-gradient-to-br from-primary to-primary/70 text-primary-foreground font-display font-bold rounded-2xl text-sm shadow-[0_0_25px_hsl(217_91%_60%/0.25)] border border-primary/30">
@@ -336,13 +338,22 @@ export default function OddEvenToss({ onResult, playerName = "You", opponentName
               )}
             </AnimatePresence>
 
-            {/* AI chose message */}
+            {/* AI chose — show clear result */}
             <AnimatePresence>
               {revealStep >= 3 && !tossWon && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="space-y-2">
                   <p className="text-[10px] text-muted-foreground font-display tracking-wider">
                     {opponentName} is choosing...
                   </p>
+                  <motion.div
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="flex items-center justify-center gap-1"
+                  >
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary/60" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary/40" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary/20" />
+                  </motion.div>
                 </motion.div>
               )}
             </AnimatePresence>
