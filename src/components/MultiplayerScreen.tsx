@@ -829,8 +829,10 @@ export default function MultiplayerScreen({ onHome }: Props) {
     if (!currentGame || !user || cooldown) return;
     setCooldown(true);
     stopTimer();
-    setShowCountdown(false);
-    setIdleMs(0);
+    // Reset consecutive misses on manual move (auto-submit sets misses before calling this)
+    if (!autoSubmitRef.current) {
+      setMyConsecutiveMisses(0);
+    }
     const moveStr = String(move);
     const isHost = user.id === currentGame.host_id;
     const updateData: any = isHost
