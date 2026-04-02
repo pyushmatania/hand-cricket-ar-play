@@ -694,7 +694,7 @@ export default function LeaderboardPage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 + i * 0.1 }}
                             className={`flex flex-col items-center ${mainTab === "friends" && !isMe ? "cursor-pointer active:scale-[0.97] transition-transform" : ""}`}
-                            onClick={() => { if (mainTab === "friends" && !isMe) setSelectedFriendId(p.user_id); }}>
+                            onClick={() => { if (mainTab === "friends" && !isMe) setPreviewFriendId(p.user_id); }}>
                             <motion.span
                               animate={{ y: [0, -3, 0] }}
                               transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
