@@ -106,10 +106,15 @@ export default function GameScreen({ onHome }: GameScreenProps) {
 
   const handlePreMatchComplete = () => {
     setShowPreMatch(false);
-    if (pendingBatFirst !== null) {
+    if (pendingBatFirst !== null && matchConfig) {
       setTossChoice(pendingBatFirst);
-      startGame(pendingBatFirst);
+      startGame(pendingBatFirst, matchConfig);
     }
+  };
+
+  const handleOverSelect = (config: import("@/hooks/useHandCricket").MatchConfig) => {
+    setMatchConfig(config);
+    setShowOverSelector(false);
   };
 
   // Auto-save match when game finishes + trigger post-match ceremony
