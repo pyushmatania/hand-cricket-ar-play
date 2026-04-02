@@ -1154,6 +1154,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
                   setCountdownMs(COUNTDOWN_MS);
                   setPvpBallHistory([]);
                   pvpPostMatchShownRef.current = false;
+                  pvpPreMatchShownRef.current = false;
+                  setRivalryStats(null);
                   navigate("/game/multiplayer", { replace: true });
                 }}
                 className="flex-1 py-3.5 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display font-bold rounded-2xl glow-primary tracking-wider">
