@@ -326,6 +326,29 @@ export default function TapPlayingUI({
         </div>
       )}
 
+      {/* Floodlight flicker on wickets — warm pulse */}
+      <AnimatePresence>
+        {floodlightFlicker && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0.3, 0.05, 0.25, 0.08, 0.2, 0] }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.8, times: [0, 0.1, 0.2, 0.35, 0.5, 0.7, 1] }}
+            className="fixed inset-0 z-[5] pointer-events-none"
+          >
+            {/* Top-left floodlight */}
+            <div className="absolute top-0 left-0 w-40 h-40 rounded-full"
+              style={{ background: "radial-gradient(circle, hsl(45 93% 58% / 0.4) 0%, transparent 70%)", filter: "blur(20px)" }} />
+            {/* Top-right floodlight */}
+            <div className="absolute top-0 right-0 w-40 h-40 rounded-full"
+              style={{ background: "radial-gradient(circle, hsl(45 93% 58% / 0.35) 0%, transparent 70%)", filter: "blur(20px)" }} />
+            {/* Center warm wash */}
+            <div className="absolute inset-0"
+              style={{ background: "radial-gradient(ellipse at 50% 20%, hsl(40 80% 60% / 0.08) 0%, transparent 60%)" }} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Over break screen */}
       <AnimatePresence>
         {showOverBreak && overBreakData && (
