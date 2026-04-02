@@ -10,7 +10,7 @@ import { pickMatchCommentators, getDuoCommentary, getOverBreakCommentary, type C
 import ScoreBoard from "./ScoreBoard";
 import CelebrationEffects from "./CelebrationEffects";
 import OverBreakScreen from "./OverBreakScreen";
-import cricketGround from "@/assets/cricket-ground.jpg";
+import pitchStrips from "@/assets/pitch-strips.jpg";
 import { pickConfiguredMatchCommentators } from "@/lib/commentaryDuo";
 
 const MOVES_CONFIG: { move: Move; emoji: string; label: string; color: string; glow: string }[] = [
@@ -227,11 +227,11 @@ export default function TapPlayingUI({
     <>
       <CelebrationEffects lastResult={lastResult} gameResult={result} phase={phase} />
 
-      {/* Cricket ground background */}
+      {/* Cricket ground background — side-on broadcast angle */}
       {phase !== "not_started" && (
         <div className="fixed inset-0 z-0 pointer-events-none">
-          <img src={cricketGround} alt="" className="w-full h-full object-cover opacity-15" />
-          <div className="absolute inset-0 stadium-ground-overlay" />
+          <img src={pitchStrips} alt="" className="w-full h-full object-cover opacity-[0.12]" style={{ objectPosition: "center 60%" }} />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/40 to-background/80" />
           <div className="absolute inset-0 floodlight-glow" />
           <div className="absolute inset-0 boundary-glow" />
         </div>

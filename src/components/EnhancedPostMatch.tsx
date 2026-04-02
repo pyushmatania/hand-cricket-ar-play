@@ -156,7 +156,7 @@ export default function EnhancedPostMatch({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[70] flex flex-col items-center justify-center overflow-hidden cursor-pointer"
+          className="fixed inset-0 z-[70] flex flex-col overflow-hidden cursor-pointer"
           onClick={handleTap}
         >
           {/* Background — podium ceremony style */}
@@ -172,24 +172,29 @@ export default function EnhancedPostMatch({
                   initial={{ y: -20, x: Math.random() * 400, opacity: 1, rotate: 0 }}
                   animate={{ y: 700, rotate: 360 * (Math.random() > 0.5 ? 1 : -1), opacity: [1, 1, 0] }}
                   transition={{ duration: 3 + Math.random() * 3, repeat: Infinity, delay: Math.random() * 2 }}
-                  className="absolute w-2 h-2 rounded-sm"
+                  className="absolute w-2.5 h-2.5 rounded-sm"
                   style={{ background: ["hsl(var(--secondary))", "hsl(var(--primary))", "hsl(var(--accent))", "hsl(var(--neon-green))"][i % 4], left: `${Math.random() * 100}%` }}
                 />
               ))}
             </div>
           )}
 
-          <div className="relative z-10 max-w-sm mx-4 w-full text-center space-y-3">
-            {/* Commentator badges */}
-            <div className="flex items-center justify-center gap-2 mb-1">
-              {duo.map((c, i) => (
-                <div key={c.id} className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[8px] font-display font-bold tracking-wider backdrop-blur-sm ${
-                  i === 0 ? "bg-primary/20 text-primary border border-primary/20" : "bg-accent/20 text-accent border border-accent/20"
-                }`}>
-                  <span className="text-xs">{c.avatar}</span> {c.name}
-                </div>
-              ))}
-            </div>
+          {/* Commentator badges - top */}
+          <div className="relative z-10 flex items-center justify-center gap-2 pt-14 pb-2">
+            {duo.map((c, i) => (
+              <div key={c.id} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-display font-bold tracking-wider backdrop-blur-md ${
+                i === 0 ? "bg-primary/20 text-primary border border-primary/25" : "bg-accent/20 text-accent border border-accent/25"
+              }`}>
+                <span className="text-sm">{c.avatar}</span> {c.name}
+              </div>
+            ))}
+          </div>
+
+          {/* Full-screen card */}
+          <div className="relative z-10 flex-1 flex flex-col mx-3 mb-3 rounded-2xl backdrop-blur-md bg-black/40 border border-white/10 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-secondary/5 pointer-events-none" />
+
+            <div className="flex-1 flex flex-col items-center justify-center px-5 relative z-10">
 
             {/* Page content with fade+scale */}
             <AnimatePresence mode="wait">
@@ -342,38 +347,42 @@ export default function EnhancedPostMatch({
                 </div>
               </motion.div>
             </AnimatePresence>
-
-            {/* Progress dots */}
-            <div className="flex justify-center gap-1.5 pt-1">
-              {pages.map((_, i) => (
-                <motion.div
-                  key={i}
-                  animate={{ scale: currentPage === i ? [1, 1.3, 1] : 1 }}
-                  transition={{ duration: 1, repeat: currentPage === i ? Infinity : 0 }}
-                  className={`w-2 h-2 rounded-full transition-colors duration-300 ${currentPage >= i ? "bg-primary" : "bg-white/20"}`}
-                />
-              ))}
             </div>
 
-            {/* Tap hint + skip */}
-            <div className="flex items-center justify-between px-4 pt-1">
-              <motion.button
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={(e) => { e.stopPropagation(); handleSkip(); }}
-                className="text-[10px] text-foreground/40 font-display tracking-wider underline"
-              >
-                SKIP
-              </motion.button>
-              <motion.span
-                animate={{ opacity: [0.3, 0.8, 0.3] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="text-[9px] text-foreground/50 font-display tracking-wider"
-              >
-                {currentPage < pages.length - 1 ? "TAP TO CONTINUE →" : "TAP TO CLOSE →"}
-              </motion.span>
+            {/* Bottom bar: dots + controls */}
+            <div className="relative z-10 px-4 pb-4 pt-2">
+              {/* Progress dots */}
+              <div className="flex justify-center gap-2 mb-3">
+                {pages.map((_, i) => (
+                  <motion.div
+                    key={i}
+                    animate={{ scale: currentPage === i ? [1, 1.3, 1] : 1 }}
+                    transition={{ duration: 1, repeat: currentPage === i ? Infinity : 0 }}
+                    className={`w-2.5 h-2.5 rounded-full transition-colors duration-300 ${currentPage >= i ? "bg-primary" : "bg-white/20"}`}
+                  />
+                ))}
+              </div>
+
+              {/* Tap hint + skip */}
+              <div className="flex items-center justify-between">
+                <motion.button
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={(e) => { e.stopPropagation(); handleSkip(); }}
+                  className="text-[11px] text-foreground/40 font-display tracking-wider underline"
+                >
+                  SKIP
+                </motion.button>
+                <motion.span
+                  animate={{ opacity: [0.3, 0.8, 0.3] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-[10px] text-foreground/50 font-display tracking-wider"
+                >
+                  {currentPage < pages.length - 1 ? "TAP TO CONTINUE →" : "TAP TO CLOSE →"}
+                </motion.span>
+              </div>
             </div>
           </div>
         </motion.div>
