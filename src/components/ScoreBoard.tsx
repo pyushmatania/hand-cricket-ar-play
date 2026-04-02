@@ -220,6 +220,14 @@ export default function ScoreBoard({ game, playerName = "You", aiName = "Rohit A
             </span>
           </div>
 
+          {/* Partnership */}
+          {partnership > 0 && (
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <span className="text-[7px] text-muted-foreground/50 font-display tracking-wider">🤝 P'SHIP</span>
+              <span className="text-[9px] font-display font-bold text-neon-green">{partnership}</span>
+            </div>
+          )}
+
           {/* 1st innings score if in 2nd innings */}
           {game.currentInnings === 2 && (
             <div className="flex items-center gap-2 mb-1.5 px-2 py-1 rounded-lg bg-muted/10 border border-muted/15">
