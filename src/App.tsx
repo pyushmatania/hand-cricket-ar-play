@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, lazy, Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -8,37 +8,56 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import PageTransition from "@/components/PageTransition";
 import SplashScreen from "@/components/SplashScreen";
-import HomePage from "./pages/HomePage";
-import PlayPage from "./pages/PlayPage";
-import ProfilePage from "./pages/ProfilePage";
-import LeaderboardPage from "./pages/LeaderboardPage";
-import GamePage from "./pages/GamePage";
-import AuthPage from "./pages/AuthPage";
-import SettingsPage from "./pages/SettingsPage";
-import FriendsPage from "./pages/FriendsPage";
-import MatchHistoryPage from "./pages/MatchHistoryPage";
-import NotificationsPage from "./pages/NotificationsPage";
-import ShopPage from "./pages/ShopPage";
 import MatchInviteNotification from "@/components/MatchInviteNotification";
-import NotFound from "./pages/NotFound";
+
+// Eager-load home (landing page)
+import HomePage from "./pages/HomePage";
+
+// Lazy-load heavy pages
+const PlayPage = lazy(() => import("./pages/PlayPage"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+const LeaderboardPage = lazy(() => import("./pages/LeaderboardPage"));
+const GamePage = lazy(() => import("./pages/GamePage"));
+const AuthPage = lazy(() => import("./pages/AuthPage"));
+const SettingsPage = lazy(() => import("./pages/SettingsPage"));
+const FriendsPage = lazy(() => import("./pages/FriendsPage"));
+const MatchHistoryPage = lazy(() => import("./pages/MatchHistoryPage"));
+const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
+const ShopPage = lazy(() => import("./pages/ShopPage"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
+
+function LazyPage({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <span className="font-display text-[9px] tracking-[0.25em] text-muted-foreground">LOADING</span>
+        </div>
+      </div>
+    }>
+      {children}
+    </Suspense>
+  );
+}
 
 function AnimatedRoutes() {
   return (
     <Routes>
       <Route path="/" element={<PageTransition><HomePage /></PageTransition>} />
-      <Route path="/play" element={<PageTransition><PlayPage /></PageTransition>} />
-      <Route path="/game/:mode" element={<GamePage />} />
-      <Route path="/profile" element={<PageTransition><ProfilePage /></PageTransition>} />
-      <Route path="/leaderboard" element={<PageTransition><LeaderboardPage /></PageTransition>} />
-      <Route path="/auth" element={<PageTransition><AuthPage /></PageTransition>} />
-      <Route path="/settings" element={<PageTransition><SettingsPage /></PageTransition>} />
-      <Route path="/friends" element={<PageTransition><FriendsPage /></PageTransition>} />
-      <Route path="/history" element={<PageTransition><MatchHistoryPage /></PageTransition>} />
-      <Route path="/notifications" element={<PageTransition><NotificationsPage /></PageTransition>} />
-      <Route path="/shop" element={<PageTransition><ShopPage /></PageTransition>} />
-      <Route path="*" element={<NotFound />} />
+      <Route path="/play" element={<LazyPage><PageTransition><PlayPage /></PageTransition></LazyPage>} />
+      <Route path="/game/:mode" element={<LazyPage><GamePage /></LazyPage>} />
+      <Route path="/profile" element={<LazyPage><PageTransition><ProfilePage /></PageTransition></LazyPage>} />
+      <Route path="/leaderboard" element={<LazyPage><PageTransition><LeaderboardPage /></PageTransition></LazyPage>} />
+      <Route path="/auth" element={<LazyPage><PageTransition><AuthPage /></PageTransition></LazyPage>} />
+      <Route path="/settings" element={<LazyPage><PageTransition><SettingsPage /></PageTransition></LazyPage>} />
+      <Route path="/friends" element={<LazyPage><PageTransition><FriendsPage /></PageTransition></LazyPage>} />
+      <Route path="/history" element={<LazyPage><PageTransition><MatchHistoryPage /></PageTransition></LazyPage>} />
+      <Route path="/notifications" element={<LazyPage><PageTransition><NotificationsPage /></PageTransition></LazyPage>} />
+      <Route path="/shop" element={<LazyPage><PageTransition><ShopPage /></PageTransition></LazyPage>} />
+      <Route path="*" element={<LazyPage><NotFound /></LazyPage>} />
     </Routes>
   );
 }
