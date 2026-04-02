@@ -28,6 +28,7 @@ interface SettingsContextType extends Settings {
   toggleVictorySound: () => void;
   setCommentaryVoice: (voice: string) => void;
   setVoiceEngine: (engine: VoiceEngine) => void;
+  setCommentaryLanguage: (lang: CommentaryLanguage) => void;
 }
 
 const defaults: Settings = {
