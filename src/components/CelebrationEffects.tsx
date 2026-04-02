@@ -258,6 +258,8 @@ export default function CelebrationEffects({ lastResult, gameResult, phase }: Ce
           </motion.div>
         )}
       </AnimatePresence>
+      {/* Crowd Mexican Wave */}
+      <CrowdWave active={crowdWave.active} intensity={crowdWave.intensity} />
     </>
   );
 }
