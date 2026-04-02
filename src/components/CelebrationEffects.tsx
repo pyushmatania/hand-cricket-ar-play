@@ -63,15 +63,17 @@ export default function CelebrationEffects({ lastResult, gameResult, phase }: Ce
         setParticles(generateParticles(SIX_EMOJIS, 20, 360));
         setFlashColor("primary");
         setShowFlash(true);
+        setCrowdWave({ active: true, intensity: "big" });
         setTimeout(() => setShowFlash(false), 500);
-        setTimeout(() => { setParticles([]); setEffectType("none"); }, 2500);
+        setTimeout(() => { setParticles([]); setEffectType("none"); setCrowdWave(w => ({ ...w, active: false })); }, 2500);
       } else if (absRuns === 4) {
         setEffectType("four");
         setParticles(generateParticles(FOUR_EMOJIS, 10, 180));
         setFlashColor("secondary");
         setShowFlash(true);
+        setCrowdWave({ active: true, intensity: "normal" });
         setTimeout(() => setShowFlash(false), 350);
-        setTimeout(() => { setParticles([]); setEffectType("none"); }, 1800);
+        setTimeout(() => { setParticles([]); setEffectType("none"); setCrowdWave(w => ({ ...w, active: false })); }, 1800);
       }
     }
   }, [lastResult]);
