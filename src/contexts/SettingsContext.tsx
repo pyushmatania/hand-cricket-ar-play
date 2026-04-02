@@ -25,6 +25,7 @@ interface SettingsContextType extends Settings {
   toggleBatSound: () => void;
   toggleVictorySound: () => void;
   setCommentaryVoice: (voice: string) => void;
+  setVoiceEngine: (engine: VoiceEngine) => void;
 }
 
 const defaults: Settings = {
