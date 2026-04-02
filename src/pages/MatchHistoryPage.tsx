@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { Virtuoso } from "react-virtuoso";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import BottomNav from "@/components/BottomNav";
@@ -254,8 +255,11 @@ export default function MatchHistoryPage() {
             )}
           </div>
         ) : (
-          <div className="space-y-2.5">
-            {filtered.map((m, i) => {
+          <div style={{ height: "calc(100vh - 340px)", minHeight: 300 }}>
+            <Virtuoso
+              data={filtered}
+              overscan={200}
+              itemContent={(i, m) => {
               const modeMeta = MODE_META[m.mode] || MODE_META.tap;
               const resultColor = m.result === "win" ? "text-neon-green" : m.result === "loss" ? "text-out-red" : "text-secondary";
               const resultBg = m.result === "win" ? "from-neon-green/8" : m.result === "loss" ? "from-out-red/8" : "from-secondary/8";
@@ -268,10 +272,11 @@ export default function MatchHistoryPage() {
               const balls = (m.innings_data && Array.isArray(m.innings_data)) ? m.innings_data as BallRecord[] : [];
 
               return (
+                <div className="pb-2.5">
                 <motion.div key={m.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.03 }}
+                  transition={{ delay: Math.min(i * 0.03, 0.3) }}
                   className="glass-premium rounded-xl relative overflow-hidden"
                 >
                   <div className={`absolute inset-0 bg-gradient-to-r ${resultBg} to-transparent opacity-40`} />
@@ -446,8 +451,10 @@ export default function MatchHistoryPage() {
                     )}
                   </AnimatePresence>
                 </motion.div>
+                </div>
               );
-            })}
+              }}
+            />
           </div>
         )}
       </div>
