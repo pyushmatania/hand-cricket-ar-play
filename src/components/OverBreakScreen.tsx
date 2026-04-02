@@ -44,13 +44,17 @@ export default function OverBreakScreen({ stats, commentaryLines, commentators, 
   // Auto-continue countdown
   useEffect(() => {
     const interval = setInterval(() => {
-      setAutoTimer(t => {
-        if (t <= 1) { onContinue(); return 0; }
-        return t - 1;
-      });
+      setAutoTimer(t => t - 1);
     }, 1000);
     return () => clearInterval(interval);
-  }, [onContinue]);
+  }, []);
+
+  // Fire onContinue when timer reaches 0
+  useEffect(() => {
+    if (autoTimer <= 0) {
+      onContinue();
+    }
+  }, [autoTimer, onContinue]);
 
   const getCommentator = useCallback((id: string) => {
     return commentators.find(c => c.name === id || c.id === id) || commentators[0];
