@@ -584,6 +584,19 @@ export default function ProfilePage() {
           {/* ========== MATCHES TAB ========== */}
           {activeTab === "matches" && (
             <motion.div key="matches" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} transition={{ duration: 0.2 }}>
+              {/* View full history link */}
+              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/history")}
+                className="w-full glass-premium rounded-xl p-3 mb-4 flex items-center justify-between group">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">📜</span>
+                  <div>
+                    <span className="font-display text-[10px] font-bold text-foreground tracking-wider block">FULL MATCH HISTORY</span>
+                    <span className="text-[7px] text-muted-foreground">Filters, replay & detailed stats</span>
+                  </div>
+                </div>
+                <span className="text-muted-foreground group-hover:text-primary transition-colors">→</span>
+              </motion.button>
+
               {/* Summary bar */}
               {matches.length > 0 && (
                 <div className="glass-premium rounded-xl p-3 mb-4 flex items-center justify-between">
