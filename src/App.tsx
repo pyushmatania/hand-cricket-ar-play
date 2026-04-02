@@ -17,6 +17,7 @@ import AuthPage from "./pages/AuthPage";
 import SettingsPage from "./pages/SettingsPage";
 import FriendsPage from "./pages/FriendsPage";
 import MatchHistoryPage from "./pages/MatchHistoryPage";
+import NotificationsPage from "./pages/NotificationsPage";
 import MatchInviteNotification from "@/components/MatchInviteNotification";
 import NotFound from "./pages/NotFound";
 
