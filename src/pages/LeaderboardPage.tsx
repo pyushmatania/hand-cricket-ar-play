@@ -64,7 +64,7 @@ interface FriendProfile {
   rank_tier?: string;
 }
 
-type MainTab = "friends" | "global" | "challenges" | "rivalry" | "records" | "seasons" | "rage";
+type MainTab = "friends" | "global" | "challenges" | "rivalry" | "records" | "seasons" | "rage" | "network";
 
 interface SeasonEntry {
   user_id: string;
