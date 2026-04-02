@@ -36,6 +36,7 @@ const CATEGORIES = [
   { key: "bat_skin", label: "BATS", icon: "🏏" },
   { key: "vs_effect", label: "VS FX", icon: "⚔️" },
   { key: "avatar_frame", label: "FRAMES", icon: "🖼️" },
+  { key: "game_pass", label: "PASSES", icon: "🎫" },
 ];
 
 export default function ShopPage() {
