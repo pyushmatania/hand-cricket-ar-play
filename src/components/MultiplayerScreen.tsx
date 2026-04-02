@@ -1064,7 +1064,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
                   if (newGame && !error) {
                     setCurrentGame(newGame as unknown as MultiplayerGame);
                     setPhase("waiting");
-                    setReserveTime(RESERVE_TIMER_MS);
+                    setCountdownMs(COUNTDOWN_MS);
                     setCooldown(false);
                     setLastResult(null);
                     navigate(`/game/multiplayer?game=${newGame.id}`, { replace: true });
