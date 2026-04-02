@@ -583,6 +583,13 @@ export default function ProfilePage() {
             </motion.div>
           )}
 
+          {/* ========== TROPHY CASE TAB ========== */}
+          {activeTab === "trophy" && (
+            <motion.div key="trophy" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} transition={{ duration: 0.2 }}>
+              <TrophyCase />
+            </motion.div>
+          )}
+
           {/* ========== MATCHES TAB ========== */}
           {activeTab === "matches" && (
             <motion.div key="matches" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} transition={{ duration: 0.2 }}>
