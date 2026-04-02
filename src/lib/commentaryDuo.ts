@@ -410,7 +410,7 @@ export function getChaseTensionCommentary(
 // ─── Pre-match ceremony pages ─────────────────────────────────
 
 export function getPreMatchDuoIntro(
-  c1Name: string, c2Name: string, playerName: string, opponentName: string
+  c1Name: string, c2Name: string, playerName: string, opponentName: string, lang: CommentaryLanguage = "english"
 ): CommentaryLine[] {
   const intros: DuoGen[] = [
     (c1, c2, p, o) => [
@@ -426,6 +426,9 @@ export function getPreMatchDuoIntro(
       { commentatorId: c2, text: `${c1}, I've been waiting for this all day! Both players are fired up!`, isKeyMoment: true },
     ],
   ];
+  if (lang === "hindi" || (lang === "both" && Math.random() > 0.5)) {
+    return pickLangPool(intros, HINDI_PRE_MATCH_INTRO, lang)(c1Name, c2Name, playerName, opponentName);
+  }
   return intros[Math.floor(Math.random() * intros.length)](c1Name, c2Name, playerName, opponentName);
 }
 
