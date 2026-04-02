@@ -548,32 +548,57 @@ export default function LeaderboardPage() {
                   {top3.length >= 3 && (
                     <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="flex items-end justify-center gap-3 mb-5">
                       {[top3[1], top3[0], top3[2]].map((p, i) => {
-                        const heights = ["h-24", "h-32", "h-20"];
+                        const heights = ["h-28", "h-36", "h-24"];
                         const sizes = ["text-3xl", "text-4xl", "text-2xl"];
                         const rank = i === 0 ? 2 : i === 1 ? 1 : 3;
                         const isMe = user && p.user_id === user.id;
                         const tier = getRankTier(p);
                         const glows = [
                           "shadow-[0_0_15px_hsl(192_91%_70%/0.15)]",
-                          "shadow-[0_0_25px_hsl(45_93%_58%/0.2)]",
+                          "shadow-[0_0_25px_hsl(45_93%_58%/0.25)]",
                           "shadow-[0_0_10px_hsl(30_70%_55%/0.1)]",
                         ];
+                        const podiumColors = [
+                          "from-accent/15 to-accent/5",
+                          "from-score-gold/15 to-score-gold/5",
+                          "from-secondary/10 to-secondary/5",
+                        ];
                         return (
-                          <div key={p.user_id} className={`flex flex-col items-center ${mainTab === "friends" && !isMe ? "cursor-pointer active:scale-[0.97] transition-transform" : ""}`}
+                          <motion.div key={p.user_id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.2 + i * 0.1 }}
+                            className={`flex flex-col items-center ${mainTab === "friends" && !isMe ? "cursor-pointer active:scale-[0.97] transition-transform" : ""}`}
                             onClick={() => { if (mainTab === "friends" && !isMe) setSelectedFriendId(p.user_id); }}>
-                            <span className={`${sizes[i]} mb-1`}>{getBadge(rank)}</span>
-                            <div className={`mb-1`}>
-                              <PlayerAvatar avatarIndex={p.avatar_index ?? 0} size="sm" />
+                            <motion.span
+                              animate={{ y: [0, -3, 0] }}
+                              transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+                              className={`${sizes[i]} mb-1`}>{getBadge(rank)}</motion.span>
+                            <div className="mb-1 relative">
+                              <PlayerAvatar avatarUrl={p.avatar_url} avatarIndex={p.avatar_index ?? 0} size="sm" />
+                              {(p.current_streak ?? 0) >= 3 && (
+                                <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-out-red/90 flex items-center justify-center">
+                                  <span className="text-[6px] text-white font-display font-black">🔥</span>
+                                </div>
+                              )}
                             </div>
-                            <div className={`w-18 ${heights[i]} rounded-t-2xl glass-premium border ${isMe ? "border-primary/30" : "border-primary/10"} flex flex-col items-center justify-end pb-3 px-2 ${glows[i]}`}>
-                              <span className="font-display text-xl font-black text-secondary leading-none" style={{ textShadow: "0 0 15px hsl(45 93% 58% / 0.3)" }}>{getScore(p)}</span>
+                            <div className={`w-20 ${heights[i]} rounded-t-2xl glass-premium border ${isMe ? "border-primary/30" : "border-primary/10"} flex flex-col items-center justify-end pb-2 px-2 ${glows[i]} bg-gradient-to-t ${podiumColors[i]} relative overflow-hidden`}>
+                              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                              <motion.span
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                transition={{ delay: 0.4 + i * 0.1, type: "spring" }}
+                                className="font-display text-xl font-black text-secondary leading-none" style={{ textShadow: "0 0 15px hsl(45 93% 58% / 0.3)" }}>{getScore(p)}</motion.span>
                               <span className="text-[6px] text-muted-foreground font-display tracking-widest mt-0.5">{SORT_OPTIONS[sortBy].label}</span>
+                              {(p.xp ?? 0) > 0 && (
+                                <span className="text-[5px] text-primary/70 font-display mt-0.5">✨{p.xp}</span>
+                              )}
                             </div>
-                            <div className="w-18 glass-card border-t-0 rounded-b-xl py-1.5 text-center">
+                            <div className="w-20 glass-card border-t-0 rounded-b-xl py-1.5 text-center">
                               <span className={`text-[7px] font-display font-bold block truncate px-1 ${isMe ? "text-primary" : "text-foreground"}`}>{p.display_name}{isMe && " ★"}</span>
                               <span className={`text-[6px] ${tier.color} font-display`}>{tier.emoji} {tier.name}</span>
                             </div>
-                          </div>
+                          </motion.div>
                         );
                       })}
                     </motion.div>
