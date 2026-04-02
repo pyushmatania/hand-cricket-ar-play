@@ -54,7 +54,7 @@ export default function EnhancedPreMatch({
 }: EnhancedPreMatchProps) {
   const [currentPage, setCurrentPage] = useState(0);
   const [visible, setVisible] = useState(true);
-  const { voiceEnabled, soundEnabled, crowdEnabled, commentaryEnabled } = useSettings();
+  const { voiceEnabled, soundEnabled, crowdEnabled, commentaryEnabled, voiceEngine } = useSettings();
   const stableOnComplete = useCallback(onComplete, []);
 
   const duo = commentators || pickMatchCommentators();
