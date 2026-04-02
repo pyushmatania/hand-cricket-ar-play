@@ -157,6 +157,14 @@ export default function MultiplayerScreen({ onHome }: Props) {
     winStreak?: number; loseStreak?: number;
   } | null>(null);
 
+  // Rematch invite state
+  const [rematchSent, setRematchSent] = useState(false);
+  const [incomingRematch, setIncomingRematch] = useState<{
+    inviteId: string;
+    gameId: string;
+    fromName: string;
+  } | null>(null);
+
   const resolvedTurnRef = useRef<string | null>(null);
   const gameIdFromQuery = searchParams.get("game");
 
