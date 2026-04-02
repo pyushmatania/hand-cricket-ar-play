@@ -343,23 +343,32 @@ export default function MultiplayerScreen({ onHome }: Props) {
     return () => { supabase.removeChannel(channel); };
   }, [currentGame?.id]);
 
-  // Timer management
+  // Timer management — idle detection + countdown
   const myMove = currentGame ? (user?.id === currentGame.host_id ? currentGame.host_move : currentGame.guest_move) : null;
   const waitingForOpponent = myMove !== null;
 
   useEffect(() => {
     if (phase !== "playing" || !currentGame) return;
-    if (waitingForOpponent) { stopTimer(); return; }
-    startBallTimer();
+    if (waitingForOpponent) { stopTimer(); setShowCountdown(false); setIdleMs(0); return; }
+    // Reset and start idle tracking
+    turnStartRef.current = Date.now();
+    setIdleMs(0);
+    setShowCountdown(false);
+    setCountdownMs(COUNTDOWN_MS);
+    
+    timerRef.current = setInterval(() => {
+      const elapsed = Date.now() - turnStartRef.current;
+      setIdleMs(elapsed);
+      if (elapsed >= IDLE_THRESHOLD_MS) {
+        setShowCountdown(true);
+        const countdownElapsed = elapsed - IDLE_THRESHOLD_MS;
+        const remaining = Math.max(0, COUNTDOWN_MS - countdownElapsed);
+        setCountdownMs(remaining);
+        if (remaining <= 0) handleAbandon();
+      }
+    }, 100);
     return () => stopTimer();
   }, [currentGame?.current_turn, waitingForOpponent, phase]);
-
-  useEffect(() => {
-    if (!currentGame || !user) return;
-    const isHost = user.id === currentGame.host_id;
-    const myReserve = isHost ? currentGame.host_reserve_ms : currentGame.guest_reserve_ms;
-    setReserveTime(myReserve);
-  }, [currentGame?.id]);
 
   useEffect(() => {
     if (!currentGame || !user) return;
@@ -367,10 +376,11 @@ export default function MultiplayerScreen({ onHome }: Props) {
     if (currentGame.phase === "pre_round_countdown" && currentGame.phase_started_at) {
       const ms = Date.now() - new Date(currentGame.phase_started_at).getTime();
       if (ms >= 3000) {
+        const totalTimeout = IDLE_THRESHOLD_MS + COUNTDOWN_MS;
         (supabase.from("multiplayer_games") as any).update({
           phase: "action_window",
           phase_started_at: new Date().toISOString(),
-          turn_deadline_at: new Date(Date.now() + RESERVE_TIMER_MS).toISOString(),
+          turn_deadline_at: new Date(Date.now() + totalTimeout).toISOString(),
           status: "playing",
         }).eq("id", currentGame.id).eq("phase", "pre_round_countdown");
       }
@@ -387,31 +397,6 @@ export default function MultiplayerScreen({ onHome }: Props) {
       }
     }
   }, [currentGame?.id, currentGame?.phase, currentGame?.phase_started_at, currentGame?.turn_deadline_at, currentGame?.host_move, currentGame?.guest_move, user?.id]);
-
-  const startBallTimer = () => {
-    stopTimer();
-    setBallTimer(BALL_TIMER_MS);
-    setUsingReserve(false);
-    reserveUsedRef.current = 0;
-    ballTimerStartRef.current = Date.now();
-
-    timerRef.current = setInterval(() => {
-      const elapsed = Date.now() - (ballTimerStartRef.current || Date.now());
-      const remaining = BALL_TIMER_MS - elapsed;
-      if (remaining > 0) {
-        setBallTimer(remaining);
-        setUsingReserve(false);
-      } else {
-        setUsingReserve(true);
-        setBallTimer(0);
-        const reserveElapsed = elapsed - BALL_TIMER_MS;
-        reserveUsedRef.current = reserveElapsed;
-        const newReserve = Math.max(0, reserveTime - reserveElapsed);
-        setReserveTime(newReserve);
-        if (newReserve <= 0) handleAbandon();
-      }
-    }, 50);
-  };
 
   const stopTimer = () => {
     if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
