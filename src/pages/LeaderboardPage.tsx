@@ -316,10 +316,10 @@ export default function LeaderboardPage() {
 
         {/* Sort options (for global & friends) */}
         {(mainTab === "global" || mainTab === "friends") && (
-          <div className="flex gap-1 mb-4">
+          <div className="flex gap-1 mb-4 overflow-x-auto no-scrollbar">
             {SORT_OPTIONS.map((opt, i) => (
               <button key={opt.key} onClick={() => setSortBy(i)}
-                className={`flex-1 py-1.5 rounded-lg font-display text-[7px] font-bold tracking-widest transition-all ${
+                className={`shrink-0 px-2.5 py-1.5 rounded-lg font-display text-[7px] font-bold tracking-widest transition-all ${
                   sortBy === i ? "bg-primary/10 text-primary border border-primary/15" : "text-muted-foreground/50"
                 }`}>
                 {opt.icon} {opt.label}
