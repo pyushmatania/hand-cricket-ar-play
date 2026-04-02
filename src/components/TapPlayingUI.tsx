@@ -168,7 +168,73 @@ export default function TapPlayingUI({
     }
   }, [phase]);
 
-  // Ball result effects with duo commentary
+  // Wicket & innings change breakdown card
+  useEffect(() => {
+    if (!lastResult || lastResult.runs !== "OUT") return;
+    if (phase === "not_started") return;
+
+    const currentBallsTotal = ballHistory.length;
+    const inningsBalls = currentInnings === 1 ? (innings1Balls ?? currentBallsTotal) : currentBallsTotal - (innings1Balls ?? 0);
+
+    // Compute batsman stats from ball history (current innings partnership)
+    const partStart = partnershipStartRef.current;
+    const currentScore = isBatting ? userScore : aiScore;
+    const pRuns = currentScore - partStart.score;
+    const pBalls = inningsBalls - partStart.balls;
+
+    // Count batsman fours and sixes from recent partnership balls
+    const recentBalls = ballHistory.slice(partStart.balls);
+    let fours = 0, sixes = 0, batsmanRuns = 0;
+    for (const b of recentBalls) {
+      if (typeof b.runs === "number") {
+        const absR = Math.abs(b.runs);
+        if (isBatting && b.runs > 0) { batsmanRuns += b.runs; if (absR === 4) fours++; if (absR === 6) sixes++; }
+        if (!isBatting && b.runs < 0) { batsmanRuns += absR; if (absR === 4) fours++; if (absR === 6) sixes++; }
+      }
+    }
+
+    // Bowling stats — the "bowler" is the opponent
+    const bowlerWickets = isBatting ? aiWickets : userWickets; // doesn't apply perfectly, use wicket count
+    const totalWickets = isBatting ? userWickets : aiWickets;
+    const oversStr = `${Math.floor(inningsBalls / 6)}.${inningsBalls % 6}`;
+
+    const isInningsChange = phase === "second_batting" || phase === "second_bowling";
+    const prevP = prevPhaseRef.current;
+    const justChangedInnings = (prevP === "first_batting" || prevP === "first_bowling") && isInningsChange;
+
+    const breakdownData: WicketBreakdownData = {
+      type: justChangedInnings ? "innings_change" : "wicket",
+      batsmanName: isBatting ? playerName : opponentName,
+      batsmanRuns,
+      batsmanBalls: pBalls,
+      batsmanFours: fours,
+      batsmanSixes: sixes,
+      partnershipRuns: pRuns,
+      partnershipBalls: pBalls,
+      bowlerName: isBatting ? opponentName : playerName,
+      bowlerWickets: totalWickets,
+      bowlerRunsConceded: isBatting ? userScore : (typeof lastResult.runs === "number" ? Math.abs(lastResult.runs) : 0),
+      bowlerOvers: oversStr,
+      totalScore: isBatting ? userScore : aiScore,
+      totalWickets,
+      currentOver: oversStr,
+      target,
+      isInningsChange: justChangedInnings,
+      newTarget: justChangedInnings ? target : undefined,
+      dismissalType: lastResult.description,
+    };
+
+    // Reset partnership tracking for next batsman
+    partnershipStartRef.current = { score: currentScore, balls: inningsBalls };
+
+    // Don't show if game is finished (post-match handles that)
+    if (phase !== "finished") {
+      setWicketBreakdownData(breakdownData);
+      setShowWicketBreakdown(true);
+    }
+  }, [lastResult?.runs === "OUT" ? ballHistory.length : null]);
+
+
   useEffect(() => {
     if (!lastResult) return;
     const r = lastResult;
