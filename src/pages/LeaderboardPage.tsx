@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +11,8 @@ import RankBadge from "@/components/RankBadge";
 import WeeklyChallengesCard from "@/components/WeeklyChallengesCard";
 import AchievementFeed from "@/components/AchievementFeed";
 import PlayerAvatar from "@/components/PlayerAvatar";
+import FormSparkline from "@/components/FormSparkline";
+import PlayerOfTheWeek from "@/components/PlayerOfTheWeek";
 import { getRankTier } from "@/lib/rankTiers";
 import { useWeeklyChallenges } from "@/hooks/useWeeklyChallenges";
 import { toast } from "@/components/ui/use-toast";
