@@ -103,9 +103,9 @@ const RECORD_LABELS: Record<string, { emoji: string; label: string }> = {
   fastest_win: { emoji: "⚡", label: "Fastest Win" },
 };
 
-function parseBalls(inningsData: any): { sixes: number; fours: number; dots: number; totalRuns: number } {
-  let sixes = 0, fours = 0, dots = 0, totalRuns = 0;
-  if (!inningsData) return { sixes, fours, dots, totalRuns };
+function parseBalls(inningsData: any): { sixes: number; fours: number; totalRuns: number } {
+  let sixes = 0, fours = 0, totalRuns = 0;
+  if (!inningsData) return { sixes, fours, totalRuns };
   const innings = Array.isArray(inningsData) ? inningsData : [inningsData];
   for (const inn of innings) {
     const balls = inn?.balls || inn?.playerBalls || [];
@@ -113,11 +113,10 @@ function parseBalls(inningsData: any): { sixes: number; fours: number; dots: num
       const runs = typeof b === "number" ? b : (b?.runs ?? b?.playerMove ?? 0);
       if (runs === 6) sixes++;
       else if (runs === 4) fours++;
-      else if (runs === 0) dots++;
       totalRuns += typeof runs === "number" ? runs : 0;
     }
   }
-  return { sixes, fours, dots, totalRuns };
+  return { sixes, fours, totalRuns };
 }
 
 export default function FriendStatsModal({ friend, onClose, onChallenge }: Props) {
