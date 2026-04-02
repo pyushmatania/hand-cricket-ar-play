@@ -56,6 +56,7 @@ const SettingsContext = createContext<SettingsContextType>({
   setCommentaryVoice: () => {},
   setVoiceEngine: () => {},
   setCommentaryLanguage: () => {},
+  toggleCeremonies: () => {},
 });
 
 export const useSettings = () => useContext(SettingsContext);
