@@ -1,9 +1,16 @@
 /**
- * Voice Commentary Engine — ElevenLabs primary, Web Speech API fallback.
- * Crowd/audience sounds via Web Audio API with ElevenLabs SFX overlay.
+ * Voice Commentary Engine — Supports 3 modes: auto, elevenlabs, system.
+ * Auto tries ElevenLabs first, falls back to system duo voices.
+ * System mode uses 10 distinct Web Speech personas with duo commentary.
  */
 
-import { speakElevenLabs, stopCurrentAudio, isElevenLabsAvailable, playElevenLabsSFX, ElevenLabsSFXPrompts } from "@/lib/elevenLabsAudio";
+import { speakElevenLabs, stopCurrentAudio, isElevenLabsAvailable, playElevenLabsSFX, ElevenLabsSFXPrompts, speakDuoLines } from "@/lib/elevenLabsAudio";
+import { speakSystemDuoLines, speakWithSystemPersona, SYSTEM_VOICE_PERSONAS, preloadSystemVoices, type SystemVoicePersona } from "@/lib/systemVoices";
+import type { VoiceEngine } from "@/contexts/SettingsContext";
+import type { Commentator, CommentaryLine } from "@/lib/commentaryDuo";
+
+// Preload system voices on import
+preloadSystemVoices();
 
 let audioCtx: AudioContext | null = null;
 
@@ -13,41 +20,81 @@ function getCtx(): AudioContext {
   return audioCtx;
 }
 
-// ─── Voice Commentary (ElevenLabs → Web Speech fallback) ─────────
+// ─── Commentator-to-System-Voice mapping ─────────────────────────
+// Maps ElevenLabs commentator IDs to system voice personas for fallback
+const COMMENTATOR_TO_SYSTEM: Record<string, string> = {
+  "ravi": "sys_ravi",
+  "priya": "sys_priya",
+  "vikram": "sys_vikram",
+  "ananya": "sys_ananya",
+  "arjun": "sys_arjun",
+  "Ravi": "sys_ravi",
+  "Priya": "sys_priya",
+  "Vikram": "sys_vikram",
+  "Ananya": "sys_ananya",
+  "Arjun": "sys_arjun",
+};
+
+function getSystemPersonaForCommentator(commentatorId: string): SystemVoicePersona {
+  const sysId = COMMENTATOR_TO_SYSTEM[commentatorId];
+  return SYSTEM_VOICE_PERSONAS.find(p => p.id === sysId) || SYSTEM_VOICE_PERSONAS[0];
+}
+
+// ─── Voice Commentary (with engine support) ──────────────────────
 
 let currentUtterance: SpeechSynthesisUtterance | null = null;
 
-export async function speakCommentary(text: string, enabled: boolean) {
+export async function speakCommentary(text: string, enabled: boolean, engine: VoiceEngine = "auto") {
   if (!enabled) return;
 
-  // Clean emoji for speech
   const clean = text.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, "").trim();
   if (!clean) return;
 
-  // Try ElevenLabs first
-  if (isElevenLabsAvailable()) {
-    stopVoice(); // stop any web speech
+  const useElevenLabs = engine === "elevenlabs" || (engine === "auto" && isElevenLabsAvailable());
+
+  if (useElevenLabs && engine !== "system") {
+    stopVoice();
     const success = await speakElevenLabs(clean);
     if (success) return;
+    // If auto mode and EL failed, fall through to system
+    if (engine === "elevenlabs") return;
   }
 
-  // Fallback to Web Speech API
-  if (!("speechSynthesis" in window)) return;
-  window.speechSynthesis.cancel();
+  // System voice fallback — use a random persona for single lines
+  const persona = SYSTEM_VOICE_PERSONAS[Math.floor(Math.random() * SYSTEM_VOICE_PERSONAS.length)];
+  await speakWithSystemPersona(clean, persona);
+}
 
-  const utterance = new SpeechSynthesisUtterance(clean);
-  utterance.rate = 0.92;  // Medium pace — not too fast
-  utterance.pitch = 1.05;
-  utterance.volume = 0.85;
+/**
+ * Speak duo commentary lines with proper voice engine routing.
+ * Maps commentary lines to either ElevenLabs voices or system voice personas.
+ */
+export async function speakDuoCommentary(
+  lines: CommentaryLine[],
+  commentators: [Commentator, Commentator],
+  engine: VoiceEngine = "auto"
+) {
+  const keyLines = lines.filter(l => l.isKeyMoment);
+  if (keyLines.length === 0) return;
 
-  const voices = window.speechSynthesis.getVoices();
-  const preferred = voices.find(
-    (v) => v.lang.startsWith("en") && (v.name.includes("Google") || v.name.includes("Daniel") || v.name.includes("Samantha"))
-  ) || voices.find((v) => v.lang.startsWith("en"));
-  if (preferred) utterance.voice = preferred;
+  const useElevenLabs = engine === "elevenlabs" || (engine === "auto" && isElevenLabsAvailable());
 
-  currentUtterance = utterance;
-  window.speechSynthesis.speak(utterance);
+  if (useElevenLabs && engine !== "system") {
+    const ttsLines = keyLines.map(l => ({
+      text: l.text,
+      voiceId: (commentators.find(c => c.name === l.commentatorId || c.id === l.commentatorId) || commentators[0]).voiceId,
+    }));
+    await speakDuoLines(ttsLines);
+    // If ElevenLabs didn't fail midway, we're done
+    if (isElevenLabsAvailable() || engine === "elevenlabs") return;
+  }
+
+  // System duo voices
+  const systemLines = keyLines.map(l => ({
+    text: l.text,
+    personaId: getSystemPersonaForCommentator(l.commentatorId).id,
+  }));
+  await speakSystemDuoLines(systemLines);
 }
 
 export function stopVoice() {
