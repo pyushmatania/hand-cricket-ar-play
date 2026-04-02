@@ -333,6 +333,13 @@ export default function MultiplayerScreen({ onHome }: Props) {
             resolveTurn(updated);
           }
 
+          // Check for incoming tease
+          const payload_data = (updated as any).round_result_payload;
+          if (payload_data?.tease && payload_data?.from !== user?.id) {
+            setReceivedTease(payload_data.tease);
+            setTimeout(() => setReceivedTease(null), 4000);
+          }
+
           if (nextPhase === "finished") {
             stopTimer();
           }
