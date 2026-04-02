@@ -109,12 +109,14 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
 
       {/* Post-match ceremony */}
       {showPostMatch && game.result && (
-        <PostMatchCeremony
+        <EnhancedPostMatch
           playerName={playerName}
           opponentName={AI_NAME}
           result={game.result}
           playerScore={game.userScore}
           opponentScore={game.aiScore}
+          playerWickets={game.userWickets}
+          opponentWickets={game.aiWickets}
           ballHistory={game.ballHistory}
           onComplete={() => setShowPostMatch(false)}
         />
