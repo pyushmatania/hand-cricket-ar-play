@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { BallResult, GameResult } from "@/hooks/useHandCricket";
+import CrowdWave from "./CrowdWave";
 
 interface Particle {
   id: number;
@@ -42,6 +43,7 @@ export default function CelebrationEffects({ lastResult, gameResult, phase }: Ce
   const [effectType, setEffectType] = useState<"none" | "four" | "six" | "wicket" | "win">("none");
   const [showFlash, setShowFlash] = useState(false);
   const [flashColor, setFlashColor] = useState("primary");
+  const [crowdWave, setCrowdWave] = useState<{ active: boolean; intensity: "normal" | "big" | "massive" }>({ active: false, intensity: "normal" });
 
   // Handle ball results
   useEffect(() => {
@@ -61,15 +63,17 @@ export default function CelebrationEffects({ lastResult, gameResult, phase }: Ce
         setParticles(generateParticles(SIX_EMOJIS, 20, 360));
         setFlashColor("primary");
         setShowFlash(true);
+        setCrowdWave({ active: true, intensity: "big" });
         setTimeout(() => setShowFlash(false), 500);
-        setTimeout(() => { setParticles([]); setEffectType("none"); }, 2500);
+        setTimeout(() => { setParticles([]); setEffectType("none"); setCrowdWave(w => ({ ...w, active: false })); }, 2500);
       } else if (absRuns === 4) {
         setEffectType("four");
         setParticles(generateParticles(FOUR_EMOJIS, 10, 180));
         setFlashColor("secondary");
         setShowFlash(true);
+        setCrowdWave({ active: true, intensity: "normal" });
         setTimeout(() => setShowFlash(false), 350);
-        setTimeout(() => { setParticles([]); setEffectType("none"); }, 1800);
+        setTimeout(() => { setParticles([]); setEffectType("none"); setCrowdWave(w => ({ ...w, active: false })); }, 1800);
       }
     }
   }, [lastResult]);
@@ -82,6 +86,7 @@ export default function CelebrationEffects({ lastResult, gameResult, phase }: Ce
       setParticles(fireworks);
       setFlashColor("primary");
       setShowFlash(true);
+      setCrowdWave({ active: true, intensity: "massive" });
       setTimeout(() => setShowFlash(false), 600);
       
       // Multiple waves
@@ -91,7 +96,7 @@ export default function CelebrationEffects({ lastResult, gameResult, phase }: Ce
       const t2 = setTimeout(() => {
         setParticles(prev => [...prev, ...generateParticles(FIREWORK_EMOJIS, 15, 360)]);
       }, 1600);
-      const t3 = setTimeout(() => { setParticles([]); setEffectType("none"); }, 4000);
+      const t3 = setTimeout(() => { setParticles([]); setEffectType("none"); setCrowdWave(w => ({ ...w, active: false })); }, 4000);
       return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
     }
   }, [phase, gameResult]);
@@ -253,6 +258,8 @@ export default function CelebrationEffects({ lastResult, gameResult, phase }: Ce
           </motion.div>
         )}
       </AnimatePresence>
+      {/* Crowd Mexican Wave */}
+      <CrowdWave active={crowdWave.active} intensity={crowdWave.intensity} />
     </>
   );
 }
