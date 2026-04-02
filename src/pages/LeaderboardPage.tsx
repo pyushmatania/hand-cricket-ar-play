@@ -178,7 +178,7 @@ export default function LeaderboardPage() {
     const col = SORT_OPTIONS[sortBy].key;
     const { data } = await supabase
       .from("profiles")
-      .select("display_name, wins, losses, draws, high_score, total_matches, best_streak, abandons, user_id, avatar_index")
+      .select("display_name, wins, losses, draws, high_score, total_matches, best_streak, abandons, user_id, avatar_index, xp, coins, rank_tier, current_streak, avatar_url")
       .in("user_id", ids)
       .order(col, { ascending: false });
     if (data) setFriendLeaders(data as unknown as LeaderEntry[]);
