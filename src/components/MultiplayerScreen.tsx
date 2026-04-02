@@ -122,12 +122,12 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [createModePickerOpen, setCreateModePickerOpen] = useState(false);
   const [lobbyMessage, setLobbyMessage] = useState<string | null>(null);
 
-  // Timer state — idle detection + countdown
-  const [idleMs, setIdleMs] = useState(0);
-  const [countdownMs, setCountdownMs] = useState(COUNTDOWN_MS);
-  const [showCountdown, setShowCountdown] = useState(false);
+  // Timer state — 5s per turn countdown
+  const [turnCountdownMs, setTurnCountdownMs] = useState(TURN_TIMER_MS);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const turnStartRef = useRef<number>(Date.now());
+  const [myConsecutiveMisses, setMyConsecutiveMisses] = useState(0);
+  const [oppConsecutiveMisses, setOppConsecutiveMisses] = useState(0);
   
   // Tease messages
   const TEASE_MESSAGES = [
