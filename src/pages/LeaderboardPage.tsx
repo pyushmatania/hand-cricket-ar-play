@@ -219,12 +219,51 @@ export default function LeaderboardPage() {
     if (!friendRows) { setFriendLeaders([]); return; }
     const ids = [user.id, ...friendRows.map((f: any) => f.friend_id)];
     const col = SORT_OPTIONS[sortBy].key;
-    const { data } = await supabase
-      .from("profiles")
-      .select("display_name, wins, losses, draws, high_score, total_matches, best_streak, abandons, user_id, avatar_index, xp, coins, rank_tier, current_streak, avatar_url")
-      .in("user_id", ids)
-      .order(col, { ascending: false });
-    if (data) setFriendLeaders(data as unknown as LeaderEntry[]);
+    const [profilesRes, pvpRes] = await Promise.all([
+      supabase.from("profiles")
+        .select("display_name, wins, losses, draws, high_score, total_matches, best_streak, abandons, user_id, avatar_index, xp, coins, rank_tier, current_streak, avatar_url")
+        .in("user_id", ids),
+      supabase.from("multiplayer_games")
+        .select("id, host_id, guest_id, host_score, guest_score, winner_id, status, abandoned_by, created_at, game_type")
+        .in("status", ["finished", "abandoned"])
+        .or(ids.map(id => `host_id.eq.${id}`).join(","))
+        .limit(1000),
+    ]);
+    
+    const profiles = profilesRes.data || [];
+    const pvpGames = (pvpRes.data as unknown as PvpGame[]) || [];
+    
+    // Build PvP record per user
+    const pvpByUser: Record<string, PvpGame[]> = {};
+    for (const g of pvpGames) {
+      if (ids.includes(g.host_id)) {
+        if (!pvpByUser[g.host_id]) pvpByUser[g.host_id] = [];
+        pvpByUser[g.host_id].push(g);
+      }
+      if (g.guest_id && ids.includes(g.guest_id)) {
+        if (!pvpByUser[g.guest_id]) pvpByUser[g.guest_id] = [];
+        pvpByUser[g.guest_id].push(g);
+      }
+    }
+    
+    // Combine AI + PvP stats
+    const combined: LeaderEntry[] = profiles.map((p: any) => {
+      const pvp = pvpByUser[p.user_id] ? computePvpRecord(pvpByUser[p.user_id], p.user_id) : null;
+      return {
+        ...p,
+        wins: p.wins + (pvp?.wins || 0),
+        losses: p.losses + (pvp?.losses || 0),
+        draws: p.draws + (pvp?.draws || 0),
+        total_matches: p.total_matches + (pvp?.totalGames || 0),
+        high_score: Math.max(p.high_score, pvp?.highScore || 0),
+        best_streak: Math.max(p.best_streak, pvp?.bestStreak || 0),
+        abandons: p.abandons + (pvp?.abandons || 0),
+      };
+    });
+    
+    // Sort by selected column
+    combined.sort((a, b) => (b[col] ?? 0) - (a[col] ?? 0));
+    setFriendLeaders(combined);
   };
 
   const loadRivalFriends = async () => {
