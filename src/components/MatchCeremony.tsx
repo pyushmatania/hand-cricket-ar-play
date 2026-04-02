@@ -81,11 +81,11 @@ export function PostMatchCeremony({ playerName, opponentName, result, playerScor
   // Generate stats commentary
   const statsLines = useMemo(() => {
     const l: string[] = [];
-    if (stats.sixes > 0) l.push(`${playerName} smashed ${stats.sixes} massive sixes! 💥`);
-    if (stats.fours > 0) l.push(`${stats.fours} boundaries found the fence! 🏏`);
-    l.push(`Strike rate of ${stats.strikeRate} off ${stats.battingBalls} balls faced!`);
-    if (stats.biggestShot === 6) l.push(`The biggest shot of the innings — a towering SIX! ☄️`);
-    if (stats.boundaryPct > 50) l.push(`Over ${stats.boundaryPct}% boundaries — pure aggression! 🔥`);
+    if (stats.sixes > 0) l.push(pick(STATS_SIXES)(playerName, stats.sixes));
+    if (stats.fours > 0) l.push(pick(STATS_FOURS)(playerName, stats.fours));
+    l.push(pick(STATS_SR)(playerName, stats.strikeRate, stats.battingBalls));
+    if (stats.biggestShot === 6) l.push(pick(STATS_BIGGEST));
+    if (stats.boundaryPct > 50) l.push(pick(STATS_BDRY_PCT)(playerName, stats.boundaryPct));
     return l;
   }, [stats, playerName]);
 
@@ -93,19 +93,15 @@ export function PostMatchCeremony({ playerName, opponentName, result, playerScor
   const pvpLines = useMemo(() => {
     if (!isPvP) return [];
     const l: string[] = [];
-    if (result === "win") {
-      l.push(`${opponentName} got absolutely cooked! 🍳 What a demolition!`);
-      l.push(`${playerName} said "sit down" and meant it! 💀🪑`);
-      if (playerScore > opponentScore * 2) l.push(`Double the score?! ${opponentName} needs to uninstall! 📵`);
-    } else if (result === "loss") {
-      l.push(`${playerName} thought they had it... NOPE! 🤡`);
-      l.push(`${opponentName} made ${playerName} look like a rookie! 😂`);
-      if (opponentScore > playerScore * 2) l.push(`Getting doubled?! Time to practice more! 📉`);
-    } else {
-      l.push(`Neither could finish the job! Both equally mid! 😐`);
-      l.push(`A draw? In THIS economy? Play again! ⚔️`);
+    const ragePool = result === "win" ? PVP_RAGE_WIN : result === "loss" ? PVP_RAGE_LOSS : PVP_RAGE_DRAW;
+    // Pick 3 unique rage lines
+    const shuffled = [...ragePool].sort(() => Math.random() - 0.5);
+    for (let i = 0; i < Math.min(3, shuffled.length); i++) {
+      l.push(shuffled[i](playerName, opponentName));
     }
-    l.push(`GGs only... or is it? 😈 REMATCH?`);
+    if (playerScore > opponentScore * 2 && result === "win") l.push(`Double the score?! ${opponentName} needs to uninstall! 📵`);
+    if (opponentScore > playerScore * 2 && result === "loss") l.push(`Getting doubled?! Time to practice more! 📉`);
+    l.push(pick(PVP_CLOSING));
     return l;
   }, [isPvP, result, playerName, opponentName, playerScore, opponentScore]);
 
