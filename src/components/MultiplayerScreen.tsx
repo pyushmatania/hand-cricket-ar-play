@@ -337,9 +337,12 @@ export default function MultiplayerScreen({ onHome }: Props) {
             loadOpponentName(updated);
           }
 
-          // Show VS intro when transitioning from waiting to toss
+          // Show VS intro + pre-match when transitioning from waiting to toss
           if (prevPhase === "waiting" && nextPhase === "toss" && !showVSIntro) {
             setShowVSIntro(true);
+            if (!pvpPreMatchShownRef.current) {
+              pvpPreMatchShownRef.current = true;
+            }
             // Phase will be set after VS intro completes
           } else {
             setPhase(nextPhase);
