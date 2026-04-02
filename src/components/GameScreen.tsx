@@ -208,13 +208,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       );
       setCommentary(duoLines);
       if (voiceEnabled) {
-        const keyLines = duoLines.filter(l => l.isKeyMoment);
-        if (keyLines.length > 0) {
-          speakDuoLines(keyLines.map(l => ({
-            text: l.text,
-            voiceId: (matchCommentators.find(c => c.name === l.commentatorId || c.id === l.commentatorId) || matchCommentators[0]).voiceId,
-          })));
-        }
+        speakDuoCommentary(duoLines, matchCommentators, voiceEngine);
       }
       setTimeout(() => setCommentary(null), 2500);
     }

@@ -94,11 +94,7 @@ export default function EnhancedPreMatch({
     if (!page || !voiceEnabled || !commentaryEnabled || !page.voiceEnabled) return;
     const keyLines = page.lines.filter(l => l.isKeyMoment);
     if (keyLines.length === 0) return;
-    const ttsLines = keyLines.map(l => ({
-      text: l.text,
-      voiceId: (duo.find(c => c.name === l.commentatorId) || duo[0]).voiceId,
-    }));
-    speakDuoLines(ttsLines);
+    speakDuoCommentary(page.lines, duo, voiceEngine);
   }, [currentPage]);
 
   // SFX per page
