@@ -260,6 +260,8 @@ export default function MatchHistoryPage() {
               data={filtered}
               overscan={200}
               itemContent={(i, m) => {
+              const modeMeta = MODE_META[m.mode] || MODE_META.tap;
+              const resultColor = m.result === "win" ? "text-neon-green" : m.result === "loss" ? "text-out-red" : "text-secondary";
               const resultBg = m.result === "win" ? "from-neon-green/8" : m.result === "loss" ? "from-out-red/8" : "from-secondary/8";
               const isExpanded = expandedMatch === m.id;
               const isReplaying = replayingMatch === m.id;
