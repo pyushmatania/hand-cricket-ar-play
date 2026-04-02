@@ -10,6 +10,8 @@ import { getCommentary, getInningsChangeCommentary } from "@/lib/commentary";
 import { useSettings } from "@/contexts/SettingsContext";
 import ScoreBoard from "./ScoreBoard";
 import RulesSheet from "./RulesSheet";
+import EnhancedPreMatch from "./EnhancedPreMatch";
+import EnhancedPostMatch from "./EnhancedPostMatch";
 
 type Round = {
   round: number;
@@ -40,6 +42,7 @@ interface Props { onHome: () => void; }
 
 export default function TournamentScreen({ onHome }: Props) {
   const { soundEnabled, hapticsEnabled, commentaryEnabled } = useSettings();
+  const { user } = useAuth();
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
   const [phase, setPhase] = useState<"bracket" | "playing" | "result">("bracket");
@@ -51,6 +54,18 @@ export default function TournamentScreen({ onHome }: Props) {
   const [showExplosion, setShowExplosion] = useState<{ emoji: string; key: number } | null>(null);
   const savedRef = useRef(false);
   const prevPhaseRef = useRef(game.phase);
+  const postMatchShownRef = useRef(false);
+
+  // Ceremony states
+  const [showPreMatch, setShowPreMatch] = useState(false);
+  const [showPostMatch, setShowPostMatch] = useState(false);
+  const [playerName, setPlayerName] = useState("You");
+
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("profiles").select("display_name").eq("user_id", user.id).maybeSingle()
+      .then(({ data }) => { if (data?.display_name) setPlayerName(data.display_name); });
+  }, [user]);
 
   const startTournament = () => {
     const r: Round[] = AI_OPPONENTS.map((opp, i) => ({ round: i + 1, opponent: opp.name, result: "pending" }));
@@ -63,8 +78,15 @@ export default function TournamentScreen({ onHome }: Props) {
   useEffect(() => { startTournament(); }, []);
 
   const startRound = () => {
+    // Show pre-match ceremony first
+    setShowPreMatch(true);
+  };
+
+  const handlePreMatchComplete = () => {
+    setShowPreMatch(false);
     resetGame();
     savedRef.current = false;
+    postMatchShownRef.current = false;
     if (soundEnabled) SFX.gameStart();
     if (hapticsEnabled) Haptics.medium();
     startGame(true);
@@ -80,7 +102,11 @@ export default function TournamentScreen({ onHome }: Props) {
       const newRounds = [...rounds];
       newRounds[currentRound] = { ...newRounds[currentRound], result: game.result === "win" ? "win" : "loss", userScore: game.userScore, oppScore: game.aiScore };
       setRounds(newRounds);
-      setTimeout(() => { if (game.result !== "win") setEliminated(true); setPhase("result"); }, 1500);
+      // Show post-match ceremony
+      if (!postMatchShownRef.current) {
+        postMatchShownRef.current = true;
+        setTimeout(() => setShowPostMatch(true), 1000);
+      }
     }
   }, [game.phase]);
 
@@ -326,6 +352,34 @@ export default function TournamentScreen({ onHome }: Props) {
           </motion.div>
         )}
       </div>
+
+      {/* Pre-match ceremony */}
+      {showPreMatch && (
+        <EnhancedPreMatch
+          playerName={playerName}
+          opponentName={opp.name}
+          tossWinner={playerName}
+          battingFirst={playerName}
+          onComplete={handlePreMatchComplete}
+        />
+      )}
+
+      {/* Post-match ceremony */}
+      {showPostMatch && game.result && (
+        <EnhancedPostMatch
+          playerName={playerName}
+          opponentName={opp.name}
+          result={game.result}
+          playerScore={game.userScore}
+          opponentScore={game.aiScore}
+          ballHistory={game.ballHistory}
+          onComplete={() => {
+            setShowPostMatch(false);
+            if (game.result !== "win") setEliminated(true);
+            setPhase("result");
+          }}
+        />
+      )}
     </div>
   );
 }

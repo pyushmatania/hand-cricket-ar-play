@@ -8,7 +8,8 @@ import RulesSheet from "./RulesSheet";
 import OddEvenToss from "./OddEvenToss";
 import CelebrationEffects from "./CelebrationEffects";
 import CanvasFireworks, { type FireworkType } from "./CanvasFireworks";
-import { PreMatchCeremony, PostMatchCeremony } from "./MatchCeremony";
+import EnhancedPreMatch from "./EnhancedPreMatch";
+import EnhancedPostMatch from "./EnhancedPostMatch";
 import { useHandCricket } from "@/hooks/useHandCricket";
 import { useHandDetection } from "@/hooks/useHandDetection";
 import { useMatchSaver } from "@/hooks/useMatchSaver";
@@ -250,7 +251,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
 
       {/* Pre-match ceremony */}
       {showPreMatch && tossInfo && (
-        <PreMatchCeremony
+        <EnhancedPreMatch
           playerName={playerName}
           opponentName={opponentName}
           tossWinner={tossInfo.winner}
@@ -261,7 +262,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
 
       {/* Post-match ceremony */}
       {showPostMatch && game.result && (
-        <PostMatchCeremony
+        <EnhancedPostMatch
           playerName={playerName}
           opponentName={opponentName}
           result={game.result}
