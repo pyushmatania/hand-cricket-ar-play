@@ -87,8 +87,9 @@ export async function speakDuoCommentary(
       text: l.text,
       voiceId: (commentators.find(c => c.name === l.commentatorId || c.id === l.commentatorId) || commentators[0]).voiceId,
     }));
-    await speakDuoLines(ttsLines);
-    if (isElevenLabsAvailable() || engine === "elevenlabs") return;
+    const success = await speakDuoLines(ttsLines);
+    if (success) return;
+    if (engine === "elevenlabs") return;
   }
 
   // System duo voices — don't cancel again, we already did above

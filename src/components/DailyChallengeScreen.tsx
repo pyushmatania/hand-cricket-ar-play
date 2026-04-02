@@ -29,7 +29,7 @@ function getTodayKey(): string {
 const DAILY_CONFIG: MatchConfig = { overs: 5, wickets: 3 };
 
 export default function DailyChallengeScreen({ onHome }: Props) {
-  const { soundEnabled, hapticsEnabled, crowdEnabled, commentaryVoice } = useSettings();
+  const { soundEnabled, hapticsEnabled, crowdEnabled, commentaryVoice, dailyCeremoniesEnabled } = useSettings();
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
   const [phase, setPhase] = useState<"intro" | "toss" | "playing" | "done">("intro");
@@ -63,7 +63,18 @@ export default function DailyChallengeScreen({ onHome }: Props) {
 
   const handleTossResult = (batFirst: boolean) => {
     setPendingBatFirst(batFirst);
-    setTimeout(() => setShowPreMatch(true), 500);
+    if (dailyCeremoniesEnabled) {
+      setTimeout(() => setShowPreMatch(true), 500);
+      return;
+    }
+    setShowPreMatch(false);
+    resetGame();
+    savedRef.current = false;
+    postMatchShownRef.current = false;
+    if (soundEnabled) SFX.gameStart();
+    if (hapticsEnabled) Haptics.medium();
+    startGame(batFirst, DAILY_CONFIG);
+    setPhase("playing");
   };
 
   const handlePreMatchComplete = () => {
@@ -95,7 +106,9 @@ export default function DailyChallengeScreen({ onHome }: Props) {
       }
       if (!postMatchShownRef.current) {
         postMatchShownRef.current = true;
-        setTimeout(() => setShowPostMatch(true), game.result === "win" ? 2500 : 1000);
+        if (dailyCeremoniesEnabled) {
+          setTimeout(() => setShowPostMatch(true), game.result === "win" ? 2500 : 1000);
+        }
       }
     }
   }, [game.phase]);

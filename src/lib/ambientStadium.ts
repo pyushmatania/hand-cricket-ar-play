@@ -8,6 +8,10 @@ let noiseSource: AudioBufferSourceNode | null = null;
 let droneOsc1: OscillatorNode | null = null;
 let droneOsc2: OscillatorNode | null = null;
 let chantInterval: ReturnType<typeof setInterval> | null = null;
+let baseVolume = 0.3;
+let boosting = false;
+let boostTimeout: ReturnType<typeof setTimeout> | null = null;
+let silenceTimeout: ReturnType<typeof setTimeout> | null = null;
 
 function getCtx(): AudioContext {
   if (!ctx) ctx = new AudioContext();
@@ -21,16 +25,14 @@ function createCrowdNoise(ac: AudioContext, dest: AudioNode) {
   for (let ch = 0; ch < 2; ch++) {
     const d = buf.getChannelData(ch);
     for (let i = 0; i < len; i++) {
-      // Brown noise (smoother than white)
       d[i] = (i === 0 ? 0 : d[i - 1]) + (Math.random() * 2 - 1) * 0.04;
-      d[i] *= 0.95; // decay
+      d[i] *= 0.95;
     }
   }
   const src = ac.createBufferSource();
   src.buffer = buf;
   src.loop = true;
 
-  // Bandpass to sound like distant crowd murmur
   const bp = ac.createBiquadFilter();
   bp.type = "bandpass";
   bp.frequency.value = 400;
@@ -47,13 +49,12 @@ function createCrowdNoise(ac: AudioContext, dest: AudioNode) {
 }
 
 function createDrone(ac: AudioContext, dest: AudioNode) {
-  // Warm pad: two detuned sine oscillators
   const o1 = ac.createOscillator();
   const o2 = ac.createOscillator();
   o1.type = "sine";
   o2.type = "sine";
-  o1.frequency.value = 110; // A2
-  o2.frequency.value = 165; // E3 (fifth)
+  o1.frequency.value = 110;
+  o2.frequency.value = 165;
   o2.detune.value = 5;
 
   const g = ac.createGain();
@@ -68,7 +69,6 @@ function createDrone(ac: AudioContext, dest: AudioNode) {
 }
 
 function startChantPulse(ac: AudioContext, dest: AudioNode) {
-  // Periodic soft "crowd swell" every ~3s
   const pulse = () => {
     try {
       const t = ac.currentTime;
@@ -97,8 +97,9 @@ export function startAmbientStadium(volume = 0.3) {
   }
   try {
     const ac = getCtx();
+    baseVolume = Math.max(0, Math.min(1, volume));
     masterGain = ac.createGain();
-    masterGain.gain.value = Math.max(0, Math.min(1, volume));
+    masterGain.gain.value = baseVolume;
     masterGain.connect(ac.destination);
 
     noiseSource = createCrowdNoise(ac, masterGain);
@@ -117,27 +118,26 @@ export function stopAmbientStadium() {
     droneOsc1?.stop();
     droneOsc2?.stop();
     if (chantInterval) clearInterval(chantInterval);
+    if (boostTimeout) clearTimeout(boostTimeout);
+    if (silenceTimeout) clearTimeout(silenceTimeout);
   } catch { /* ignore */ }
   noiseSource = null;
   droneOsc1 = null;
   droneOsc2 = null;
   chantInterval = null;
+  boostTimeout = null;
+  silenceTimeout = null;
   masterGain = null;
+  boosting = false;
   running = false;
 }
 
 export function setAmbientVolume(v: number) {
-  if (masterGain) {
-    baseVolume = Math.max(0, Math.min(1, v));
-    if (!boosting) {
-      masterGain.gain.setTargetAtTime(baseVolume, masterGain.context.currentTime, 0.1);
-    }
+  baseVolume = Math.max(0, Math.min(1, v));
+  if (masterGain && !boosting) {
+    masterGain.gain.setTargetAtTime(baseVolume, masterGain.context.currentTime, 0.1);
   }
 }
-
-let baseVolume = 0.3;
-let boosting = false;
-let boostTimeout: ReturnType<typeof setTimeout> | null = null;
 
 /** Temporarily boost ambient volume for a crowd roar effect */
 export function crowdRoar(intensity: "four" | "six" = "six") {
@@ -148,12 +148,11 @@ export function crowdRoar(intensity: "four" | "six" = "six") {
 
   boosting = true;
   if (boostTimeout) clearTimeout(boostTimeout);
+  if (silenceTimeout) clearTimeout(silenceTimeout);
 
-  // Quick ramp up
   masterGain.gain.cancelScheduledValues(ac.currentTime);
   masterGain.gain.setTargetAtTime(peak, ac.currentTime, 0.08);
 
-  // Also add a burst of extra crowd noise
   try {
     const burstLen = Math.floor(ac.sampleRate * duration);
     const buf = ac.createBuffer(2, burstLen, ac.sampleRate);
@@ -180,13 +179,32 @@ export function crowdRoar(intensity: "four" | "six" = "six") {
     src.stop(ac.currentTime + duration);
   } catch { /* ignore */ }
 
-  // Fade back down
   boostTimeout = setTimeout(() => {
     if (masterGain) {
       masterGain.gain.setTargetAtTime(baseVolume, masterGain.context.currentTime, 0.3);
     }
     boosting = false;
   }, duration * 1000);
+}
+
+/** Briefly duck the stadium ambience on a wicket, then restore it. */
+export function crowdGaspMute(durationMs = 1000) {
+  if (!masterGain || !running) return;
+  const ac = masterGain.context;
+
+  boosting = true;
+  if (boostTimeout) clearTimeout(boostTimeout);
+  if (silenceTimeout) clearTimeout(silenceTimeout);
+
+  masterGain.gain.cancelScheduledValues(ac.currentTime);
+  masterGain.gain.setTargetAtTime(0.001, ac.currentTime, 0.05);
+
+  silenceTimeout = setTimeout(() => {
+    if (masterGain) {
+      masterGain.gain.setTargetAtTime(baseVolume, masterGain.context.currentTime, 0.25);
+    }
+    boosting = false;
+  }, durationMs);
 }
 
 export function isAmbientPlaying() {

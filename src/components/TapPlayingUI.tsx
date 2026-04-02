@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Move, BallResult, GameResult, InningsPhase, MatchConfig } from "@/hooks/useHandCricket";
 import { SFX, Haptics } from "@/lib/sounds";
-import { startAmbientStadium, stopAmbientStadium, setAmbientVolume, crowdRoar } from "@/lib/ambientStadium";
+import { startAmbientStadium, stopAmbientStadium, setAmbientVolume, crowdRoar, crowdGaspMute } from "@/lib/ambientStadium";
 import { getCommentary, getInningsChangeCommentary } from "@/lib/commentary";
 import { speakCommentary, playCrowdForResult, CrowdSFX, speakDuoCommentary } from "@/lib/voiceCommentary";
 import { isElevenLabsAvailable } from "@/lib/elevenLabsAudio";
@@ -265,7 +265,11 @@ export default function TapPlayingUI({
     const r = lastResult;
     if (soundEnabled) SFX.batHit();
     if (r.runs === "OUT") {
-      setTimeout(() => { if (soundEnabled) SFX.out(); if (hapticsEnabled) Haptics.out(); }, 150);
+      setTimeout(() => {
+        if (soundEnabled) SFX.out();
+        if (hapticsEnabled) Haptics.out();
+        crowdGaspMute();
+      }, 150);
     } else if (typeof r.runs === "number") {
       const absRuns = Math.abs(r.runs);
       if (absRuns === 6) { setTimeout(() => { if (soundEnabled) SFX.six(); if (hapticsEnabled) Haptics.heavy(); crowdRoar("six"); }, 100); }
@@ -283,9 +287,12 @@ export default function TapPlayingUI({
       );
       setCommentary(duoLines);
 
-      // Only speak key moments via TTS (sixes, fours, wickets)
-      if (voiceEnabled && duoLines.some(l => l.isKeyMoment)) {
-        speakDuoCommentary(duoLines, matchCommentators, voiceEngine);
+      if (voiceEnabled) {
+        if (duoLines.some(l => l.isKeyMoment)) {
+          speakDuoCommentary(duoLines, matchCommentators, voiceEngine);
+        } else if (duoLines[0]) {
+          speakCommentary(duoLines[0].text, true, voiceEngine);
+        }
       }
 
       setTimeout(() => setCommentary(null), 3500);

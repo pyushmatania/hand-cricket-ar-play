@@ -25,8 +25,7 @@ interface TapGameScreenProps {
 export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
-  const { soundEnabled, hapticsEnabled, crowdEnabled } = useSettings();
-  const { commentaryVoice } = useSettings();
+  const { soundEnabled, hapticsEnabled, crowdEnabled, commentaryVoice, tapCeremoniesEnabled } = useSettings();
   const { user } = useAuth();
   const savedRef = useRef(false);
 
@@ -71,14 +70,24 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
       else if (game.result === "loss") { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); if (crowdEnabled) playCrowdForResult(0, true, true, "loss"); }
       if (!postMatchShownRef.current) {
         postMatchShownRef.current = true;
-        setTimeout(() => setShowPostMatch(true), game.result === "win" ? 2500 : 1000);
+        if (tapCeremoniesEnabled) {
+          setTimeout(() => setShowPostMatch(true), game.result === "win" ? 2500 : 1000);
+        }
       }
     }
   }, [game.phase, game, saveMatch]);
 
   const handleStart = (batFirst: boolean) => {
     setPendingBatFirst(batFirst);
-    setTimeout(() => setShowPreMatch(true), 500);
+    if (tapCeremoniesEnabled) {
+      setTimeout(() => setShowPreMatch(true), 500);
+      return;
+    }
+    if (matchConfig) {
+      if (soundEnabled) SFX.gameStart();
+      if (hapticsEnabled) Haptics.medium();
+      startGame(batFirst, matchConfig);
+    }
   };
 
   const handlePreMatchComplete = () => {

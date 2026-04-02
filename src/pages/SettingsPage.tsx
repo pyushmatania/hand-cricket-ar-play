@@ -125,7 +125,11 @@ export default function SettingsPage() {
       items: [
         { key: "crowdEnabled", icon: "🏟️", label: "CROWD SOUNDS", desc: "Cheers, gasps & applause", toggle: "toggleCrowd" },
         { key: "hapticsEnabled", icon: "📳", label: "HAPTIC FEEDBACK", desc: "Vibrations on actions", toggle: "toggleHaptics" },
-        { key: "ceremoniesEnabled", icon: "🎬", label: "MATCH CEREMONIES", desc: "Pre/post match, innings break, toss animations", toggle: "toggleCeremonies" },
+        { key: "tapCeremoniesEnabled", icon: "🎬", label: "TAP CEREMONIES", desc: "Pre/post match cards for Tap mode", toggle: "toggleTapCeremonies" },
+        { key: "arCeremoniesEnabled", icon: "📹", label: "AR CEREMONIES", desc: "Pre/post match cards for AR mode", toggle: "toggleArCeremonies" },
+        { key: "tournamentCeremoniesEnabled", icon: "🏆", label: "TOURNAMENT CEREMONIES", desc: "Pre/post match cards for Tournament mode", toggle: "toggleTournamentCeremonies" },
+        { key: "dailyCeremoniesEnabled", icon: "📅", label: "DAILY CEREMONIES", desc: "Pre/post match cards for Daily Challenge", toggle: "toggleDailyCeremonies" },
+        { key: "multiplayerCeremoniesEnabled", icon: "🤝", label: "PVP CEREMONIES", desc: "Pre/post match cards for Multiplayer", toggle: "toggleMultiplayerCeremonies" },
       ],
     },
   ];

@@ -17,6 +17,11 @@ interface Settings {
   commentaryLanguage: CommentaryLanguage;
   ceremoniesEnabled: boolean;
   ambientVolume: number;
+  tapCeremoniesEnabled: boolean;
+  arCeremoniesEnabled: boolean;
+  tournamentCeremoniesEnabled: boolean;
+  dailyCeremoniesEnabled: boolean;
+  multiplayerCeremoniesEnabled: boolean;
 }
 
 interface SettingsContextType extends Settings {
@@ -33,17 +38,32 @@ interface SettingsContextType extends Settings {
   setCommentaryLanguage: (lang: CommentaryLanguage) => void;
   toggleCeremonies: () => void;
   setAmbientVolume: (v: number) => void;
+  toggleTapCeremonies: () => void;
+  toggleArCeremonies: () => void;
+  toggleTournamentCeremonies: () => void;
+  toggleDailyCeremonies: () => void;
+  toggleMultiplayerCeremonies: () => void;
 }
 
 const defaults: Settings = {
-  soundEnabled: true, hapticsEnabled: true, commentaryEnabled: true,
-  voiceEnabled: true, crowdEnabled: true, musicEnabled: true,
-  batSoundEnabled: true, victorySoundEnabled: true,
-  commentaryVoice: "nPczCjzI2devNBz1zQrb", // Brian (default)
+  soundEnabled: true,
+  hapticsEnabled: true,
+  commentaryEnabled: true,
+  voiceEnabled: true,
+  crowdEnabled: true,
+  musicEnabled: true,
+  batSoundEnabled: true,
+  victorySoundEnabled: true,
+  commentaryVoice: "nPczCjzI2devNBz1zQrb",
   voiceEngine: "system" as VoiceEngine,
   commentaryLanguage: "both" as CommentaryLanguage,
   ceremoniesEnabled: false,
   ambientVolume: 0.25,
+  tapCeremoniesEnabled: false,
+  arCeremoniesEnabled: false,
+  tournamentCeremoniesEnabled: false,
+  dailyCeremoniesEnabled: false,
+  multiplayerCeremoniesEnabled: false,
 };
 
 const SettingsContext = createContext<SettingsContextType>({
@@ -61,6 +81,11 @@ const SettingsContext = createContext<SettingsContextType>({
   setCommentaryLanguage: () => {},
   toggleCeremonies: () => {},
   setAmbientVolume: () => {},
+  toggleTapCeremonies: () => {},
+  toggleArCeremonies: () => {},
+  toggleTournamentCeremonies: () => {},
+  toggleDailyCeremonies: () => {},
+  toggleMultiplayerCeremonies: () => {},
 });
 
 export const useSettings = () => useContext(SettingsContext);
@@ -92,9 +117,36 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const setCommentaryLanguage = (lang: CommentaryLanguage) => setSettings((s) => ({ ...s, commentaryLanguage: lang }));
   const toggleCeremonies = () => setSettings((s) => ({ ...s, ceremoniesEnabled: !s.ceremoniesEnabled }));
   const setAmbientVolume = (v: number) => setSettings((s) => ({ ...s, ambientVolume: v }));
+  const toggleTapCeremonies = () => setSettings((s) => ({ ...s, tapCeremoniesEnabled: !s.tapCeremoniesEnabled }));
+  const toggleArCeremonies = () => setSettings((s) => ({ ...s, arCeremoniesEnabled: !s.arCeremoniesEnabled }));
+  const toggleTournamentCeremonies = () => setSettings((s) => ({ ...s, tournamentCeremoniesEnabled: !s.tournamentCeremoniesEnabled }));
+  const toggleDailyCeremonies = () => setSettings((s) => ({ ...s, dailyCeremoniesEnabled: !s.dailyCeremoniesEnabled }));
+  const toggleMultiplayerCeremonies = () => setSettings((s) => ({ ...s, multiplayerCeremoniesEnabled: !s.multiplayerCeremoniesEnabled }));
 
   return (
-    <SettingsContext.Provider value={{ ...settings, toggleSound, toggleHaptics, toggleCommentary, toggleVoice, toggleCrowd, toggleMusic, toggleBatSound, toggleVictorySound, setCommentaryVoice, setVoiceEngine, setCommentaryLanguage, toggleCeremonies, setAmbientVolume }}>
+    <SettingsContext.Provider
+      value={{
+        ...settings,
+        toggleSound,
+        toggleHaptics,
+        toggleCommentary,
+        toggleVoice,
+        toggleCrowd,
+        toggleMusic,
+        toggleBatSound,
+        toggleVictorySound,
+        setCommentaryVoice,
+        setVoiceEngine,
+        setCommentaryLanguage,
+        toggleCeremonies,
+        setAmbientVolume,
+        toggleTapCeremonies,
+        toggleArCeremonies,
+        toggleTournamentCeremonies,
+        toggleDailyCeremonies,
+        toggleMultiplayerCeremonies,
+      }}
+    >
       {children}
     </SettingsContext.Provider>
   );
