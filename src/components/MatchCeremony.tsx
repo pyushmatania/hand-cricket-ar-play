@@ -17,6 +17,7 @@ interface PostMatchProps {
   opponentScore: number;
   ballHistory: BallResult[];
   onComplete: () => void;
+  isPvP?: boolean;
 }
 
 type Stage = "result" | "commentary" | "stats" | "done";
@@ -67,7 +68,7 @@ const POST_DRAW = [
   (_p: string, _o: string) => `Incredible! Neither side gives in! A match for the ages!`,
 ];
 
-export function PostMatchCeremony({ playerName, opponentName, result, playerScore, opponentScore, ballHistory, onComplete }: PostMatchProps) {
+export function PostMatchCeremony({ playerName, opponentName, result, playerScore, opponentScore, ballHistory, onComplete, isPvP = false }: PostMatchProps) {
   const [stage, setStage] = useState<Stage>("result");
   const [lineIndex, setLineIndex] = useState(0);
   const { voiceEnabled, soundEnabled } = useSettings();
@@ -86,8 +87,32 @@ export function PostMatchCeremony({ playerName, opponentName, result, playerScor
     if (stats.fours > 0) l.push(`${stats.fours} boundaries found the fence! 🏏`);
     l.push(`Strike rate of ${stats.strikeRate} off ${stats.battingBalls} balls faced!`);
     if (stats.biggestShot === 6) l.push(`The biggest shot of the innings — a towering SIX! ☄️`);
+    if (stats.boundaryPct > 50) l.push(`Over ${stats.boundaryPct}% boundaries — pure aggression! 🔥`);
     return l;
   }, [stats, playerName]);
+
+  // PvP rage-bait / analysis lines
+  const pvpLines = useMemo(() => {
+    if (!isPvP) return [];
+    const l: string[] = [];
+    if (result === "win") {
+      l.push(`${opponentName} got absolutely cooked! 🍳 What a demolition!`);
+      l.push(`${playerName} said "sit down" and meant it! 💀🪑`);
+      if (playerScore > opponentScore * 2) l.push(`Double the score?! ${opponentName} needs to uninstall! 📵`);
+    } else if (result === "loss") {
+      l.push(`${playerName} thought they had it... NOPE! 🤡`);
+      l.push(`${opponentName} made ${playerName} look like a rookie! 😂`);
+      if (opponentScore > playerScore * 2) l.push(`Getting doubled?! Time to practice more! 📉`);
+    } else {
+      l.push(`Neither could finish the job! Both equally mid! 😐`);
+      l.push(`A draw? In THIS economy? Play again! ⚔️`);
+    }
+    l.push(`GGs only... or is it? 😈 REMATCH?`);
+    return l;
+  }, [isPvP, result, playerName, opponentName, playerScore, opponentScore]);
+
+  // Timing multiplier — PvP ceremonies are longer
+  const tm = isPvP ? 2.5 : 1;
 
   useEffect(() => {
     if (soundEnabled) {
@@ -96,38 +121,53 @@ export function PostMatchCeremony({ playerName, opponentName, result, playerScor
     }
     if (voiceEnabled) speakCommentary(lines[0], true);
 
-    // Stage progression: result (2s) → commentary (4s) → stats (5s) → done
-    const t1 = setTimeout(() => {
+    const timers: ReturnType<typeof setTimeout>[] = [];
+
+    // Stage progression
+    // result → commentary → stats → (pvp: analysis) → done
+    let t = 2500 * tm;
+
+    timers.push(setTimeout(() => {
       setStage("commentary");
       if (voiceEnabled && lines[1]) speakCommentary(lines[1], true);
       setLineIndex(1);
-    }, 2500);
+    }, t));
 
-    const t2 = setTimeout(() => {
+    t += 2500 * tm;
+
+    timers.push(setTimeout(() => {
       setStage("stats");
       if (voiceEnabled && statsLines[0]) speakCommentary(statsLines[0], true);
-    }, 5000);
+    }, t));
 
     // Auto-advance stats lines
-    const statsTimers = statsLines.map((line, i) => {
-      if (i === 0) return null;
-      return setTimeout(() => {
+    statsLines.forEach((line, i) => {
+      if (i === 0) return;
+      timers.push(setTimeout(() => {
         setLineIndex(i);
         if (voiceEnabled) speakCommentary(line, true);
-      }, 5000 + i * 2000);
+      }, t + i * (2000 * tm)));
     });
 
-    const tEnd = setTimeout(() => {
+    t += statsLines.length * (2000 * tm) + 1000;
+
+    // PvP rage-bait analysis stage
+    if (isPvP && pvpLines.length > 0) {
+      pvpLines.forEach((line, i) => {
+        timers.push(setTimeout(() => {
+          setLineIndex(100 + i); // Use 100+ offset for pvp lines
+          if (voiceEnabled) speakCommentary(line, true);
+        }, t + i * 4000));
+      });
+      t += pvpLines.length * 4000;
+    }
+
+    timers.push(setTimeout(() => {
       setStage("done");
       setTimeout(onComplete, 400);
-    }, 5000 + statsLines.length * 2000 + 1000);
+    }, t));
 
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(tEnd);
-      statsTimers.forEach(t => t && clearTimeout(t));
-    };
+    return () => timers.forEach(t => clearTimeout(t));
   }, []);
 
   const resultEmoji = result === "win" ? "🏆" : result === "loss" ? "😔" : "🤝";
@@ -272,16 +312,18 @@ export function PostMatchCeremony({ playerName, opponentName, result, playerScor
                     ))}
                   </div>
 
-                  {/* Stats commentary line */}
+                  {/* Stats/PvP commentary line */}
                   <AnimatePresence mode="wait">
                     <motion.p
                       key={lineIndex}
                       initial={{ opacity: 0, y: 5 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -5 }}
-                      className="text-[9px] text-muted-foreground text-center font-display"
+                      className={`text-[9px] text-center font-display ${lineIndex >= 100 ? "text-out-red font-bold" : "text-muted-foreground"}`}
                     >
-                      🎙️ {statsLines[Math.min(lineIndex, statsLines.length - 1)]}
+                      {lineIndex >= 100
+                        ? `😈 ${pvpLines[lineIndex - 100] || ""}`
+                        : `🎙️ ${statsLines[Math.min(lineIndex, statsLines.length - 1)]}`}
                     </motion.p>
                   </AnimatePresence>
 
