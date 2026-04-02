@@ -9,7 +9,8 @@ import SpinningCricketBall from "./SpinningCricketBall";
 import WaitingRoom from "./WaitingRoom";
 import VSIntroScreen from "./VSIntroScreen";
 import TapPlayingUI from "./TapPlayingUI";
-import { PreMatchCeremony, PostMatchCeremony } from "./MatchCeremony";
+import EnhancedPreMatch from "./EnhancedPreMatch";
+import EnhancedPostMatch from "./EnhancedPostMatch";
 import type { Move, BallResult } from "@/hooks/useHandCricket";
 import {
   claimMultiplayerGame,
@@ -140,8 +141,17 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [receivedTease, setReceivedTease] = useState<string | null>(null);
   const [showTeasePanel, setShowTeasePanel] = useState(false);
   const [showPvPPostMatch, setShowPvPPostMatch] = useState(false);
+  const [showPvPPreMatch, setShowPvPPreMatch] = useState(false);
   const [pvpBallHistory, setPvpBallHistory] = useState<BallResult[]>([]);
   const pvpPostMatchShownRef = useRef(false);
+  const pvpPreMatchShownRef = useRef(false);
+  const [rivalryStats, setRivalryStats] = useState<{
+    myWins: number; theirWins: number; totalGames: number;
+    myHighScore: number; theirHighScore: number;
+    myAvgScore?: number; theirAvgScore?: number;
+    lastResult?: "win" | "loss" | "draw";
+    winStreak?: number; loseStreak?: number;
+  } | null>(null);
 
   const resolvedTurnRef = useRef<string | null>(null);
   const gameIdFromQuery = searchParams.get("game");
@@ -327,9 +337,12 @@ export default function MultiplayerScreen({ onHome }: Props) {
             loadOpponentName(updated);
           }
 
-          // Show VS intro when transitioning from waiting to toss
+          // Show VS intro + pre-match when transitioning from waiting to toss
           if (prevPhase === "waiting" && nextPhase === "toss" && !showVSIntro) {
             setShowVSIntro(true);
+            if (!pvpPreMatchShownRef.current) {
+              pvpPreMatchShownRef.current = true;
+            }
             // Phase will be set after VS intro completes
           } else {
             setPhase(nextPhase);
@@ -503,6 +516,47 @@ export default function MultiplayerScreen({ onHome }: Props) {
     if (data) {
       setOpponentName(data.display_name);
       setOpponentAvatarIndex((data as any).avatar_index ?? 1);
+    }
+    // Load rivalry stats
+    if (user) {
+      const { data: games } = await supabase
+        .from("multiplayer_games")
+        .select("host_id, guest_id, host_score, guest_score, winner_id, status")
+        .or(`and(host_id.eq.${user.id},guest_id.eq.${oppId}),and(host_id.eq.${oppId},guest_id.eq.${user.id})`)
+        .in("status", ["finished", "abandoned"])
+        .order("created_at", { ascending: false })
+        .limit(100);
+      if (games && games.length > 0) {
+        let myWins = 0, theirWins = 0, myHighScore = 0, theirHighScore = 0;
+        let myTotalScore = 0, theirTotalScore = 0;
+        let winStreak = 0, loseStreak = 0, lastResult: "win" | "loss" | "draw" = "draw";
+        games.forEach((g: any, i: number) => {
+          const isHost = g.host_id === user.id;
+          const myS = isHost ? g.host_score : g.guest_score;
+          const theirS = isHost ? g.guest_score : g.host_score;
+          myTotalScore += myS; theirTotalScore += theirS;
+          if (myS > myHighScore) myHighScore = myS;
+          if (theirS > theirHighScore) theirHighScore = theirS;
+          if (g.winner_id === user.id) { myWins++; if (i === 0) lastResult = "win"; }
+          else if (g.winner_id) { theirWins++; if (i === 0) lastResult = "loss"; }
+          else if (i === 0) lastResult = "draw";
+        });
+        // Calculate streaks from most recent
+        for (const g of games) {
+          if ((g as any).winner_id === user.id) { if (loseStreak === 0) winStreak++; else break; }
+          else if ((g as any).winner_id) { if (winStreak === 0) loseStreak++; else break; }
+          else break;
+        }
+        setRivalryStats({
+          myWins, theirWins, totalGames: games.length,
+          myHighScore, theirHighScore,
+          myAvgScore: Math.round(myTotalScore / games.length),
+          theirAvgScore: Math.round(theirTotalScore / games.length),
+          lastResult, winStreak, loseStreak,
+        });
+      } else {
+        setRivalryStats(null);
+      }
     }
   };
 
@@ -1028,7 +1082,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
 
         {/* PvP Post-match ceremony overlay */}
         {showPvPPostMatch && currentGame && (
-          <PostMatchCeremony
+          <EnhancedPostMatch
             playerName={myName}
             opponentName={opponentName}
             result={currentGame.winner_id === user?.id ? "win" : currentGame.winner_id ? "loss" : "draw"}
@@ -1037,6 +1091,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
             ballHistory={pvpBallHistory}
             onComplete={() => setShowPvPPostMatch(false)}
             isPvP={true}
+            rivalryStats={rivalryStats}
           />
         )}
 
@@ -1083,6 +1138,9 @@ export default function MultiplayerScreen({ onHome }: Props) {
                     setLastBallResult(null);
                     setPvpBallHistory([]);
                     pvpPostMatchShownRef.current = false;
+                    pvpPreMatchShownRef.current = false;
+                    setShowPvPPreMatch(false);
+                    setRivalryStats(null);
                     navigate(`/game/multiplayer?game=${newGame.id}`, { replace: true });
                   }
                 }}
@@ -1096,6 +1154,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
                   setCountdownMs(COUNTDOWN_MS);
                   setPvpBallHistory([]);
                   pvpPostMatchShownRef.current = false;
+                  pvpPreMatchShownRef.current = false;
+                  setRivalryStats(null);
                   navigate("/game/multiplayer", { replace: true });
                 }}
                 className="flex-1 py-3.5 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display font-bold rounded-2xl glow-primary tracking-wider">
@@ -1152,6 +1212,27 @@ export default function MultiplayerScreen({ onHome }: Props) {
           gameType={currentGame?.game_type}
           onComplete={() => {
             setShowVSIntro(false);
+            // Show enhanced pre-match ceremony for PvP
+            if (pvpPreMatchShownRef.current) {
+              setShowPvPPreMatch(true);
+            } else if (currentGame) {
+              setPhase(statusToPhase(currentGame.status));
+            }
+          }}
+        />
+      )}
+
+      {/* Enhanced Pre-Match Ceremony */}
+      {showPvPPreMatch && currentGame && (
+        <EnhancedPreMatch
+          playerName={myName}
+          opponentName={opponentName}
+          tossWinner={myName}
+          battingFirst={currentGame.host_batting ? (isHost ? myName : opponentName) : (isHost ? opponentName : myName)}
+          rivalryStats={rivalryStats}
+          isPvP={true}
+          onComplete={() => {
+            setShowPvPPreMatch(false);
             if (currentGame) {
               setPhase(statusToPhase(currentGame.status));
             }
