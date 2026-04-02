@@ -7,7 +7,7 @@ import { playCrowdForResult } from "@/lib/voiceCommentary";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { pickMatchCommentators, type Commentator } from "@/lib/commentaryDuo";
+import { pickConfiguredMatchCommentators, type Commentator } from "@/lib/commentaryDuo";
 import RulesSheet from "./RulesSheet";
 import OddEvenToss from "./OddEvenToss";
 import EnhancedPreMatch from "./EnhancedPreMatch";
@@ -26,6 +26,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
   const { soundEnabled, hapticsEnabled, crowdEnabled } = useSettings();
+  const { commentaryVoice } = useSettings();
   const { user } = useAuth();
   const savedRef = useRef(false);
 
@@ -42,7 +43,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const postMatchShownRef = useRef(false);
 
   const [playerName, setPlayerName] = useState("You");
-  const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickMatchCommentators());
+  const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickConfiguredMatchCommentators(commentaryVoice));
 
   useEffect(() => {
     if (!user) return;
@@ -211,6 +212,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
           onHome={onHome}
           modeLabel="TAP MODE"
           matchConfig={matchConfig || undefined}
+          commentators={matchCommentators}
         />
       </div>
     </div>

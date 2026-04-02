@@ -7,7 +7,7 @@ import { useHandCricket, type Move, type MatchConfig } from "@/hooks/useHandCric
 import { useMatchSaver } from "@/hooks/useMatchSaver";
 import { SFX, Haptics } from "@/lib/sounds";
 import { useSettings } from "@/contexts/SettingsContext";
-import { pickMatchCommentators, type Commentator } from "@/lib/commentaryDuo";
+import { pickConfiguredMatchCommentators, type Commentator } from "@/lib/commentaryDuo";
 import RulesSheet from "./RulesSheet";
 import EnhancedPreMatch from "./EnhancedPreMatch";
 import EnhancedPostMatch from "./EnhancedPostMatch";
@@ -35,6 +35,7 @@ interface Props { onHome: () => void; }
 
 export default function TournamentScreen({ onHome }: Props) {
   const { soundEnabled, hapticsEnabled } = useSettings();
+  const { commentaryVoice } = useSettings();
   const { user } = useAuth();
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
@@ -52,7 +53,7 @@ export default function TournamentScreen({ onHome }: Props) {
   const [matchConfig, setMatchConfig] = useState<MatchConfig>({ overs: 5, wickets: 3 });
   const [tossInfo, setTossInfo] = useState<{ winner: string; battingFirst: string } | null>(null);
   const [pendingBatFirst, setPendingBatFirst] = useState<boolean | null>(null);
-  const [matchCommentators, setMatchCommentators] = useState<[Commentator, Commentator]>(() => pickMatchCommentators());
+  const [matchCommentators, setMatchCommentators] = useState<[Commentator, Commentator]>(() => pickConfiguredMatchCommentators(commentaryVoice));
 
   useEffect(() => {
     if (!user) return;
@@ -88,7 +89,7 @@ export default function TournamentScreen({ onHome }: Props) {
 
   const handleTossResult = (batFirst: boolean) => {
     setPendingBatFirst(batFirst);
-    setMatchCommentators(pickMatchCommentators()); // Fresh commentators per round
+    setMatchCommentators(pickConfiguredMatchCommentators(commentaryVoice)); // Fresh commentators per round
     setTimeout(() => setShowPreMatch(true), 500);
   };
 
@@ -300,6 +301,7 @@ export default function TournamentScreen({ onHome }: Props) {
               modeLabel="TOURNAMENT"
               matchConfig={matchConfig}
               innings1Balls={game.innings1Balls}
+              commentators={matchCommentators}
             />
           </>
         )}
