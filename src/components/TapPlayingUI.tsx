@@ -66,8 +66,12 @@ export default function TapPlayingUI({
   const [commentary, setCommentary] = useState<CommentaryLine[] | null>(null);
   const [showOverBreak, setShowOverBreak] = useState(false);
   const [overBreakData, setOverBreakData] = useState<any>(null);
+  const [showWicketBreakdown, setShowWicketBreakdown] = useState(false);
+  const [wicketBreakdownData, setWicketBreakdownData] = useState<WicketBreakdownData | null>(null);
   const prevPhaseRef = useRef(phase);
   const prevBallCountRef = useRef(0);
+  const prevWicketsRef = useRef({ user: 0, ai: 0 });
+  const partnershipStartRef = useRef({ score: 0, balls: 0 });
 
   // Pick 2 commentators for this match session
   const [matchCommentators] = useState<[Commentator, Commentator]>(() =>
