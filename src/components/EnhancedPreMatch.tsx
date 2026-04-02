@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SFX } from "@/lib/sounds";
-import { CrowdSFX } from "@/lib/voiceCommentary";
-import { playElevenLabsMusic, stopMusic, isElevenLabsAvailable, speakDuoLines } from "@/lib/elevenLabsAudio";
+import { CrowdSFX, speakDuoCommentary } from "@/lib/voiceCommentary";
+import { playElevenLabsMusic, stopMusic, isElevenLabsAvailable } from "@/lib/elevenLabsAudio";
 import { useSettings } from "@/contexts/SettingsContext";
 import {
   pickMatchCommentators, type Commentator, type CommentaryLine,
@@ -54,7 +54,7 @@ export default function EnhancedPreMatch({
 }: EnhancedPreMatchProps) {
   const [currentPage, setCurrentPage] = useState(0);
   const [visible, setVisible] = useState(true);
-  const { voiceEnabled, soundEnabled, crowdEnabled, commentaryEnabled } = useSettings();
+  const { voiceEnabled, soundEnabled, crowdEnabled, commentaryEnabled, voiceEngine } = useSettings();
   const stableOnComplete = useCallback(onComplete, []);
 
   const duo = commentators || pickMatchCommentators();
@@ -94,11 +94,7 @@ export default function EnhancedPreMatch({
     if (!page || !voiceEnabled || !commentaryEnabled || !page.voiceEnabled) return;
     const keyLines = page.lines.filter(l => l.isKeyMoment);
     if (keyLines.length === 0) return;
-    const ttsLines = keyLines.map(l => ({
-      text: l.text,
-      voiceId: (duo.find(c => c.name === l.commentatorId) || duo[0]).voiceId,
-    }));
-    speakDuoLines(ttsLines);
+    speakDuoCommentary(page.lines, duo, voiceEngine);
   }, [currentPage]);
 
   // SFX per page

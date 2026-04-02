@@ -3,8 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import type { Move, BallResult, GameResult, InningsPhase, MatchConfig } from "@/hooks/useHandCricket";
 import { SFX, Haptics } from "@/lib/sounds";
 import { getCommentary, getInningsChangeCommentary } from "@/lib/commentary";
-import { speakCommentary, playCrowdForResult, CrowdSFX } from "@/lib/voiceCommentary";
-import { speakDuoLines, isElevenLabsAvailable } from "@/lib/elevenLabsAudio";
+import { speakCommentary, playCrowdForResult, CrowdSFX, speakDuoCommentary } from "@/lib/voiceCommentary";
+import { isElevenLabsAvailable } from "@/lib/elevenLabsAudio";
 import { useSettings } from "@/contexts/SettingsContext";
 import { pickMatchCommentators, getDuoCommentary, getOverBreakCommentary, type Commentator, type CommentaryLine } from "@/lib/commentaryDuo";
 import ScoreBoard from "./ScoreBoard";
@@ -59,7 +59,7 @@ export default function TapPlayingUI({
   isPvP = false, waitingForOpponent = false, cooldownOverride,
   extraContent, modeLabel = "TAP MODE", matchConfig, innings1Balls, commentators,
 }: TapPlayingUIProps) {
-  const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, commentaryVoice } = useSettings();
+  const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, commentaryVoice, voiceEngine } = useSettings();
   const [lastPlayed, setLastPlayed] = useState<Move | null>(null);
   const [cooldown, setCooldown] = useState(false);
   const [showExplosion, setShowExplosion] = useState<{ emoji: string; key: number } | null>(null);
@@ -149,11 +149,7 @@ export default function TapPlayingUI({
 
       // Speak key moment lines
       if (voiceEnabled && commentaryEnabled) {
-        const keyLines = lines.filter(l => l.isKeyMoment).map(l => ({
-          text: l.text,
-          voiceId: (matchCommentators.find(c => c.name === l.commentatorId || c.id === l.commentatorId) || matchCommentators[0]).voiceId,
-        }));
-        speakDuoLines(keyLines);
+        speakDuoCommentary(lines, matchCommentators, voiceEngine);
       }
     }
   }, [ballHistory.length]);
@@ -169,7 +165,7 @@ export default function TapPlayingUI({
           { commentatorId: matchCommentators[0].name, text, isKeyMoment: true },
         ];
         setCommentary(lines);
-        if (voiceEnabled) speakCommentary(text, true);
+        if (voiceEnabled) speakCommentary(text, true, voiceEngine);
         setTimeout(() => setCommentary(null), 3000);
       }
       if (crowdEnabled) CrowdSFX.ambientMurmur(2);
@@ -271,13 +267,8 @@ export default function TapPlayingUI({
       setCommentary(duoLines);
 
       // Only speak key moments via TTS (sixes, fours, wickets)
-      const keyLines = duoLines.filter(l => l.isKeyMoment);
-      if (voiceEnabled && keyLines.length > 0) {
-        const ttsLines = keyLines.map(l => ({
-          text: l.text,
-          voiceId: (matchCommentators.find(c => c.name === l.commentatorId || c.id === l.commentatorId) || matchCommentators[0]).voiceId,
-        }));
-        speakDuoLines(ttsLines);
+      if (voiceEnabled && duoLines.some(l => l.isKeyMoment)) {
+        speakDuoCommentary(duoLines, matchCommentators, voiceEngine);
       }
 
       setTimeout(() => setCommentary(null), 3500);

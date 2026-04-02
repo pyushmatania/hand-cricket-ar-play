@@ -15,8 +15,8 @@ import { useHandDetection } from "@/hooks/useHandDetection";
 import { useMatchSaver } from "@/hooks/useMatchSaver";
 import { SFX, Haptics } from "@/lib/sounds";
 import { getInningsChangeCommentary } from "@/lib/commentary";
-import { playCrowdForResult, CrowdSFX } from "@/lib/voiceCommentary";
-import { speakDuoLines } from "@/lib/elevenLabsAudio";
+import { playCrowdForResult, CrowdSFX, speakDuoCommentary, speakCommentary } from "@/lib/voiceCommentary";
+import { isElevenLabsAvailable } from "@/lib/elevenLabsAudio";
 import { useSettings } from "@/contexts/SettingsContext";
 import { pickConfiguredMatchCommentators, getDuoCommentary, type Commentator, type CommentaryLine } from "@/lib/commentaryDuo";
 import { useAuth } from "@/contexts/AuthContext";
@@ -47,7 +47,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
-  const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled } = useSettings();
+  const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, voiceEngine } = useSettings();
   const { commentaryVoice } = useSettings();
   const detection = useHandDetection(videoElementRef);
   const [tossChoice, setTossChoice] = useState<null | boolean>(null);
@@ -163,7 +163,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         ];
         setCommentary(lines);
         if (voiceEnabled) {
-          speakDuoLines([{ text, voiceId: matchCommentators[0].voiceId }]);
+          speakDuoCommentary(lines, matchCommentators, voiceEngine);
         }
         setTimeout(() => setCommentary(null), 3000);
       }
@@ -208,13 +208,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       );
       setCommentary(duoLines);
       if (voiceEnabled) {
-        const keyLines = duoLines.filter(l => l.isKeyMoment);
-        if (keyLines.length > 0) {
-          speakDuoLines(keyLines.map(l => ({
-            text: l.text,
-            voiceId: (matchCommentators.find(c => c.name === l.commentatorId || c.id === l.commentatorId) || matchCommentators[0]).voiceId,
-          })));
-        }
+        speakDuoCommentary(duoLines, matchCommentators, voiceEngine);
       }
       setTimeout(() => setCommentary(null), 2500);
     }

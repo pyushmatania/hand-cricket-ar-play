@@ -50,10 +50,22 @@ export async function speakElevenLabs(text: string, voiceId?: string): Promise<b
         console.warn("[ElevenLabs] Tokens exhausted — switching to fallback");
         elevenLabsAvailable = false;
       }
+      console.warn(`[ElevenLabs] TTS failed with status ${response.status}`);
+      return false;
+    }
+
+    // Verify we got audio, not a JSON error
+    const contentType = response.headers.get("content-type") || "";
+    if (!contentType.includes("audio")) {
+      console.warn("[ElevenLabs] Response is not audio:", contentType);
       return false;
     }
 
     const blob = await response.blob();
+    if (blob.size < 500) {
+      console.warn("[ElevenLabs] Audio blob too small, likely an error");
+      return false;
+    }
     const url = URL.createObjectURL(blob);
     audioCache.set(key, url);
     return playAudioUrl(url);
@@ -70,29 +82,12 @@ export async function speakDuoLines(lines: { text: string; voiceId: string }[]):
     if (!clean) continue;
     const success = await speakElevenLabs(clean, line.voiceId);
     if (!success) {
-      // Fallback to web speech
-      await speakWebSpeech(clean);
+      // Fallback handled by caller (voiceCommentary.ts)
+      return;
     }
     // Small pause between speakers
     await new Promise(r => setTimeout(r, 300));
   }
-}
-
-function speakWebSpeech(text: string): Promise<void> {
-  return new Promise((resolve) => {
-    if (!("speechSynthesis" in window)) { resolve(); return; }
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.92;
-    utterance.pitch = 1.05;
-    utterance.volume = 0.85;
-    const voices = window.speechSynthesis.getVoices();
-    const preferred = voices.find(v => v.lang.startsWith("en") && (v.name.includes("Google") || v.name.includes("Daniel"))) || voices.find(v => v.lang.startsWith("en"));
-    if (preferred) utterance.voice = preferred;
-    utterance.onend = () => resolve();
-    utterance.onerror = () => resolve();
-    window.speechSynthesis.speak(utterance);
-  });
 }
 
 function playAudioUrl(url: string, channel: "tts" | "sfx" = "tts"): Promise<boolean> {

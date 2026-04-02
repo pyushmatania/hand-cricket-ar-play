@@ -1,5 +1,7 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 
+export type VoiceEngine = "auto" | "elevenlabs" | "system";
+
 interface Settings {
   soundEnabled: boolean;
   hapticsEnabled: boolean;
@@ -10,6 +12,7 @@ interface Settings {
   batSoundEnabled: boolean;
   victorySoundEnabled: boolean;
   commentaryVoice: string;
+  voiceEngine: VoiceEngine;
 }
 
 interface SettingsContextType extends Settings {
@@ -22,6 +25,7 @@ interface SettingsContextType extends Settings {
   toggleBatSound: () => void;
   toggleVictorySound: () => void;
   setCommentaryVoice: (voice: string) => void;
+  setVoiceEngine: (engine: VoiceEngine) => void;
 }
 
 const defaults: Settings = {
@@ -29,6 +33,7 @@ const defaults: Settings = {
   voiceEnabled: true, crowdEnabled: true, musicEnabled: true,
   batSoundEnabled: true, victorySoundEnabled: true,
   commentaryVoice: "nPczCjzI2devNBz1zQrb", // Brian (default)
+  voiceEngine: "auto" as VoiceEngine,
 };
 
 const SettingsContext = createContext<SettingsContextType>({
@@ -42,6 +47,7 @@ const SettingsContext = createContext<SettingsContextType>({
   toggleBatSound: () => {},
   toggleVictorySound: () => {},
   setCommentaryVoice: () => {},
+  setVoiceEngine: () => {},
 });
 
 export const useSettings = () => useContext(SettingsContext);
@@ -69,9 +75,10 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const toggleBatSound = () => setSettings((s) => ({ ...s, batSoundEnabled: !s.batSoundEnabled }));
   const toggleVictorySound = () => setSettings((s) => ({ ...s, victorySoundEnabled: !s.victorySoundEnabled }));
   const setCommentaryVoice = (voice: string) => setSettings((s) => ({ ...s, commentaryVoice: voice }));
+  const setVoiceEngine = (engine: VoiceEngine) => setSettings((s) => ({ ...s, voiceEngine: engine }));
 
   return (
-    <SettingsContext.Provider value={{ ...settings, toggleSound, toggleHaptics, toggleCommentary, toggleVoice, toggleCrowd, toggleMusic, toggleBatSound, toggleVictorySound, setCommentaryVoice }}>
+    <SettingsContext.Provider value={{ ...settings, toggleSound, toggleHaptics, toggleCommentary, toggleVoice, toggleCrowd, toggleMusic, toggleBatSound, toggleVictorySound, setCommentaryVoice, setVoiceEngine }}>
       {children}
     </SettingsContext.Provider>
   );

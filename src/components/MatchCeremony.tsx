@@ -69,7 +69,7 @@ const POST_DRAW = POST_DRAW_EXPANDED;
 export function PostMatchCeremony({ playerName, opponentName, result, playerScore, opponentScore, ballHistory, onComplete, isPvP = false }: PostMatchProps) {
   const [stage, setStage] = useState<Stage>("result");
   const [lineIndex, setLineIndex] = useState(0);
-  const { voiceEnabled, soundEnabled } = useSettings();
+  const { voiceEnabled, soundEnabled, voiceEngine } = useSettings();
 
   const stats = useMemo(() => computeStats(ballHistory, true), [ballHistory]);
 
@@ -113,7 +113,7 @@ export function PostMatchCeremony({ playerName, opponentName, result, playerScor
       if (result === "win") SFX.victoryAnthem();
       else SFX.loss();
     }
-    if (voiceEnabled) speakCommentary(lines[0], true);
+    if (voiceEnabled) speakCommentary(lines[0], true, voiceEngine);
 
     const timers: ReturnType<typeof setTimeout>[] = [];
 
@@ -123,7 +123,7 @@ export function PostMatchCeremony({ playerName, opponentName, result, playerScor
 
     timers.push(setTimeout(() => {
       setStage("commentary");
-      if (voiceEnabled && lines[1]) speakCommentary(lines[1], true);
+      if (voiceEnabled && lines[1]) speakCommentary(lines[1], true, voiceEngine);
       setLineIndex(1);
     }, t));
 
@@ -131,7 +131,7 @@ export function PostMatchCeremony({ playerName, opponentName, result, playerScor
 
     timers.push(setTimeout(() => {
       setStage("stats");
-      if (voiceEnabled && statsLines[0]) speakCommentary(statsLines[0], true);
+      if (voiceEnabled && statsLines[0]) speakCommentary(statsLines[0], true, voiceEngine);
     }, t));
 
     // Auto-advance stats lines
@@ -139,7 +139,7 @@ export function PostMatchCeremony({ playerName, opponentName, result, playerScor
       if (i === 0) return;
       timers.push(setTimeout(() => {
         setLineIndex(i);
-        if (voiceEnabled) speakCommentary(line, true);
+        if (voiceEnabled) speakCommentary(line, true, voiceEngine);
       }, t + i * (2000 * tm)));
     });
 
@@ -150,7 +150,7 @@ export function PostMatchCeremony({ playerName, opponentName, result, playerScor
       pvpLines.forEach((line, i) => {
         timers.push(setTimeout(() => {
           setLineIndex(100 + i); // Use 100+ offset for pvp lines
-          if (voiceEnabled) speakCommentary(line, true);
+          if (voiceEnabled) speakCommentary(line, true, voiceEngine);
         }, t + i * 4000));
       });
       t += pvpLines.length * 4000;
@@ -378,7 +378,7 @@ type PreStage = "players" | "rivalry" | "toss" | "go";
 export function PreMatchCeremony({ playerName, opponentName, tossWinner, battingFirst, rivalryStats, onComplete }: PreMatchProps) {
   const [stage, setStage] = useState<PreStage>("players");
   const [visible, setVisible] = useState(true);
-  const { voiceEnabled, soundEnabled } = useSettings();
+  const { voiceEnabled, soundEnabled, voiceEngine } = useSettings();
 
   const hasRivalry = rivalryStats && rivalryStats.totalGames > 0;
 
@@ -427,7 +427,7 @@ export function PreMatchCeremony({ playerName, opponentName, tossWinner, batting
     // Schedule voice and stage transitions
     const timers: NodeJS.Timeout[] = [];
 
-    if (voiceEnabled) speakCommentary(commentaryLines[0].text, true);
+    if (voiceEnabled) speakCommentary(commentaryLines[0].text, true, voiceEngine);
 
     let stageIdx = 0;
     const stages: PreStage[] = hasRivalry ? ["players", "rivalry", "toss", "go"] : ["players", "toss", "go"];
@@ -437,7 +437,7 @@ export function PreMatchCeremony({ playerName, opponentName, tossWinner, batting
         timers.push(setTimeout(() => {
           stageIdx++;
           setStage(stages[Math.min(stageIdx, stages.length - 1)]);
-          if (voiceEnabled) speakCommentary(line.text, true);
+          if (voiceEnabled) speakCommentary(line.text, true, voiceEngine);
         }, line.delay));
       }
     });
