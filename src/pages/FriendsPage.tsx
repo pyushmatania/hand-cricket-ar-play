@@ -20,12 +20,18 @@ interface FriendProfile {
   display_name: string;
   wins: number;
   losses: number;
+  draws?: number;
   total_matches: number;
   high_score: number;
   best_streak: number;
+  current_streak?: number;
+  abandons?: number;
   invite_code: string;
   avatar_url?: string | null;
   avatar_index?: number;
+  xp?: number;
+  coins?: number;
+  rank_tier?: string;
 }
 type GameType = "ar" | "tap" | "tournament";
 
