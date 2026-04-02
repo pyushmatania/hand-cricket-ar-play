@@ -251,7 +251,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
 
       {/* Pre-match ceremony */}
       {showPreMatch && tossInfo && (
-        <PreMatchCeremony
+        <EnhancedPreMatch
           playerName={playerName}
           opponentName={opponentName}
           tossWinner={tossInfo.winner}
@@ -262,7 +262,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
 
       {/* Post-match ceremony */}
       {showPostMatch && game.result && (
-        <PostMatchCeremony
+        <EnhancedPostMatch
           playerName={playerName}
           opponentName={opponentName}
           result={game.result}
