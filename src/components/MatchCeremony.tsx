@@ -68,7 +68,7 @@ const POST_DRAW = [
   (_p: string, _o: string) => `Incredible! Neither side gives in! A match for the ages!`,
 ];
 
-export function PostMatchCeremony({ playerName, opponentName, result, playerScore, opponentScore, ballHistory, onComplete }: PostMatchProps) {
+export function PostMatchCeremony({ playerName, opponentName, result, playerScore, opponentScore, ballHistory, onComplete, isPvP = false }: PostMatchProps) {
   const [stage, setStage] = useState<Stage>("result");
   const [lineIndex, setLineIndex] = useState(0);
   const { voiceEnabled, soundEnabled } = useSettings();
