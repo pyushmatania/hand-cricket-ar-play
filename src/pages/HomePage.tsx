@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import BottomNav from "@/components/BottomNav";
 import TopStatusBar from "@/components/TopStatusBar";
 import OnboardingTutorial from "@/components/OnboardingTutorial";
+import RivalrySection from "@/components/RivalrySection";
+import { useRivals } from "@/hooks/useRivals";
 
 interface ProfileData {
   total_matches: number;
@@ -45,6 +47,7 @@ export default function HomePage() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [recentMatch, setRecentMatch] = useState<RecentMatch | null>(null);
+  const { rivals, loading: rivalsLoading } = useRivals();
 
   useEffect(() => {
     const seen = localStorage.getItem("hc_onboarding_done");
@@ -187,6 +190,10 @@ export default function HomePage() {
             </span>
           </div>
         </motion.div>
+
+
+        {/* ── Rivalry Section ────────────────────── */}
+        <RivalrySection rivals={rivals} loading={rivalsLoading} />
 
         {/* ── Past Match Widget ──────────────────── */}
         {recentMatch && (
