@@ -655,13 +655,37 @@ export default function MultiplayerScreen({ onHome }: Props) {
       }
     }
 
-    setLastResult(result);
-    setTimeout(() => setLastResult(null), 2000);
+    // Build ball result for shared UI
+    const isHostLocal = user.id === game.host_id;
+    const userMoveVal = (isHostLocal ? hostMove : guestMove) as Move;
+    const aiMoveVal = (isHostLocal ? guestMove : hostMove) as Move;
+    const isBattingLocal = isHostLocal ? battingIsHost : !battingIsHost;
+    let ballRuns: number | "OUT";
+    if (isOut) {
+      ballRuns = "OUT";
+    } else {
+      const battingMove = battingIsHost ? hostMove : guestMove;
+      const r = battingMove === "DEF" ? 0 : parseInt(battingMove);
+      ballRuns = isBattingLocal ? r : -r;
+    }
+
+    const ballResult: BallResult = {
+      userMove: userMoveVal,
+      aiMove: aiMoveVal,
+      runs: ballRuns,
+      description: result,
+    };
+
+    setLastBallResult(ballResult);
+    setPvpBallHistory(prev => [...prev, ballResult]);
+
+no setLastResult(result);
+    setTimeout(() => { setLastResult(null); setLastBallResult(null); }, 2000);
 
     await supabase.from("multiplayer_games").update({
       host_score: newHostScore, guest_score: newGuestScore, host_move: null, guest_move: null,
       current_turn: game.current_turn + 1, turn_number: (game.turn_number ?? game.current_turn) + 1, innings: newInnings, innings_number: newInnings, host_batting: newHostBatting,
-      status: newStatus as any, winner_id: newWinner, phase: newStatus === "finished" ? "match_finished" : "pre_round_countdown",
+      status: newStatus as any, winner_    id: newWinner, phase: newStatus === "finished" ? "match_finished" : "pre_round_countdown",
       phase_started_at: new Date().toISOString(), turn_deadline_at: null,
       round_result_payload: { text: result, turn: game.current_turn },
     }).eq("id", game.id).eq("current_turn", game.current_turn).eq("host_move", hostMove).eq("guest_move", guestMove);
