@@ -262,7 +262,8 @@ export default function TapPlayingUI({
     if (commentaryEnabled) {
       const duoLines = getDuoCommentary(
         matchCommentators[0].name, matchCommentators[1].name,
-        r.runs, isBatting, playerName, opponentName
+        r.runs, isBatting, playerName, opponentName,
+        undefined, commentaryLanguage
       );
       setCommentary(duoLines);
 

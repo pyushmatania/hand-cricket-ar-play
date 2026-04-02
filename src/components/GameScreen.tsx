@@ -213,7 +213,8 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     if (commentaryEnabled) {
       const duoLines = getDuoCommentary(
         matchCommentators[0].name, matchCommentators[1].name,
-        r.runs, game.isBatting, playerName, opponentName
+        r.runs, game.isBatting, playerName, opponentName,
+        undefined, commentaryLanguage
       );
       setCommentary(duoLines);
       if (voiceEnabled) {
