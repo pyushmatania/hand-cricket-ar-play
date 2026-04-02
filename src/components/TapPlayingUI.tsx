@@ -236,6 +236,10 @@ export default function TapPlayingUI({
     // Reset partnership tracking for next batsman
     partnershipStartRef.current = { score: currentScore, balls: inningsBalls };
 
+    // Trigger floodlight flicker on wickets
+    setFloodlightFlicker(true);
+    setTimeout(() => setFloodlightFlicker(false), 2000);
+
     // Don't show if game is finished (post-match handles that)
     if (phase !== "finished") {
       setWicketBreakdownData(breakdownData);
