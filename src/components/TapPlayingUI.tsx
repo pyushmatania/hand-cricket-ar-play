@@ -11,6 +11,7 @@ import ScoreBoard from "./ScoreBoard";
 import CelebrationEffects from "./CelebrationEffects";
 import OverBreakScreen from "./OverBreakScreen";
 import cricketGround from "@/assets/cricket-ground.jpg";
+import { pickConfiguredMatchCommentators } from "@/lib/commentaryDuo";
 
 const MOVES_CONFIG: { move: Move; emoji: string; label: string; color: string; glow: string }[] = [
   { move: "DEF", emoji: "✊", label: "DEF", color: "from-accent/20 to-accent/5 border-accent/25", glow: "shadow-[0_0_15px_hsl(168_80%_50%/0.15)]" },
@@ -46,6 +47,7 @@ export interface TapPlayingUIProps {
   modeLabel?: string;
   matchConfig?: MatchConfig;
   innings1Balls?: number;
+  commentators?: [Commentator, Commentator];
 }
 
 export default function TapPlayingUI({
@@ -54,9 +56,9 @@ export default function TapPlayingUI({
   playerName, opponentName, opponentEmoji = "🏏",
   onMove, onReset, onHome,
   isPvP = false, waitingForOpponent = false, cooldownOverride,
-  extraContent, modeLabel = "TAP MODE", matchConfig, innings1Balls,
+  extraContent, modeLabel = "TAP MODE", matchConfig, innings1Balls, commentators,
 }: TapPlayingUIProps) {
-  const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled } = useSettings();
+  const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, commentaryVoice } = useSettings();
   const [lastPlayed, setLastPlayed] = useState<Move | null>(null);
   const [cooldown, setCooldown] = useState(false);
   const [showExplosion, setShowExplosion] = useState<{ emoji: string; key: number } | null>(null);
@@ -67,7 +69,9 @@ export default function TapPlayingUI({
   const prevBallCountRef = useRef(0);
 
   // Pick 2 commentators for this match session
-  const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickMatchCommentators());
+  const [matchCommentators] = useState<[Commentator, Commentator]>(() =>
+    commentators || pickConfiguredMatchCommentators(commentaryVoice)
+  );
 
   const effectiveCooldown = cooldownOverride !== undefined ? cooldownOverride : cooldown;
 

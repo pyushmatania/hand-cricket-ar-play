@@ -11,7 +11,8 @@ import VSIntroScreen from "./VSIntroScreen";
 import TapPlayingUI from "./TapPlayingUI";
 import EnhancedPreMatch from "./EnhancedPreMatch";
 import EnhancedPostMatch from "./EnhancedPostMatch";
-import { pickMatchCommentators, type Commentator } from "@/lib/commentaryDuo";
+import { pickConfiguredMatchCommentators, type Commentator } from "@/lib/commentaryDuo";
+import { useSettings } from "@/contexts/SettingsContext";
 import type { Move, BallResult } from "@/hooks/useHandCricket";
 import {
   claimMultiplayerGame,
@@ -98,6 +99,7 @@ function gameTypeLabel(gameType: GameType): string {
 
 export default function MultiplayerScreen({ onHome }: Props) {
   const { user } = useAuth();
+  const { commentaryVoice } = useSettings();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [phase, setPhase] = useState<Phase>("lobby");
@@ -144,7 +146,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [showPvPPostMatch, setShowPvPPostMatch] = useState(false);
   const [showPvPPreMatch, setShowPvPPreMatch] = useState(false);
   const [pvpBallHistory, setPvpBallHistory] = useState<BallResult[]>([]);
-  const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickMatchCommentators());
+  const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickConfiguredMatchCommentators(commentaryVoice));
   const pvpPostMatchShownRef = useRef(false);
   const pvpPreMatchShownRef = useRef(false);
   const [rivalryStats, setRivalryStats] = useState<{
