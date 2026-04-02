@@ -15,7 +15,7 @@ import { useHandCricket } from "@/hooks/useHandCricket";
 import { useHandDetection } from "@/hooks/useHandDetection";
 import { useMatchSaver } from "@/hooks/useMatchSaver";
 import { SFX, Haptics } from "@/lib/sounds";
-import { startAmbientStadium, stopAmbientStadium, setAmbientVolume, crowdRoar } from "@/lib/ambientStadium";
+import { startAmbientStadium, stopAmbientStadium, setAmbientVolume, crowdRoar, crowdGaspMute } from "@/lib/ambientStadium";
 import { getInningsChangeCommentary } from "@/lib/commentary";
 import { playCrowdForResult, CrowdSFX, speakDuoCommentary, speakCommentary } from "@/lib/voiceCommentary";
 import { isElevenLabsAvailable } from "@/lib/elevenLabsAudio";
@@ -49,7 +49,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
-  const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, voiceEngine, commentaryVoice, commentaryLanguage, musicEnabled, ambientVolume } = useSettings();
+  const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, voiceEngine, commentaryVoice, commentaryLanguage, musicEnabled, ambientVolume, arCeremoniesEnabled } = useSettings();
   const detection = useHandDetection(videoElementRef);
   const [tossChoice, setTossChoice] = useState<null | boolean>(null);
   const [matchConfig, setMatchConfig] = useState<import("@/hooks/useHandCricket").MatchConfig | null>(null);
@@ -114,8 +114,14 @@ export default function GameScreen({ onHome }: GameScreenProps) {
 
   const handleTossResult = (batFirst: boolean) => {
     setPendingBatFirst(batFirst);
-    // Show pre-match ceremony after a short delay
-    setTimeout(() => setShowPreMatch(true), 500);
+    if (arCeremoniesEnabled) {
+      setTimeout(() => setShowPreMatch(true), 500);
+      return;
+    }
+    if (matchConfig) {
+      setTossChoice(batFirst);
+      startGame(batFirst, matchConfig);
+    }
   };
 
   const handlePreMatchComplete = () => {
@@ -158,10 +164,11 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         if (crowdEnabled) playCrowdForResult(0, true, true, "loss");
       }
 
-      // Show post-match ceremony
       if (!postMatchShownRef.current) {
         postMatchShownRef.current = true;
-        setTimeout(() => setShowPostMatch(true), game.result === "win" ? 2500 : 1000);
+        if (arCeremoniesEnabled) {
+          setTimeout(() => setShowPostMatch(true), game.result === "win" ? 2500 : 1000);
+        }
       }
     }
   }, [game.phase, game, saveMatch]);
@@ -201,8 +208,11 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     const r = game.lastResult;
     if (soundEnabled) SFX.batHit();
     if (r.runs === "OUT") {
-      setTimeout(() => { if (soundEnabled) SFX.out(); if (hapticsEnabled) Haptics.out(); }, 150);
-      // Wicket fireworks
+      setTimeout(() => {
+        if (soundEnabled) SFX.out();
+        if (hapticsEnabled) Haptics.out();
+        crowdGaspMute();
+      }, 150);
       setFireworkType("wicket");
       if (soundEnabled) setTimeout(() => SFX.fireworkPop(), 300);
     } else if (typeof r.runs === "number") {
@@ -233,7 +243,11 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       );
       setCommentary(duoLines);
       if (voiceEnabled) {
-        speakDuoCommentary(duoLines, matchCommentators, voiceEngine);
+        if (duoLines.some(l => l.isKeyMoment)) {
+          speakDuoCommentary(duoLines, matchCommentators, voiceEngine);
+        } else if (duoLines[0]) {
+          speakCommentary(duoLines[0].text, true, voiceEngine);
+        }
       }
       setTimeout(() => setCommentary(null), 2500);
     }

@@ -99,7 +99,7 @@ function gameTypeLabel(gameType: GameType): string {
 
 export default function MultiplayerScreen({ onHome }: Props) {
   const { user } = useAuth();
-  const { commentaryVoice, ceremoniesEnabled } = useSettings();
+  const { commentaryVoice, multiplayerCeremoniesEnabled } = useSettings();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [phase, setPhase] = useState<Phase>("lobby");
@@ -361,13 +361,15 @@ export default function MultiplayerScreen({ onHome }: Props) {
             loadOpponentName(updated);
           }
 
-          // Show VS intro + pre-match when transitioning from waiting to toss
           if (prevPhase === "waiting" && nextPhase === "toss" && !showVSIntro) {
-            setShowVSIntro(true);
-            if (!pvpPreMatchShownRef.current) {
-              pvpPreMatchShownRef.current = true;
+            if (multiplayerCeremoniesEnabled) {
+              setShowVSIntro(true);
+              if (!pvpPreMatchShownRef.current) {
+                pvpPreMatchShownRef.current = true;
+              }
+            } else {
+              setPhase(nextPhase);
             }
-            // Phase will be set after VS intro completes
           } else {
             setPhase(nextPhase);
           }
@@ -423,7 +425,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
             stopTimer();
             if (!pvpPostMatchShownRef.current) {
               pvpPostMatchShownRef.current = true;
-              if (ceremoniesEnabled) {
+              if (multiplayerCeremoniesEnabled) {
                 setTimeout(() => setShowPvPPostMatch(true), 1000);
               }
             }
@@ -1791,8 +1793,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
           gameType={currentGame?.game_type}
           onComplete={() => {
             setShowVSIntro(false);
-            // Show enhanced pre-match ceremony for PvP
-            if (pvpPreMatchShownRef.current) {
+            if (multiplayerCeremoniesEnabled && pvpPreMatchShownRef.current) {
               setShowPvPPreMatch(true);
             } else if (currentGame) {
               setPhase(statusToPhase(currentGame.status));

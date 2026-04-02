@@ -76,18 +76,23 @@ export async function speakElevenLabs(text: string, voiceId?: string): Promise<b
 }
 
 /** Speak a sequence of lines with different voices, one after another */
-export async function speakDuoLines(lines: { text: string; voiceId: string }[]): Promise<void> {
+export async function speakDuoLines(lines: { text: string; voiceId: string }[]): Promise<boolean> {
+  let playedAny = false;
+
   for (const line of lines) {
     const clean = line.text.replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, "").trim();
     if (!clean) continue;
+
     const success = await speakElevenLabs(clean, line.voiceId);
     if (!success) {
-      // Fallback handled by caller (voiceCommentary.ts)
-      return;
+      return playedAny;
     }
-    // Small pause between speakers
+
+    playedAny = true;
     await new Promise(r => setTimeout(r, 300));
   }
+
+  return playedAny;
 }
 
 function playAudioUrl(url: string, channel: "tts" | "sfx" = "tts"): Promise<boolean> {

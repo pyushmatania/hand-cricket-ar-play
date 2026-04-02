@@ -34,8 +34,7 @@ const AI_OPPONENTS = [
 interface Props { onHome: () => void; }
 
 export default function TournamentScreen({ onHome }: Props) {
-  const { soundEnabled, hapticsEnabled } = useSettings();
-  const { commentaryVoice } = useSettings();
+  const { soundEnabled, hapticsEnabled, commentaryVoice, tournamentCeremoniesEnabled } = useSettings();
   const { user } = useAuth();
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
@@ -89,8 +88,21 @@ export default function TournamentScreen({ onHome }: Props) {
 
   const handleTossResult = (batFirst: boolean) => {
     setPendingBatFirst(batFirst);
-    setMatchCommentators(pickConfiguredMatchCommentators(commentaryVoice)); // Fresh commentators per round
-    setTimeout(() => setShowPreMatch(true), 500);
+    setMatchCommentators(pickConfiguredMatchCommentators(commentaryVoice));
+    if (tournamentCeremoniesEnabled) {
+      setTimeout(() => setShowPreMatch(true), 500);
+      return;
+    }
+    setShowPreMatch(false);
+    resetGame();
+    savedRef.current = false;
+    postMatchShownRef.current = false;
+    if (soundEnabled) SFX.gameStart();
+    if (hapticsEnabled) Haptics.medium();
+    if (matchConfig) {
+      startGame(batFirst, matchConfig);
+      setPhase("playing");
+    }
   };
 
   const handlePreMatchComplete = () => {
@@ -119,7 +131,12 @@ export default function TournamentScreen({ onHome }: Props) {
       setRounds(newRounds);
       if (!postMatchShownRef.current) {
         postMatchShownRef.current = true;
-        setTimeout(() => setShowPostMatch(true), 1000);
+        if (tournamentCeremoniesEnabled) {
+          setTimeout(() => setShowPostMatch(true), 1000);
+        } else {
+          if (game.result !== "win") setEliminated(true);
+          setPhase("result");
+        }
       }
     }
   }, [game.phase]);
