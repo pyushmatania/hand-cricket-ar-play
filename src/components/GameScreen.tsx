@@ -256,6 +256,8 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     setShowPostMatch(false);
     savedRef.current = false;
     postMatchShownRef.current = false;
+    setMatchConfig(null);
+    setShowOverSelector(true);
   };
 
   const toggleImmersive = () => setImmersive(!immersive);
