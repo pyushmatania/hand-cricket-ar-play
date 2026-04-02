@@ -10,6 +10,8 @@ import { getCommentary, getInningsChangeCommentary } from "@/lib/commentary";
 import { useSettings } from "@/contexts/SettingsContext";
 import ScoreBoard from "./ScoreBoard";
 import RulesSheet from "./RulesSheet";
+import EnhancedPreMatch from "./EnhancedPreMatch";
+import EnhancedPostMatch from "./EnhancedPostMatch";
 
 type Round = {
   round: number;
