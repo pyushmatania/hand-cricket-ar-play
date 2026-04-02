@@ -386,6 +386,63 @@ export default function MultiplayerScreen({ onHome }: Props) {
     return () => { supabase.removeChannel(channel); };
   }, [currentGame?.id]);
 
+  // Subscribe to rematch invites when game is finished
+  useEffect(() => {
+    if (!user || !currentGame || currentGame.status !== "finished") return;
+
+    // Poll for incoming rematch invites from opponent
+    const opponentId = user.id === currentGame.host_id ? currentGame.guest_id : currentGame.host_id;
+    if (!opponentId) return;
+
+    const checkRematch = async () => {
+      const { data } = await supabase
+        .from("match_invites")
+        .select("*")
+        .eq("to_user_id", user.id)
+        .eq("from_user_id", opponentId)
+        .eq("status", "pending")
+        .gte("expires_at", new Date().toISOString())
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      
+      if (data && !incomingRematch) {
+        setIncomingRematch({
+          inviteId: data.id,
+          gameId: data.game_id,
+          fromName: opponentName,
+        });
+      }
+    };
+
+    checkRematch();
+    const interval = setInterval(checkRematch, 3000);
+
+    // Also subscribe to realtime for faster response
+    const channel = supabase
+      .channel(`rematch-invites-${currentGame.id}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "match_invites", filter: `to_user_id=eq.${user.id}` },
+        (payload) => {
+          const invite = payload.new as any;
+          if (invite.from_user_id === opponentId && invite.status === "pending") {
+            setIncomingRematch({
+              inviteId: invite.id,
+              gameId: invite.game_id,
+              fromName: opponentName,
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      clearInterval(interval);
+      supabase.removeChannel(channel);
+    };
+  }, [user?.id, currentGame?.id, currentGame?.status, opponentName]);
+
   // Timer management — idle detection + countdown
   const myMove = currentGame ? (user?.id === currentGame.host_id ? currentGame.host_move : currentGame.guest_move) : null;
   const waitingForOpponent = myMove !== null;
