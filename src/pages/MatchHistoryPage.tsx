@@ -449,7 +449,8 @@ export default function MatchHistoryPage() {
                   </AnimatePresence>
                 </motion.div>
               );
-            })}
+              }}
+            />
           </div>
         )}
       </div>
