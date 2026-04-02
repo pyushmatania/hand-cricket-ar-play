@@ -160,6 +160,7 @@ export default function LeaderboardPage() {
   const [archiveEntries, setArchiveEntries] = useState<any[]>([]);
   const [challengeTargetId, setChallengeTargetId] = useState<string | null>(null);
   const [selectedFriendId, setSelectedFriendId] = useState<string | null>(null);
+  const [previewFriendId, setPreviewFriendId] = useState<string | null>(null);
   const [sparklines, setSparklines] = useState<Record<string, ("W" | "L" | "D")[]>>({});
   const [playerOfWeek, setPlayerOfWeek] = useState<any>(null);
   const [potwLoading, setPotwLoading] = useState(false);
