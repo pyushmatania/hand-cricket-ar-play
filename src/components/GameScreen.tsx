@@ -65,6 +65,20 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickConfiguredMatchCommentators(commentaryVoice));
   const prevPhaseRef = useRef(game.phase);
 
+  // Ambient stadium music for AR mode
+  useEffect(() => {
+    if (soundEnabled && musicEnabled && !game.result) {
+      startAmbientStadium(ambientVolume);
+    } else {
+      stopAmbientStadium();
+    }
+    return () => { stopAmbientStadium(); };
+  }, [soundEnabled, musicEnabled, game.result]);
+
+  useEffect(() => {
+    if (soundEnabled && musicEnabled) setAmbientVolume(ambientVolume);
+  }, [ambientVolume, soundEnabled, musicEnabled]);
+
   // Fireworks state
   const [fireworkType, setFireworkType] = useState<FireworkType | null>(null);
 
