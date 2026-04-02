@@ -312,12 +312,46 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          created_at: string
+          data: Json | null
+          id: string
+          message: string
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json | null
+          id?: string
+          message: string
+          read?: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json | null
+          id?: string
+          message?: string
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           abandons: number
           avatar_index: number
           avatar_url: string | null
           best_streak: number
+          coins: number
           created_at: string
           current_streak: number
           display_name: string
@@ -326,16 +360,19 @@ export type Database = {
           id: string
           invite_code: string
           losses: number
+          rank_tier: string
           total_matches: number
           updated_at: string
           user_id: string
           wins: number
+          xp: number
         }
         Insert: {
           abandons?: number
           avatar_index?: number
           avatar_url?: string | null
           best_streak?: number
+          coins?: number
           created_at?: string
           current_streak?: number
           display_name?: string
@@ -344,16 +381,19 @@ export type Database = {
           id?: string
           invite_code?: string
           losses?: number
+          rank_tier?: string
           total_matches?: number
           updated_at?: string
           user_id: string
           wins?: number
+          xp?: number
         }
         Update: {
           abandons?: number
           avatar_index?: number
           avatar_url?: string | null
           best_streak?: number
+          coins?: number
           created_at?: string
           current_streak?: number
           display_name?: string
@@ -362,10 +402,39 @@ export type Database = {
           id?: string
           invite_code?: string
           losses?: number
+          rank_tier?: string
           total_matches?: number
           updated_at?: string
           user_id?: string
           wins?: number
+          xp?: number
+        }
+        Relationships: []
+      }
+      rank_history: {
+        Row: {
+          created_at: string
+          id: string
+          new_tier: string
+          old_tier: string
+          points: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          new_tier: string
+          old_tier: string
+          points?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          new_tier?: string
+          old_tier?: string
+          points?: number
+          user_id?: string
         }
         Relationships: []
       }
