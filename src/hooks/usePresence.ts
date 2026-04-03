@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { SFX, Haptics } from "@/lib/sounds";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 
 interface PresenceState {
