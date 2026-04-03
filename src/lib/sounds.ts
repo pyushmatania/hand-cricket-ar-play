@@ -380,4 +380,5 @@ export const Haptics = {
   coinSpend() { navigator?.vibrate?.([10, 20, 10]); },
   chestOpen() { navigator?.vibrate?.([20, 30, 40, 30, 60]); },
   navTap() { navigator?.vibrate?.(6); },
+  countdownTick() { navigator?.vibrate?.([15, 20, 15]); },
 };
