@@ -114,6 +114,7 @@ interface ProfileData {
   equipped_avatar_frame: string | null;
   equipped_bat_skin: string | null;
   equipped_vs_effect: string | null;
+  equipped_button_style: string | null;
   xp: number;
   coins: number;
   rank_tier: string;
