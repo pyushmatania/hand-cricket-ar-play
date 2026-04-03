@@ -22,8 +22,10 @@ export default function VSIntroScreen({
   playerAvatarIndex = 0,
   opponentAvatarIndex = 1,
   gameType = "ar",
+  equippedVSEffect,
   onComplete,
 }: Props) {
+  const vsEffect = getVSEffect(equippedVSEffect);
   const [stage, setStage] = useState<"enter" | "vs" | "flash" | "done">("enter");
 
   useEffect(() => {
