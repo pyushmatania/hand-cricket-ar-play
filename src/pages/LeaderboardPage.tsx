@@ -441,36 +441,41 @@ export default function LeaderboardPage() {
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden pb-24">
-      <div className="absolute inset-0 stadium-gradient pointer-events-none" />
-      <div className="absolute inset-0 vignette pointer-events-none" />
-      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[500px] h-[300px] pointer-events-none"
-        style={{ background: "radial-gradient(ellipse, hsl(45 93% 58% / 0.05) 0%, transparent 70%)" }} />
+      <div className="absolute inset-0 bg-gradient-to-b from-[hsl(222_55%_10%)] to-background pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] pointer-events-none"
+        style={{ background: "radial-gradient(ellipse, hsl(51 100% 50% / 0.04) 0%, transparent 70%)" }} />
       <TopStatusBar />
 
       <div className="relative z-10 max-w-lg mx-auto px-4 pt-4">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-3">
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-1 h-6 rounded-full bg-gradient-to-b from-secondary to-secondary/40" />
-              <h1 className="font-display text-xl font-black text-foreground tracking-wider">LEADERBOARD</h1>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-b from-game-gold to-[hsl(43_96%_42%)] border-b-3 border-[hsl(43_96%_32%)] flex items-center justify-center text-lg shadow-[0_4px_12px_hsl(51_100%_50%/0.3)]">
+                🏆
+              </div>
+              <div>
+                <h1 className="font-game-title text-lg text-foreground">Leaderboard</h1>
+                <span className="text-[8px] text-muted-foreground font-game-display tracking-[0.2em]">COMPETE & CLIMB</span>
+              </div>
             </div>
             {myStats && <RankBadge stats={myStats} compact />}
           </div>
         </motion.div>
 
-        {/* Scrollable tab bar */}
-        <div className="flex gap-1 mb-3 glass-card rounded-xl p-1 overflow-x-auto no-scrollbar">
+        {/* Scrollable tab bar — game-styled */}
+        <div className="flex gap-1 mb-4 bg-game-dark/80 rounded-2xl p-1 overflow-x-auto no-scrollbar border border-[hsl(222_25%_22%/0.5)]">
           {mainTabs.map((t) => (
             <button
               key={t.key}
               onClick={() => setMainTab(t.key)}
-              className={`shrink-0 px-3 py-2 rounded-lg font-display text-[8px] font-bold tracking-widest transition-all flex items-center gap-1 ${
+              className={`shrink-0 px-3 py-2.5 rounded-xl font-game-display text-[7px] tracking-widest transition-all flex items-center gap-1 ${
                 mainTab === t.key
-                  ? "bg-gradient-to-r from-secondary/20 to-secondary/10 text-secondary border border-secondary/20"
-                  : "text-muted-foreground"
+                  ? "bg-gradient-to-b from-game-gold to-[hsl(43_96%_42%)] text-game-dark border-b-2 border-[hsl(43_96%_32%)] shadow-[0_2px_8px_hsl(51_100%_50%/0.3)] font-bold"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              <span className="text-xs">{t.icon}</span>
+              <span className="text-sm">{t.icon}</span>
               {t.label}
             </button>
           ))}
