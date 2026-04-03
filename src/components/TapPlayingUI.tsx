@@ -12,6 +12,7 @@ import { pickConfiguredMatchCommentators } from "@/lib/commentaryDuo";
 import ScoreBoard from "./ScoreBoard";
 import CelebrationEffects from "./CelebrationEffects";
 import ShotResultOverlay from "./ShotResultOverlay";
+import ArenaParticles from "./ArenaParticles";
 import OverBreakScreen from "./OverBreakScreen";
 import WicketBreakdownCard, { type WicketBreakdownData } from "./WicketBreakdownCard";
 import pitch3d from "@/assets/pitch-3d.jpg";
@@ -327,6 +328,9 @@ export default function TapPlayingUI({
           <div className="absolute inset-0 bg-gradient-to-b from-[hsl(220_25%_8%/0.7)] via-[hsl(220_25%_8%/0.4)] to-[hsl(220_25%_8%/0.85)]" />
         </div>
       )}
+
+      {/* Arena-specific floating particles */}
+      {phase !== "not_started" && phase !== "finished" && <ArenaParticles arenaId={arenaId} />}
 
       {/* Floodlight flicker */}
       <AnimatePresence>
