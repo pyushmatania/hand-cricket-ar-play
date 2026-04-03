@@ -27,6 +27,7 @@ const MatchHistoryPage = lazy(() => import("./pages/MatchHistoryPage"));
 const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
 const ShopPage = lazy(() => import("./pages/ShopPage"));
 const DailyRewardsPage = lazy(() => import("./pages/DailyRewardsPage"));
+const BattlePassPage = lazy(() => import("./pages/BattlePassPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -65,6 +66,7 @@ function AnimatedRoutes() {
         <Route path="/notifications" element={<LazyPage><PageTransition><NotificationsPage /></PageTransition></LazyPage>} />
         <Route path="/shop" element={<LazyPage><PageTransition><ShopPage /></PageTransition></LazyPage>} />
         <Route path="/daily-rewards" element={<LazyPage><PageTransition><DailyRewardsPage /></PageTransition></LazyPage>} />
+        <Route path="/battle-pass" element={<LazyPage><PageTransition><BattlePassPage /></PageTransition></LazyPage>} />
         <Route path="*" element={<LazyPage><PageTransition><NotFound /></PageTransition></LazyPage>} />
       </Routes>
     </AnimatePresence>
