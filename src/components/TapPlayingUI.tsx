@@ -63,8 +63,10 @@ export default function TapPlayingUI({
   arenaImage,
   arenaId,
   equippedBatSkin,
+  equippedButtonStyle,
 }: TapPlayingUIProps) {
   const batSkin = getBatSkin(equippedBatSkin);
+  const btnTheme = getButtonStyle(equippedButtonStyle);
   const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, commentaryVoice, voiceEngine, commentaryLanguage, musicEnabled, ambientVolume } = useSettings();
 
   // Ambient stadium music — arena-specific
