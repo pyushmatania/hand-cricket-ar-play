@@ -1666,15 +1666,19 @@ export default function MultiplayerScreen({ onHome }: Props) {
                   <div className="space-y-1.5">
                     <div className="w-full h-1.5 rounded-full bg-muted/20 overflow-hidden">
                       <motion.div
-                        className="h-full rounded-full bg-gradient-to-r from-neon-green to-neon-green/70"
+                        className={`h-full rounded-full bg-gradient-to-r ${inningsBreakCountdown <= 5 ? "from-red-500 to-orange-500" : "from-neon-green to-neon-green/70"}`}
                         initial={{ width: "100%" }}
                         animate={{ width: `${(inningsBreakCountdown / 15) * 100}%` }}
                         transition={{ duration: 0.3 }}
                       />
                     </div>
-                    <p className="text-[8px] text-muted-foreground font-display tracking-wider">
-                      Auto-ready in <span className="text-secondary font-bold">{inningsBreakCountdown}s</span>
-                    </p>
+                    <motion.p
+                      className={`text-[8px] font-display tracking-wider ${inningsBreakCountdown <= 5 ? "text-red-400 font-bold" : "text-muted-foreground"}`}
+                      animate={inningsBreakCountdown <= 5 ? { scale: [1, 1.15, 1], opacity: [1, 0.7, 1] } : {}}
+                      transition={{ duration: 0.5, repeat: Infinity }}
+                    >
+                      Auto-ready in <span className={`font-bold ${inningsBreakCountdown <= 5 ? "text-red-300" : "text-secondary"}`}>{inningsBreakCountdown}s</span>
+                    </motion.p>
                   </div>
                 )}
 
