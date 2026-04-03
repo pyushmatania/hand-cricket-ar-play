@@ -87,6 +87,13 @@ export default {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      boxShadow: {
+        "game-card": "0 4px 12px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.1)",
+        "game-button": "0 4px 0 rgba(0,0,0,0.3), 0 6px 12px rgba(0,0,0,0.2)",
+        "game-button-pressed": "0 2px 0 rgba(0,0,0,0.3), 0 3px 6px rgba(0,0,0,0.2)",
+        "game-glow-green": "0 0 20px hsl(122 39% 49% / 0.4), 0 0 60px hsl(122 39% 49% / 0.2)",
+        "game-glow-gold": "0 0 20px hsl(51 100% 50% / 0.4), 0 0 60px hsl(51 100% 50% / 0.2)",
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },

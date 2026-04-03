@@ -60,6 +60,23 @@
     --floodlight: 217 80% 75%;
     --pitch-line: 217 30% 40% / 0.15;
 
+    /* Supercell Game Palette */
+    --game-green: 122 39% 49%;
+    --game-gold: 51 100% 50%;
+    --game-blue: 207 90% 54%;
+    --game-red: 4 90% 58%;
+    --game-orange: 36 100% 50%;
+    --game-purple: 291 47% 51%;
+    --game-dark: 240 30% 14%;
+    --game-medium: 222 48% 17%;
+    --game-teal: 174 72% 46%;
+
+    /* Rarity colors */
+    --rarity-common: 210 15% 60%;
+    --rarity-rare: 207 90% 54%;
+    --rarity-epic: 291 47% 51%;
+    --rarity-legendary: 43 96% 56%;
+
     /* Gradients */
     --gradient-blue-deep: linear-gradient(180deg, hsl(222 55% 10%) 0%, hsl(222 47% 4%) 100%);
     --gradient-card: linear-gradient(145deg, hsl(222 40% 13% / 0.9), hsl(222 40% 8% / 0.95));
