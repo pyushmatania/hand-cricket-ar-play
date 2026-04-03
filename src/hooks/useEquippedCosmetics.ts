@@ -6,9 +6,10 @@ export interface EquippedCosmetics {
   batSkin: string | null;
   vsEffect: string | null;
   avatarFrame: string | null;
+  buttonStyle: string | null;
 }
 
-const DEFAULT: EquippedCosmetics = { batSkin: null, vsEffect: null, avatarFrame: null };
+const DEFAULT: EquippedCosmetics = { batSkin: null, vsEffect: null, avatarFrame: null, buttonStyle: null };
 
 export function useEquippedCosmetics(): EquippedCosmetics {
   const { user } = useAuth();
@@ -18,7 +19,7 @@ export function useEquippedCosmetics(): EquippedCosmetics {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("equipped_bat_skin, equipped_vs_effect, equipped_avatar_frame")
+      .select("equipped_bat_skin, equipped_vs_effect, equipped_avatar_frame, equipped_button_style")
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data }) => {
@@ -27,6 +28,7 @@ export function useEquippedCosmetics(): EquippedCosmetics {
             batSkin: (data as any).equipped_bat_skin || null,
             vsEffect: (data as any).equipped_vs_effect || null,
             avatarFrame: (data as any).equipped_avatar_frame || null,
+            buttonStyle: (data as any).equipped_button_style || null,
           });
         }
       });
