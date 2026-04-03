@@ -106,10 +106,11 @@ export default function HomePage() {
   const nextArena = ARENA_LEVELS[ARENA_LEVELS.indexOf(currentArena) + 1] || currentArena;
 
   return (
-    <div className="min-h-screen bg-[hsl(240_30%_6%)] relative overflow-hidden pb-28">
-      {/* Background sky gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[hsl(220_60%_18%)] via-[hsl(240_30%_8%)] to-[hsl(240_30%_6%)] pointer-events-none" />
-      <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[hsl(30_80%_50%/0.08)] to-transparent pointer-events-none" />
+    <div className="min-h-screen relative overflow-hidden pb-28 scallop-bg">
+      {/* Vignette overlay */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(222 47% 3% / 0.7) 100%)" }} />
+      {/* Warm top glow */}
+      <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[hsl(30_80%_50%/0.06)] to-transparent pointer-events-none" />
 
       {/* Top Bar */}
       <TopBar coins={profile?.coins ?? 0} runs={profile?.xp ?? 0} />
