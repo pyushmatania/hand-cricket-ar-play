@@ -465,7 +465,7 @@ export default function TapPlayingUI({
                 <p className="text-[6px] text-white/50 font-game-display font-bold tracking-[0.2em] mb-0.5">{opponentName.toUpperCase().slice(0, 8)}</p>
                 <motion.div initial={{ rotateY: -90 }} animate={{ rotateY: 0 }} transition={{ delay: 0.1 }}
                   className="w-10 h-10 rounded-xl bg-gradient-to-br from-game-gold/15 to-game-gold/5 border border-game-gold/20 flex items-center justify-center mx-auto">
-                  <span className="text-xl">{MOVES.find(m => m.move === lastResult?.aiMove)?.emoji || opponentEmoji}</span>
+                  <span className="text-xl">{btnTheme.moves[lastResult?.aiMove === "DEF" ? "DEF" : String(lastResult?.aiMove)]?.emoji || opponentEmoji}</span>
                 </motion.div>
                 <p className="text-[8px] font-game-display font-bold text-game-gold mt-0.5">{lastResult.aiMove === "DEF" ? "DEF" : lastResult.aiMove}</p>
               </div>
