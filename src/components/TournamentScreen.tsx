@@ -15,6 +15,7 @@ import EnhancedPostMatch from "./EnhancedPostMatch";
 import OddEvenToss from "./OddEvenToss";
 import TapPlayingUI from "./TapPlayingUI";
 import OverSelector from "./OverSelector";
+import { useEquippedCosmetics } from "@/hooks/useEquippedCosmetics";
 
 type Round = {
   round: number;
@@ -39,6 +40,7 @@ export default function TournamentScreen({ onHome }: Props) {
   const arenaImage = (location.state as any)?.arenaImage as string | undefined;
   const arenaId = (location.state as any)?.arenaId as string | undefined;
   const { soundEnabled, hapticsEnabled, commentaryVoice, tournamentCeremoniesEnabled } = useSettings();
+  const cosmetics = useEquippedCosmetics();
   const { user } = useAuth();
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
@@ -328,6 +330,7 @@ export default function TournamentScreen({ onHome }: Props) {
               commentators={matchCommentators}
               arenaImage={arenaImage}
               arenaId={arenaId}
+              equippedBatSkin={cosmetics.batSkin}
             />
           </>
         )}

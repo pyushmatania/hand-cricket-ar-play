@@ -15,6 +15,7 @@ import EnhancedPreMatch from "./EnhancedPreMatch";
 import EnhancedPostMatch from "./EnhancedPostMatch";
 import TapPlayingUI from "./TapPlayingUI";
 import OverSelector from "./OverSelector";
+import { useEquippedCosmetics } from "@/hooks/useEquippedCosmetics";
 
 const AI_NAME = "Rohit AI";
 const AI_EMOJI = "🏏";
@@ -29,6 +30,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const arenaId = (location.state as any)?.arenaId as string | undefined;
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
+  const cosmetics = useEquippedCosmetics();
   const { soundEnabled, hapticsEnabled, crowdEnabled, commentaryVoice, tapCeremoniesEnabled } = useSettings();
   const { user } = useAuth();
   const savedRef = useRef(false);
@@ -233,6 +235,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
           commentators={matchCommentators}
           arenaImage={arenaImage}
           arenaId={arenaId}
+          equippedBatSkin={cosmetics.batSkin}
         />
       </div>
     </div>

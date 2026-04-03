@@ -11,6 +11,7 @@ import OddEvenToss from "./OddEvenToss";
 import EnhancedPreMatch from "./EnhancedPreMatch";
 import EnhancedPostMatch from "./EnhancedPostMatch";
 import TapPlayingUI from "./TapPlayingUI";
+import { useEquippedCosmetics } from "@/hooks/useEquippedCosmetics";
 import ScoreBoard from "./ScoreBoard";
 import RulesSheet from "./RulesSheet";
 
@@ -34,6 +35,7 @@ export default function DailyChallengeScreen({ onHome }: Props) {
   const arenaImage = (location.state as any)?.arenaImage as string | undefined;
   const arenaId = (location.state as any)?.arenaId as string | undefined;
   const { soundEnabled, hapticsEnabled, crowdEnabled, commentaryVoice, dailyCeremoniesEnabled } = useSettings();
+  const cosmetics = useEquippedCosmetics();
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
   const [phase, setPhase] = useState<"intro" | "toss" | "playing" | "done">("intro");
@@ -282,6 +284,7 @@ export default function DailyChallengeScreen({ onHome }: Props) {
               commentators={matchCommentators}
               arenaImage={arenaImage}
               arenaId={arenaId}
+              equippedBatSkin={cosmetics.batSkin}
             />
           </>
         )}

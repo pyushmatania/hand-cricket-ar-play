@@ -4,6 +4,7 @@ import PlayerAvatar from "@/components/PlayerAvatar";
 import { SFX } from "@/lib/sounds";
 import playerBatsman from "@/assets/player-batsman.png";
 import playerBowler from "@/assets/player-bowler.png";
+import { getVSEffect } from "@/lib/cosmetics";
 
 interface Props {
   playerName: string;
@@ -11,6 +12,7 @@ interface Props {
   playerAvatarIndex?: number;
   opponentAvatarIndex?: number;
   gameType?: string;
+  equippedVSEffect?: string | null;
   onComplete: () => void;
 }
 
@@ -20,8 +22,10 @@ export default function VSIntroScreen({
   playerAvatarIndex = 0,
   opponentAvatarIndex = 1,
   gameType = "ar",
+  equippedVSEffect,
   onComplete,
 }: Props) {
+  const vsEffect = getVSEffect(equippedVSEffect);
   const [stage, setStage] = useState<"enter" | "vs" | "flash" | "done">("enter");
 
   useEffect(() => {
@@ -48,7 +52,7 @@ export default function VSIntroScreen({
         <motion.div
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[60] flex items-center justify-center overflow-hidden"
-          style={{ background: "linear-gradient(180deg, hsl(222 47% 6%), hsl(222 47% 11%))" }}
+          style={{ background: `linear-gradient(180deg, ${vsEffect.bgGradient.includes("from-") ? "hsl(222 47% 6%)" : "hsl(222 47% 6%)"}, hsl(222 47% 11%))` }}
         >
           {/* Animated background lines */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -128,7 +132,7 @@ export default function VSIntroScreen({
                 transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                 className="absolute -inset-6 rounded-full border border-dashed border-primary/20"
               />
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary via-accent to-secondary flex items-center justify-center shadow-[0_0_40px_hsl(217_91%_60%/0.4)]">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary via-accent to-secondary flex items-center justify-center" style={{ boxShadow: `0 0 40px ${vsEffect.glowColor}` }}>
                 <span className="font-display text-xl font-black text-white">VS</span>
               </div>
               {/* Fire-like particles */}
@@ -144,7 +148,7 @@ export default function VSIntroScreen({
                   transition={{ duration: 1 + Math.random(), repeat: Infinity, delay: i * 0.2 }}
                   className="absolute top-1/2 left-1/2 w-2 h-2 rounded-full"
                   style={{
-                    background: `hsl(${20 + Math.random() * 30} 90% 55%)`,
+                    background: vsEffect.particleColors[i % vsEffect.particleColors.length],
                     filter: "blur(1px)",
                   }}
                 />

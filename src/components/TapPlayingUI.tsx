@@ -18,6 +18,7 @@ import WicketBreakdownCard, { type WicketBreakdownData } from "./WicketBreakdown
 import pitch3d from "@/assets/pitch-3d.jpg";
 import { getBestArena } from "@/lib/arenas";
 import GameButton from "./shared/GameButton";
+import { getBatSkin } from "@/lib/cosmetics";
 
 /* ── Move button config ── */
 const MOVES: { move: Move; label: string; emoji: string; color: string; border: string; glow: string }[] = [
@@ -57,6 +58,7 @@ export interface TapPlayingUIProps {
   commentators?: [Commentator, Commentator];
   arenaImage?: string;
   arenaId?: string;
+  equippedBatSkin?: string | null;
 }
 
 export default function TapPlayingUI({
@@ -68,7 +70,9 @@ export default function TapPlayingUI({
   extraContent, modeLabel = "TAP MODE", matchConfig, innings1Balls, commentators,
   arenaImage,
   arenaId,
+  equippedBatSkin,
 }: TapPlayingUIProps) {
+  const batSkin = getBatSkin(equippedBatSkin);
   const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, commentaryVoice, voiceEngine, commentaryLanguage, musicEnabled, ambientVolume } = useSettings();
 
   // Ambient stadium music — arena-specific
@@ -477,6 +481,13 @@ export default function TapPlayingUI({
       {/* ── Color-coded Move Buttons ── */}
       {phase !== "not_started" && phase !== "finished" && !waitingForOpponent && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative pb-1">
+          {/* Equipped bat skin indicator */}
+          {equippedBatSkin && equippedBatSkin !== "Classic Willow" && (
+            <div className="flex items-center justify-center gap-1.5 mb-1">
+              <span className="text-sm">{batSkin.emoji}</span>
+              <span className="text-[7px] text-white/40 font-game-display tracking-wider">{equippedBatSkin.toUpperCase()}</span>
+            </div>
+          )}
           <p className="text-center text-[7px] text-white/40 font-game-display mb-1.5 tracking-[0.2em]">
             {isBatting ? "⚡ TAP YOUR SHOT" : "🎯 TAP YOUR BOWL"}
           </p>
