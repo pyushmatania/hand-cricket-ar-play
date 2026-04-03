@@ -52,7 +52,7 @@ export default function VSIntroScreen({
         <motion.div
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[60] flex items-center justify-center overflow-hidden"
-          style={{ background: "linear-gradient(180deg, hsl(222 47% 6%), hsl(222 47% 11%))" }}
+          style={{ background: `linear-gradient(180deg, ${vsEffect.bgGradient.includes("from-") ? "hsl(222 47% 6%)" : "hsl(222 47% 6%)"}, hsl(222 47% 11%))` }}
         >
           {/* Animated background lines */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
