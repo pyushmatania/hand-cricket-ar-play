@@ -360,7 +360,7 @@ export default function HomePage() {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate("/shop")}
-            className="bg-gradient-to-br from-game-teal/20 to-game-blue/10 border-2 border-game-teal/30 rounded-2xl p-3 flex items-center gap-3"
+            className="wood-panel metal-corners rounded-2xl p-3 flex items-center gap-3"
           >
             <span className="text-2xl">🛒</span>
             <div className="text-left">
