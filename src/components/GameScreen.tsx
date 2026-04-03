@@ -73,6 +73,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   // ── Big result animation ──
   const [bigResult, setBigResult] = useState<BallResult | null>(null);
   const [playerXP, setPlayerXP] = useState(0);
+  const [matchRewards, setMatchRewards] = useState<any>(null);
   const [stadiumMode, setStadiumMode] = useState(true);
   const [filter, setFilter] = useState<CameraFilter>("broadcast");
   const [gloveStyle, setGloveStyle] = useState<GloveStyle>("cricket");
