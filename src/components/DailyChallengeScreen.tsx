@@ -285,6 +285,7 @@ export default function DailyChallengeScreen({ onHome }: Props) {
               arenaImage={arenaImage}
               arenaId={arenaId}
               equippedBatSkin={cosmetics.batSkin}
+              equippedButtonStyle={cosmetics.buttonStyle}
             />
           </>
         )}
