@@ -54,6 +54,7 @@ export interface TapPlayingUIProps {
   arenaId?: string;
   equippedBatSkin?: string | null;
   equippedButtonStyle?: string | null;
+  weather?: Weather | null;
 }
 
 export default function TapPlayingUI({
