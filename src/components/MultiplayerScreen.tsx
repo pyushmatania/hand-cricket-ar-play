@@ -756,7 +756,22 @@ export default function MultiplayerScreen({ onHome }: Props) {
     }
   };
 
-  const loadOpponentName = async (game: MultiplayerGame) => {
+  const loadLobbyFriends = async () => {
+    if (!user) return;
+    const { data: friendRows } = await supabase
+      .from("friends")
+      .select("friend_id")
+      .eq("user_id", user.id);
+    if (!friendRows || friendRows.length === 0) { setLobbyFriends([]); return; }
+    const friendIds = friendRows.map((f: any) => f.friend_id);
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("user_id, display_name, avatar_index, wins, total_matches")
+      .in("user_id", friendIds);
+    setLobbyFriends(profiles || []);
+  };
+
+
     const oppId = user?.id === game.host_id ? game.guest_id : game.host_id;
     if (!oppId) return;
     const { data } = await supabase.from("profiles").select("display_name, avatar_index").eq("user_id", oppId).single();
