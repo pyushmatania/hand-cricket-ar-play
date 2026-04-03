@@ -107,8 +107,9 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const onlineUsers = usePresence();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [phase, setPhase] = useState<Phase>("lobby");
+  const [phase, _setPhase] = useState<Phase>("lobby");
   const phaseRef = useRef<Phase>("lobby");
+  const setPhase = useCallback((p: Phase) => { phaseRef.current = p; _setPhase(p); }, []);
   const [games, setGames] = useState<LobbyGame[]>([]);
   const [lobbyTab, setLobbyTab] = useState<"join" | "create" | "friends">("join");
   const [currentGame, setCurrentGame] = useState<MultiplayerGame | null>(null);
