@@ -169,7 +169,7 @@ export default function TournamentScreen({ onHome }: Props) {
   const winsCount = rounds.filter(r => r.result === "win").length;
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-background flex flex-col overflow-hidden">
       <div className="absolute inset-0 stadium-gradient pointer-events-none" />
       <div className="absolute inset-0 vignette pointer-events-none" />
       <div className="absolute inset-x-0 bottom-0 h-48 bg-[radial-gradient(ellipse_at_center,hsl(142_71%_45%/0.12),hsl(142_71%_45%/0.04)_55%,transparent_70%)] pointer-events-none" />
