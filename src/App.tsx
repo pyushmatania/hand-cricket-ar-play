@@ -26,6 +26,7 @@ const FriendsPage = lazy(() => import("./pages/FriendsPage"));
 const MatchHistoryPage = lazy(() => import("./pages/MatchHistoryPage"));
 const NotificationsPage = lazy(() => import("./pages/NotificationsPage"));
 const ShopPage = lazy(() => import("./pages/ShopPage"));
+const DailyRewardsPage = lazy(() => import("./pages/DailyRewardsPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
