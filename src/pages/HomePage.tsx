@@ -388,10 +388,7 @@ export default function HomePage() {
           transition={{ delay: 0.47 }}
           whileTap={{ scale: 0.97 }}
           onClick={() => navigate("/battle-pass")}
-          className="w-full mb-4 rounded-2xl p-3 flex items-center gap-3 border-2 border-secondary/30"
-          style={{
-            background: "linear-gradient(135deg, hsl(45 93% 58% / 0.12), hsl(36 90% 48% / 0.06))",
-          }}
+          className="w-full mb-4 wood-panel metal-corners rounded-2xl p-3 flex items-center gap-3"
         >
           <span className="text-2xl">⚔️</span>
           <div className="flex-1 text-left">
