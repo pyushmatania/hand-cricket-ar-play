@@ -49,6 +49,9 @@ const GLOVE_OPTIONS: { key: GloveStyle; label: string }[] = [
 ];
 
 export default function GameScreen({ onHome }: GameScreenProps) {
+  const location = useLocation();
+  const arenaImage = (location.state as any)?.arenaImage as string | undefined;
+  const arenaId = (location.state as any)?.arenaId as string | undefined;
   const cameraRef = useRef<CameraFeedHandle>(null);
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
   const { game, startGame, playBall, resetGame } = useHandCricket();
