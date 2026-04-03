@@ -25,7 +25,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { BallResult, Move } from "@/hooks/useHandCricket";
 
 const MOVE_EMOJI: Record<string, string> = {
-  DEF: "✊", "1": "☝️", "2": "✌️", "3": "🫱", "4": "🖐️", "6": "👍",
+  DEF: "✊", "1": "☝️", "2": "✌️", "3": "🤟", "4": "🖖", "6": "👍",
 };
 
 type TossStep = "choose_oe" | "show_number" | "reveal" | "pick_innings" | null;
