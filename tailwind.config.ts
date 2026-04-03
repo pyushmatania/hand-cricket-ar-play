@@ -15,6 +15,12 @@ export default {
         display: ["Orbitron", "sans-serif"],
         body: ["Rajdhani", "sans-serif"],
         heading: ["Exo 2", "sans-serif"],
+        "game-display": ["Bungee", "sans-serif"],
+        "game-display-3d": ["Bungee Shade", "sans-serif"],
+        "game-title": ["Lilita One", "sans-serif"],
+        "game-body": ["Nunito", "sans-serif"],
+        "game-card": ["Fredoka", "sans-serif"],
+        "game-mono": ["Rubik", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -56,6 +62,15 @@ export default {
         floodlight: "hsl(var(--floodlight))",
         "neon-green": "hsl(var(--neon-green))",
         "neon-cyan": "hsl(var(--neon-cyan))",
+        "game-green": "hsl(var(--game-green))",
+        "game-gold": "hsl(var(--game-gold))",
+        "game-blue": "hsl(var(--game-blue))",
+        "game-red": "hsl(var(--game-red))",
+        "game-orange": "hsl(var(--game-orange))",
+        "game-purple": "hsl(var(--game-purple))",
+        "game-dark": "hsl(var(--game-dark))",
+        "game-medium": "hsl(var(--game-medium))",
+        "game-teal": "hsl(var(--game-teal))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -71,6 +86,13 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      boxShadow: {
+        "game-card": "0 4px 12px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.1)",
+        "game-button": "0 4px 0 rgba(0,0,0,0.3), 0 6px 12px rgba(0,0,0,0.2)",
+        "game-button-pressed": "0 2px 0 rgba(0,0,0,0.3), 0 3px 6px rgba(0,0,0,0.2)",
+        "game-glow-green": "0 0 20px hsl(122 39% 49% / 0.4), 0 0 60px hsl(122 39% 49% / 0.2)",
+        "game-glow-gold": "0 0 20px hsl(51 100% 50% / 0.4), 0 0 60px hsl(51 100% 50% / 0.2)",
       },
       keyframes: {
         "accordion-down": {
@@ -97,6 +119,16 @@ export default {
           "0%": { transform: "scale(0.95)", opacity: "0" },
           "100%": { transform: "scale(1)", opacity: "1" },
         },
+        "bounce-in": {
+          "0%": { transform: "scale(0.3)", opacity: "0" },
+          "50%": { transform: "scale(1.05)" },
+          "70%": { transform: "scale(0.9)" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
+        "float": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-8px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -105,6 +137,8 @@ export default {
         "slide-up": "slide-up 0.4s ease-out",
         "fade-in": "fade-in 0.3s ease-out",
         "scale-in": "scale-in 0.2s ease-out",
+        "bounce-in": "bounce-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)",
+        "float": "float 3s ease-in-out infinite",
       },
     },
   },
