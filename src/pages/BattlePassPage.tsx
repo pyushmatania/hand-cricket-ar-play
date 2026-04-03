@@ -298,12 +298,38 @@ export default function BattlePassPage() {
       )
     : 100;
 
-  const handleClaim = (key: string, reward: PassReward["free"]) => {
+  const handleClaim = useCallback(async (key: string, reward: PassReward["free"]) => {
+    if (!user || claimed.has(key)) return;
     SFX.rewardClaim();
     Haptics.rewardClaim();
     setClaimingReward(reward);
     setClaimed((prev) => new Set(prev).add(key));
-  };
+
+    // Persist coin/XP rewards to the database
+    const updates: Record<string, number> = {};
+    if (reward.label === "Coins" && reward.amount) {
+      updates.coins = coins + reward.amount;
+      setCoins((c) => c + reward.amount!);
+    }
+    if (reward.label === "XP Boost") {
+      updates.xp = currentXp + 50;
+      setCurrentXp((x) => x + 50);
+    }
+    if (reward.label === "XP Boost x2") {
+      updates.xp = currentXp + 100;
+      setCurrentXp((x) => x + 100);
+    }
+
+    if (Object.keys(updates).length > 0) {
+      const { error } = await supabase
+        .from("profiles")
+        .update(updates)
+        .eq("user_id", user.id);
+      if (error) {
+        toast({ title: "Failed to save reward", description: error.message, variant: "destructive" });
+      }
+    }
+  }, [user, claimed, coins, currentXp, toast]);
 
   return (
     <div className="min-h-screen bg-background pb-28 relative">
