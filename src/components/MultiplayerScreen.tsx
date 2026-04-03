@@ -159,7 +159,9 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const pvpPreMatchShownRef = useRef(false);
   
   // Innings break ready-up state
-  const [showInningsBreak, setShowInningsBreak] = useState(false);
+  const [showInningsBreak, _setShowInningsBreak] = useState(false);
+  const showInningsBreakRef = useRef(false);
+  const setShowInningsBreak = useCallback((v: boolean) => { showInningsBreakRef.current = v; _setShowInningsBreak(v); }, []);
   const [inningsBreakReady, setInningsBreakReady] = useState(false);
   const [inningsBreakStats, setInningsBreakStats] = useState<{ batter: string; bowler: string; score: number; lastMove: string; opponentLastMove: string } | null>(null);
   
@@ -403,15 +405,57 @@ export default function MultiplayerScreen({ onHome }: Props) {
             resolveTurn(updated);
           }
 
-          // Check for incoming tease
+          // Extract payload early so it's available for all checks below
           const payload_data = (updated as any).round_result_payload;
+
+          // Guest-side: reconstruct ball result from round_result_payload
+          if (user?.id !== updated.host_id && payload_data?.hostMove && payload_data?.guestMove && !payload_data?.tease) {
+            const hostMove = payload_data.hostMove;
+            const guestMove = payload_data.guestMove;
+            const battingIsHost = updated.host_batting;
+            const effectiveBattingIsHost = payload_data.isInningsChange ? !battingIsHost : battingIsHost;
+            const isOut = hostMove === guestMove;
+            const guestIsBatting = !effectiveBattingIsHost;
+
+            let ballRuns: number | "OUT";
+            if (isOut) {
+              ballRuns = "OUT";
+            } else {
+              const battingMove = effectiveBattingIsHost ? hostMove : guestMove;
+              const bowlingMove = effectiveBattingIsHost ? guestMove : hostMove;
+              let r: number;
+              if (battingMove === "DEF") {
+                r = bowlingMove === "DEF" ? 0 : parseInt(bowlingMove);
+              } else {
+                r = parseInt(battingMove);
+              }
+              ballRuns = guestIsBatting ? r : -r;
+            }
+
+            const guestBallResult: BallResult = {
+              userMove: guestMove as Move,
+              aiMove: hostMove as Move,
+              runs: ballRuns,
+              description: payload_data.text || "",
+            };
+
+            setLastBallResult(guestBallResult);
+            setPvpBallHistory(prev => {
+              if (prev.length >= (updated.current_turn)) return prev;
+              return [...prev, guestBallResult];
+            });
+            setLastResult(payload_data.text || null);
+            setTimeout(() => { setLastResult(null); setLastBallResult(null); }, 2500);
+          }
+
+          // Check for incoming tease
           if (payload_data?.tease && payload_data?.from !== user?.id) {
             setReceivedTease(payload_data.tease);
             setTimeout(() => setReceivedTease(null), 4000);
           }
 
           // Guest-side innings break detection
-          if ((updated as any).phase === "innings_break" && user?.id !== updated.host_id && !showInningsBreak) {
+          if ((updated as any).phase === "innings_break" && user?.id !== updated.host_id && !showInningsBreakRef.current) {
             // updated.host_batting is already the NEW value (post-flip).
             // Pre-flip: old_host_batting = !updated.host_batting
             // Guest was batting in innings 1 iff host was NOT batting = !old_host_batting = updated.host_batting
@@ -443,7 +487,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
           }
 
           // When phase transitions from innings_break to pre_round_countdown, dismiss the overlay
-          if ((updated as any).phase === "pre_round_countdown" && showInningsBreak) {
+          if ((updated as any).phase === "pre_round_countdown" && showInningsBreakRef.current) {
             setShowInningsBreak(false);
             setInningsBreakReady(false);
             setTurnCountdownMs(TURN_TIMER_MS); // Full reset
@@ -650,14 +694,16 @@ export default function MultiplayerScreen({ onHome }: Props) {
     if (user.id !== currentGame.host_id) return;
     if (currentGame.phase === "pre_round_countdown" && currentGame.phase_started_at) {
       const ms = Date.now() - new Date(currentGame.phase_started_at).getTime();
-      if (ms >= 1500) {
+      const remaining = Math.max(0, 1500 - ms);
+      const timer = setTimeout(() => {
         (supabase.from("multiplayer_games") as any).update({
           phase: "action_window",
           phase_started_at: new Date().toISOString(),
           turn_deadline_at: new Date(Date.now() + TURN_TIMER_MS).toISOString(),
           status: "playing",
         }).eq("id", currentGame.id).eq("phase", "pre_round_countdown");
-      }
+      }, remaining);
+      return () => clearTimeout(timer);
     }
     if (currentGame.phase === "action_window" && currentGame.turn_deadline_at && Date.now() >= new Date(currentGame.turn_deadline_at).getTime()) {
       const isHostMoveMissing = !currentGame.host_move;
