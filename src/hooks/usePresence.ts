@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { SFX, Haptics } from "@/lib/sounds";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 
 interface PresenceState {
@@ -41,6 +42,13 @@ export function usePresence(): PresenceData {
           }
         }
         setOnlineUsers(ids);
+      })
+      .on("presence", { event: "join" }, ({ key }) => {
+        // Play chime when someone else comes online
+        if (key && key !== user.id) {
+          SFX.friendOnline();
+          Haptics.light();
+        }
       })
       .on("presence", { event: "leave" }, ({ key }) => {
         if (key) {
