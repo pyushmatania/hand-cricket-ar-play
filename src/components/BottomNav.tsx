@@ -38,7 +38,7 @@ export default function BottomNav() {
             {NAV_ITEMS.map((item) => {
               const isActive =
                 location.pathname === item.path ||
-                (item.path === "/play" && location.pathname === "/");
+                (item.path === "/" && location.pathname === "/index");
               const isCenter = item.center;
 
               return (
