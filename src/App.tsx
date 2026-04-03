@@ -84,11 +84,14 @@ const App = () => {
           <TooltipProvider>
             <Toaster />
             <Sonner />
-            {showSplash && <SplashScreen onComplete={handleSplashComplete} />}
-            <BrowserRouter>
-              <MatchInviteNotification />
-              <AnimatedRoutes />
-            </BrowserRouter>
+            {showSplash ? (
+              <SplashScreen onComplete={handleSplashComplete} />
+            ) : (
+              <BrowserRouter>
+                <MatchInviteNotification />
+                <AnimatedRoutes />
+              </BrowserRouter>
+            )}
           </TooltipProvider>
         </SettingsProvider>
       </AuthProvider>
