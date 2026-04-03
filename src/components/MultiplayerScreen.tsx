@@ -16,6 +16,7 @@ import EnhancedPostMatch from "./EnhancedPostMatch";
 import LobbyChat from "./LobbyChat";
 import { pickConfiguredMatchCommentators, type Commentator } from "@/lib/commentaryDuo";
 import { useSettings } from "@/contexts/SettingsContext";
+import { SFX, Haptics } from "@/lib/sounds";
 import type { Move, BallResult } from "@/hooks/useHandCricket";
 import {
   claimMultiplayerGame,
@@ -1175,6 +1176,15 @@ export default function MultiplayerScreen({ onHome }: Props) {
     }, 1000);
     return () => { if (inningsBreakTimerRef.current) { clearInterval(inningsBreakTimerRef.current); inningsBreakTimerRef.current = null; } };
   }, [showInningsBreak, inningsBreakReady]);
+
+  // Warning sound + haptic at 5s and below
+  useEffect(() => {
+    if (!showInningsBreak || inningsBreakReady) return;
+    if (inningsBreakCountdown <= 5 && inningsBreakCountdown > 0) {
+      Haptics.countdownTick();
+      SFX.tossRevealBuild();
+    }
+  }, [inningsBreakCountdown, showInningsBreak, inningsBreakReady]);
 
   const isBatting = currentGame ? (isHost ? currentGame.host_batting : !currentGame.host_batting) : false;
   const myScore = currentGame ? (isHost ? currentGame.host_score : currentGame.guest_score) : 0;
