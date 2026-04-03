@@ -61,9 +61,17 @@ export function useMatchSaver() {
 
         // Streak bonus
         const hasStreakBonus = newStreak >= 3;
+        const streakXp = hasStreakBonus ? newStreak * 2 : 0;
         if (hasStreakBonus) {
-          xpEarned += newStreak * 2;
+          xpEarned += streakXp;
           coinsEarned += newStreak * 3;
+        }
+
+        // XP history entries to batch-insert later
+        const xpEntries: { user_id: string; amount: number; source: string }[] = [];
+        xpEntries.push({ user_id: user.id, amount: XP_REWARDS[resultKey] || 10, source: `match_${resultKey}` });
+        if (hasStreakBonus) {
+          xpEntries.push({ user_id: user.id, amount: streakXp, source: "streak_bonus" });
         }
 
         const oldTier = getRankTier({
