@@ -166,6 +166,7 @@ export default function DailyChallengeScreen({ onHome }: Props) {
           opponentWickets={game.aiWickets}
           ballHistory={game.ballHistory}
           commentators={matchCommentators}
+          matchRewards={matchRewards}
           onComplete={() => setShowPostMatch(false)}
         />
       )}

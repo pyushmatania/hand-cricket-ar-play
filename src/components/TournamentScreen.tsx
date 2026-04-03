@@ -396,6 +396,7 @@ export default function TournamentScreen({ onHome }: Props) {
           opponentWickets={game.aiWickets}
           ballHistory={game.ballHistory}
           commentators={matchCommentators}
+          matchRewards={matchRewards}
           onComplete={() => {
             setShowPostMatch(false);
             if (game.result !== "win") setEliminated(true);
