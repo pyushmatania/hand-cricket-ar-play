@@ -66,6 +66,7 @@ export default function TapPlayingUI({
   equippedBatSkin,
   equippedButtonStyle,
 }: TapPlayingUIProps) {
+  const shake = useScreenShake();
   const batSkin = getBatSkin(equippedBatSkin);
   const btnTheme = getButtonStyle(equippedButtonStyle);
   const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, commentaryVoice, voiceEngine, commentaryLanguage, musicEnabled, ambientVolume } = useSettings();
