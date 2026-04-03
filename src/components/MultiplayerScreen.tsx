@@ -1116,7 +1116,13 @@ export default function MultiplayerScreen({ onHome }: Props) {
                 className={`flex-1 py-2.5 rounded-lg font-display text-[10px] font-bold tracking-widest transition-all ${
                   lobbyTab === "join" ? "bg-primary text-primary-foreground" : "text-muted-foreground"
                 }`}>
-                🎮 JOIN MATCH
+                🎮 JOIN
+              </button>
+              <button onClick={() => setLobbyTab("friends")}
+                className={`flex-1 py-2.5 rounded-lg font-display text-[10px] font-bold tracking-widest transition-all ${
+                  lobbyTab === "friends" ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+                }`}>
+                👥 FRIENDS
               </button>
               <button onClick={() => setLobbyTab("create")}
                 className={`flex-1 py-2.5 rounded-lg font-display text-[10px] font-bold tracking-widest transition-all ${
