@@ -185,7 +185,7 @@ export default function TournamentScreen({ onHome }: Props) {
         <RulesSheet />
       </div>
 
-      <div className="relative z-10 flex-1 flex flex-col gap-2 px-4 pb-3 max-w-lg mx-auto w-full overflow-hidden">
+      <div className="relative z-10 flex-1 flex flex-col gap-2 px-4 pb-[env(safe-area-inset-bottom,16px)] max-w-lg mx-auto w-full overflow-y-auto overflow-x-hidden">
         {/* BRACKET VIEW */}
         {phase === "bracket" && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3 mt-2">
