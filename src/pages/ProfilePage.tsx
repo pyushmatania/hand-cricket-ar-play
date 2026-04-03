@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import ShareButton from "@/components/share/ShareButton";
 import ProfileShareCard from "@/components/share/ProfileShareCard";
+import AchievementShareCard from "@/components/share/AchievementShareCard";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
