@@ -39,9 +39,10 @@ interface ChatMessage {
 interface LobbyChatProps {
   friend: Friend;
   onBack: () => void;
+  onOpen?: () => void;
 }
 
-export default function LobbyChat({ friend, onBack }: LobbyChatProps) {
+export default function LobbyChat({ friend, onBack, onOpen }: LobbyChatProps) {
   const { user } = useAuth();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
