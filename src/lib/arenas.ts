@@ -17,7 +17,7 @@ export interface Arena {
 export const ARENAS: Arena[] = [
   {
     id: "school",
-    name: "School Ground",
+    name: "Classroom",
     subtitle: "Where legends begin",
     image: arenaSchool,
     emoji: "🏫",
