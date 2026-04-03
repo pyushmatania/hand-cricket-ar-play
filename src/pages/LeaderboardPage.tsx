@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,6 +18,7 @@ import PlayerOfTheWeek from "@/components/PlayerOfTheWeek";
 import MostActiveTicker from "@/components/MostActiveTicker";
 import CanvasFireworks from "@/components/CanvasFireworks";
 import FriendsNetworkGraph from "@/components/FriendsNetworkGraph";
+import SeasonCountdown from "@/components/SeasonCountdown";
 import { getRankTier } from "@/lib/rankTiers";
 import { useWeeklyChallenges } from "@/hooks/useWeeklyChallenges";
 import { toast } from "@/components/ui/use-toast";
