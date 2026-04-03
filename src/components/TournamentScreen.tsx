@@ -99,6 +99,7 @@ export default function TournamentScreen({ onHome }: Props) {
   const handleTossResult = (batFirst: boolean) => {
     setPendingBatFirst(batFirst);
     setMatchCommentators(pickConfiguredMatchCommentators(commentaryVoice));
+    setMatchWeather(rollWeather());
     if (tournamentCeremoniesEnabled) {
       setTimeout(() => setShowPreMatch(true), 500);
       return;
