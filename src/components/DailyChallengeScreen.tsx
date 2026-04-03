@@ -12,6 +12,7 @@ import EnhancedPreMatch from "./EnhancedPreMatch";
 import EnhancedPostMatch from "./EnhancedPostMatch";
 import TapPlayingUI from "./TapPlayingUI";
 import { useEquippedCosmetics } from "@/hooks/useEquippedCosmetics";
+import { rollWeather, type Weather } from "@/lib/weather";
 import ScoreBoard from "./ScoreBoard";
 import RulesSheet from "./RulesSheet";
 
@@ -51,6 +52,7 @@ export default function DailyChallengeScreen({ onHome }: Props) {
   const [tossInfo, setTossInfo] = useState<{ winner: string; battingFirst: string } | null>(null);
   const [pendingBatFirst, setPendingBatFirst] = useState<boolean | null>(null);
   const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickConfiguredMatchCommentators(commentaryVoice));
+  const [matchWeather] = useState<Weather>(() => rollWeather());
 
   const dailyTarget = getDailyTarget();
   const todayKey = getTodayKey();
@@ -286,6 +288,7 @@ export default function DailyChallengeScreen({ onHome }: Props) {
               arenaId={arenaId}
               equippedBatSkin={cosmetics.batSkin}
               equippedButtonStyle={cosmetics.buttonStyle}
+              weather={matchWeather}
             />
           </>
         )}

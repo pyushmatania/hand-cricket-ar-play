@@ -16,6 +16,7 @@ import EnhancedPostMatch from "./EnhancedPostMatch";
 import TapPlayingUI from "./TapPlayingUI";
 import OverSelector from "./OverSelector";
 import { useEquippedCosmetics } from "@/hooks/useEquippedCosmetics";
+import { rollWeather, type Weather } from "@/lib/weather";
 
 const AI_NAME = "Rohit AI";
 const AI_EMOJI = "🏏";
@@ -40,7 +41,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const [showOverSelector, setShowOverSelector] = useState(true);
   const [playerXP, setPlayerXP] = useState(0);
   const [matchRewards, setMatchRewards] = useState<any>(null);
-
+  const [matchWeather] = useState<Weather>(() => rollWeather());
   // Ceremony states
   const [showPreMatch, setShowPreMatch] = useState(false);
   const [showPostMatch, setShowPostMatch] = useState(false);
@@ -194,6 +195,23 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
         {/* Over selector - shown first */}
         {showOverSelector && game.phase === "not_started" && !showPreMatch && (
           <div className="mt-4">
+            {/* Weather badge */}
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <div
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl"
+                style={{
+                  background: "linear-gradient(180deg, hsl(30 40% 22%), hsl(25 35% 15%))",
+                  border: "2px solid hsl(25 30% 12%)",
+                  boxShadow: "inset 0 1px 0 hsl(35 40% 32%), 0 3px 6px hsl(0 0% 0% / 0.3)",
+                }}
+              >
+                <span className="text-sm">{matchWeather.icon}</span>
+                <div>
+                  <span className="font-display text-[9px] font-bold text-foreground/80 tracking-wider block">{matchWeather.name.toUpperCase()}</span>
+                  <span className="font-display text-[7px] text-muted-foreground/60">{matchWeather.description}</span>
+                </div>
+              </div>
+            </div>
             <OverSelector playerXP={playerXP} onSelect={handleOverSelect} />
           </div>
         )}
@@ -236,6 +254,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
           arenaId={arenaId}
           equippedBatSkin={cosmetics.batSkin}
           equippedButtonStyle={cosmetics.buttonStyle}
+          weather={matchWeather}
         />
       </div>
     </div>

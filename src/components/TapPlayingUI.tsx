@@ -20,6 +20,8 @@ import pitch3d from "@/assets/pitch-3d.jpg";
 import { getBestArena } from "@/lib/arenas";
 import GameButton from "./shared/GameButton";
 import { getBatSkin, getButtonStyle } from "@/lib/cosmetics";
+import WeatherOverlay from "./WeatherOverlay";
+import type { Weather } from "@/lib/weather";
 const ALL_MOVE_KEYS: Move[] = ["DEF", 1, 2, 3, 4, 6];
 
 export interface TapPlayingUIProps {
@@ -52,6 +54,7 @@ export interface TapPlayingUIProps {
   arenaId?: string;
   equippedBatSkin?: string | null;
   equippedButtonStyle?: string | null;
+  weather?: Weather | null;
 }
 
 export default function TapPlayingUI({
@@ -65,6 +68,7 @@ export default function TapPlayingUI({
   arenaId,
   equippedBatSkin,
   equippedButtonStyle,
+  weather,
 }: TapPlayingUIProps) {
   const shake = useScreenShake();
   const batSkin = getBatSkin(equippedBatSkin);
@@ -330,9 +334,14 @@ export default function TapPlayingUI({
       {/* Arena / pitch background */}
       {phase !== "not_started" && (
         <div className="fixed inset-0 z-0 pointer-events-none">
-          <img src={arenaImage || pitch3d} alt="" className="w-full h-full object-cover opacity-20" style={{ objectPosition: "center 40%" }} />
+          <img src={arenaImage || pitch3d} alt="" className="w-full h-full object-cover opacity-20" style={{ objectPosition: "center 40%", filter: weather?.visual.imageFilter }} />
           <div className="absolute inset-0 bg-gradient-to-b from-[hsl(220_25%_8%/0.7)] via-[hsl(220_25%_8%/0.4)] to-[hsl(220_25%_8%/0.85)]" />
         </div>
+      )}
+
+      {/* Weather overlay */}
+      {weather && phase !== "not_started" && phase !== "finished" && (
+        <WeatherOverlay weather={weather} />
       )}
 
       {/* Arena-specific floating particles */}

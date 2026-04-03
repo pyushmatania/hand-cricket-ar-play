@@ -17,6 +17,7 @@ import TapPlayingUI from "./TapPlayingUI";
 import OverSelector from "./OverSelector";
 import { useEquippedCosmetics } from "@/hooks/useEquippedCosmetics";
 import TournamentFixtureCard from "./TournamentFixtureCard";
+import { rollWeather, type Weather } from "@/lib/weather";
 
 type Round = {
   round: number;
@@ -61,6 +62,7 @@ export default function TournamentScreen({ onHome }: Props) {
   const [tossInfo, setTossInfo] = useState<{ winner: string; battingFirst: string } | null>(null);
   const [pendingBatFirst, setPendingBatFirst] = useState<boolean | null>(null);
   const [matchCommentators, setMatchCommentators] = useState<[Commentator, Commentator]>(() => pickConfiguredMatchCommentators(commentaryVoice));
+  const [matchWeather, setMatchWeather] = useState<Weather>(() => rollWeather());
 
   useEffect(() => {
     if (!user) return;
@@ -97,6 +99,7 @@ export default function TournamentScreen({ onHome }: Props) {
   const handleTossResult = (batFirst: boolean) => {
     setPendingBatFirst(batFirst);
     setMatchCommentators(pickConfiguredMatchCommentators(commentaryVoice));
+    setMatchWeather(rollWeather());
     if (tournamentCeremoniesEnabled) {
       setTimeout(() => setShowPreMatch(true), 500);
       return;
@@ -317,6 +320,7 @@ export default function TournamentScreen({ onHome }: Props) {
               arenaId={arenaId}
               equippedBatSkin={cosmetics.batSkin}
               equippedButtonStyle={cosmetics.buttonStyle}
+              weather={matchWeather}
             />
           </>
         )}
