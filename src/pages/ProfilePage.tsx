@@ -452,6 +452,33 @@ export default function ProfilePage() {
           </div>
         </motion.div>
 
+        {/* Share Profile */}
+        {profile && (
+          <div className="flex justify-center mb-4">
+            <ShareButton
+              title={`${profile.display_name}'s Hand Cricket Profile`}
+              text={`🏏 ${profile.display_name} — ${totalWins} wins, ${winRate}% win rate, High Score: ${Math.max(profile.high_score || 0, pvpRecord?.highScore || 0)} | Hand Cricket`}
+              variant="primary"
+              size="md"
+              renderCard={() => (
+                <ProfileShareCard
+                  displayName={profile.display_name}
+                  rankTier={profile.rank_tier}
+                  xp={profile.xp}
+                  totalMatches={totalMatches}
+                  wins={totalWins}
+                  losses={totalLosses}
+                  highScore={Math.max(profile.high_score || 0, pvpRecord?.highScore || 0)}
+                  bestStreak={profile.best_streak}
+                  totalSixes={profile.total_sixes}
+                  totalFours={profile.total_fours}
+                  winRate={winRate}
+                />
+              )}
+            />
+          </div>
+        )}
+
         {/* ═══ Tab Switcher ═══ */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="flex gap-1 mb-4 rounded-xl p-1 bg-[hsl(222_40%_10%/0.8)] border border-muted/10">
