@@ -16,6 +16,7 @@ import OddEvenToss from "./OddEvenToss";
 import TapPlayingUI from "./TapPlayingUI";
 import OverSelector from "./OverSelector";
 import { useEquippedCosmetics } from "@/hooks/useEquippedCosmetics";
+import TournamentFixtureCard from "./TournamentFixtureCard";
 
 type Round = {
   round: number;
