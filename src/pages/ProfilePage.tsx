@@ -272,12 +272,7 @@ export default function ProfilePage() {
     </div>
   );
 
-  /* ── Equipped cosmetics list ── */
-  const equippedItems = [
-    profile?.equipped_bat_skin && { label: "BAT", value: profile.equipped_bat_skin, emoji: "🏏" },
-    profile?.equipped_avatar_frame && { label: "FRAME", value: profile.equipped_avatar_frame, emoji: "🖼️" },
-    profile?.equipped_vs_effect && { label: "VS FX", value: profile.equipped_vs_effect, emoji: "✨" },
-  ].filter(Boolean) as { label: string; value: string; emoji: string }[];
+  /* ── Equipped cosmetics list (kept for reference in other places) ── */
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden pb-24">
