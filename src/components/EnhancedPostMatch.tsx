@@ -326,6 +326,33 @@ export default function EnhancedPostMatch({
             </motion.div>
           </div>
 
+          {/* XP/Coins reward strip above button */}
+          {matchRewards && (
+            <motion.div
+              initial={{ y: 10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="mx-4 mb-2 rounded-xl p-2.5 flex items-center justify-center gap-5 bg-white/[0.04] border border-white/10"
+            >
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm">⚡</span>
+                <span className="font-game-display text-sm font-black text-game-blue">+{matchRewards.xpEarned}</span>
+                <span className="text-[7px] text-muted-foreground font-game-display">XP</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm">🪙</span>
+                <span className="font-game-display text-sm font-black text-game-gold">+{matchRewards.coinsEarned}</span>
+                <span className="text-[7px] text-muted-foreground font-game-display">COINS</span>
+              </div>
+              {matchRewards.streakBonus && (
+                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-game-orange/15 border border-game-orange/25">
+                  <span className="text-[10px]">🔥</span>
+                  <span className="font-game-display text-[7px] text-game-orange">STREAK</span>
+                </div>
+              )}
+            </motion.div>
+          )}
+
           {/* Fixed bottom button */}
           <div className="sticky bottom-0 p-4 pb-8 bg-gradient-to-t from-[hsl(220_25%_8%)] via-[hsl(220_25%_8%/0.95)] to-transparent">
             <GameButton variant="gold" size="lg" bounce onClick={handleClose} className="w-full">
@@ -333,6 +360,17 @@ export default function EnhancedPostMatch({
             </GameButton>
           </div>
         </motion.div>
+      )}
+
+      {/* Level Up / Rank Up Modal */}
+      {showLevelUp && matchRewards && (
+        <LevelUpModal
+          rewards={matchRewards}
+          onClose={() => {
+            setShowLevelUp(false);
+            stableOnComplete();
+          }}
+        />
       )}
     </AnimatePresence>
   );
