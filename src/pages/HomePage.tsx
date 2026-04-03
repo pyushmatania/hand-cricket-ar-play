@@ -340,7 +340,7 @@ export default function HomePage() {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate("/game/tournament")}
-            className="bg-gradient-to-br from-game-purple/20 to-game-blue/10 border-2 border-game-purple/30 rounded-2xl p-3 flex items-center gap-3"
+            className="wood-panel-dark metal-corners rounded-2xl p-3 flex items-center gap-3"
           >
             <span className="text-2xl">🏆</span>
             <div className="text-left">
