@@ -35,7 +35,7 @@ const GESTURES = [
   },
   {
     move: "3",
-    emoji: "🤟👆",
+    emoji: "🫱",
     name: "TRIPLE",
     value: "3 runs",
     description: "Show the rock/love sign — thumb, index, and pinky extended.",
