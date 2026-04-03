@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import TopStatusBar from "@/components/TopStatusBar";
 import PlayerAvatar from "@/components/PlayerAvatar";
+import GlobalChat from "@/components/chat/GlobalChat";
 import FriendStatsModal from "@/components/FriendStatsModal";
 import {
   createMultiplayerRoom,
