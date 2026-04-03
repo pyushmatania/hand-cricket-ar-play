@@ -15,6 +15,7 @@ import ShotResultOverlay from "./ShotResultOverlay";
 import OverBreakScreen from "./OverBreakScreen";
 import WicketBreakdownCard, { type WicketBreakdownData } from "./WicketBreakdownCard";
 import pitch3d from "@/assets/pitch-3d.jpg";
+import { getBestArena } from "@/lib/arenas";
 import GameButton from "./shared/GameButton";
 
 /* ── Move button config ── */
