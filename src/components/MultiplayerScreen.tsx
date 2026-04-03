@@ -1181,8 +1181,13 @@ export default function MultiplayerScreen({ onHome }: Props) {
                     return (
                       <motion.div key={friend.user_id} whileTap={{ scale: 0.97 }}
                         className="w-full glass-score p-3 flex items-center gap-3 rounded-2xl border border-border/30">
-                        <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${avatar.gradient} flex items-center justify-center shadow-lg`}>
-                          <span className="text-lg">{avatar.emoji}</span>
+                        <div className="relative">
+                          <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${avatar.gradient} flex items-center justify-center shadow-lg`}>
+                            <span className="text-lg">{avatar.emoji}</span>
+                          </div>
+                          {onlineUsers.has(friend.user_id) && (
+                            <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-neon-green border-2 border-background shadow-[0_0_6px_hsl(var(--neon-green))]" />
+                          )}
                         </div>
                         <div className="flex-1 min-w-0">
                           <span className="font-display text-xs font-bold text-foreground block truncate">{friend.display_name}</span>
