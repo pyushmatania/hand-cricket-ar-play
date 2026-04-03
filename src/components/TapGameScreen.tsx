@@ -233,6 +233,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
           commentators={matchCommentators}
           arenaImage={arenaImage}
           arenaId={arenaId}
+        />
       </div>
     </div>
   );
