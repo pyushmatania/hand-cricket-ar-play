@@ -44,6 +44,7 @@ export default function TournamentScreen({ onHome }: Props) {
   const [eliminated, setEliminated] = useState(false);
   const savedRef = useRef(false);
   const postMatchShownRef = useRef(false);
+  const [matchRewards, setMatchRewards] = useState<any>(null);
 
   const [showPreMatch, setShowPreMatch] = useState(false);
   const [showPostMatch, setShowPostMatch] = useState(false);
