@@ -37,6 +37,7 @@ export default function DailyChallengeScreen({ onHome }: Props) {
   const [bestToday, setBestToday] = useState<number | null>(null);
   const savedRef = useRef(false);
   const postMatchShownRef = useRef(false);
+  const [matchRewards, setMatchRewards] = useState<any>(null);
 
   // Ceremony states
   const [showPreMatch, setShowPreMatch] = useState(false);
