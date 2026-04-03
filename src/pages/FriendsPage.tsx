@@ -565,6 +565,7 @@ export default function FriendsPage() {
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
       {challengeTargetId && (
         <div className="fixed inset-0 z-50 bg-[hsl(222_47%_4%/0.85)] backdrop-blur-md flex items-end justify-center p-4">
           <motion.div
