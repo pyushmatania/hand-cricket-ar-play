@@ -5,6 +5,7 @@ import { AVATAR_PRESETS } from "@/lib/avatars";
 import { SFX, Haptics } from "@/lib/sounds";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, ArrowLeft, Smile, MessageSquare } from "lucide-react";
+import { setActiveChatPartner } from "./ChatNotificationListener";
 
 // ─── Quick emojis & trash talk ────────────────────────────────────
 const QUICK_EMOJIS = ["🔥", "😂", "👏", "😤", "💀", "🏏", "👑", "🫡"];
