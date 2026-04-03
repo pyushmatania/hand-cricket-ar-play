@@ -119,6 +119,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const { commentaryVoice, multiplayerCeremoniesEnabled } = useSettings();
   const { unreadCount, markRead } = useUnreadMessages();
   const onlineUsers = usePresence();
+  const shake = useScreenShake();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [phase, _setPhase] = useState<Phase>("lobby");
