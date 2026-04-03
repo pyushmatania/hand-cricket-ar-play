@@ -481,13 +481,15 @@ export default function LeaderboardPage() {
           ))}
         </div>
 
-        {/* Sort options (for global & friends) */}
+        {/* Sort options — game-styled chips */}
         {(mainTab === "global" || mainTab === "friends") && (
-          <div className="flex gap-1 mb-4 overflow-x-auto no-scrollbar">
+          <div className="flex gap-1.5 mb-4 overflow-x-auto no-scrollbar">
             {SORT_OPTIONS.map((opt, i) => (
               <button key={opt.key} onClick={() => setSortBy(i)}
-                className={`shrink-0 px-2.5 py-1.5 rounded-lg font-display text-[7px] font-bold tracking-widest transition-all ${
-                  sortBy === i ? "bg-primary/10 text-primary border border-primary/15" : "text-muted-foreground/50"
+                className={`shrink-0 px-3 py-2 rounded-xl font-game-display text-[7px] tracking-widest transition-all border ${
+                  sortBy === i
+                    ? "bg-game-blue/15 text-game-blue border-game-blue/30 shadow-[0_0_8px_hsl(207_90%_54%/0.15)]"
+                    : "text-muted-foreground/60 border-transparent hover:text-muted-foreground"
                 }`}>
                 {opt.icon} {opt.label}
               </button>
