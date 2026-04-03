@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { SFX, Haptics } from "@/lib/sounds";
 
 interface ShopItemCardProps {
   name: string;
