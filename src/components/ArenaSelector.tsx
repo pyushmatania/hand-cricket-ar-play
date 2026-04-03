@@ -21,7 +21,8 @@ export default function ArenaSelector({ currentTierIndex, selectedArenaId, onSel
         </span>
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <ScrollHint>
+      <div className="flex gap-2 pb-2">
         {arenas.map((arena, i) => {
           const selected = arena.id === selectedArenaId;
           const tier = RANK_TIERS[arena.unlockTierIndex];

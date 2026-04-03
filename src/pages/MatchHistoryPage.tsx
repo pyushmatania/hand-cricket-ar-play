@@ -243,7 +243,8 @@ export default function MatchHistoryPage() {
               );
             })}
           </div>
-          <div className="flex gap-1.5 overflow-x-auto no-scrollbar">
+          <ScrollHint>
+            <div className="flex gap-1.5">
             {(["all", "tap", "ar", "tournament", "multiplayer"] as ModeFilter[]).map(f => {
               const meta = f === "all" ? { icon: "🎮", label: "ALL", accent: "hsl(207,90%,54%)" } : MODE_META[f];
               const isActive = modeFilter === f;
