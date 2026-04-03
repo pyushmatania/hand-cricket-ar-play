@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { getBatSkin, getVSEffect, getButtonStyle, BUTTON_STYLES } from "@/lib/cosmetics";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { motion, AnimatePresence, type PanInfo } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { getBatSkin, getVSEffect, getButtonStyle } from "@/lib/cosmetics";
 
 interface CosmeticItem {
   id: string;
@@ -10,6 +11,7 @@ interface CosmeticItem {
   gradient: string;
   glow: string;
   detail?: string;
+  shopCategory?: string; // maps to shop filter key
 }
 
 interface CosmeticsCarouselProps {
@@ -22,7 +24,6 @@ interface CosmeticsCarouselProps {
 function buildItems(props: CosmeticsCarouselProps): CosmeticItem[] {
   const items: CosmeticItem[] = [];
 
-  // Bat skin
   const bs = getBatSkin(props.batSkin);
   items.push({
     id: "bat",
@@ -31,9 +32,9 @@ function buildItems(props: CosmeticsCarouselProps): CosmeticItem[] {
     emoji: bs.emoji,
     gradient: bs.gradient || "from-[hsl(30_40%_45%)] to-[hsl(30_35%_35%)]",
     glow: bs.glow,
+    shopCategory: "bat_skin",
   });
 
-  // VS effect
   const vs = getVSEffect(props.vsEffect);
   items.push({
     id: "vs",
@@ -43,9 +44,9 @@ function buildItems(props: CosmeticsCarouselProps): CosmeticItem[] {
     gradient: vs.bgGradient || "from-[hsl(222_47%_6%)] to-[hsl(222_47%_11%)]",
     glow: `shadow-[0_0_20px_${vs.glowColor}]`,
     detail: vs.entranceStyle?.toUpperCase(),
+    shopCategory: "vs_effect",
   });
 
-  // Avatar frame
   if (props.avatarFrame) {
     items.push({
       id: "frame",
@@ -54,10 +55,10 @@ function buildItems(props: CosmeticsCarouselProps): CosmeticItem[] {
       emoji: "🖼️",
       gradient: "from-[hsl(270_60%_50%)] to-[hsl(220_60%_40%)]",
       glow: "shadow-[0_0_16px_hsl(270_60%_50%/0.3)]",
+      shopCategory: "avatar_frame",
     });
   }
 
-  // Button style
   const btn = getButtonStyle(props.buttonStyle);
   if (btn.id !== "classic" || props.buttonStyle) {
     items.push({
@@ -74,16 +75,46 @@ function buildItems(props: CosmeticsCarouselProps): CosmeticItem[] {
   return items;
 }
 
+const SWIPE_THRESHOLD = 50;
+
 export default function CosmeticsCarousel(props: CosmeticsCarouselProps) {
+  const navigate = useNavigate();
   const items = buildItems(props);
   const [active, setActive] = useState(0);
+  const [direction, setDirection] = useState(0); // -1 left, 1 right
   const [autoPlay, setAutoPlay] = useState(true);
 
   useEffect(() => {
     if (!autoPlay || items.length <= 1) return;
-    const t = setInterval(() => setActive(p => (p + 1) % items.length), 3000);
+    const t = setInterval(() => {
+      setDirection(1);
+      setActive(p => (p + 1) % items.length);
+    }, 3000);
     return () => clearInterval(t);
   }, [autoPlay, items.length]);
+
+  const goTo = useCallback((idx: number) => {
+    setDirection(idx > active ? 1 : -1);
+    setActive(idx);
+    setAutoPlay(false);
+  }, [active]);
+
+  const goPrev = useCallback(() => {
+    setDirection(-1);
+    setActive(p => (p - 1 + items.length) % items.length);
+    setAutoPlay(false);
+  }, [items.length]);
+
+  const goNext = useCallback(() => {
+    setDirection(1);
+    setActive(p => (p + 1) % items.length);
+    setAutoPlay(false);
+  }, [items.length]);
+
+  const handleDragEnd = useCallback((_: any, info: PanInfo) => {
+    if (info.offset.x < -SWIPE_THRESHOLD) goNext();
+    else if (info.offset.x > SWIPE_THRESHOLD) goPrev();
+  }, [goNext, goPrev]);
 
   if (items.length === 0) return null;
 
@@ -91,41 +122,47 @@ export default function CosmeticsCarousel(props: CosmeticsCarouselProps) {
   const btnTheme = active === items.findIndex(i => i.id === "buttons")
     ? getButtonStyle(props.buttonStyle) : null;
 
+  const slideVariants = {
+    enter: (d: number) => ({ x: d > 0 ? 120 : -120, opacity: 0, rotateY: d > 0 ? 30 : -30, scale: 0.9 }),
+    center: { x: 0, opacity: 1, rotateY: 0, scale: 1 },
+    exit: (d: number) => ({ x: d > 0 ? -120 : 120, opacity: 0, rotateY: d > 0 ? -30 : 30, scale: 0.9 }),
+  };
+
   return (
-    <div
-      className="border-t border-muted/10 px-3 py-3"
-      onPointerDown={() => setAutoPlay(false)}
-    >
+    <div className="border-t border-muted/10 px-3 py-3">
       <div className="flex items-center justify-between mb-2">
         <span className="text-[7px] text-muted-foreground font-game-display tracking-[0.2em]">
           EQUIPPED LOADOUT
         </span>
-        {/* Dot indicators */}
         <div className="flex gap-1">
           {items.map((it, i) => (
             <button
               key={it.id}
-              onClick={() => { setActive(i); setAutoPlay(false); }}
+              onClick={() => goTo(i)}
               className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${
-                i === active
-                  ? "bg-primary scale-125"
-                  : "bg-muted-foreground/30"
+                i === active ? "bg-primary scale-125" : "bg-muted-foreground/30"
               }`}
             />
           ))}
         </div>
       </div>
 
-      <div className="relative h-[100px] overflow-hidden rounded-xl">
-        <AnimatePresence mode="wait">
+      <div className="relative h-[100px] overflow-hidden rounded-xl touch-pan-y">
+        <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={item.id}
-            initial={{ opacity: 0, rotateY: 45, scale: 0.85 }}
-            animate={{ opacity: 1, rotateY: 0, scale: 1 }}
-            exit={{ opacity: 0, rotateY: -45, scale: 0.85 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
+            custom={direction}
+            variants={slideVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.35, ease: "easeOut" }}
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={0.3}
+            onDragEnd={handleDragEnd}
             style={{ perspective: 600, transformStyle: "preserve-3d" }}
-            className={`absolute inset-0 rounded-xl bg-gradient-to-br ${item.gradient} ${item.glow} border border-white/10 p-3 flex items-center gap-3`}
+            className={`absolute inset-0 rounded-xl bg-gradient-to-br ${item.gradient} ${item.glow} border border-white/10 p-3 flex items-center gap-3 cursor-grab active:cursor-grabbing`}
           >
             {/* 3D spinning icon */}
             <motion.div
@@ -166,6 +203,20 @@ export default function CosmeticsCarousel(props: CosmeticsCarouselProps) {
               )}
             </div>
 
+            {/* Change button */}
+            {item.shopCategory && (
+              <motion.button
+                whileTap={{ scale: 0.9 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/shop?category=${item.shopCategory}`);
+                }}
+                className="absolute top-2 right-2 px-2.5 py-1 rounded-lg bg-white/15 border border-white/20 backdrop-blur-sm text-[7px] font-game-display font-bold text-white tracking-wider hover:bg-white/25 transition-colors"
+              >
+                CHANGE
+              </motion.button>
+            )}
+
             {/* Floating shimmer */}
             <motion.div
               animate={{ x: ["-100%", "200%"] }}
@@ -179,17 +230,17 @@ export default function CosmeticsCarousel(props: CosmeticsCarouselProps) {
         </AnimatePresence>
       </div>
 
-      {/* Swipe hint */}
+      {/* Prev/Next arrows */}
       {items.length > 1 && (
         <div className="flex justify-center gap-4 mt-2">
           <button
-            onClick={() => { setActive((active - 1 + items.length) % items.length); setAutoPlay(false); }}
+            onClick={goPrev}
             className="text-[8px] text-muted-foreground/40 font-game-display tracking-wider active:scale-90 transition-transform"
           >
             ◀ PREV
           </button>
           <button
-            onClick={() => { setActive((active + 1) % items.length); setAutoPlay(false); }}
+            onClick={goNext}
             className="text-[8px] text-muted-foreground/40 font-game-display tracking-wider active:scale-90 transition-transform"
           >
             NEXT ▶
