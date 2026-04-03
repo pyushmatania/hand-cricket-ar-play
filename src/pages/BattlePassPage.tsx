@@ -305,11 +305,17 @@ export default function BattlePassPage() {
     setClaimingReward(reward);
     setClaimed((prev) => new Set(prev).add(key));
 
-    // Persist coin/XP rewards to the database
+    // Persist coin/XP/gem rewards to the database
     const updates: Record<string, number> = {};
     if (reward.label === "Coins" && reward.amount) {
       updates.coins = coins + reward.amount;
       setCoins((c) => c + reward.amount!);
+    }
+    if (reward.label === "Gems" && reward.amount) {
+      // Gems are stored as coins (1 gem = 10 coins)
+      const coinValue = reward.amount * 10;
+      updates.coins = coins + coinValue;
+      setCoins((c) => c + coinValue);
     }
     if (reward.label === "XP Boost") {
       updates.xp = currentXp + 50;
