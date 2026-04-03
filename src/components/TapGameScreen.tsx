@@ -41,7 +41,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const [showOverSelector, setShowOverSelector] = useState(true);
   const [playerXP, setPlayerXP] = useState(0);
   const [matchRewards, setMatchRewards] = useState<any>(null);
-
+  const [matchWeather] = useState<Weather>(() => rollWeather());
   // Ceremony states
   const [showPreMatch, setShowPreMatch] = useState(false);
   const [showPostMatch, setShowPostMatch] = useState(false);
