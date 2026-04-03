@@ -581,6 +581,17 @@ export default function ProfilePage() {
                 </motion.div>
               )}
 
+              {/* XP History */}
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-1 h-4 rounded-full bg-secondary" />
+                  <span className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">⚡ XP HISTORY</span>
+                </div>
+                <div className="rounded-xl p-3 mb-4 bg-[hsl(222_40%_10%/0.8)] border border-muted/10">
+                  <XpHistoryFeed />
+                </div>
+              </motion.div>
+
               {/* Achievements */}
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
