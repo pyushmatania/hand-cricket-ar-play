@@ -16,7 +16,7 @@ import PlayerAvatar from "@/components/PlayerAvatar";
 import FormSparkline from "@/components/FormSparkline";
 import PlayerOfTheWeek from "@/components/PlayerOfTheWeek";
 import MostActiveTicker from "@/components/MostActiveTicker";
-import CanvasFireworks from "@/components/CanvasFireworks";
+
 import FriendsNetworkGraph from "@/components/FriendsNetworkGraph";
 import SeasonCountdown from "@/components/SeasonCountdown";
 import { getRankTier } from "@/lib/rankTiers";
@@ -124,26 +124,8 @@ const RAGE_TITLES = [
   { title: "🪨 The Wall", desc: "Fewest abandons (10+ matches)", stat: (e: LeaderEntry) => e.total_matches >= 10 ? e.total_matches - e.abandons : 0, label: "completed", color: "from-primary/10 to-transparent" },
 ];
 
-function PotwWithConfetti({ player, loading }: { player: any; loading?: boolean }) {
-  const [fireworkType, setFireworkType] = useState<"win" | null>(null);
-  const hasTriggeredRef = useRef(false);
-
-  useEffect(() => {
-    if (player && !loading && !hasTriggeredRef.current) {
-      hasTriggeredRef.current = true;
-      // Small delay so the card animates in first
-      const t = setTimeout(() => setFireworkType("win"), 400);
-      const clear = setTimeout(() => setFireworkType(null), 3500);
-      return () => { clearTimeout(t); clearTimeout(clear); };
-    }
-  }, [player, loading]);
-
-  return (
-    <>
-      <CanvasFireworks type={fireworkType} duration={2800} />
-      <PlayerOfTheWeek player={player} loading={loading} />
-    </>
-  );
+function PotwWithoutConfetti({ player, loading }: { player: any; loading?: boolean }) {
+  return <PlayerOfTheWeek player={player} loading={loading} />;
 }
 
 export default function LeaderboardPage() {
@@ -740,7 +722,7 @@ export default function LeaderboardPage() {
               ) : (
                 <>
                   {/* Player of the Week with confetti */}
-                  <PotwWithConfetti player={playerOfWeek} loading={potwLoading} />
+                  <PotwWithoutConfetti player={playerOfWeek} loading={potwLoading} />
 
                   {/* Top 3 podium — Supercell style */}
                   {top3.length >= 3 && (
