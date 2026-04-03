@@ -12,6 +12,7 @@ import VSIntroScreen from "./VSIntroScreen";
 import TapPlayingUI from "./TapPlayingUI";
 import EnhancedPreMatch from "./EnhancedPreMatch";
 import EnhancedPostMatch from "./EnhancedPostMatch";
+import LobbyChat from "./LobbyChat";
 import { pickConfiguredMatchCommentators, type Commentator } from "@/lib/commentaryDuo";
 import { useSettings } from "@/contexts/SettingsContext";
 import type { Move, BallResult } from "@/hooks/useHandCricket";
@@ -123,6 +124,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [selectedGameType, setSelectedGameType] = useState<GameType>("ar");
   const [createModePickerOpen, setCreateModePickerOpen] = useState(false);
   const [lobbyMessage, setLobbyMessage] = useState<string | null>(null);
+  const [chattingFriend, setChattingFriend] = useState<{ user_id: string; display_name: string; avatar_index: number } | null>(null);
 
   // Timer state — 5s per turn countdown
   const [turnCountdownMs, setTurnCountdownMs] = useState(TURN_TIMER_MS);
@@ -1162,80 +1164,101 @@ export default function MultiplayerScreen({ onHome }: Props) {
             {/* FRIENDS TAB */}
             {lobbyTab === "friends" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-2">
-                <p className="text-[9px] text-muted-foreground font-display tracking-wider text-center">CHALLENGE A FRIEND TO BATTLE</p>
-                {lobbyFriends.length === 0 ? (
-                  <div className="glass-score p-6 text-center">
-                    <span className="text-3xl block mb-2">👥</span>
-                    <p className="text-xs text-muted-foreground">No friends yet</p>
-                    <p className="text-[9px] text-muted-foreground mt-1">Add friends from the Friends page to challenge them!</p>
-                    <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/friends")}
-                      className="mt-3 px-4 py-2 rounded-lg bg-primary/15 border border-primary/30 text-[9px] font-display font-bold text-primary tracking-wider">
-                      GO TO FRIENDS
-                    </motion.button>
-                  </div>
-                ) : (
-                  [...lobbyFriends].sort((a, b) => {
-                    const aOnline = onlineUsers.isOnline(a.user_id) ? 1 : 0;
-                    const bOnline = onlineUsers.isOnline(b.user_id) ? 1 : 0;
-                    return bOnline - aOnline;
-                  }).map((friend) => {
-                    const avatar = AVATAR_PRESETS[friend.avatar_index % AVATAR_PRESETS.length];
-                    const winRate = friend.total_matches > 0 ? Math.round((friend.wins / friend.total_matches) * 100) : 0;
-                    const isChallenging = challengingFriendId === friend.user_id;
-                    const isOnline = onlineUsers.isOnline(friend.user_id);
-                    const lastSeen = onlineUsers.getLastSeen(friend.user_id);
-                    return (
-                      <motion.div key={friend.user_id} whileTap={{ scale: 0.97 }}
-                        className="w-full glass-score p-3 flex items-center gap-3 rounded-2xl border border-border/30">
-                        <div className="relative">
-                          <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${avatar.gradient} flex items-center justify-center shadow-lg`}>
-                            <span className="text-lg">{avatar.emoji}</span>
-                          </div>
-                          {isOnline && (
-                            <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-neon-green border-2 border-background shadow-[0_0_6px_hsl(var(--neon-green))]" />
-                          )}
+                <AnimatePresence mode="wait">
+                  {chattingFriend ? (
+                    <LobbyChat
+                      key={`chat-${chattingFriend.user_id}`}
+                      friend={chattingFriend}
+                      onBack={() => setChattingFriend(null)}
+                    />
+                  ) : (
+                    <motion.div key="friend-list" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-2">
+                      <p className="text-[9px] text-muted-foreground font-display tracking-wider text-center">CHALLENGE A FRIEND TO BATTLE</p>
+                      {lobbyFriends.length === 0 ? (
+                        <div className="glass-score p-6 text-center">
+                          <span className="text-3xl block mb-2">👥</span>
+                          <p className="text-xs text-muted-foreground">No friends yet</p>
+                          <p className="text-[9px] text-muted-foreground mt-1">Add friends from the Friends page to challenge them!</p>
+                          <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/friends")}
+                            className="mt-3 px-4 py-2 rounded-lg bg-primary/15 border border-primary/30 text-[9px] font-display font-bold text-primary tracking-wider">
+                            GO TO FRIENDS
+                          </motion.button>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <span className="font-display text-xs font-bold text-foreground block truncate">{friend.display_name}</span>
-                          <span className={`text-[8px] block ${isOnline ? "text-neon-green font-bold" : "text-muted-foreground"}`}>
-                            {isOnline ? "🟢 Online" : `⚫ ${formatLastSeen(lastSeen)}`}
-                          </span>
-                          <div className="flex items-center gap-2 mt-0.5">
-                            <span className="text-[8px] text-muted-foreground">{friend.total_matches} matches</span>
-                            <span className="text-[8px] text-neon-green font-bold">{winRate}% WR</span>
-                          </div>
-                        </div>
-                        <motion.button
-                          whileTap={{ scale: 0.9 }}
-                          disabled={isChallenging}
-                          onClick={async () => {
-                            setChallengingFriendId(friend.user_id);
-                            const { data: newGame, error } = await createMultiplayerRoom(user!.id, "tap", friend.user_id);
-                            if (newGame && !error) {
-                              await supabase.from("match_invites").insert({
-                                game_id: (newGame as any).id,
-                                from_user_id: user!.id,
-                                to_user_id: friend.user_id,
-                                game_type: "tap",
-                              });
-                              setCurrentGame(newGame as unknown as MultiplayerGame);
-                              setPhase("waiting");
-                              navigate(`/game/multiplayer?game=${(newGame as any).id}`, { replace: true });
-                            }
-                            setChallengingFriendId(null);
-                          }}
-                          className={`px-3 py-2 rounded-xl font-display text-[9px] font-bold tracking-wider ${
-                            isChallenging
-                              ? "bg-muted/50 text-muted-foreground border border-border"
-                              : "bg-gradient-to-r from-secondary to-secondary/70 text-secondary-foreground border border-secondary/40 shadow-[0_0_12px_hsl(45_93%_58%/0.2)]"
-                          }`}
-                        >
-                          {isChallenging ? "⏳..." : "⚔️ BATTLE"}
-                        </motion.button>
-                      </motion.div>
-                    );
-                  })
-                )}
+                      ) : (
+                        [...lobbyFriends].sort((a, b) => {
+                          const aOnline = onlineUsers.isOnline(a.user_id) ? 1 : 0;
+                          const bOnline = onlineUsers.isOnline(b.user_id) ? 1 : 0;
+                          return bOnline - aOnline;
+                        }).map((friend) => {
+                          const avatar = AVATAR_PRESETS[friend.avatar_index % AVATAR_PRESETS.length];
+                          const winRate = friend.total_matches > 0 ? Math.round((friend.wins / friend.total_matches) * 100) : 0;
+                          const isChallenging = challengingFriendId === friend.user_id;
+                          const isOnline = onlineUsers.isOnline(friend.user_id);
+                          const lastSeen = onlineUsers.getLastSeen(friend.user_id);
+                          return (
+                            <motion.div key={friend.user_id} whileTap={{ scale: 0.97 }}
+                              className="w-full glass-score p-3 flex items-center gap-3 rounded-2xl border border-border/30">
+                              <div className="relative">
+                                <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${avatar.gradient} flex items-center justify-center shadow-lg`}>
+                                  <span className="text-lg">{avatar.emoji}</span>
+                                </div>
+                                {isOnline && (
+                                  <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-neon-green border-2 border-background shadow-[0_0_6px_hsl(var(--neon-green))]" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <span className="font-display text-xs font-bold text-foreground block truncate">{friend.display_name}</span>
+                                <span className={`text-[8px] block ${isOnline ? "text-neon-green font-bold" : "text-muted-foreground"}`}>
+                                  {isOnline ? "🟢 Online" : `⚫ ${formatLastSeen(lastSeen)}`}
+                                </span>
+                                <div className="flex items-center gap-2 mt-0.5">
+                                  <span className="text-[8px] text-muted-foreground">{friend.total_matches} matches</span>
+                                  <span className="text-[8px] text-neon-green font-bold">{winRate}% WR</span>
+                                </div>
+                              </div>
+                              <div className="flex flex-col gap-1.5">
+                                <motion.button
+                                  whileTap={{ scale: 0.9 }}
+                                  disabled={isChallenging}
+                                  onClick={async () => {
+                                    setChallengingFriendId(friend.user_id);
+                                    const { data: newGame, error } = await createMultiplayerRoom(user!.id, "tap", friend.user_id);
+                                    if (newGame && !error) {
+                                      await supabase.from("match_invites").insert({
+                                        game_id: (newGame as any).id,
+                                        from_user_id: user!.id,
+                                        to_user_id: friend.user_id,
+                                        game_type: "tap",
+                                      });
+                                      setCurrentGame(newGame as unknown as MultiplayerGame);
+                                      setPhase("waiting");
+                                      navigate(`/game/multiplayer?game=${(newGame as any).id}`, { replace: true });
+                                    }
+                                    setChallengingFriendId(null);
+                                  }}
+                                  className={`px-3 py-1.5 rounded-xl font-display text-[9px] font-bold tracking-wider ${
+                                    isChallenging
+                                      ? "bg-muted/50 text-muted-foreground border border-border"
+                                      : "bg-gradient-to-r from-secondary to-secondary/70 text-secondary-foreground border border-secondary/40 shadow-[0_0_12px_hsl(45_93%_58%/0.2)]"
+                                  }`}
+                                >
+                                  {isChallenging ? "⏳..." : "⚔️ BATTLE"}
+                                </motion.button>
+                                <motion.button
+                                  whileTap={{ scale: 0.9 }}
+                                  onClick={() => setChattingFriend({ user_id: friend.user_id, display_name: friend.display_name, avatar_index: friend.avatar_index })}
+                                  className="px-3 py-1.5 rounded-xl font-display text-[9px] font-bold tracking-wider bg-primary/10 border border-primary/25 text-primary"
+                                >
+                                  💬 CHAT
+                                </motion.button>
+                              </div>
+                            </motion.div>
+                          );
+                        })
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             )}
 
