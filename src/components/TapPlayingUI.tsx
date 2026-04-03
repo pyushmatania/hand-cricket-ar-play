@@ -57,6 +57,7 @@ export interface TapPlayingUIProps {
   commentators?: [Commentator, Commentator];
   arenaImage?: string;
   arenaId?: string;
+  equippedBatSkin?: string | null;
 }
 
 export default function TapPlayingUI({
