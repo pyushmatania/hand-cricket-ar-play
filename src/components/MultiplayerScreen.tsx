@@ -159,7 +159,9 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const pvpPreMatchShownRef = useRef(false);
   
   // Innings break ready-up state
-  const [showInningsBreak, setShowInningsBreak] = useState(false);
+  const [showInningsBreak, _setShowInningsBreak] = useState(false);
+  const showInningsBreakRef = useRef(false);
+  const setShowInningsBreak = useCallback((v: boolean) => { showInningsBreakRef.current = v; _setShowInningsBreak(v); }, []);
   const [inningsBreakReady, setInningsBreakReady] = useState(false);
   const [inningsBreakStats, setInningsBreakStats] = useState<{ batter: string; bowler: string; score: number; lastMove: string; opponentLastMove: string } | null>(null);
   
