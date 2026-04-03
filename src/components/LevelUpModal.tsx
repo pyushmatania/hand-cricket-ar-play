@@ -26,8 +26,6 @@ export default function LevelUpModal({ rewards, onClose }: LevelUpModalProps) {
   const didLevelUp = rewards ? rewards.newLevel > rewards.oldLevel : false;
   const didRankUp = rewards ? (rewards.newRankName && rewards.oldRankName && rewards.newRankName !== rewards.oldRankName) : false;
   const newRankTier = didRankUp && rewards ? RANK_TIERS.find(t => t.name === rewards.newRankName) : null;
-  const didRankUp = rewards.newRankName && rewards.oldRankName && rewards.newRankName !== rewards.oldRankName;
-  const newRankTier = didRankUp ? RANK_TIERS.find(t => t.name === rewards.newRankName) : null;
 
   useEffect(() => {
     setShow(true);
