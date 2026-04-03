@@ -15,6 +15,8 @@ import { Settings } from "lucide-react";
 import floatingIsland from "@/assets/floating-island.png";
 import avatarFrame from "@/assets/avatar-frame.png";
 import { getChestTier } from "@/lib/chests";
+import { getCurrentSeasonalTheme } from "@/lib/seasonalThemes";
+import SeasonalIslandOverlay from "@/components/SeasonalIslandOverlay";
 
 interface ProfileData {
   total_matches: number;
