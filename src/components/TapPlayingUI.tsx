@@ -311,8 +311,13 @@ export default function TapPlayingUI({
     setWicketBreakdownData(null);
   }, []);
 
-  // Filter moves for noDefence mode
-  const activeMoves = config.noDefence ? MOVES.filter(m => m.move !== "DEF") : MOVES;
+  // Build move buttons from theme
+  const allMoves = ALL_MOVE_KEYS.map(move => {
+    const key = move === "DEF" ? "DEF" : String(move);
+    const style = btnTheme.moves[key];
+    return { move, ...style };
+  });
+  const activeMoves = config.noDefence ? allMoves.filter(m => m.move !== "DEF") : allMoves;
 
   return (
     <>
