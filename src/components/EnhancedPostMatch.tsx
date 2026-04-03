@@ -31,6 +31,7 @@ interface EnhancedPostMatchProps {
   isPvP?: boolean;
   rivalryStats?: RivalryStats | null;
   commentators?: [Commentator, Commentator];
+  matchRewards?: MatchRewards | null;
   onComplete: () => void;
 }
 
