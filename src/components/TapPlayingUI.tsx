@@ -68,6 +68,7 @@ export default function TapPlayingUI({
   arenaId,
   equippedBatSkin,
   equippedButtonStyle,
+  weather,
 }: TapPlayingUIProps) {
   const shake = useScreenShake();
   const batSkin = getBatSkin(equippedBatSkin);
