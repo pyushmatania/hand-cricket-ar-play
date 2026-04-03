@@ -132,7 +132,7 @@ export default function VSIntroScreen({
                 transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
                 className="absolute -inset-6 rounded-full border border-dashed border-primary/20"
               />
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary via-accent to-secondary flex items-center justify-center shadow-[0_0_40px_hsl(217_91%_60%/0.4)]">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary via-accent to-secondary flex items-center justify-center" style={{ boxShadow: `0 0 40px ${vsEffect.glowColor}` }}>
                 <span className="font-display text-xl font-black text-white">VS</span>
               </div>
               {/* Fire-like particles */}
