@@ -195,6 +195,23 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
         {/* Over selector - shown first */}
         {showOverSelector && game.phase === "not_started" && !showPreMatch && (
           <div className="mt-4">
+            {/* Weather badge */}
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <div
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl"
+                style={{
+                  background: "linear-gradient(180deg, hsl(30 40% 22%), hsl(25 35% 15%))",
+                  border: "2px solid hsl(25 30% 12%)",
+                  boxShadow: "inset 0 1px 0 hsl(35 40% 32%), 0 3px 6px hsl(0 0% 0% / 0.3)",
+                }}
+              >
+                <span className="text-sm">{matchWeather.icon}</span>
+                <div>
+                  <span className="font-display text-[9px] font-bold text-foreground/80 tracking-wider block">{matchWeather.name.toUpperCase()}</span>
+                  <span className="font-display text-[7px] text-muted-foreground/60">{matchWeather.description}</span>
+                </div>
+              </div>
+            </div>
             <OverSelector playerXP={playerXP} onSelect={handleOverSelect} />
           </div>
         )}
