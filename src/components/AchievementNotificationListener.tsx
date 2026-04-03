@@ -30,6 +30,12 @@ export default function AchievementNotificationListener() {
     }
   }, [current, queue]);
 
+  // Register imperative push
+  useEffect(() => {
+    registerAchievementPush((a: Achievement) => setQueue(q => [...q, a]));
+    return () => unregisterAchievementPush();
+  }, []);
+
   const handleDone = useCallback(() => {
     setCurrent(null);
   }, []);
