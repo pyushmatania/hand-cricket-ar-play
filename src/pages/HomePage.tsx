@@ -14,6 +14,7 @@ import { useRivals } from "@/hooks/useRivals";
 import { Settings } from "lucide-react";
 import floatingIsland from "@/assets/floating-island.png";
 import avatarFrame from "@/assets/avatar-frame.png";
+import { getChestTier } from "@/lib/chests";
 
 interface ProfileData {
   total_matches: number;
