@@ -237,6 +237,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
           arenaId={arenaId}
           equippedBatSkin={cosmetics.batSkin}
           equippedButtonStyle={cosmetics.buttonStyle}
+          weather={matchWeather}
         />
       </div>
     </div>
