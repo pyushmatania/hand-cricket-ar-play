@@ -333,42 +333,64 @@ export default function FriendsPage() {
           {tab === "friends" && (
             <motion.div key="friends" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               {friends.length === 0 ? (
-                <div className="glass-premium rounded-xl p-8 text-center">
-                  <span className="text-3xl block mb-2">👥</span>
-                  <span className="font-display text-xs font-bold text-muted-foreground tracking-wider">NO FRIENDS YET</span>
-                  <p className="text-[9px] text-muted-foreground/60 mt-1">Add friends to play together!</p>
+                <div className="rounded-2xl border-2 border-[hsl(222_25%_22%/0.5)] bg-gradient-to-b from-[hsl(222_40%_13%/0.9)] to-[hsl(222_40%_8%/0.95)] p-8 text-center">
+                  <span className="text-4xl block mb-3">👥</span>
+                  <span className="font-game-title text-sm text-foreground">No Friends Yet</span>
+                  <p className="text-[9px] text-muted-foreground font-game-body mt-1">Add friends to play together!</p>
                 </div>
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   {friends.map((f, i) => {
                     const winRate = f.total_matches > 0 ? Math.round((f.wins / f.total_matches) * 100) : 0;
+                    const isHotStreak = (f.current_streak ?? 0) >= 3;
                     return (
                       <motion.div
                         key={f.user_id}
-                        initial={{ opacity: 0, x: -10 }}
+                        initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: i * 0.05 }}
-                        className="glass-premium rounded-xl p-3 flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform"
+                        transition={{ delay: i * 0.06, type: "spring", stiffness: 300, damping: 25 }}
+                        className="rounded-2xl border-2 border-[hsl(222_25%_22%/0.5)] bg-gradient-to-b from-[hsl(222_40%_13%/0.9)] to-[hsl(222_40%_8%/0.95)] p-3 flex items-center gap-3 cursor-pointer active:scale-[0.97] transition-transform"
                         onClick={() => setSelectedFriend(f)}
                       >
-                        <PlayerAvatar avatarUrl={f.avatar_url} avatarIndex={f.avatar_index ?? 0} size="sm" />
+                        {/* Avatar with streak indicator */}
+                        <div className="relative">
+                          <div className={`rounded-full border-2 ${isHotStreak ? "border-game-red shadow-[0_0_10px_hsl(4_90%_58%/0.3)]" : "border-[hsl(222_25%_22%)]"}`}>
+                            <PlayerAvatar avatarUrl={f.avatar_url} avatarIndex={f.avatar_index ?? 0} size="sm" />
+                          </div>
+                          {isHotStreak && (
+                            <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-game-red border-2 border-game-dark flex items-center justify-center">
+                              <span className="text-[7px]">🔥</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Info */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5">
-                            <span className="font-display text-[11px] font-bold text-foreground block truncate">{f.display_name}</span>
-                            <span className="text-[7px] text-primary/40 font-display">›</span>
+                            <span className="font-game-card text-xs font-bold text-foreground truncate">{f.display_name}</span>
+                            {f.rank_tier && (
+                              <span className="text-[7px] font-game-display text-game-gold">{f.rank_tier === "Diamond" ? "💎" : f.rank_tier === "Gold" ? "🥇" : f.rank_tier === "Silver" ? "🥈" : "🏅"}</span>
+                            )}
                           </div>
-                          <span className="text-[8px] text-muted-foreground">{f.wins}W {f.losses}L • {winRate}% WR</span>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-[8px] text-muted-foreground font-game-body">{f.wins}W {f.losses}L</span>
+                            <span className="text-[8px] text-game-green font-game-display">{winRate}%</span>
+                          </div>
                         </div>
+
+                        {/* Battle button */}
                         <motion.button
                           whileTap={{ scale: 0.85 }}
                           onClick={(e) => { e.stopPropagation(); setChallengeTargetId(f.user_id); }}
-                          className="px-3 py-2 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display text-[8px] font-bold tracking-wider"
+                          className="px-3 py-2 rounded-xl bg-gradient-to-b from-game-red to-[hsl(4_90%_45%)] border-b-2 border-[hsl(4_90%_35%)] text-white font-game-display text-[7px] tracking-wider shadow-[0_2px_8px_hsl(4_90%_58%/0.3)] active:translate-y-[1px] active:border-b-0"
                         >
-                          LET'S BATTLE
+                          ⚔️ BATTLE
                         </motion.button>
-                        <div className="text-right">
-                          <span className="font-display text-sm font-black text-secondary block leading-none">{f.high_score}</span>
-                          <span className="text-[6px] text-muted-foreground font-display tracking-widest">HIGH</span>
+
+                        {/* High score */}
+                        <div className="text-right min-w-[40px]">
+                          <span className="font-game-display text-sm text-game-gold block leading-none">{f.high_score}</span>
+                          <span className="text-[6px] text-muted-foreground font-game-display tracking-widest">HIGH</span>
                         </div>
                       </motion.div>
                     );
