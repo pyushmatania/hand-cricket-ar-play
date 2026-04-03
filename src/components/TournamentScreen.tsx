@@ -124,7 +124,9 @@ export default function TournamentScreen({ onHome }: Props) {
   useEffect(() => {
     if (game.phase === "finished" && !savedRef.current) {
       savedRef.current = true;
-      saveMatch(game, "tournament");
+      saveMatch(game, "tournament").then((rewards) => {
+        if (rewards) setMatchRewards(rewards);
+      });
       if (game.result === "win") { if (soundEnabled) SFX.win(); if (hapticsEnabled) Haptics.success(); }
       else { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); }
       const newRounds = [...rounds];
