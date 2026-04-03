@@ -56,9 +56,10 @@ function computeStats(ballHistory: BallResult[]) {
 export default function EnhancedPostMatch({
   playerName, opponentName, result, playerScore, opponentScore,
   playerWickets = 0, opponentWickets = 0,
-  ballHistory, isPvP = false, rivalryStats, commentators, onComplete,
+  ballHistory, isPvP = false, rivalryStats, commentators, matchRewards, onComplete,
 }: EnhancedPostMatchProps) {
   const [visible, setVisible] = useState(true);
+  const [showLevelUp, setShowLevelUp] = useState(false);
   const { voiceEnabled, soundEnabled, crowdEnabled, commentaryEnabled } = useSettings();
   const stableOnComplete = useCallback(onComplete, []);
 
