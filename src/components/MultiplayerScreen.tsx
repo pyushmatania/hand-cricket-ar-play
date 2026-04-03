@@ -1177,6 +1177,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
                       key={`chat-${chattingFriend.user_id}`}
                       friend={chattingFriend}
                       onBack={() => setChattingFriend(null)}
+                      onOpen={() => markRead(chattingFriend.user_id)}
                     />
                   ) : (
                     <motion.div key="friend-list" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-2">
