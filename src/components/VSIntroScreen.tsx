@@ -12,6 +12,7 @@ interface Props {
   playerAvatarIndex?: number;
   opponentAvatarIndex?: number;
   gameType?: string;
+  equippedVSEffect?: string | null;
   onComplete: () => void;
 }
 
