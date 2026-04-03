@@ -4,6 +4,7 @@ import PlayerAvatar from "@/components/PlayerAvatar";
 import { SFX } from "@/lib/sounds";
 import playerBatsman from "@/assets/player-batsman.png";
 import playerBowler from "@/assets/player-bowler.png";
+import { getVSEffect } from "@/lib/cosmetics";
 
 interface Props {
   playerName: string;
