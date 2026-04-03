@@ -10,7 +10,7 @@ interface PracticeScreenProps {
 }
 
 const moveEmoji: Record<string, string> = {
-  DEF: "✊", "1": "☝️", "2": "✌️", "3": "🤟", "4": "🖖", "6": "👍",
+  DEF: "✊", "1": "☝️", "2": "✌️", "3": "🤟👆", "4": "🖐️", "6": "👍",
 };
 
 const GESTURE_INFO: Record<string, { name: string; desc: string }> = {

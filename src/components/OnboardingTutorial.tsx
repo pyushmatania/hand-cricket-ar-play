@@ -44,7 +44,7 @@ const GESTURES = [
   },
   {
     move: "4",
-    emoji: "🖖",
+    emoji: "🖐️",
     name: "BOUNDARY",
     value: "4 runs",
     description: "Show the Vulcan salute — split your fingers into a V shape.",
