@@ -277,10 +277,14 @@ export default function HomePage() {
             className="relative mx-auto"
             style={{ maxWidth: 320 }}
           >
+            {/* Seasonal overlay */}
+            {seasonalTheme && <SeasonalIslandOverlay theme={seasonalTheme} />}
+
             <img
               src={floatingIsland}
               alt={`${currentArena.name} Stadium Island`}
               className="w-full h-auto drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
+              style={{ filter: seasonalTheme?.imageFilter }}
               width={768}
               height={768}
             />
