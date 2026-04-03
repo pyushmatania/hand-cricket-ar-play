@@ -5,6 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePresence, formatLastSeen } from "@/hooks/usePresence";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import OddEvenToss from "./OddEvenToss";
 import SpinningCricketBall from "./SpinningCricketBall";
 import WaitingRoom from "./WaitingRoom";
