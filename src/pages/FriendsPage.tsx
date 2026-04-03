@@ -190,6 +190,7 @@ export default function FriendsPage() {
   const pendingCount = incoming.length;
   const tabs: { key: Tab; label: string; icon: string; badge?: number }[] = [
     { key: "friends", label: "FRIENDS", icon: "👥" },
+    { key: "global", label: "GLOBAL", icon: "🌍" },
     { key: "requests", label: "REQUESTS", icon: "📩", badge: pendingCount },
     { key: "add", label: "ADD", icon: "➕" },
   ];
