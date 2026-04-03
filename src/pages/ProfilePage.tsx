@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import BottomNav from "@/components/BottomNav";
 import TopStatusBar from "@/components/TopStatusBar";
 import PlayerAvatar from "@/components/PlayerAvatar";
 import TrophyCase from "@/components/TrophyCase";
@@ -907,7 +906,6 @@ export default function ProfilePage() {
         </AnimatePresence>
       </div>
 
-      <BottomNav />
       {selectedFriend && (
         <FriendStatsModal friend={selectedFriend} onClose={() => setSelectedFriend(null)} />
       )}

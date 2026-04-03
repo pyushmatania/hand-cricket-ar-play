@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import BottomNav from "@/components/BottomNav";
 import TopStatusBar from "@/components/TopStatusBar";
 import CurrencyPill from "@/components/shared/CurrencyPill";
 import ShopItemCard from "@/components/shop/ShopItemCard";
@@ -188,7 +187,6 @@ export default function ShopPage() {
         />
       )}
 
-      <BottomNav />
     </div>
   );
 }

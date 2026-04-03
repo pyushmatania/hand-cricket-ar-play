@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { useSettings } from "@/contexts/SettingsContext";
 import type { CommentaryLanguage } from "@/contexts/SettingsContext";
 import { useAuth } from "@/contexts/AuthContext";
-import BottomNav from "@/components/BottomNav";
 import TopStatusBar from "@/components/TopStatusBar";
 import { SYSTEM_VOICE_PERSONAS, speakWithSystemPersona } from "@/lib/systemVoices";
 import { BUTTON_STYLES } from "@/lib/cosmetics";
@@ -594,7 +593,6 @@ export default function SettingsPage() {
         </motion.div>
       </div>
 
-      <BottomNav />
     </div>
   );
 }

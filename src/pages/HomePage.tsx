@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import BottomNav from "@/components/BottomNav";
 import TopBar from "@/components/layout/TopBar";
 import OnboardingTutorial from "@/components/OnboardingTutorial";
 import RivalrySection from "@/components/RivalrySection";
@@ -483,7 +482,6 @@ export default function HomePage() {
         </motion.div>
       </div>
 
-      <BottomNav />
     </div>
   );
 }

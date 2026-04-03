@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import BottomNav from "@/components/BottomNav";
 import ArenaSelector from "@/components/ArenaSelector";
 import { ARENAS, getBestArena, type Arena } from "@/lib/arenas";
 import { RANK_TIERS, getRankTier } from "@/lib/rankTiers";
@@ -285,7 +284,6 @@ export default function PlayPage() {
         </div>
       </div>
 
-      <BottomNav />
     </div>
   );
 }
