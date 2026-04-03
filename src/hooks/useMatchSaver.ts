@@ -51,13 +51,17 @@ export function useMatchSaver() {
         const newStreak =
           game.result === "win" ? profile.current_streak + 1 : 0;
 
+        const oldXp = (profile as any).xp || 0;
+        const oldLevel = Math.floor(oldXp / 100) + 1;
+
         // Calculate XP/coins earned
         const resultKey = game.result as "win" | "loss" | "draw";
         let xpEarned = XP_REWARDS[resultKey] || 10;
         let coinsEarned = COIN_REWARDS[resultKey] || 10;
 
         // Streak bonus
-        if (newStreak >= 3) {
+        const hasStreakBonus = newStreak >= 3;
+        if (hasStreakBonus) {
           xpEarned += newStreak * 2;
           coinsEarned += newStreak * 3;
         }
