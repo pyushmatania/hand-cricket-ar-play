@@ -120,7 +120,7 @@ export default function BottomNav() {
                   <span
                     className={cn(
                       "text-[8px] font-game-display tracking-wider transition-colors duration-200",
-                      isCenter ? "mt-7" : "mt-0",
+                      isCenter ? "mt-8" : "mt-0",
                     )}
                     style={{
                       color: isActive ? item.accent : "hsl(var(--muted-foreground) / 0.35)",
