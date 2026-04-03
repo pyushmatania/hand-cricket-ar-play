@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { SFX, Haptics } from "@/lib/sounds";
 
 const NAV_ITEMS = [
-  { path: "/shop", label: "Shop", icon: "🎁", accent: "hsl(291,47%,51%)" },
+  { path: "/", label: "Home", icon: "🏠", accent: "hsl(207,90%,54%)" },
   { path: "/friends", label: "Friends", icon: "👥", accent: "hsl(207,90%,54%)" },
   { path: "/play", label: "Battle", icon: "⚔️", accent: "hsl(122,39%,49%)", center: true },
   { path: "/leaderboard", label: "League", icon: "🏆", accent: "hsl(51,100%,50%)" },
@@ -38,7 +38,7 @@ export default function BottomNav() {
             {NAV_ITEMS.map((item) => {
               const isActive =
                 location.pathname === item.path ||
-                (item.path === "/play" && location.pathname === "/");
+                (item.path === "/" && location.pathname === "/index");
               const isCenter = item.center;
 
               return (
