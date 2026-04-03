@@ -466,6 +466,14 @@ export default function MultiplayerScreen({ onHome }: Props) {
               if (prev.length >= (updated.current_turn)) return prev;
               return [...prev, guestBallResult];
             });
+            // Screen shake for guest
+            if (isOut) {
+              shake("heavy");
+            } else if (typeof ballRuns === "number" && Math.abs(ballRuns) >= 6) {
+              shake("medium");
+            } else if (typeof ballRuns === "number" && Math.abs(ballRuns) >= 4) {
+              shake("light");
+            }
             setLastResult(payload_data.text || null);
             setTimeout(() => { setLastResult(null); setLastBallResult(null); }, 2500);
           }
