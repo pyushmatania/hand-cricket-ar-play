@@ -166,6 +166,8 @@ export default function DailyRewardsPage() {
 
   const handleDayClaim = (day: DayReward) => {
     if (day.day === cycleDay && todayClaimed) {
+      SFX.chestOpen();
+      Haptics.chestOpen();
       setOpeningReward(day);
     }
   };
