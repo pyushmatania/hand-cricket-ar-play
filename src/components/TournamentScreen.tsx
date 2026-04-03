@@ -15,6 +15,7 @@ import EnhancedPostMatch from "./EnhancedPostMatch";
 import OddEvenToss from "./OddEvenToss";
 import TapPlayingUI from "./TapPlayingUI";
 import OverSelector from "./OverSelector";
+import { useEquippedCosmetics } from "@/hooks/useEquippedCosmetics";
 
 type Round = {
   round: number;
