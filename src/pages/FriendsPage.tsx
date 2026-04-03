@@ -555,8 +555,16 @@ export default function FriendsPage() {
               </div>
             </motion.div>
           )}
+
+          {/* GLOBAL CHAT */}
+          {tab === "global" && (
+            <motion.div key="global" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="rounded-2xl border-2 border-[hsl(222_25%_22%/0.5)] bg-gradient-to-b from-[hsl(222_40%_13%/0.9)] to-[hsl(222_40%_8%/0.95)] p-3 h-[420px]"
+            >
+              <GlobalChat />
+            </motion.div>
+          )}
         </AnimatePresence>
-      </div>
       {challengeTargetId && (
         <div className="fixed inset-0 z-50 bg-[hsl(222_47%_4%/0.85)] backdrop-blur-md flex items-end justify-center p-4">
           <motion.div
