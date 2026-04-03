@@ -5,6 +5,7 @@ import { AVATAR_PRESETS } from "@/lib/avatars";
 import { SFX, Haptics } from "@/lib/sounds";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, ArrowLeft, Smile, MessageSquare } from "lucide-react";
+import { setActiveChatPartner } from "./ChatNotificationListener";
 
 // ─── Quick emojis & trash talk ────────────────────────────────────
 const QUICK_EMOJIS = ["🔥", "😂", "👏", "😤", "💀", "🏏", "👑", "🫡"];
@@ -55,8 +56,12 @@ export default function LobbyChat({ friend, onBack, onOpen }: LobbyChatProps) {
     setTimeout(() => scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" }), 50);
   }, []);
 
-  // Mark as read on open
-  useEffect(() => { onOpen?.(); }, []);
+  // Mark as read on open & suppress global toast for this friend
+  useEffect(() => {
+    onOpen?.();
+    setActiveChatPartner(friend.user_id);
+    return () => setActiveChatPartner(null);
+  }, [friend.user_id]);
 
   // Load recent messages
   useEffect(() => {

@@ -11,6 +11,7 @@ import { SettingsProvider } from "@/contexts/SettingsContext";
 import PageTransition from "@/components/PageTransition";
 import SplashScreen from "@/components/SplashScreen";
 import MatchInviteNotification from "@/components/MatchInviteNotification";
+import ChatNotificationListener from "@/components/ChatNotificationListener";
 
 // Eager-load home (landing page)
 import HomePage from "./pages/HomePage";
@@ -89,6 +90,7 @@ const App = () => {
             ) : (
               <BrowserRouter>
                 <MatchInviteNotification />
+                <ChatNotificationListener />
                 <AnimatedRoutes />
               </BrowserRouter>
             )}
