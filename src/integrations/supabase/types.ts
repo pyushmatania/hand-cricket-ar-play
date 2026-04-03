@@ -138,11 +138,36 @@ export type Database = {
         }
         Relationships: []
       }
+      global_messages: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          message_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          message_type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          message_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       lobby_messages: {
         Row: {
           created_at: string
           id: string
           message: string
+          message_type: string
           receiver_id: string
           sender_id: string
         }
@@ -150,6 +175,7 @@ export type Database = {
           created_at?: string
           id?: string
           message: string
+          message_type?: string
           receiver_id: string
           sender_id: string
         }
@@ -157,6 +183,7 @@ export type Database = {
           created_at?: string
           id?: string
           message?: string
+          message_type?: string
           receiver_id?: string
           sender_id?: string
         }

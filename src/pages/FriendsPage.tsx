@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import TopStatusBar from "@/components/TopStatusBar";
 import PlayerAvatar from "@/components/PlayerAvatar";
+import GlobalChat from "@/components/chat/GlobalChat";
 import FriendStatsModal from "@/components/FriendStatsModal";
 import {
   createMultiplayerRoom,
@@ -44,7 +45,7 @@ interface FriendRequest {
   to_name?: string;
 }
 
-type Tab = "friends" | "requests" | "add";
+type Tab = "friends" | "requests" | "add" | "global";
 
 export default function FriendsPage() {
   const { user } = useAuth();
@@ -189,6 +190,7 @@ export default function FriendsPage() {
   const pendingCount = incoming.length;
   const tabs: { key: Tab; label: string; icon: string; badge?: number }[] = [
     { key: "friends", label: "FRIENDS", icon: "👥" },
+    { key: "global", label: "GLOBAL", icon: "🌍" },
     { key: "requests", label: "REQUESTS", icon: "📩", badge: pendingCount },
     { key: "add", label: "ADD", icon: "➕" },
   ];
@@ -551,6 +553,15 @@ export default function FriendsPage() {
                   </div>
                 )}
               </div>
+            </motion.div>
+          )}
+
+          {/* GLOBAL CHAT */}
+          {tab === "global" && (
+            <motion.div key="global" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              className="rounded-2xl border-2 border-[hsl(222_25%_22%/0.5)] bg-gradient-to-b from-[hsl(222_40%_13%/0.9)] to-[hsl(222_40%_8%/0.95)] p-3 h-[420px]"
+            >
+              <GlobalChat />
             </motion.div>
           )}
         </AnimatePresence>
