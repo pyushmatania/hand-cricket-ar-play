@@ -13,6 +13,8 @@ interface OddEvenTossProps {
   playerName?: string;
   opponentName?: string;
   isMultiplayer?: boolean;
+  multiplayerPlayerChoice?: OddEven | null;
+  multiplayerOpponentChoice?: OddEven | null;
   onTossComplete?: (tossWinner: string, battingFirst: string) => void;
   playerAvatarIndex?: number;
   opponentAvatarIndex?: number;
@@ -22,7 +24,7 @@ type OddEven = "odd" | "even";
 
 export default function OddEvenToss({ 
   onResult, playerName = "You", opponentName = "AI", 
-  isMultiplayer = false, onTossComplete,
+  isMultiplayer = false, multiplayerPlayerChoice = null, multiplayerOpponentChoice = null, onTossComplete,
   playerAvatarIndex = 0, opponentAvatarIndex = 1,
 }: OddEvenTossProps) {
   const [step, setStep] = useState<"assigning" | "choose_number" | "reveal" | "pick_innings">(isMultiplayer ? "assigning" : "choose_oe" as any);
@@ -40,17 +42,17 @@ export default function OddEvenToss({
   // For PvP: randomly assign odd/even
   useEffect(() => {
     if (isMultiplayer && step === "assigning") {
-      const random = Math.random() > 0.5;
-      const pChoice: OddEven = random ? "odd" : "even";
-      const oChoice: OddEven = random ? "even" : "odd";
+      const pChoice: OddEven = multiplayerPlayerChoice ?? (Math.random() > 0.5 ? "odd" : "even");
+      const oChoice: OddEven = multiplayerOpponentChoice ?? (pChoice === "odd" ? "even" : "odd");
       setPlayerChoice(pChoice);
       setOpponentChoice(oChoice);
-      setTimeout(() => {
+      const timer = window.setTimeout(() => {
         if (soundEnabled) SFX.tossSelect();
         setStep("choose_number");
       }, 2500);
+      return () => window.clearTimeout(timer);
     }
-  }, [isMultiplayer, step]);
+  }, [isMultiplayer, step, multiplayerPlayerChoice, multiplayerOpponentChoice, soundEnabled]);
 
   // For solo: start at choose_oe
   useEffect(() => {
