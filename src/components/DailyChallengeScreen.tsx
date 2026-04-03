@@ -280,6 +280,8 @@ export default function DailyChallengeScreen({ onHome }: Props) {
               matchConfig={DAILY_CONFIG}
               innings1Balls={game.innings1Balls}
               commentators={matchCommentators}
+              arenaImage={arenaImage}
+              arenaId={arenaId}
             />
           </>
         )}

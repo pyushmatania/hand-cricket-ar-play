@@ -326,6 +326,8 @@ export default function TournamentScreen({ onHome }: Props) {
               matchConfig={matchConfig}
               innings1Balls={game.innings1Balls}
               commentators={matchCommentators}
+              arenaImage={arenaImage}
+              arenaId={arenaId}
             />
           </>
         )}
