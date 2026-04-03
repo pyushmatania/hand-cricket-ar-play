@@ -104,7 +104,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [searchParams] = useSearchParams();
   const [phase, setPhase] = useState<Phase>("lobby");
   const [games, setGames] = useState<LobbyGame[]>([]);
-  const [lobbyTab, setLobbyTab] = useState<"join" | "create">("join");
+  const [lobbyTab, setLobbyTab] = useState<"join" | "create" | "friends">("join");
   const [currentGame, setCurrentGame] = useState<MultiplayerGame | null>(null);
   const [ownHostedGame, setOwnHostedGame] = useState<LobbyGame | null>(null);
   const [opponentName, setOpponentName] = useState("Opponent");
@@ -166,7 +166,11 @@ export default function MultiplayerScreen({ onHome }: Props) {
     winStreak?: number; loseStreak?: number;
   } | null>(null);
 
-  // Rematch invite state
+  // Friends state for lobby
+  const [lobbyFriends, setLobbyFriends] = useState<{ user_id: string; display_name: string; avatar_index: number; wins: number; total_matches: number }[]>([]);
+  const [challengingFriendId, setChallengingFriendId] = useState<string | null>(null);
+
+
   const [rematchSent, setRematchSent] = useState(false);
   const [rematchCountdown, setRematchCountdown] = useState<number | null>(null);
   const [rematchExpiredMsg, setRematchExpiredMsg] = useState<string | null>(null);
@@ -330,6 +334,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
   useEffect(() => {
     if (phase !== "lobby") return;
     loadGames();
+    loadLobbyFriends();
     const loadInterval = setInterval(loadGames, 5000);
     // Tick lobby game timers every second
     const tickInterval = setInterval(() => {
@@ -751,7 +756,22 @@ export default function MultiplayerScreen({ onHome }: Props) {
     }
   };
 
-  const loadOpponentName = async (game: MultiplayerGame) => {
+  const loadLobbyFriends = async () => {
+    if (!user) return;
+    const { data: friendRows } = await supabase
+      .from("friends")
+      .select("friend_id")
+      .eq("user_id", user.id);
+    if (!friendRows || friendRows.length === 0) { setLobbyFriends([]); return; }
+    const friendIds = friendRows.map((f: any) => f.friend_id);
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("user_id, display_name, avatar_index, wins, total_matches")
+      .in("user_id", friendIds);
+    setLobbyFriends(profiles || []);
+  };
+
+
     const oppId = user?.id === game.host_id ? game.guest_id : game.host_id;
     if (!oppId) return;
     const { data } = await supabase.from("profiles").select("display_name, avatar_index").eq("user_id", oppId).single();
@@ -1096,7 +1116,13 @@ export default function MultiplayerScreen({ onHome }: Props) {
                 className={`flex-1 py-2.5 rounded-lg font-display text-[10px] font-bold tracking-widest transition-all ${
                   lobbyTab === "join" ? "bg-primary text-primary-foreground" : "text-muted-foreground"
                 }`}>
-                🎮 JOIN MATCH
+                🎮 JOIN
+              </button>
+              <button onClick={() => setLobbyTab("friends")}
+                className={`flex-1 py-2.5 rounded-lg font-display text-[10px] font-bold tracking-widest transition-all ${
+                  lobbyTab === "friends" ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+                }`}>
+                👥 FRIENDS
               </button>
               <button onClick={() => setLobbyTab("create")}
                 className={`flex-1 py-2.5 rounded-lg font-display text-[10px] font-bold tracking-widest transition-all ${
@@ -1128,6 +1154,72 @@ export default function MultiplayerScreen({ onHome }: Props) {
                   className="w-full py-4 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display font-black text-sm rounded-2xl glow-primary tracking-wider">
                   🏏 CREATE MATCH
                 </motion.button>
+              </motion.div>
+            )}
+
+            {/* FRIENDS TAB */}
+            {lobbyTab === "friends" && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-2">
+                <p className="text-[9px] text-muted-foreground font-display tracking-wider text-center">CHALLENGE A FRIEND TO BATTLE</p>
+                {lobbyFriends.length === 0 ? (
+                  <div className="glass-score p-6 text-center">
+                    <span className="text-3xl block mb-2">👥</span>
+                    <p className="text-xs text-muted-foreground">No friends yet</p>
+                    <p className="text-[9px] text-muted-foreground mt-1">Add friends from the Friends page to challenge them!</p>
+                    <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/friends")}
+                      className="mt-3 px-4 py-2 rounded-lg bg-primary/15 border border-primary/30 text-[9px] font-display font-bold text-primary tracking-wider">
+                      GO TO FRIENDS
+                    </motion.button>
+                  </div>
+                ) : (
+                  lobbyFriends.map((friend) => {
+                    const avatar = AVATAR_PRESETS[friend.avatar_index % AVATAR_PRESETS.length];
+                    const winRate = friend.total_matches > 0 ? Math.round((friend.wins / friend.total_matches) * 100) : 0;
+                    const isChallenging = challengingFriendId === friend.user_id;
+                    return (
+                      <motion.div key={friend.user_id} whileTap={{ scale: 0.97 }}
+                        className="w-full glass-score p-3 flex items-center gap-3 rounded-2xl border border-border/30">
+                        <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${avatar.gradient} flex items-center justify-center shadow-lg`}>
+                          <span className="text-lg">{avatar.emoji}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <span className="font-display text-xs font-bold text-foreground block truncate">{friend.display_name}</span>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-[8px] text-muted-foreground">{friend.total_matches} matches</span>
+                            <span className="text-[8px] text-neon-green font-bold">{winRate}% WR</span>
+                          </div>
+                        </div>
+                        <motion.button
+                          whileTap={{ scale: 0.9 }}
+                          disabled={isChallenging}
+                          onClick={async () => {
+                            setChallengingFriendId(friend.user_id);
+                            const { data: newGame, error } = await createMultiplayerRoom(user!.id, "tap", friend.user_id);
+                            if (newGame && !error) {
+                              await supabase.from("match_invites").insert({
+                                game_id: (newGame as any).id,
+                                from_user_id: user!.id,
+                                to_user_id: friend.user_id,
+                                game_type: "tap",
+                              });
+                              setCurrentGame(newGame as unknown as MultiplayerGame);
+                              setPhase("waiting");
+                              navigate(`/game/multiplayer?game=${(newGame as any).id}`, { replace: true });
+                            }
+                            setChallengingFriendId(null);
+                          }}
+                          className={`px-3 py-2 rounded-xl font-display text-[9px] font-bold tracking-wider ${
+                            isChallenging
+                              ? "bg-muted/50 text-muted-foreground border border-border"
+                              : "bg-gradient-to-r from-secondary to-secondary/70 text-secondary-foreground border border-secondary/40 shadow-[0_0_12px_hsl(45_93%_58%/0.2)]"
+                          }`}
+                        >
+                          {isChallenging ? "⏳..." : "⚔️ BATTLE"}
+                        </motion.button>
+                      </motion.div>
+                    );
+                  })
+                )}
               </motion.div>
             )}
 
