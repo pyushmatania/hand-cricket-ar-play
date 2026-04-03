@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-type ShakeIntensity = "light" | "medium" | heavy";
+type ShakeIntensity = "light" | "medium" | "heavy";
 
 export function useScreenShake() {
   const shake = useCallback((intensity: ShakeIntensity = "medium") => {
