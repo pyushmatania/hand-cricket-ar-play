@@ -442,7 +442,7 @@ export default function TapPlayingUI({
                 <p className="text-[6px] text-white/50 font-game-display font-bold tracking-[0.2em] mb-0.5">{playerName.toUpperCase().slice(0, 8)}</p>
                 <motion.div initial={{ rotateY: 90 }} animate={{ rotateY: 0 }}
                   className="w-10 h-10 rounded-xl bg-gradient-to-br from-game-green/20 to-game-green/5 border border-game-green/25 flex items-center justify-center mx-auto">
-                  <span className="text-xl">{MOVES.find(m => m.move === lastResult?.userMove)?.emoji || "❓"}</span>
+                  <span className="text-xl">{btnTheme.moves[lastResult?.userMove === "DEF" ? "DEF" : String(lastResult?.userMove)]?.emoji || "❓"}</span>
                 </motion.div>
                 <p className="text-[8px] font-game-display font-bold text-game-green mt-0.5">{lastResult.userMove === "DEF" ? "DEF" : lastResult.userMove}</p>
               </div>
