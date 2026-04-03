@@ -35,7 +35,7 @@ const GESTURES = [
   },
   {
     move: "3",
-    emoji: "🤟",
+    emoji: "🫱",
     name: "TRIPLE",
     value: "3 runs",
     description: "Show the rock/love sign — thumb, index, and pinky extended.",
@@ -44,7 +44,7 @@ const GESTURES = [
   },
   {
     move: "4",
-    emoji: "🖖",
+    emoji: "🖐️",
     name: "BOUNDARY",
     value: "4 runs",
     description: "Show the Vulcan salute — split your fingers into a V shape.",

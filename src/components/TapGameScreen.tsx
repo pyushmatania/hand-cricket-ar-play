@@ -65,8 +65,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   }, []);
 
   const handleOverSelect = (config: MatchConfig) => {
-    // Tap mode never uses DEF — flag this so the AI also skips it
-    setMatchConfig({ ...config, noDefence: true });
+    setMatchConfig(config);
     setShowOverSelector(false);
   };
 

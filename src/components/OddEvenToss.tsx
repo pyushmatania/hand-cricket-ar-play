@@ -5,7 +5,7 @@ import { useSettings } from "@/contexts/SettingsContext";
 import { AVATAR_PRESETS } from "@/lib/avatars";
 
 const HAND_EMOJIS: Record<number, string> = {
-  1: "☝️", 2: "✌️", 3: "🤟", 4: "🖖", 6: "👍",
+  1: "☝️", 2: "✌️", 3: "🫱", 4: "🖐️", 6: "👍",
 };
 
 interface OddEvenTossProps {

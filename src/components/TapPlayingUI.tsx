@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useScreenShake } from "@/hooks/useScreenShake";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Move, BallResult, GameResult, InningsPhase, MatchConfig } from "@/hooks/useHandCricket";
 import { SFX, Haptics } from "@/lib/sounds";
@@ -65,6 +66,7 @@ export default function TapPlayingUI({
   equippedBatSkin,
   equippedButtonStyle,
 }: TapPlayingUIProps) {
+  const shake = useScreenShake();
   const batSkin = getBatSkin(equippedBatSkin);
   const btnTheme = getButtonStyle(equippedButtonStyle);
   const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, commentaryVoice, voiceEngine, commentaryLanguage, musicEnabled, ambientVolume } = useSettings();
@@ -256,6 +258,7 @@ export default function TapPlayingUI({
     setShotOverlayKey(Date.now());
     if (soundEnabled) SFX.batHit();
     if (r.runs === "OUT") {
+      shake("heavy");
       setTimeout(() => {
         if (soundEnabled) SFX.out();
         if (hapticsEnabled) Haptics.out();
@@ -263,8 +266,8 @@ export default function TapPlayingUI({
       }, 150);
     } else if (typeof r.runs === "number") {
       const absRuns = Math.abs(r.runs);
-      if (absRuns === 6) { setTimeout(() => { if (soundEnabled) SFX.six(); if (hapticsEnabled) Haptics.heavy(); crowdRoar("six"); }, 100); }
-      else if (absRuns === 4) { setTimeout(() => { if (soundEnabled) SFX.four(); if (hapticsEnabled) Haptics.medium(); crowdRoar("four"); }, 100); }
+      if (absRuns === 6) { shake("medium"); setTimeout(() => { if (soundEnabled) SFX.six(); if (hapticsEnabled) Haptics.heavy(); crowdRoar("six"); }, 100); }
+      else if (absRuns === 4) { shake("light"); setTimeout(() => { if (soundEnabled) SFX.four(); if (hapticsEnabled) Haptics.medium(); crowdRoar("four"); }, 100); }
       else if (absRuns === 0) { if (soundEnabled) SFX.defence(); if (hapticsEnabled) Haptics.light(); }
       else { if (soundEnabled) SFX.runs(absRuns); if (hapticsEnabled) Haptics.light(); }
     }
