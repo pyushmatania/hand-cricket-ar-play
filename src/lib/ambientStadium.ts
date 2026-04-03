@@ -14,7 +14,7 @@ let boostTimeout: ReturnType<typeof setTimeout> | null = null;
 let silenceTimeout: ReturnType<typeof setTimeout> | null = null;
 let currentArenaId: string | null = null;
 
-export type ArenaAudioProfile = "school" | "street" | "ipl";
+export type ArenaAudioProfile = "school" | "rooftop" | "street" | "beach" | "ipl" | "worldcup";
 
 interface ArenaAudioConfig {
   noiseGain: number;
@@ -33,45 +33,39 @@ interface ArenaAudioConfig {
 const ARENA_AUDIO: Record<ArenaAudioProfile, ArenaAudioConfig> = {
   // Classroom: kids chattering, higher pitch, lighter
   school: {
-    noiseGain: 0.2,
-    noiseBandpass: 700,
-    noiseQ: 0.8,
-    noiseBrownianFactor: 0.06,
-    droneFreq1: 180,
-    droneFreq2: 270,
-    droneGain: 0.04,
-    chantBaseFreq: 400,
-    chantGain: 0.04,
-    chantIntervalMs: 1800,
-    chantVariance: 100,
+    noiseGain: 0.2, noiseBandpass: 700, noiseQ: 0.8, noiseBrownianFactor: 0.06,
+    droneFreq1: 180, droneFreq2: 270, droneGain: 0.04,
+    chantBaseFreq: 400, chantGain: 0.04, chantIntervalMs: 1800, chantVariance: 100,
+  },
+  // Rooftop: city ambience, wind, distant traffic
+  rooftop: {
+    noiseGain: 0.22, noiseBandpass: 550, noiseQ: 0.6, noiseBrownianFactor: 0.05,
+    droneFreq1: 160, droneFreq2: 240, droneGain: 0.05,
+    chantBaseFreq: 350, chantGain: 0.03, chantIntervalMs: 3000, chantVariance: 60,
   },
   // Street: neighborhood sounds, mid-range, organic
   street: {
-    noiseGain: 0.3,
-    noiseBandpass: 500,
-    noiseQ: 0.5,
-    noiseBrownianFactor: 0.05,
-    droneFreq1: 140,
-    droneFreq2: 200,
-    droneGain: 0.06,
-    chantBaseFreq: 300,
-    chantGain: 0.05,
-    chantIntervalMs: 2200,
-    chantVariance: 80,
+    noiseGain: 0.3, noiseBandpass: 500, noiseQ: 0.5, noiseBrownianFactor: 0.05,
+    droneFreq1: 140, droneFreq2: 200, droneGain: 0.06,
+    chantBaseFreq: 300, chantGain: 0.05, chantIntervalMs: 2200, chantVariance: 80,
+  },
+  // Beach: ocean waves, seagulls, breezy
+  beach: {
+    noiseGain: 0.28, noiseBandpass: 300, noiseQ: 0.35, noiseBrownianFactor: 0.03,
+    droneFreq1: 100, droneFreq2: 160, droneGain: 0.07,
+    chantBaseFreq: 500, chantGain: 0.03, chantIntervalMs: 3500, chantVariance: 120,
   },
   // IPL: massive roaring crowds, deep bass, powerful
   ipl: {
-    noiseGain: 0.45,
-    noiseBandpass: 350,
-    noiseQ: 0.4,
-    noiseBrownianFactor: 0.04,
-    droneFreq1: 80,
-    droneFreq2: 130,
-    droneGain: 0.1,
-    chantBaseFreq: 200,
-    chantGain: 0.08,
-    chantIntervalMs: 2800,
-    chantVariance: 50,
+    noiseGain: 0.45, noiseBandpass: 350, noiseQ: 0.4, noiseBrownianFactor: 0.04,
+    droneFreq1: 80, droneFreq2: 130, droneGain: 0.1,
+    chantBaseFreq: 200, chantGain: 0.08, chantIntervalMs: 2800, chantVariance: 50,
+  },
+  // World Cup: thunderous stadium, deepest bass, most intense
+  worldcup: {
+    noiseGain: 0.55, noiseBandpass: 280, noiseQ: 0.35, noiseBrownianFactor: 0.035,
+    droneFreq1: 65, droneFreq2: 110, droneGain: 0.12,
+    chantBaseFreq: 180, chantGain: 0.1, chantIntervalMs: 2000, chantVariance: 40,
   },
 };
 
