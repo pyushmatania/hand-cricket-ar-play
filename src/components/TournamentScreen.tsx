@@ -16,6 +16,7 @@ import OddEvenToss from "./OddEvenToss";
 import TapPlayingUI from "./TapPlayingUI";
 import OverSelector from "./OverSelector";
 import { useEquippedCosmetics } from "@/hooks/useEquippedCosmetics";
+import TournamentFixtureCard from "./TournamentFixtureCard";
 
 type Round = {
   round: number;
@@ -212,39 +213,23 @@ export default function TournamentScreen({ onHome }: Props) {
               </div>
             </div>
 
-            <div className="space-y-1.5">
+            <div className="space-y-2">
               {AI_OPPONENTS.map((ai, i) => {
                 const r = rounds[i];
                 const isCurrent = i === currentRound;
                 const isPast = r && r.result !== "pending";
                 return (
-                  <motion.div
+                  <TournamentFixtureCard
                     key={i}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    className={`glass-premium rounded-xl p-2.5 flex items-center gap-3 transition-all ${
-                      isCurrent ? "border border-secondary/30 shadow-[0_0_15px_hsl(45_93%_58%/0.1)]" : isPast ? "" : "opacity-35"
-                    }`}
-                  >
-                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-lg ${
-                      isCurrent ? "bg-gradient-to-br from-secondary/20 to-secondary/10 border border-secondary/25" : isPast && r?.result === "win" ? "bg-neon-green/10 border border-neon-green/20" : "bg-muted/30"
-                    }`}>{ai.emoji}</div>
-                    <div className="flex-1">
-                      <span className="font-display text-[10px] font-bold text-foreground block tracking-wider">R{i + 1}: {ai.name}</span>
-                      <span className="text-[8px] text-muted-foreground">
-                        {isPast && r ? `${r.userScore} - ${r.oppScore}` : isCurrent ? "Next match" : "Locked"}
-                      </span>
-                    </div>
-                    {isPast && r && (
-                      <span className={`font-display text-[9px] font-bold px-2 py-1 rounded-lg ${r.result === "win" ? "text-neon-green bg-neon-green/10" : "text-out-red bg-out-red/10"}`}>
-                        {r.result === "win" ? "✅ WON" : "❌ LOST"}
-                      </span>
-                    )}
-                    {isCurrent && !isPast && (
-                      <span className="text-secondary font-display font-bold text-xs animate-pulse">▶</span>
-                    )}
-                  </motion.div>
+                    index={i}
+                    opponentName={ai.name}
+                    opponentEmoji={ai.emoji}
+                    result={r?.result}
+                    userScore={r?.userScore}
+                    oppScore={r?.oppScore}
+                    isCurrent={isCurrent}
+                    isLocked={!isCurrent && !isPast}
+                  />
                 );
               })}
             </div>
