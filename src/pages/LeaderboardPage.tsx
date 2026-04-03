@@ -192,6 +192,16 @@ export default function LeaderboardPage() {
     if (mainTab === "friends" || mainTab === "global") loadPlayerOfWeek();
   }, [mainTab]);
 
+  // Auto-snapshot previous season when visiting Seasons tab (at most once per session)
+  const snapshotTriggeredRef = useRef(false);
+  const triggerAutoSnapshot = useCallback(async () => {
+    if (snapshotTriggeredRef.current) return;
+    snapshotTriggeredRef.current = true;
+    try {
+      await supabase.functions.invoke("season-snapshot");
+    } catch { /* silent */ }
+  }, []);
+
   const loadMyStats = async () => {
     if (!user) return;
     const { data } = await supabase.from("profiles").select("wins, total_matches, high_score, best_streak").eq("user_id", user.id).single();
