@@ -4,7 +4,23 @@ import { useAuth } from "@/contexts/AuthContext";
 import { AVATAR_PRESETS } from "@/lib/avatars";
 import { SFX, Haptics } from "@/lib/sounds";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, ArrowLeft } from "lucide-react";
+import { Send, ArrowLeft, Smile, MessageSquare } from "lucide-react";
+
+// ─── Quick emojis & trash talk ────────────────────────────────────
+const QUICK_EMOJIS = ["🔥", "😂", "👏", "😤", "💀", "🏏", "👑", "🫡"];
+
+const TRASH_TALK = [
+  "My grandma plays better 👵🏏",
+  "You call that batting? 😴",
+  "Easy clap 👏💤",
+  "I'm built different 💪🔥",
+  "Scared to lose? 🏳️",
+  "That was embarrassing 💀",
+  "GG EZ 🥱",
+  "You're next 🎯⚔️",
+  "Not even close 😂",
+  "Wicket incoming 🏏💨",
+];
 
 interface Friend {
   user_id: string;
@@ -30,6 +46,7 @@ export default function LobbyChat({ friend, onBack }: LobbyChatProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
+  const [showQuickPanel, setShowQuickPanel] = useState<"emoji" | "trash" | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -67,7 +84,6 @@ export default function LobbyChat({ friend, onBack }: LobbyChatProps) {
         { event: "INSERT", schema: "public", table: "lobby_messages" },
         (payload) => {
           const msg = payload.new as ChatMessage;
-          // Only add if it's part of this conversation
           if (
             (msg.sender_id === user.id && msg.receiver_id === friend.user_id) ||
             (msg.sender_id === friend.user_id && msg.receiver_id === user.id)
@@ -89,12 +105,27 @@ export default function LobbyChat({ friend, onBack }: LobbyChatProps) {
     return () => { supabase.removeChannel(channel); };
   }, [user?.id, friend.user_id, scrollToBottom]);
 
+  const quickSend = async (text: string) => {
+    if (!user?.id || sending) return;
+    setSending(true);
+    SFX.tap();
+    Haptics.light();
+    setShowQuickPanel(null);
+    await supabase.from("lobby_messages").insert({
+      sender_id: user.id,
+      receiver_id: friend.user_id,
+      message: text,
+    });
+    setSending(false);
+  };
+
   const sendMessage = async () => {
     if (!input.trim() || !user?.id || sending) return;
     const text = input.trim().slice(0, 200);
     setInput("");
     setSending(true);
     SFX.tap();
+    setShowQuickPanel(null);
     await supabase.from("lobby_messages").insert({
       sender_id: user.id,
       receiver_id: friend.user_id,
@@ -109,6 +140,13 @@ export default function LobbyChat({ friend, onBack }: LobbyChatProps) {
   const formatTime = (iso: string) => {
     const d = new Date(iso);
     return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+
+  // Detect if a message is a single emoji (for larger rendering)
+  const isSingleEmoji = (text: string) => {
+    const trimmed = text.trim();
+    const emojiRegex = /^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)$/u;
+    return emojiRegex.test(trimmed) || QUICK_EMOJIS.includes(trimmed);
   };
 
   return (
@@ -140,38 +178,110 @@ export default function LobbyChat({ friend, onBack }: LobbyChatProps) {
         <AnimatePresence initial={false}>
           {messages.map((msg) => {
             const isMe = msg.sender_id === user?.id;
+            const isEmoji = isSingleEmoji(msg.message);
             return (
               <motion.div
                 key={msg.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
                 className={`flex ${isMe ? "justify-end" : "justify-start"}`}
               >
-                <div
-                  className={`max-w-[75%] px-3 py-1.5 rounded-2xl text-[10px] leading-relaxed ${
-                    isMe
-                      ? "bg-primary/20 text-primary-foreground border border-primary/30 rounded-br-sm"
-                      : "bg-muted/40 text-foreground border border-border/30 rounded-bl-sm"
-                  }`}
-                >
-                  <p className="break-words">{msg.message}</p>
-                  <span className={`text-[7px] block mt-0.5 ${isMe ? "text-primary/50 text-right" : "text-muted-foreground/60"}`}>
-                    {formatTime(msg.created_at)}
-                  </span>
-                </div>
+                {isEmoji ? (
+                  <motion.span
+                    initial={{ scale: 0.5 }}
+                    animate={{ scale: 1 }}
+                    className="text-3xl px-1"
+                    title={formatTime(msg.created_at)}
+                  >
+                    {msg.message}
+                  </motion.span>
+                ) : (
+                  <div
+                    className={`max-w-[75%] px-3 py-1.5 rounded-2xl text-[10px] leading-relaxed ${
+                      isMe
+                        ? "bg-primary/20 text-primary-foreground border border-primary/30 rounded-br-sm"
+                        : "bg-muted/40 text-foreground border border-border/30 rounded-bl-sm"
+                    }`}
+                  >
+                    <p className="break-words">{msg.message}</p>
+                    <span className={`text-[7px] block mt-0.5 ${isMe ? "text-primary/50 text-right" : "text-muted-foreground/60"}`}>
+                      {formatTime(msg.created_at)}
+                    </span>
+                  </div>
+                )}
               </motion.div>
             );
           })}
         </AnimatePresence>
       </div>
 
-      {/* Input */}
-      <div className="flex gap-2 mt-2 pt-2 border-t border-border/30">
+      {/* Quick panel */}
+      <AnimatePresence>
+        {showQuickPanel && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="overflow-hidden"
+          >
+            {showQuickPanel === "emoji" && (
+              <div className="flex flex-wrap gap-1.5 py-2 px-1 justify-center">
+                {QUICK_EMOJIS.map((emoji) => (
+                  <motion.button
+                    key={emoji}
+                    whileTap={{ scale: 0.75 }}
+                    onClick={() => quickSend(emoji)}
+                    className="w-9 h-9 rounded-xl bg-muted/30 border border-border/20 flex items-center justify-center text-lg hover:bg-muted/50 transition-colors"
+                  >
+                    {emoji}
+                  </motion.button>
+                ))}
+              </div>
+            )}
+            {showQuickPanel === "trash" && (
+              <div className="flex flex-col gap-1 py-2 px-1 max-h-[100px] overflow-y-auto scrollbar-thin">
+                {TRASH_TALK.map((line) => (
+                  <motion.button
+                    key={line}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => quickSend(line)}
+                    className="w-full text-left px-3 py-1.5 rounded-xl bg-secondary/10 border border-secondary/20 text-[9px] font-display font-bold text-secondary-foreground hover:bg-secondary/20 transition-colors truncate"
+                  >
+                    {line}
+                  </motion.button>
+                ))}
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Input row */}
+      <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-border/30">
+        <motion.button
+          whileTap={{ scale: 0.85 }}
+          onClick={() => setShowQuickPanel((p) => (p === "emoji" ? null : "emoji"))}
+          className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${
+            showQuickPanel === "emoji" ? "bg-primary/20 border border-primary/40" : "bg-muted/20 border border-border/20"
+          }`}
+        >
+          <Smile className="w-3.5 h-3.5 text-muted-foreground" />
+        </motion.button>
+        <motion.button
+          whileTap={{ scale: 0.85 }}
+          onClick={() => setShowQuickPanel((p) => (p === "trash" ? null : "trash"))}
+          className={`w-8 h-8 rounded-xl flex items-center justify-center transition-colors ${
+            showQuickPanel === "trash" ? "bg-secondary/20 border border-secondary/40" : "bg-muted/20 border border-border/20"
+          }`}
+        >
+          <MessageSquare className="w-3.5 h-3.5 text-muted-foreground" />
+        </motion.button>
         <input
           ref={inputRef}
           value={input}
           onChange={(e) => setInput(e.target.value.slice(0, 200))}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+          onFocus={() => setShowQuickPanel(null)}
           placeholder="Type a message..."
           className="flex-1 bg-muted/20 border border-border/30 rounded-xl px-3 py-2 text-[10px] text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-primary/50 transition-colors"
         />
@@ -179,7 +289,7 @@ export default function LobbyChat({ friend, onBack }: LobbyChatProps) {
           whileTap={{ scale: 0.85 }}
           onClick={sendMessage}
           disabled={!input.trim() || sending}
-          className="w-9 h-9 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center disabled:opacity-30 transition-opacity"
+          className="w-8 h-8 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center disabled:opacity-30 transition-opacity"
         >
           <Send className="w-3.5 h-3.5 text-primary" />
         </motion.button>
