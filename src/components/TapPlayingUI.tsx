@@ -329,6 +329,9 @@ export default function TapPlayingUI({
         </div>
       )}
 
+      {/* Arena-specific floating particles */}
+      {phase !== "not_started" && phase !== "finished" && <ArenaParticles arenaId={arenaId} />}
+
       {/* Floodlight flicker */}
       <AnimatePresence>
         {floodlightFlicker && (
