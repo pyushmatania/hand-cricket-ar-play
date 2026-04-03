@@ -12,6 +12,7 @@ import FriendStatsModal from "@/components/FriendStatsModal";
 import XpHistoryFeed from "@/components/XpHistoryFeed";
 import { usePvpStats } from "@/hooks/usePvpStats";
 import { getRankTier, getNextTier, calculateRankPoints } from "@/lib/rankTiers";
+import CosmeticsCarousel from "@/components/CosmeticsCarousel";
 
 /* ─── Types ─── */
 interface BallRecord {
@@ -113,6 +114,7 @@ interface ProfileData {
   equipped_avatar_frame: string | null;
   equipped_bat_skin: string | null;
   equipped_vs_effect: string | null;
+  equipped_button_style: string | null;
   xp: number;
   coins: number;
   rank_tier: string;
@@ -157,7 +159,7 @@ export default function ProfilePage() {
   useEffect(() => {
     if (!user) return;
     supabase.from("profiles")
-      .select("display_name, total_matches, wins, losses, draws, high_score, current_streak, best_streak, abandons, avatar_url, avatar_index, equipped_avatar_frame, equipped_bat_skin, equipped_vs_effect, xp, coins, rank_tier, total_sixes, total_fours, total_runs")
+      .select("display_name, total_matches, wins, losses, draws, high_score, current_streak, best_streak, abandons, avatar_url, avatar_index, equipped_avatar_frame, equipped_bat_skin, equipped_vs_effect, equipped_button_style, xp, coins, rank_tier, total_sixes, total_fours, total_runs")
       .eq("user_id", user.id).single()
       .then(({ data }) => { if (data) setProfile(data as unknown as ProfileData); });
 
@@ -270,12 +272,7 @@ export default function ProfilePage() {
     </div>
   );
 
-  /* ── Equipped cosmetics list ── */
-  const equippedItems = [
-    profile?.equipped_bat_skin && { label: "BAT", value: profile.equipped_bat_skin, emoji: "🏏" },
-    profile?.equipped_avatar_frame && { label: "FRAME", value: profile.equipped_avatar_frame, emoji: "🖼️" },
-    profile?.equipped_vs_effect && { label: "VS FX", value: profile.equipped_vs_effect, emoji: "✨" },
-  ].filter(Boolean) as { label: string; value: string; emoji: string }[];
+  /* ── Equipped cosmetics list (kept for reference in other places) ── */
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden pb-24">
@@ -424,18 +421,13 @@ export default function ProfilePage() {
               ))}
             </div>
 
-            {/* Equipped cosmetics strip */}
-            {equippedItems.length > 0 && (
-              <div className="border-t border-muted/10 px-3 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar">
-                <span className="text-[7px] text-muted-foreground font-display tracking-widest shrink-0">EQUIPPED</span>
-                {equippedItems.map(item => (
-                  <div key={item.label} className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-muted/20 border border-muted/10 shrink-0">
-                    <span className="text-xs">{item.emoji}</span>
-                    <span className="text-[7px] text-foreground font-display font-bold tracking-wider">{item.value}</span>
-                  </div>
-                ))}
-              </div>
-            )}
+            {/* Equipped cosmetics carousel */}
+            <CosmeticsCarousel
+              batSkin={profile?.equipped_bat_skin}
+              vsEffect={profile?.equipped_vs_effect}
+              avatarFrame={profile?.equipped_avatar_frame}
+              buttonStyle={profile?.equipped_button_style}
+            />
 
             {/* Recent form strip */}
             {matches.length > 0 && (
