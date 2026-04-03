@@ -381,10 +381,11 @@ export default function BattlePassPage() {
               boxShadow: "0 4px 0 hsl(36 80% 30%), 0 6px 20px hsl(45 93% 58% / 0.25)",
             }}
             whileTap={{ scale: 0.97, y: 2 }}
-            onClick={() => setIsPremium(true)}
+            onClick={handlePurchasePremium}
+            disabled={purchasing}
           >
             <Crown className="w-4 h-4" />
-            UNLOCK PREMIUM PASS — 500 Coins
+            {purchasing ? "PURCHASING..." : `UNLOCK PREMIUM PASS — 500 Coins (${coins} available)`}
           </motion.button>
         )}
         {isPremium && (
