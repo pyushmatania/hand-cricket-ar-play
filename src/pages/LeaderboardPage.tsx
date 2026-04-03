@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,6 +18,7 @@ import PlayerOfTheWeek from "@/components/PlayerOfTheWeek";
 import MostActiveTicker from "@/components/MostActiveTicker";
 import CanvasFireworks from "@/components/CanvasFireworks";
 import FriendsNetworkGraph from "@/components/FriendsNetworkGraph";
+import SeasonCountdown from "@/components/SeasonCountdown";
 import { getRankTier } from "@/lib/rankTiers";
 import { useWeeklyChallenges } from "@/hooks/useWeeklyChallenges";
 import { toast } from "@/components/ui/use-toast";
@@ -177,7 +178,7 @@ export default function LeaderboardPage() {
     if (mainTab === "global" || mainTab === "rage") loadGlobal();
     if (mainTab === "friends") loadFriends();
     if (mainTab === "rivalry") loadRivalFriends();
-    if (mainTab === "seasons") { loadSeasonData(); loadArchivedSeasons(); }
+    if (mainTab === "seasons") { loadSeasonData(); loadArchivedSeasons(); triggerAutoSnapshot(); }
   }, [mainTab, sortBy, seasonWeeksAgo]);
 
   // Load sparklines when active list changes
@@ -190,6 +191,16 @@ export default function LeaderboardPage() {
   useEffect(() => {
     if (mainTab === "friends" || mainTab === "global") loadPlayerOfWeek();
   }, [mainTab]);
+
+  // Auto-snapshot previous season when visiting Seasons tab (at most once per session)
+  const snapshotTriggeredRef = useRef(false);
+  const triggerAutoSnapshot = useCallback(async () => {
+    if (snapshotTriggeredRef.current) return;
+    snapshotTriggeredRef.current = true;
+    try {
+      await supabase.functions.invoke("season-snapshot");
+    } catch { /* silent */ }
+  }, []);
 
   const loadMyStats = async () => {
     if (!user) return;
@@ -542,10 +553,13 @@ export default function LeaderboardPage() {
                       <button onClick={() => setSeasonWeeksAgo(w => Math.max(0, w - 1))} disabled={seasonWeeksAgo === 0} className="w-8 h-8 rounded-lg glass-card flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30">▶</button>
                     </div>
                     {seasonWeeksAgo === 0 && (
-                      <div className="flex items-center gap-1.5 justify-center">
-                        <span className="w-2 h-2 rounded-full bg-neon-green animate-pulse" />
-                        <span className="text-[7px] text-neon-green font-display tracking-widest">COMPETING NOW</span>
-                      </div>
+                      <>
+                        <div className="flex items-center gap-1.5 justify-center mb-2">
+                          <span className="w-2 h-2 rounded-full bg-neon-green animate-pulse" />
+                          <span className="text-[7px] text-neon-green font-display tracking-widest">COMPETING NOW</span>
+                        </div>
+                        <SeasonCountdown endDate={getWeekRange(0).end} />
+                      </>
                     )}
                   </div>
                   {seasonEntries.length === 0 ? (
