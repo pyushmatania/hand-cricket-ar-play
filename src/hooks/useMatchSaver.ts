@@ -4,6 +4,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import type { GameState } from "./useHandCricket";
 import { checkAndSaveRecordBreaks } from "./useRecordBreaks";
 import { getRankTier, calculateRankPoints } from "@/lib/rankTiers";
+import { ACHIEVEMENTS, detectNewAchievements, type Achievement } from "@/lib/achievements";
+import { pushAchievementToast } from "@/components/AchievementNotificationListener";
 
 const XP_REWARDS = { win: 30, loss: 10, draw: 15 };
 const COIN_REWARDS = { win: 50, loss: 10, draw: 20 };
@@ -172,6 +174,73 @@ export function useMatchSaver() {
           wins: updatedStats.wins,
           total_matches: updatedStats.total_matches,
         });
+
+        // ── ACHIEVEMENT UNLOCK DETECTION ──
+        try {
+          // Build batting stats for old & new profile
+          const oldBattingStats = {
+            totalSixes: (profile as any).total_sixes || 0,
+            totalFours: (profile as any).total_fours || 0,
+            boundaryPct: (() => {
+              const totalRuns = (profile as any).total_runs || 0;
+              const boundaryRuns = ((profile as any).total_sixes || 0) * 6 + ((profile as any).total_fours || 0) * 4;
+              return totalRuns > 0 ? Math.round((boundaryRuns / totalRuns) * 100) : 0;
+            })(),
+          };
+          const newBattingStats = {
+            totalSixes: updatedStats.total_sixes,
+            totalFours: updatedStats.total_fours,
+            boundaryPct: (() => {
+              const totalRuns = updatedStats.total_runs;
+              const boundaryRuns = updatedStats.total_sixes * 6 + updatedStats.total_fours * 4;
+              return totalRuns > 0 ? Math.round((boundaryRuns / totalRuns) * 100) : 0;
+            })(),
+          };
+
+          const newlyUnlocked = detectNewAchievements(profile, updatedStats, oldBattingStats, newBattingStats);
+
+          if (newlyUnlocked.length > 0) {
+            // Push instant toasts
+            for (const a of newlyUnlocked) {
+              pushAchievementToast(a);
+            }
+
+            // Save notifications to DB (self)
+            const selfNotifs = newlyUnlocked.map(a => ({
+              user_id: user.id,
+              type: "achievement_unlock",
+              title: `${a.icon} ${a.title} Unlocked!`,
+              message: a.desc,
+              data: {
+                achievement_key: a.key,
+                achievement_title: a.title,
+                achievement_desc: a.desc,
+                achievement_tier: a.tier,
+                achievement_category: a.category,
+                icon: a.icon,
+              },
+            }));
+            await supabase.from("notifications").insert(selfNotifs as any);
+
+            // Notify friends
+            const { data: friends3 } = await supabase
+              .from("friends")
+              .select("friend_id")
+              .eq("user_id", user.id);
+            if (friends3?.length) {
+              const friendNotifs = newlyUnlocked.flatMap(a =>
+                friends3.map((f: any) => ({
+                  user_id: f.friend_id,
+                  type: "friend_achievement",
+                  title: `${profile.display_name} unlocked ${a.icon} ${a.title}!`,
+                  message: `${profile.display_name} just earned the "${a.title}" badge (${a.tier})`,
+                  data: { from_user_id: user.id, achievement_key: a.key },
+                }))
+              );
+              await supabase.from("notifications").insert(friendNotifs as any);
+            }
+          }
+        } catch (e) { console.error("[Achievements] unlock detection failed", e); }
 
         // Update weekly challenge progress
         try {
