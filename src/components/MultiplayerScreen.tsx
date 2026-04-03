@@ -652,14 +652,16 @@ export default function MultiplayerScreen({ onHome }: Props) {
     if (user.id !== currentGame.host_id) return;
     if (currentGame.phase === "pre_round_countdown" && currentGame.phase_started_at) {
       const ms = Date.now() - new Date(currentGame.phase_started_at).getTime();
-      if (ms >= 1500) {
+      const remaining = Math.max(0, 1500 - ms);
+      const timer = setTimeout(() => {
         (supabase.from("multiplayer_games") as any).update({
           phase: "action_window",
           phase_started_at: new Date().toISOString(),
           turn_deadline_at: new Date(Date.now() + TURN_TIMER_MS).toISOString(),
           status: "playing",
         }).eq("id", currentGame.id).eq("phase", "pre_round_countdown");
-      }
+      }, remaining);
+      return () => clearTimeout(timer);
     }
     if (currentGame.phase === "action_window" && currentGame.turn_deadline_at && Date.now() >= new Date(currentGame.turn_deadline_at).getTime()) {
       const isHostMoveMissing = !currentGame.host_move;
