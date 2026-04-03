@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import ShareButton from "@/components/share/ShareButton";
+import LeaderboardShareCard from "@/components/share/LeaderboardShareCard";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { computePvpRecord, type PvpGame } from "@/hooks/usePvpStats";
@@ -846,6 +848,31 @@ export default function LeaderboardPage() {
                 {myRank ? `#${myRank}` : "—"}
               </p>
             </div>
+            {myRank && user && (() => {
+              const me = leaders.find(l => l.user_id === user.id);
+              return me ? (
+                <ShareButton
+                  renderCard={() => (
+                    <LeaderboardShareCard
+                      playerName={me.display_name}
+                      rank={myRank}
+                      totalPlayers={leaders.length}
+                      sortLabel={SORT_OPTIONS[sortBy].label}
+                      sortValue={getScore(me)}
+                      wins={me.wins}
+                      losses={me.losses}
+                      highScore={me.high_score}
+                      rankTier={me.rank_tier || "Bronze"}
+                      isGlobal
+                    />
+                  )}
+                  title="🏏 My Leaderboard Rank"
+                  text={`I'm ranked #${myRank} on the Hand Cricket leaderboard! 🏏🔥`}
+                  variant="primary"
+                  size="sm"
+                />
+              ) : null;
+            })()}
             {!user && <p className="text-[8px] text-muted-foreground font-game-body">Sign in to track</p>}
           </motion.div>
         )}
