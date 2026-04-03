@@ -421,18 +421,13 @@ export default function ProfilePage() {
               ))}
             </div>
 
-            {/* Equipped cosmetics strip */}
-            {equippedItems.length > 0 && (
-              <div className="border-t border-muted/10 px-3 py-2 flex items-center gap-2 overflow-x-auto no-scrollbar">
-                <span className="text-[7px] text-muted-foreground font-display tracking-widest shrink-0">EQUIPPED</span>
-                {equippedItems.map(item => (
-                  <div key={item.label} className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-muted/20 border border-muted/10 shrink-0">
-                    <span className="text-xs">{item.emoji}</span>
-                    <span className="text-[7px] text-foreground font-display font-bold tracking-wider">{item.value}</span>
-                  </div>
-                ))}
-              </div>
-            )}
+            {/* Equipped cosmetics carousel */}
+            <CosmeticsCarousel
+              batSkin={profile?.equipped_bat_skin}
+              vsEffect={profile?.equipped_vs_effect}
+              avatarFrame={profile?.equipped_avatar_frame}
+              buttonStyle={profile?.equipped_button_style}
+            />
 
             {/* Recent form strip */}
             {matches.length > 0 && (
