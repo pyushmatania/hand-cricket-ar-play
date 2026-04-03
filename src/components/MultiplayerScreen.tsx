@@ -124,6 +124,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [selectedGameType, setSelectedGameType] = useState<GameType>("ar");
   const [createModePickerOpen, setCreateModePickerOpen] = useState(false);
   const [lobbyMessage, setLobbyMessage] = useState<string | null>(null);
+  const [chattingFriend, setChattingFriend] = useState<{ user_id: string; display_name: string; avatar_index: number } | null>(null);
 
   // Timer state — 5s per turn countdown
   const [turnCountdownMs, setTurnCountdownMs] = useState(TURN_TIMER_MS);
