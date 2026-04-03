@@ -78,17 +78,3 @@ export default function AchievementNotificationListener() {
 
   return <AchievementUnlockToast achievement={current} onDone={handleDone} />;
 }
-
-/**
- * Imperatively push an achievement toast (used by match saver directly,
- * bypassing realtime for instant feedback).
- */
-let _pushAchievement: ((a: Achievement) => void) | null = null;
-
-export function registerAchievementPush(fn: (a: Achievement) => void) {
-  _pushAchievement = fn;
-}
-
-export function pushAchievementToast(a: Achievement) {
-  if (_pushAchievement) _pushAchievement(a);
-}
