@@ -55,6 +55,7 @@ export interface TapPlayingUIProps {
   innings1Balls?: number;
   commentators?: [Commentator, Commentator];
   arenaImage?: string;
+  arenaId?: string;
 }
 
 export default function TapPlayingUI({
