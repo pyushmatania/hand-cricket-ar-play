@@ -205,7 +205,9 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   useEffect(() => {
     if (game.phase === "finished" && !savedRef.current) {
       savedRef.current = true;
-      saveMatch(game, "ar");
+      saveMatch(game, "ar").then((rewards) => {
+        if (rewards) setMatchRewards(rewards);
+      });
 
       if (game.result === "win") {
         if (soundEnabled) SFX.win();
