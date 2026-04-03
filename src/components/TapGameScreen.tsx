@@ -230,6 +230,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
           modeLabel="TAP MODE"
           matchConfig={matchConfig || undefined}
           commentators={matchCommentators}
+          arenaImage={arenaImage}
         />
       </div>
     </div>
