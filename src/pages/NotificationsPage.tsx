@@ -21,6 +21,7 @@ const TYPE_META: Record<string, { icon: string; accent: string; category: "socia
   rank_up:              { icon: "🏆", accent: "hsl(51,100%,50%)",  category: "rewards" },
   challenge_complete:   { icon: "🎯", accent: "hsl(122,39%,49%)", category: "rewards" },
   record_broken:        { icon: "🔥", accent: "hsl(4,90%,58%)",   category: "rewards" },
+  achievement_unlock:   { icon: "🏅", accent: "hsl(45,93%,58%)",  category: "rewards" },
   friend_achievement:   { icon: "⭐", accent: "hsl(51,100%,50%)",  category: "social" },
   xp_earned:            { icon: "✨", accent: "hsl(291,47%,51%)", category: "rewards" },
   coins_earned:         { icon: "🪙", accent: "hsl(43,96%,56%)",  category: "rewards" },

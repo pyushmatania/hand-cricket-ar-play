@@ -93,6 +93,7 @@ const App = () => {
               <BrowserRouter>
                 <MatchInviteNotification />
                 <ChatNotificationListener />
+                <AchievementNotificationListener />
                 <AnimatedRoutes />
                 <BottomNav />
               </BrowserRouter>
