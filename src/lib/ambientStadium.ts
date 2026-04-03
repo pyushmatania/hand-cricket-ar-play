@@ -14,7 +14,7 @@ let boostTimeout: ReturnType<typeof setTimeout> | null = null;
 let silenceTimeout: ReturnType<typeof setTimeout> | null = null;
 let currentArenaId: string | null = null;
 
-export type ArenaAudioProfile = "school" | "street" | "ipl";
+export type ArenaAudioProfile = "school" | "rooftop" | "street" | "beach" | "ipl" | "worldcup";
 
 interface ArenaAudioConfig {
   noiseGain: number;
