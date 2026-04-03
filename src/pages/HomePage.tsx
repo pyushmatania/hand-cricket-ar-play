@@ -52,12 +52,6 @@ const CHEST_SLOTS = [
   { state: "empty" as const, type: null, label: "", timer: "" },
 ];
 
-const CHEST_ICONS: Record<string, { emoji: string; glow: string }> = {
-  bronze: { emoji: "🪙", glow: "hsl(30 60% 45%)" },
-  silver: { emoji: "⬜", glow: "hsl(210 20% 60%)" },
-  gold: { emoji: "👑", glow: "hsl(45 100% 55%)" },
-  diamond: { emoji: "💎", glow: "hsl(200 90% 60%)" },
-};
 
 export default function HomePage() {
   const navigate = useNavigate();
