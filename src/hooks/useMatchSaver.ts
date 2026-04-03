@@ -12,12 +12,22 @@ const CHALLENGE_COINS = 100;
 const RANKUP_XP = 100;
 const RANKUP_COINS = 200;
 
+export interface MatchRewardsResult {
+  xpEarned: number;
+  coinsEarned: number;
+  oldLevel: number;
+  newLevel: number;
+  oldRankName: string | null;
+  newRankName: string | null;
+  streakBonus: boolean;
+}
+
 export function useMatchSaver() {
   const { user } = useAuth();
 
   const saveMatch = useCallback(
-    async (game: GameState, mode: string) => {
-      if (!user || game.phase !== "finished" || !game.result) return;
+    async (game: GameState, mode: string): Promise<MatchRewardsResult | null> => {
+      if (!user || game.phase !== "finished" || !game.result) return null;
 
       const matchData = {
         user_id: user.id,

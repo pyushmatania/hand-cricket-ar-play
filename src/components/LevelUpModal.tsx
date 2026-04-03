@@ -28,6 +28,7 @@ export default function LevelUpModal({ rewards, onClose }: LevelUpModalProps) {
   const newRankTier = didRankUp && rewards ? RANK_TIERS.find(t => t.name === rewards.newRankName) : null;
 
   useEffect(() => {
+    if (!rewards) return;
     setShow(true);
     setPhase(0);
     const t1 = setTimeout(() => {
