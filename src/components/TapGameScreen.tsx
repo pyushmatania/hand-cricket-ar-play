@@ -67,7 +67,9 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   useEffect(() => {
     if (game.phase === "finished" && !savedRef.current) {
       savedRef.current = true;
-      saveMatch(game, "tap");
+      saveMatch(game, "tap").then((rewards) => {
+        if (rewards) setMatchRewards(rewards);
+      });
       if (game.result === "win") { if (soundEnabled) SFX.win(); if (hapticsEnabled) Haptics.success(); if (crowdEnabled) playCrowdForResult(0, true, true, "win"); }
       else if (game.result === "loss") { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); if (crowdEnabled) playCrowdForResult(0, true, true, "loss"); }
       if (!postMatchShownRef.current) {
