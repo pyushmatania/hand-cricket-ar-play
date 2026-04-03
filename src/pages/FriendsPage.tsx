@@ -406,36 +406,37 @@ export default function FriendsPage() {
               {incoming.length > 0 && (
                 <>
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="w-1 h-4 rounded-full bg-neon-green" />
-                    <span className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">INCOMING</span>
+                    <div className="w-8 h-8 rounded-lg bg-game-green/15 border border-game-green/25 flex items-center justify-center text-sm">📥</div>
+                    <span className="font-game-display text-[8px] text-muted-foreground tracking-[0.25em]">INCOMING</span>
                   </div>
                   <div className="space-y-2 mb-4">
-                    {incoming.map((r) => (
-                      <div key={r.id} className="glass-premium rounded-xl p-3 flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-neon-green/10 border border-neon-green/20 flex items-center justify-center">
-                          <span className="text-sm">👤</span>
+                    {incoming.map((r, i) => (
+                      <motion.div key={r.id} initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}
+                        className="rounded-2xl border-2 border-game-green/20 bg-gradient-to-b from-[hsl(222_40%_13%/0.9)] to-[hsl(222_40%_8%/0.95)] p-3 flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-game-green/10 border border-game-green/20 flex items-center justify-center">
+                          <span className="text-lg">👤</span>
                         </div>
                         <div className="flex-1">
-                          <span className="font-display text-[11px] font-bold text-foreground block">{r.from_name}</span>
-                          <span className="text-[8px] text-muted-foreground">wants to be friends</span>
+                          <span className="font-game-card text-xs font-bold text-foreground block">{r.from_name}</span>
+                          <span className="text-[8px] text-muted-foreground font-game-body">wants to be friends</span>
                         </div>
                         <div className="flex gap-1.5">
                           <motion.button
                             whileTap={{ scale: 0.9 }}
                             onClick={() => acceptRequest(r.id)}
-                            className="px-3 py-1.5 rounded-lg bg-neon-green/20 border border-neon-green/30 text-[8px] font-display font-bold text-neon-green tracking-wider"
+                            className="px-3 py-2 rounded-xl bg-gradient-to-b from-game-green to-[hsl(122_39%_38%)] border-b-2 border-[hsl(122_39%_30%)] text-white font-game-display text-[7px] tracking-wider active:translate-y-[1px]"
                           >
                             ✓ ACCEPT
                           </motion.button>
                           <motion.button
                             whileTap={{ scale: 0.9 }}
                             onClick={() => rejectRequest(r.id)}
-                            className="px-2 py-1.5 rounded-lg bg-out-red/10 border border-out-red/20 text-[8px] font-display font-bold text-out-red tracking-wider"
+                            className="px-2.5 py-2 rounded-xl bg-game-dark border-2 border-game-red/30 text-game-red font-game-display text-[7px] tracking-wider"
                           >
                             ✕
                           </motion.button>
                         </div>
-                      </div>
+                      </motion.div>
                     ))}
                   </div>
                 </>
@@ -444,20 +445,20 @@ export default function FriendsPage() {
               {outgoing.length > 0 && (
                 <>
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="w-1 h-4 rounded-full bg-secondary" />
-                    <span className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">SENT</span>
+                    <div className="w-8 h-8 rounded-lg bg-game-gold/15 border border-game-gold/25 flex items-center justify-center text-sm">📤</div>
+                    <span className="font-game-display text-[8px] text-muted-foreground tracking-[0.25em]">SENT</span>
                   </div>
                   <div className="space-y-2">
                     {outgoing.map((r) => (
-                      <div key={r.id} className="glass-premium rounded-xl p-3 flex items-center gap-3 opacity-60">
-                        <div className="w-9 h-9 rounded-xl bg-secondary/10 border border-secondary/20 flex items-center justify-center">
-                          <span className="text-sm">📤</span>
+                      <div key={r.id} className="rounded-2xl border-2 border-[hsl(222_25%_22%/0.3)] bg-gradient-to-b from-[hsl(222_40%_13%/0.6)] to-[hsl(222_40%_8%/0.7)] p-3 flex items-center gap-3 opacity-60">
+                        <div className="w-10 h-10 rounded-xl bg-game-gold/10 border border-game-gold/15 flex items-center justify-center">
+                          <span className="text-lg">📤</span>
                         </div>
                         <div className="flex-1">
-                          <span className="font-display text-[11px] font-bold text-foreground block">{r.to_name}</span>
-                          <span className="text-[8px] text-muted-foreground">pending...</span>
+                          <span className="font-game-card text-xs font-bold text-foreground block">{r.to_name}</span>
+                          <span className="text-[8px] text-muted-foreground font-game-body">pending...</span>
                         </div>
-                        <span className="text-[8px] text-secondary font-display">⏳</span>
+                        <span className="text-[9px] text-game-gold font-game-display">⏳</span>
                       </div>
                     ))}
                   </div>
@@ -465,9 +466,9 @@ export default function FriendsPage() {
               )}
 
               {incoming.length === 0 && outgoing.length === 0 && (
-                <div className="glass-premium rounded-xl p-8 text-center">
-                  <span className="text-3xl block mb-2">📩</span>
-                  <span className="font-display text-xs font-bold text-muted-foreground tracking-wider">NO REQUESTS</span>
+                <div className="rounded-2xl border-2 border-[hsl(222_25%_22%/0.5)] bg-gradient-to-b from-[hsl(222_40%_13%/0.9)] to-[hsl(222_40%_8%/0.95)] p-8 text-center">
+                  <span className="text-4xl block mb-3">📩</span>
+                  <span className="font-game-title text-sm text-foreground">No Requests</span>
                 </div>
               )}
             </motion.div>
