@@ -275,12 +275,12 @@ export default function HomePage() {
               key={i}
               whileTap={{ scale: 0.9 }}
               onClick={() => slot.state === "ready" ? navigate("/shop") : undefined}
-              className={`relative rounded-2xl p-2 flex flex-col items-center justify-center min-h-[80px] border-2 transition-all ${
+              className={`relative rounded-2xl p-2 flex flex-col items-center justify-center min-h-[80px] transition-all ${
                 slot.state === "ready"
-                  ? "bg-gradient-to-b from-game-gold/20 to-game-gold/5 border-game-gold/40"
+                  ? "wood-panel border-[3px] border-[hsl(43_80%_40%)]"
                   : slot.state === "locked"
-                  ? "bg-gradient-to-b from-game-medium to-game-dark border-[hsl(222_25%_22%/0.5)]"
-                  : "bg-game-dark/40 border-dashed border-[hsl(222_25%_22%/0.3)]"
+                  ? "wood-panel-dark border-[3px] border-[hsl(222_30%_12%)]"
+                  : "wood-panel-dark border-[3px] border-dashed border-[hsl(222_25%_20%/0.4)] opacity-60"
               }`}
             >
               {slot.state === "ready" && (
