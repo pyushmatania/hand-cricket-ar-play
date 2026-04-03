@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import { useHandCricket, type Move, type MatchConfig } from "@/hooks/useHandCricket";
 import { useMatchSaver } from "@/hooks/useMatchSaver";
 import { SFX, Haptics } from "@/lib/sounds";
@@ -23,6 +24,8 @@ interface TapGameScreenProps {
 }
 
 export default function TapGameScreen({ onHome }: TapGameScreenProps) {
+  const location = useLocation();
+  const arenaImage = (location.state as any)?.arenaImage as string | undefined;
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
   const { soundEnabled, hapticsEnabled, crowdEnabled, commentaryVoice, tapCeremoniesEnabled } = useSettings();
@@ -227,6 +230,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
           modeLabel="TAP MODE"
           matchConfig={matchConfig || undefined}
           commentators={matchCommentators}
+          arenaImage={arenaImage}
         />
       </div>
     </div>

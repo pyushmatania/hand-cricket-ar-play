@@ -1,7 +1,12 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import BottomNav from "@/components/BottomNav";
+import ArenaSelector from "@/components/ArenaSelector";
+import { ARENAS, getBestArena, type Arena } from "@/lib/arenas";
+import { RANK_TIERS, getRankTier } from "@/lib/rankTiers";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { SFX, Haptics } from "@/lib/sounds";
 
 const MODES = [
@@ -203,6 +208,41 @@ function ModeCard({ mode, index, onSelect }: { mode: typeof MODES[0]; index: num
 
 export default function PlayPage() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [tierIndex, setTierIndex] = useState(0);
+  const [selectedArena, setSelectedArena] = useState<Arena>(ARENAS[0]);
+
+  // Load player rank tier
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("profiles").select("wins, total_matches, high_score, best_streak").eq("user_id", user.id).maybeSingle()
+      .then(({ data }) => {
+        if (data) {
+          const tier = getRankTier(data);
+          const idx = RANK_TIERS.findIndex(t => t.name === tier.name);
+          setTierIndex(idx);
+          // Restore saved arena or use best unlocked
+          const saved = localStorage.getItem("selectedArena");
+          const best = getBestArena(idx);
+          if (saved) {
+            const found = ARENAS.find(a => a.id === saved && idx >= a.unlockTierIndex);
+            setSelectedArena(found || best);
+          } else {
+            setSelectedArena(best);
+          }
+        }
+      });
+  }, [user]);
+
+  const handleArenaSelect = (arena: Arena) => {
+    setSelectedArena(arena);
+    localStorage.setItem("selectedArena", arena.id);
+    try { SFX.tap(); Haptics.light(); } catch {}
+  };
+
+  const handleModeSelect = (modeId: string) => {
+    navigate(`/game/${modeId}`, { state: { arenaImage: selectedArena.image } });
+  };
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden pb-24">
@@ -224,13 +264,22 @@ export default function PlayPage() {
           <p className="text-xs text-muted-foreground mt-1 ml-3">Choose your arena</p>
         </motion.div>
 
+        {/* Arena selector */}
+        <div className="mb-5">
+          <ArenaSelector
+            currentTierIndex={tierIndex}
+            selectedArenaId={selectedArena.id}
+            onSelect={handleArenaSelect}
+          />
+        </div>
+
         <div className="space-y-3">
           {MODES.map((mode, i) => (
             <ModeCard
               key={mode.id}
               mode={mode}
               index={i}
-              onSelect={() => navigate(`/game/${mode.id}`)}
+              onSelect={() => handleModeSelect(mode.id)}
             />
           ))}
         </div>
