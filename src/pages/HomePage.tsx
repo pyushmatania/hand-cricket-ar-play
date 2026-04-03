@@ -146,7 +146,7 @@ export default function HomePage() {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate("/game/daily")}
-            className="bg-gradient-to-br from-game-blue/20 to-game-blue/5 border-2 border-game-blue/30 rounded-2xl p-3 flex flex-col items-center gap-1"
+            className="wood-panel-dark metal-corners rounded-2xl p-3 flex flex-col items-center gap-1"
           >
             <span className="text-3xl">📅</span>
             <span className="font-game-display text-[9px] text-game-blue tracking-wider">
