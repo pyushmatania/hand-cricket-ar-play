@@ -292,6 +292,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       const abs = Math.abs(r.runs);
       if (abs === 6) {
         setTimeout(() => { if (soundEnabled) SFX.six(); if (hapticsEnabled) Haptics.heavy(); crowdRoar("six"); }, 100);
+        shake("medium");
         setFireworkType("six");
         if (soundEnabled) {
           setTimeout(() => SFX.fireworkWhoosh(), 400);
