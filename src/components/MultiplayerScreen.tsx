@@ -166,7 +166,11 @@ export default function MultiplayerScreen({ onHome }: Props) {
     winStreak?: number; loseStreak?: number;
   } | null>(null);
 
-  // Rematch invite state
+  // Friends state for lobby
+  const [lobbyFriends, setLobbyFriends] = useState<{ user_id: string; display_name: string; avatar_index: number; wins: number; total_matches: number }[]>([]);
+  const [challengingFriendId, setChallengingFriendId] = useState<string | null>(null);
+
+
   const [rematchSent, setRematchSent] = useState(false);
   const [rematchCountdown, setRematchCountdown] = useState<number | null>(null);
   const [rematchExpiredMsg, setRematchExpiredMsg] = useState<string | null>(null);
