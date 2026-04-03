@@ -349,6 +349,37 @@ export default function HomePage() {
           </motion.button>
         </motion.div>
 
+        {/* ── Shop + Battle Pass Row ──────── */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.46 }}
+          className="grid grid-cols-2 gap-2 mb-4"
+        >
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate("/shop")}
+            className="bg-gradient-to-br from-game-teal/20 to-game-blue/10 border-2 border-game-teal/30 rounded-2xl p-3 flex items-center gap-3"
+          >
+            <span className="text-2xl">🛒</span>
+            <div className="text-left">
+              <span className="font-game-display text-[10px] text-game-teal block">SHOP</span>
+              <span className="font-game-body text-[8px] text-muted-foreground">Skins & Items</span>
+            </div>
+          </motion.button>
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate("/daily-rewards")}
+            className="bg-gradient-to-br from-game-green/20 to-game-teal/10 border-2 border-game-green/30 rounded-2xl p-3 flex items-center gap-3"
+          >
+            <span className="text-2xl">🎁</span>
+            <div className="text-left">
+              <span className="font-game-display text-[10px] text-game-green block">REWARDS</span>
+              <span className="font-game-body text-[8px] text-muted-foreground">Daily Login</span>
+            </div>
+          </motion.button>
+        </motion.div>
+
         {/* ── Battle Pass Banner ────────────── */}
         <motion.button
           initial={{ opacity: 0, y: 10 }}

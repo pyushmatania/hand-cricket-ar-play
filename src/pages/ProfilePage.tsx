@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from "react";
+import ScrollHint from "@/components/shared/ScrollHint";
 import ShareButton from "@/components/share/ShareButton";
 import ProfileShareCard from "@/components/share/ProfileShareCard";
 import AchievementShareCard from "@/components/share/AchievementShareCard";
@@ -608,16 +609,18 @@ export default function ProfilePage() {
               </div>
 
               {/* Category filter */}
-              <div className="flex gap-1 mb-3 overflow-x-auto no-scrollbar">
-                {["All", ...Array.from(new Set(ACHIEVEMENTS.map(a => a.category)))].map(cat => (
-                  <button key={cat} onClick={() => setAchieveFilter(cat)}
-                    className={`px-2.5 py-1 rounded-lg font-display text-[7px] font-bold tracking-widest whitespace-nowrap transition-all ${
-                      achieveFilter === cat ? "bg-primary/15 text-primary border border-primary/20" : "text-muted-foreground/50"
-                    }`}>
-                    {cat.toUpperCase()}
-                  </button>
-                ))}
-              </div>
+              <ScrollHint>
+                <div className="flex gap-1 mb-3">
+                  {["All", ...Array.from(new Set(ACHIEVEMENTS.map(a => a.category)))].map(cat => (
+                    <button key={cat} onClick={() => setAchieveFilter(cat)}
+                      className={`px-2.5 py-1 rounded-lg font-display text-[7px] font-bold tracking-widest whitespace-nowrap transition-all ${
+                        achieveFilter === cat ? "bg-primary/15 text-primary border border-primary/20" : "text-muted-foreground/50"
+                      }`}>
+                      {cat.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+              </ScrollHint>
 
               <div className="grid grid-cols-2 gap-2">
                 {ACHIEVEMENTS.filter(a => achieveFilter === "All" || a.category === achieveFilter).map((a, i) => {

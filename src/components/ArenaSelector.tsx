@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Lock } from "lucide-react";
+import ScrollHint from "@/components/shared/ScrollHint";
 import { ARENAS, getUnlockedArenas, type Arena } from "@/lib/arenas";
 import { RANK_TIERS } from "@/lib/rankTiers";
 
@@ -21,7 +22,8 @@ export default function ArenaSelector({ currentTierIndex, selectedArenaId, onSel
         </span>
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <ScrollHint>
+      <div className="flex gap-2 pb-2">
         {arenas.map((arena, i) => {
           const selected = arena.id === selectedArenaId;
           const tier = RANK_TIERS[arena.unlockTierIndex];
@@ -82,6 +84,7 @@ export default function ArenaSelector({ currentTierIndex, selectedArenaId, onSel
           );
         })}
       </div>
+      </ScrollHint>
     </div>
   );
 }

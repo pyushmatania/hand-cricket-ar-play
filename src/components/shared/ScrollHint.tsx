@@ -1,0 +1,57 @@
+import { useRef, useState, useEffect, useCallback } from "react";
+import { cn } from "@/lib/utils";
+
+interface ScrollHintProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+/**
+ * Wraps a horizontally-scrollable container and shows
+ * left / right fade + chevron hints when more content exists.
+ */
+export default function ScrollHint({ children, className }: ScrollHintProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const check = useCallback(() => {
+    const el = ref.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 4);
+  }, []);
+
+  useEffect(() => {
+    check();
+    const el = ref.current;
+    if (!el) return;
+    el.addEventListener("scroll", check, { passive: true });
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => { el.removeEventListener("scroll", check); ro.disconnect(); };
+  }, [check]);
+
+  return (
+    <div className="relative">
+      {/* Left fade */}
+      {canScrollLeft && (
+        <div className="absolute left-0 top-0 bottom-0 w-6 z-10 pointer-events-none bg-gradient-to-r from-[hsl(240_30%_6%)] to-transparent flex items-center justify-start pl-0.5">
+          <span className="text-[10px] text-muted-foreground/60 animate-pulse">‹</span>
+        </div>
+      )}
+
+      {/* Scrollable content */}
+      <div ref={ref} className={cn("overflow-x-auto no-scrollbar scrollbar-none", className)}>
+        {children}
+      </div>
+
+      {/* Right fade */}
+      {canScrollRight && (
+        <div className="absolute right-0 top-0 bottom-0 w-6 z-10 pointer-events-none bg-gradient-to-l from-[hsl(240_30%_6%)] to-transparent flex items-center justify-end pr-0.5">
+          <span className="text-[10px] text-muted-foreground/60 animate-pulse">›</span>
+        </div>
+      )}
+    </div>
+  );
+}
