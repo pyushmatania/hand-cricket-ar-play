@@ -45,7 +45,7 @@ interface FriendRequest {
   to_name?: string;
 }
 
-type Tab = "friends" | "requests" | "add";
+type Tab = "friends" | "requests" | "add" | "global";
 
 export default function FriendsPage() {
   const { user } = useAuth();
