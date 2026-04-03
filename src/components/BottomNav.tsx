@@ -34,7 +34,7 @@ export default function BottomNav() {
           {/* Top highlight line */}
           <div className="absolute top-0 left-[10%] right-[10%] h-px" style={{ background: "linear-gradient(to right, transparent, hsl(222 40% 30% / 0.3), transparent)" }} />
 
-          <div className="flex items-end justify-around px-1 pb-[env(safe-area-inset-bottom,4px)]">
+          <div className="flex items-end justify-around px-1 pt-1 pb-[env(safe-area-inset-bottom,6px)]">
             {NAV_ITEMS.map((item) => {
               const isActive =
                 location.pathname === item.path ||
@@ -47,8 +47,8 @@ export default function BottomNav() {
                   onClick={() => { SFX.navTap(); Haptics.navTap(); navigate(item.path); }}
                   whileTap={{ scale: 0.85 }}
                   className={cn(
-                    "relative flex flex-col items-center gap-0.5 pt-2 pb-1",
-                    isCenter ? "px-3 -mt-3" : "px-4"
+                    "relative flex flex-col items-center gap-0.5",
+                    isCenter ? "px-3 pt-0 pb-1" : "px-4 pt-2 pb-1"
                   )}
                 >
                   {/* Center raised 3D button */}
