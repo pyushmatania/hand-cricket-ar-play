@@ -13,6 +13,7 @@ import SplashScreen from "@/components/SplashScreen";
 import BottomNav from "@/components/BottomNav";
 import MatchInviteNotification from "@/components/MatchInviteNotification";
 import ChatNotificationListener from "@/components/ChatNotificationListener";
+import AchievementNotificationListener from "@/components/AchievementNotificationListener";
 
 // Eager-load home (landing page)
 import HomePage from "./pages/HomePage";
