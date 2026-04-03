@@ -148,7 +148,7 @@ export default function VSIntroScreen({
                   transition={{ duration: 1 + Math.random(), repeat: Infinity, delay: i * 0.2 }}
                   className="absolute top-1/2 left-1/2 w-2 h-2 rounded-full"
                   style={{
-                    background: `hsl(${20 + Math.random() * 30} 90% 55%)`,
+                    background: vsEffect.particleColors[i % vsEffect.particleColors.length],
                     filter: "blur(1px)",
                   }}
                 />
