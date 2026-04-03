@@ -16,7 +16,7 @@ export default function TopBar({ coins = 1250, gems = 45, runs = 3800 }: TopBarP
   return (
     <div className="fixed top-0 left-0 right-0 z-50">
       <div className="max-w-lg mx-auto">
-        <div className="flex items-center justify-between px-3 pt-[env(safe-area-inset-top,8px)] pb-2 bg-gradient-to-b from-[hsl(222_47%_6%/0.95)] to-transparent backdrop-blur-md">
+        <div className="flex items-center justify-between px-3 pt-[env(safe-area-inset-top,8px)] pb-2 wood-shelf" style={{ borderTop: "none", borderBottom: "2px solid hsl(25 30% 10%)", boxShadow: "0 4px 16px rgba(0,0,0,0.5), inset 0 -1px 0 rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 30% 30% / 0.15)" }}>
           {/* Player avatar + level */}
           <button
             onClick={() => navigate("/profile")}
