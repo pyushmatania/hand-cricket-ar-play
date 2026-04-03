@@ -5,6 +5,12 @@ import { SFX, Haptics } from "@/lib/sounds";
 import type { Achievement } from "@/lib/achievements";
 import AchievementUnlockToast from "./AchievementUnlockToast";
 
+// Imperative push API
+let _pushFn: ((a: Achievement) => void) | null = null;
+export function registerAchievementPush(fn: (a: Achievement) => void) { _pushFn = fn; }
+export function unregisterAchievementPush() { _pushFn = null; }
+export function pushAchievementToast(a: Achievement) { if (_pushFn) _pushFn(a); }
+
 /**
  * Global listener that watches for achievement_unlock notifications
  * and shows a branded toast popup.
