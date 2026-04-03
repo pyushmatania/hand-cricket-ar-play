@@ -61,9 +61,17 @@ export function useMatchSaver() {
 
         // Streak bonus
         const hasStreakBonus = newStreak >= 3;
+        const streakXp = hasStreakBonus ? newStreak * 2 : 0;
         if (hasStreakBonus) {
-          xpEarned += newStreak * 2;
+          xpEarned += streakXp;
           coinsEarned += newStreak * 3;
+        }
+
+        // XP history entries to batch-insert later
+        const xpEntries: { user_id: string; amount: number; source: string }[] = [];
+        xpEntries.push({ user_id: user.id, amount: XP_REWARDS[resultKey] || 10, source: `match_${resultKey}` });
+        if (hasStreakBonus) {
+          xpEntries.push({ user_id: user.id, amount: streakXp, source: "streak_bonus" });
         }
 
         const oldTier = getRankTier({
@@ -109,6 +117,7 @@ export function useMatchSaver() {
         if (newTier.name !== oldTier.name) {
           updatedStats.xp += RANKUP_XP;
           updatedStats.coins += RANKUP_COINS;
+          xpEntries.push({ user_id: user.id, amount: RANKUP_XP, source: "rank_up" });
           (updatedStats as any).rank_tier = newTier.name;
 
           // Save rank history
@@ -218,6 +227,7 @@ export function useMatchSaver() {
                 }
 
                 if (done) {
+                  xpEntries.push({ user_id: user.id, amount: CHALLENGE_XP, source: "challenge_complete" });
                   totalChallengeXp += CHALLENGE_XP;
                   totalChallengeCoins += CHALLENGE_COINS;
 
@@ -386,6 +396,11 @@ export function useMatchSaver() {
               }
             }
           } catch (e) { console.error("[Rivalry] notification failed", e); }
+        }
+
+        // Batch-insert XP history
+        if (xpEntries.length > 0) {
+          await supabase.from("xp_history" as any).insert(xpEntries as any);
         }
 
         const newXp = updatedStats.xp;

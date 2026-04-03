@@ -73,6 +73,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   // ── Big result animation ──
   const [bigResult, setBigResult] = useState<BallResult | null>(null);
   const [playerXP, setPlayerXP] = useState(0);
+  const [matchRewards, setMatchRewards] = useState<any>(null);
   const [stadiumMode, setStadiumMode] = useState(true);
   const [filter, setFilter] = useState<CameraFilter>("broadcast");
   const [gloveStyle, setGloveStyle] = useState<GloveStyle>("cricket");
@@ -204,7 +205,9 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   useEffect(() => {
     if (game.phase === "finished" && !savedRef.current) {
       savedRef.current = true;
-      saveMatch(game, "ar");
+      saveMatch(game, "ar").then((rewards) => {
+        if (rewards) setMatchRewards(rewards);
+      });
 
       if (game.result === "win") {
         if (soundEnabled) SFX.win();
@@ -422,6 +425,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
           opponentScore={game.aiScore}
           ballHistory={game.ballHistory}
           commentators={matchCommentators}
+          matchRewards={matchRewards}
           onComplete={() => setShowPostMatch(false)}
         />
       )}
