@@ -1,10 +1,14 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, useCallback } from "react";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import BottomNav from "@/components/BottomNav";
 import TopStatusBar from "@/components/TopStatusBar";
+import CurrencyPill from "@/components/shared/CurrencyPill";
+import ShopItemCard from "@/components/shop/ShopItemCard";
+import ShopItemModal from "@/components/shop/ShopItemModal";
+import ChestReveal from "@/components/shop/ChestReveal";
 import { toast } from "sonner";
 
 interface ShopItem {
@@ -24,13 +28,6 @@ interface Purchase {
   equipped: boolean;
 }
 
-const RARITY_STYLES: Record<string, { border: string; bg: string; glow: string; label: string; labelColor: string }> = {
-  common: { border: "border-muted/30", bg: "from-muted/10 to-transparent", glow: "", label: "COMMON", labelColor: "text-muted-foreground" },
-  rare: { border: "border-primary/30", bg: "from-primary/10 to-transparent", glow: "shadow-[0_0_12px_hsl(217_91%_60%/0.15)]", label: "RARE", labelColor: "text-primary" },
-  epic: { border: "border-accent/30", bg: "from-accent/10 to-transparent", glow: "shadow-[0_0_16px_hsl(168_80%_50%/0.2)]", label: "EPIC", labelColor: "text-accent" },
-  legendary: { border: "border-score-gold/40", bg: "from-score-gold/15 to-transparent", glow: "shadow-[0_0_20px_hsl(45_93%_58%/0.25)]", label: "LEGENDARY", labelColor: "text-score-gold" },
-};
-
 const CATEGORIES = [
   { key: "all", label: "ALL", icon: "🛒" },
   { key: "bat_skin", label: "BATS", icon: "🏏" },
@@ -48,272 +45,147 @@ export default function ShopPage() {
   const [category, setCategory] = useState("all");
   const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
   const [purchasing, setPurchasing] = useState(false);
+  const [chestItem, setChestItem] = useState<ShopItem | null>(null);
 
   useEffect(() => {
     if (!user) return;
-
     supabase.from("shop_items").select("*").order("sort_order")
       .then(({ data }) => { if (data) setItems(data as unknown as ShopItem[]); });
-
     supabase.from("user_purchases").select("item_id, equipped").eq("user_id", user.id)
       .then(({ data }) => { if (data) setPurchases(data as unknown as Purchase[]); });
-
     supabase.from("profiles").select("coins").eq("user_id", user.id).single()
       .then(({ data }) => { if (data) setCoins((data as any).coins || 0); });
   }, [user]);
 
-  const isOwned = (itemId: string) => purchases.some(p => p.item_id === itemId);
-  const isEquipped = (itemId: string) => purchases.some(p => p.item_id === itemId && p.equipped);
+  const isOwned = (id: string) => purchases.some(p => p.item_id === id);
+  const isEquipped = (id: string) => purchases.some(p => p.item_id === id && p.equipped);
 
   const handlePurchase = async (item: ShopItem) => {
     if (!user || purchasing) return;
-    if (coins < item.price) {
-      toast.error("Not enough coins! Play more matches to earn.");
-      return;
-    }
+    if (coins < item.price) { toast.error("Not enough coins!"); return; }
     setPurchasing(true);
-
-    // Deduct coins
     const newCoins = coins - item.price;
     await supabase.from("profiles").update({ coins: newCoins } as any).eq("user_id", user.id);
-
-    // Insert purchase
-    await supabase.from("user_purchases").insert({
-      user_id: user.id,
-      item_id: item.id,
-    } as any);
-
+    await supabase.from("user_purchases").insert({ user_id: user.id, item_id: item.id } as any);
     setCoins(newCoins);
     setPurchases(prev => [...prev, { item_id: item.id, equipped: false }]);
-    toast.success(`Purchased ${item.name}! 🎉`);
+    setSelectedItem(null);
+    setChestItem(item);
     setPurchasing(false);
   };
 
   const handleEquip = async (item: ShopItem) => {
     if (!user) return;
-
-    // Game passes are auto-active once purchased, no equip needed
-    if (item.category === "game_pass") {
-      toast.info("Game passes are always active once purchased! 🎫");
-      setSelectedItem(null);
-      return;
-    }
-
-    // Unequip all in same category, equip this one
+    if (item.category === "game_pass") { toast.info("Game passes are always active! 🎫"); setSelectedItem(null); return; }
     const categoryItems = items.filter(i => i.category === item.category);
     const ownedInCategory = categoryItems.filter(i => isOwned(i.id));
-
     for (const owned of ownedInCategory) {
-      await supabase.from("user_purchases").update({ equipped: false } as any)
-        .eq("user_id", user.id).eq("item_id", owned.id);
+      await supabase.from("user_purchases").update({ equipped: false } as any).eq("user_id", user.id).eq("item_id", owned.id);
     }
-
-    await supabase.from("user_purchases").update({ equipped: true } as any)
-      .eq("user_id", user.id).eq("item_id", item.id);
-
-    // Update profile equipped field
-    const fieldMap: Record<string, string> = {
-      bat_skin: "equipped_bat_skin",
-      vs_effect: "equipped_vs_effect",
-      avatar_frame: "equipped_avatar_frame",
-    };
+    await supabase.from("user_purchases").update({ equipped: true } as any).eq("user_id", user.id).eq("item_id", item.id);
+    const fieldMap: Record<string, string> = { bat_skin: "equipped_bat_skin", vs_effect: "equipped_vs_effect", avatar_frame: "equipped_avatar_frame" };
     const field = fieldMap[item.category];
-    if (field) {
-      await supabase.from("profiles").update({ [field]: item.name } as any).eq("user_id", user.id);
-    }
-
+    if (field) await supabase.from("profiles").update({ [field]: item.name } as any).eq("user_id", user.id);
     setPurchases(prev => prev.map(p => ({
       ...p,
-      equipped: p.item_id === item.id ? true :
-        categoryItems.some(ci => ci.id === p.item_id) ? false : p.equipped,
+      equipped: p.item_id === item.id ? true : categoryItems.some(ci => ci.id === p.item_id) ? false : p.equipped,
     })));
-
     toast.success(`Equipped ${item.name}! ✨`);
     setSelectedItem(null);
   };
+
+  const handleChestComplete = useCallback(() => {
+    if (chestItem) toast.success(`Purchased ${chestItem.name}! 🎉`);
+    setChestItem(null);
+  }, [chestItem]);
 
   const filtered = category === "all" ? items : items.filter(i => i.category === category);
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden pb-24">
-      <div className="absolute inset-0 stadium-gradient pointer-events-none" />
-      <div className="absolute inset-0 vignette pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[hsl(222_55%_10%)] to-background pointer-events-none" />
       <TopStatusBar />
 
       <div className="relative z-10 max-w-lg mx-auto px-4 pt-4">
         {/* Header */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
             <motion.button whileTap={{ scale: 0.9 }} onClick={() => navigate(-1)}
-              className="w-9 h-9 rounded-xl glass-premium flex items-center justify-center text-sm">←</motion.button>
+              className="w-10 h-10 rounded-xl bg-game-dark border-2 border-[hsl(222_25%_22%)] flex items-center justify-center text-foreground font-game-body text-sm active:scale-95 transition-transform">
+              ←
+            </motion.button>
             <div>
-              <h1 className="font-display text-base font-black text-foreground tracking-wider">COSMETIC SHOP</h1>
-              <span className="text-[8px] text-muted-foreground font-display tracking-wider">Customize your style</span>
+              <h1 className="font-game-title text-lg text-foreground">Shop</h1>
+              <span className="text-[9px] text-muted-foreground font-game-display tracking-[0.2em]">CUSTOMIZE YOUR STYLE</span>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl glass-premium border border-secondary/20">
-            <span className="text-sm">🪙</span>
-            <span className="font-display text-sm font-black text-secondary">{coins}</span>
-          </div>
+          <CurrencyPill icon="🪙" value={coins} showPlus={false} />
         </div>
 
         {/* Category tabs */}
-        <div className="flex gap-1 mb-4 glass-card rounded-xl p-1">
+        <div className="flex gap-1 mb-5 bg-game-dark/80 rounded-2xl p-1 border border-[hsl(222_25%_22%/0.5)]">
           {CATEGORIES.map(c => (
             <button key={c.key} onClick={() => setCategory(c.key)}
-              className={`flex-1 py-2 rounded-lg font-display text-[8px] font-bold tracking-widest transition-all flex items-center justify-center gap-1 ${
-                category === c.key ? "bg-primary/15 text-primary border border-primary/20" : "text-muted-foreground"
+              className={`flex-1 py-2.5 rounded-xl font-game-display text-[8px] tracking-widest transition-all flex items-center justify-center gap-1 ${
+                category === c.key
+                  ? "bg-gradient-to-b from-game-blue to-[hsl(207_90%_44%)] text-white border-b-2 border-[hsl(207_90%_35%)] shadow-[0_2px_8px_hsl(207_90%_54%/0.3)]"
+                  : "text-muted-foreground hover:text-foreground"
               }`}>
-              <span className="text-xs">{c.icon}</span>
+              <span className="text-sm">{c.icon}</span>
               {c.label}
             </button>
           ))}
         </div>
 
         {/* Items grid */}
-        <div className="grid grid-cols-2 gap-2">
-          {filtered.map((item, i) => {
-            const owned = isOwned(item.id);
-            const equipped = isEquipped(item.id);
-            const style = RARITY_STYLES[item.rarity] || RARITY_STYLES.common;
-
-            return (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.04 }}
-                onClick={() => setSelectedItem(item)}
-                className={`glass-premium rounded-xl p-3 relative overflow-hidden cursor-pointer border transition-all active:scale-[0.97] ${style.border} ${equipped ? style.glow : ""}`}
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${style.bg}`} />
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className={`text-[6px] font-display font-bold tracking-widest ${style.labelColor}`}>{style.label}</span>
-                    {equipped && (
-                      <span className="text-[6px] font-display font-bold text-neon-green tracking-wider bg-neon-green/10 px-1.5 py-0.5 rounded">EQUIPPED</span>
-                    )}
-                    {owned && !equipped && (
-                      <span className="text-[6px] font-display font-bold text-primary tracking-wider bg-primary/10 px-1.5 py-0.5 rounded">OWNED</span>
-                    )}
-                  </div>
-                  <div className="text-center py-3">
-                    <span className="text-4xl">{item.preview_emoji}</span>
-                  </div>
-                  <span className="font-display text-[10px] font-bold text-foreground block truncate">{item.name}</span>
-                  <div className="flex items-center justify-between mt-1">
-                    <span className="text-[8px] text-muted-foreground line-clamp-1">{item.description.slice(0, 25)}</span>
-                    {!owned && (
-                      <span className="font-display text-[9px] font-bold text-secondary flex items-center gap-0.5">
-                        🪙 {item.price}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
+        <div className="grid grid-cols-2 gap-3">
+          {filtered.map((item, i) => (
+            <ShopItemCard
+              key={item.id}
+              name={item.name}
+              rarity={item.rarity}
+              previewEmoji={item.preview_emoji}
+              description={item.description}
+              price={item.price}
+              owned={isOwned(item.id)}
+              equipped={isEquipped(item.id)}
+              index={i}
+              onClick={() => setSelectedItem(item)}
+            />
+          ))}
         </div>
+
+        {filtered.length === 0 && (
+          <div className="text-center py-16">
+            <span className="text-5xl block mb-3">🏗️</span>
+            <p className="font-game-card text-sm text-muted-foreground">No items in this category yet!</p>
+          </div>
+        )}
       </div>
 
-      {/* Item Detail Modal */}
-      <AnimatePresence>
-        {selectedItem && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end justify-center p-4"
-            onClick={() => setSelectedItem(null)}
-          >
-            <motion.div
-              initial={{ y: 100, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 100, opacity: 0 }}
-              onClick={e => e.stopPropagation()}
-              className="w-full max-w-sm glass-premium rounded-3xl p-5 space-y-4 border border-primary/20"
-            >
-              {(() => {
-                const item = selectedItem;
-                const owned = isOwned(item.id);
-                const equipped = isEquipped(item.id);
-                const style = RARITY_STYLES[item.rarity] || RARITY_STYLES.common;
-                const canAfford = coins >= item.price;
+      {/* Item detail modal */}
+      {selectedItem && (
+        <ShopItemModal
+          item={selectedItem}
+          coins={coins}
+          owned={isOwned(selectedItem.id)}
+          equipped={isEquipped(selectedItem.id)}
+          purchasing={purchasing}
+          onClose={() => setSelectedItem(null)}
+          onPurchase={handlePurchase}
+          onEquip={handleEquip}
+        />
+      )}
 
-                return (
-                  <>
-                    <div className="text-center">
-                      <span className={`text-[8px] font-display font-bold tracking-widest ${style.labelColor}`}>{style.label}</span>
-                      <div className="py-6">
-                        <motion.span
-                          animate={{ scale: [1, 1.1, 1] }}
-                          transition={{ duration: 2, repeat: Infinity }}
-                          className="text-7xl block"
-                        >
-                          {item.preview_emoji}
-                        </motion.span>
-                      </div>
-                      <h3 className="font-display text-lg font-black text-foreground tracking-wider">{item.name}</h3>
-                      <p className="text-[10px] text-muted-foreground mt-1">{item.description}</p>
-                      <span className="text-[8px] text-muted-foreground/50 font-display tracking-wider mt-1 block">
-                        {item.category === "bat_skin" ? "🏏 Bat Skin" : item.category === "vs_effect" ? "⚔️ VS Effect" : item.category === "game_pass" ? "🎫 Game Pass" : "🖼️ Avatar Frame"}
-                      </span>
-                    </div>
-
-                    {!owned && (
-                      <div className="flex items-center justify-center gap-2">
-                        <span className="text-lg">🪙</span>
-                        <span className={`font-display text-2xl font-black ${canAfford ? "text-secondary" : "text-out-red"}`}>
-                          {item.price}
-                        </span>
-                        {!canAfford && (
-                          <span className="text-[8px] text-out-red font-display">({item.price - coins} more needed)</span>
-                        )}
-                      </div>
-                    )}
-
-                    <div className="flex gap-3">
-                      {!owned ? (
-                        <motion.button
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => handlePurchase(item)}
-                          disabled={!canAfford || purchasing}
-                          className={`flex-1 py-3.5 font-display font-bold rounded-2xl tracking-wider text-sm ${
-                            canAfford
-                              ? "bg-gradient-to-r from-secondary to-secondary/80 text-secondary-foreground shadow-[0_0_20px_hsl(45_93%_58%/0.2)]"
-                              : "bg-muted/30 text-muted-foreground cursor-not-allowed"
-                          }`}
-                        >
-                          {purchasing ? "..." : canAfford ? "🪙 BUY NOW" : "NOT ENOUGH COINS"}
-                        </motion.button>
-                      ) : equipped ? (
-                        <div className="flex-1 py-3.5 rounded-2xl glass-premium text-center font-display font-bold text-neon-green tracking-wider text-sm border border-neon-green/20">
-                          ✅ EQUIPPED
-                        </div>
-                      ) : (
-                        <motion.button
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => handleEquip(item)}
-                          className="flex-1 py-3.5 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display font-bold rounded-2xl tracking-wider text-sm shadow-[0_0_20px_hsl(217_91%_60%/0.2)]"
-                        >
-                          ⚡ EQUIP
-                        </motion.button>
-                      )}
-                      <motion.button
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setSelectedItem(null)}
-                        className="px-6 py-3.5 glass-premium text-foreground font-display font-bold rounded-2xl tracking-wider text-sm"
-                      >
-                        ✕
-                      </motion.button>
-                    </div>
-                  </>
-                );
-              })()}
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Chest reveal animation */}
+      {chestItem && (
+        <ChestReveal
+          itemName={chestItem.name}
+          itemEmoji={chestItem.preview_emoji}
+          rarity={chestItem.rarity}
+          onComplete={handleChestComplete}
+        />
+      )}
 
       <BottomNav />
     </div>

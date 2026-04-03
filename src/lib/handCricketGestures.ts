@@ -181,38 +181,56 @@ export function classifyHandCricketGesture(landmarks: V3[] | undefined, handedne
     };
   }
 
-  const { palmCenter, palmNormal, sideAxis, palmScale, orientation } = getPalmMetrics(landmarks);
-  const thumb = getThumbMetrics(landmarks, handedness, palmCenter, palmNormal, sideAxis, palmScale);
-  const index = getFingerMetrics(landmarks, 5, 6, 7, 8, palmCenter);
-  const middle = getFingerMetrics(landmarks, 9, 10, 11, 12, palmCenter);
-  const ring = getFingerMetrics(landmarks, 13, 14, 15, 16, palmCenter);
-  const pinky = getFingerMetrics(landmarks, 17, 18, 19, 20, palmCenter);
+  const lm = landmarks;
+
+  // ── Simple, robust finger-extension detection ──────────────────────────────
+  // MediaPipe normalized coords: y = 0 at TOP, y = 1 at BOTTOM of image.
+  // A finger is "extended" when its tip is HIGHER in the image than its PIP
+  // joint, i.e. tip.y < pip.y.  This works reliably for upright hand poses
+  // and is completely independent of handedness or camera mirroring.
+  //
+  // Landmark layout (per finger):  MCP → PIP → DIP → TIP
+  //   Index:  5(MCP)  6(PIP)  7(DIP)  8(TIP)
+  //   Middle: 9(MCP) 10(PIP) 11(DIP) 12(TIP)
+  //   Ring:  13(MCP) 14(PIP) 15(DIP) 16(TIP)
+  //   Pinky: 17(MCP) 18(PIP) 19(DIP) 20(TIP)
+  //   Thumb:  1(CMC)  2(MCP)  3(IP)   4(TIP)
+
+  const indexExt  = lm[8].y  < lm[6].y;
+  const middleExt = lm[12].y < lm[10].y;
+  const ringExt   = lm[16].y < lm[14].y;
+  const pinkyExt  = lm[20].y < lm[18].y;
+
+  // Thumbs-up (shot "6"): thumb tip well above its MCP joint AND all four
+  // other fingers curled down.  The 0.08 margin (8 % of frame height)
+  // prevents a casually raised thumb from triggering "6".
+  const thumbHighAboveMcp = lm[4].y < (lm[2].y - 0.08);
+  const thumbUp = thumbHighAboveMcp && !indexExt && !middleExt && !ringExt && !pinkyExt;
 
   const fingerStates: FingerStates = {
-    thumb: thumb.extended,
-    index: index.extended,
-    middle: middle.extended,
-    ring: ring.extended,
-    pinky: pinky.extended,
+    thumb: thumbUp,
+    index: indexExt,
+    middle: middleExt,
+    ring: ringExt,
+    pinky: pinkyExt,
   };
 
-  const { thumb: thumbExtended, index: indexExtended, middle: middleExtended, ring: ringExtended, pinky: pinkyExtended } = fingerStates;
-  const allFourStraight = indexExtended && middleExtended && ringExtended && pinkyExtended;
+  const extCount = [indexExt, middleExt, ringExt, pinkyExt].filter(Boolean).length;
 
   let rawGesture: RawGesture = "invalid";
 
-  if (!thumbExtended && !indexExtended && !middleExtended && !ringExtended && !pinkyExtended) {
-    rawGesture = "def";
-  } else if (!thumbExtended && indexExtended && !middleExtended && !ringExtended && !pinkyExtended) {
-    rawGesture = "1";
-  } else if (!thumbExtended && indexExtended && middleExtended && !ringExtended && !pinkyExtended) {
-    rawGesture = "2";
-  } else if (!thumbExtended && indexExtended && middleExtended && ringExtended && !pinkyExtended) {
-    rawGesture = "3";
-  } else if (allFourStraight && !thumb.extended) {
-    rawGesture = "4";
-  } else if (thumbExtended && !indexExtended && !middleExtended && !ringExtended && !pinkyExtended) {
-    rawGesture = "6";
+  if (thumbUp) {
+    rawGesture = "6";                                         // 👍 thumbs-up
+  } else if (extCount === 0) {
+    rawGesture = "def";                                       // ✊ fist = DEF
+  } else if (extCount === 1 && indexExt) {
+    rawGesture = "1";                                         // ☝️ one finger
+  } else if (extCount === 2 && indexExt && middleExt) {
+    rawGesture = "2";                                         // ✌️ two fingers
+  } else if (extCount === 3 && indexExt && middleExt && ringExt) {
+    rawGesture = "3";                                         // 🤟 three fingers
+  } else if (extCount === 4) {
+    rawGesture = "4";                                         // 🖖 four fingers
   }
 
   return {
@@ -220,9 +238,9 @@ export function classifyHandCricketGesture(landmarks: V3[] | undefined, handedne
     move: rawGestureToMove(rawGesture),
     fingerStates,
     handedness,
-    orientation,
-    thumbScore: thumb.score,
-    thumbLikelyOpen: thumb.likelyOpen,
+    orientation: "palm",
+    thumbScore: thumbUp ? 3 : 0,
+    thumbLikelyOpen: thumbUp,
   };
 }
 

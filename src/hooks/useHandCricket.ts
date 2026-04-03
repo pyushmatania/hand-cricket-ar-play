@@ -15,6 +15,7 @@ export interface BallResult {
 export interface MatchConfig {
   overs: number | null; // null = unlimited
   wickets: number; // default 1 (current), 3 for limited overs
+  noDefence?: boolean; // true = DEF move excluded (tap mode)
 }
 
 export interface GameState {
@@ -58,8 +59,8 @@ function getMoveValue(move: Move | AiMove): number {
   return move === "DEF" ? 0 : move;
 }
 
-function getAiMove(): AiMove {
-  const moves: AiMove[] = ["DEF", 1, 2, 3, 4, 6];
+function getAiMove(noDefence = false): AiMove {
+  const moves: AiMove[] = noDefence ? [1, 2, 3, 4, 6] : ["DEF", 1, 2, 3, 4, 6];
   return moves[Math.floor(Math.random() * moves.length)];
 }
 
@@ -136,7 +137,7 @@ export function useHandCricket() {
     setGame((prev) => {
       if (prev.phase === "not_started" || prev.phase === "finished") return prev;
 
-      const aiMove = getAiMove();
+      const aiMove = getAiMove(prev.config.noDefence);
       const { runs, desc } = resolveResult(userMove, aiMove, prev.isBatting);
 
       const ballResult: BallResult = { userMove, aiMove, runs, description: desc };
