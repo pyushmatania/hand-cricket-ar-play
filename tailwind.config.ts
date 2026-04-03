@@ -71,6 +71,10 @@ export default {
         "game-dark": "hsl(var(--game-dark))",
         "game-medium": "hsl(var(--game-medium))",
         "game-teal": "hsl(var(--game-teal))",
+        "wood-light": "hsl(var(--wood-light))",
+        "wood-dark": "hsl(var(--wood-dark))",
+        "wood-plank": "hsl(var(--wood-plank))",
+        "metal-bronze": "hsl(var(--metal-bronze))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",

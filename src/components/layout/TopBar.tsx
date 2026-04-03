@@ -16,13 +16,13 @@ export default function TopBar({ coins = 1250, gems = 45, runs = 3800 }: TopBarP
   return (
     <div className="fixed top-0 left-0 right-0 z-50">
       <div className="max-w-lg mx-auto">
-        <div className="flex items-center justify-between px-3 pt-[env(safe-area-inset-top,8px)] pb-2 bg-gradient-to-b from-[hsl(222_47%_6%/0.95)] to-transparent backdrop-blur-md">
+        <div className="flex items-center justify-between px-3 pt-[env(safe-area-inset-top,8px)] pb-2 wood-shelf" style={{ borderTop: "none", borderBottom: "2px solid hsl(25 30% 10%)", boxShadow: "0 4px 16px rgba(0,0,0,0.5), inset 0 -1px 0 rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 30% 30% / 0.15)" }}>
           {/* Player avatar + level */}
           <button
             onClick={() => navigate("/profile")}
             className="flex items-center gap-2 active:scale-95 transition-transform"
           >
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-game-blue to-game-purple border-2 border-game-gold flex items-center justify-center text-sm">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-game-blue to-game-purple border-2 border-[hsl(35_30%_50%)] flex items-center justify-center text-sm" style={{ boxShadow: "0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 hsl(40 40% 70% / 0.3)" }}>
               🏏
             </div>
             <div className="flex flex-col items-start">
@@ -43,7 +43,8 @@ export default function TopBar({ coins = 1250, gems = 45, runs = 3800 }: TopBarP
           {/* Settings */}
           <button
             onClick={() => navigate("/settings")}
-            className="w-8 h-8 rounded-full bg-game-dark/60 border border-[hsl(222_25%_25%/0.5)] flex items-center justify-center active:scale-90 transition-transform"
+            className="w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-transform"
+            style={{ background: "radial-gradient(circle at 40% 40%, hsl(35 30% 50%), hsl(30 25% 30%))", boxShadow: "0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 hsl(40 40% 65% / 0.3)" }}
           >
             <Settings className="w-4 h-4 text-muted-foreground" />
           </button>

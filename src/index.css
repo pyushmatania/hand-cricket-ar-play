@@ -40,6 +40,18 @@
 
     --radius: 0.75rem;
 
+    /* Wood & Metal texture tokens */
+    --wood-light: 28 56% 32%;
+    --wood-dark: 25 55% 18%;
+    --wood-plank: 28 45% 24%;
+    --wood-grain: 30 40% 28%;
+    --metal-bronze: 30 40% 45%;
+    --metal-iron: 220 10% 40%;
+    --metal-rivet: 35 30% 55%;
+    --leather-bg: 30 35% 20%;
+    --scallop-base: 222 40% 8%;
+    --scallop-tile: 222 35% 12%;
+
     /* Premium glass tokens */
     --glass-bg: 222 40% 12% / 0.65;
     --glass-border: 222 25% 28% / 0.5;
@@ -82,6 +94,8 @@
     --gradient-card: linear-gradient(145deg, hsl(222 40% 13% / 0.9), hsl(222 40% 8% / 0.95));
     --gradient-premium: linear-gradient(135deg, hsl(222 45% 14% / 0.95), hsl(222 50% 8% / 0.98));
     --gradient-hero: linear-gradient(180deg, hsl(217 60% 15% / 0.4) 0%, hsl(222 47% 6%) 70%);
+    --gradient-wood: linear-gradient(180deg, hsl(28 56% 32%) 0%, hsl(25 55% 18%) 100%);
+    --gradient-wood-dark: linear-gradient(180deg, hsl(28 45% 24%) 0%, hsl(25 40% 14%) 100%);
 
     --sidebar-background: 222 40% 10%;
     --sidebar-foreground: 210 40% 96%;
@@ -107,52 +121,184 @@
 }
 
 @layer utilities {
-  /* ── Glass Effects ─────────────────────────── */
+  /* ── Scalloped / Fish-Scale Background Pattern ── */
+  .scallop-bg {
+    background-color: hsl(var(--scallop-base));
+    background-image:
+      radial-gradient(circle at 50% 0%, hsl(var(--scallop-tile)) 50%, transparent 50.5%),
+      radial-gradient(circle at 0% 0%, hsl(var(--scallop-tile)) 50%, transparent 50.5%),
+      radial-gradient(circle at 100% 0%, hsl(var(--scallop-tile)) 50%, transparent 50.5%);
+    background-size: 40px 20px;
+    background-position: 0 0, 0 0, 0 0;
+  }
+
+  .scallop-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 40%, hsl(222 47% 3% / 0.7) 100%);
+    z-index: 0;
+  }
+
+  /* ── Wood Panel Styles ────────────────────── */
+  .wood-panel {
+    background:
+      repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        hsl(28 30% 22% / 0.06) 2px,
+        transparent 4px,
+        hsl(28 20% 30% / 0.04) 8px,
+        transparent 12px
+      ),
+      linear-gradient(180deg, hsl(28 45% 26%) 0%, hsl(25 50% 16%) 100%);
+    border: 3px solid hsl(25 40% 12%);
+    border-radius: 12px;
+    box-shadow:
+      0 6px 12px rgba(0,0,0,0.5),
+      inset 0 2px 0 hsl(35 40% 40% / 0.2),
+      inset 0 -2px 0 rgba(0,0,0,0.3);
+  }
+
+  .wood-panel-dark {
+    background:
+      repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        hsl(222 20% 15% / 0.1) 2px,
+        transparent 4px,
+        hsl(222 15% 20% / 0.06) 8px,
+        transparent 12px
+      ),
+      linear-gradient(180deg, hsl(222 40% 14%) 0%, hsl(222 45% 9%) 100%);
+    border: 3px solid hsl(222 30% 8%);
+    border-radius: 12px;
+    box-shadow:
+      0 6px 12px rgba(0,0,0,0.5),
+      inset 0 2px 0 hsl(222 30% 25% / 0.15),
+      inset 0 -2px 0 rgba(0,0,0,0.3);
+  }
+
+  /* ── Metal Corner Brackets (via pseudo-elements on children) ── */
+  .metal-corners {
+    position: relative;
+  }
+  .metal-corners::before,
+  .metal-corners::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    background: radial-gradient(circle at 40% 40%, hsl(35 30% 60%), hsl(30 25% 35%));
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 hsl(40 40% 70% / 0.4);
+    z-index: 2;
+  }
+  .metal-corners::before {
+    top: -3px;
+    left: -3px;
+    border-bottom-right-radius: 6px;
+  }
+  .metal-corners::after {
+    top: -3px;
+    right: -3px;
+    border-bottom-left-radius: 6px;
+  }
+
+  /* ── Metal Rivet Dot ───────────────────────── */
+  .metal-rivet {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, hsl(35 30% 65%), hsl(30 25% 35%));
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5), inset 0 1px 0 hsl(40 40% 75% / 0.5);
+  }
+
+  /* ── Rope Separator ────────────────────────── */
+  .rope-separator {
+    height: 6px;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        hsl(30 40% 35%) 0px,
+        hsl(35 45% 45%) 4px,
+        hsl(28 35% 30%) 8px,
+        hsl(32 40% 40%) 12px
+      );
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.4), inset 0 1px 0 hsl(40 40% 55% / 0.3);
+  }
+
+  /* ── Wooden Button Style ───────────────────── */
+  .btn-wood {
+    background:
+      repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        hsl(28 25% 30% / 0.08) 3px,
+        transparent 6px
+      ),
+      linear-gradient(180deg, var(--btn-start, hsl(122 50% 52%)), var(--btn-mid, hsl(122 45% 42%)), var(--btn-end, hsl(122 39% 35%)));
+    border: 3px solid var(--btn-dark, hsl(122 39% 25%));
+    border-bottom-width: 7px;
+    border-radius: 14px;
+    color: white;
+    font-family: 'Lilita One', sans-serif;
+    text-shadow: 0 3px 6px rgba(0,0,0,0.6);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    box-shadow:
+      0 7px 0 var(--btn-dark, hsl(122 39% 22%)),
+      0 10px 15px rgba(0,0,0,0.4),
+      inset 0 2px 0 hsl(0 0% 100% / 0.2);
+    transition: all 0.1s ease;
+  }
+  .btn-wood:active {
+    border-bottom-width: 3px;
+    transform: translateY(4px);
+    box-shadow:
+      0 3px 0 var(--btn-dark, hsl(122 39% 22%)),
+      0 5px 8px rgba(0,0,0,0.3);
+  }
+
+  /* ── Wooden Shelf (Bottom Nav) ────────────── */
+  .wood-shelf {
+    background:
+      repeating-linear-gradient(
+        90deg,
+        transparent 0px,
+        hsl(25 30% 15% / 0.08) 3px,
+        transparent 6px
+      ),
+      linear-gradient(to top, hsl(25 40% 12%), hsl(28 35% 18%));
+    border-top: 3px solid hsl(25 30% 10%);
+    box-shadow:
+      0 -4px 16px rgba(0,0,0,0.6),
+      inset 0 2px 0 hsl(35 30% 30% / 0.2),
+      inset 0 -1px 0 rgba(0,0,0,0.3);
+  }
+
+  /* ── Glass Effects (kept for transition) ─── */
   .glass {
-    background: hsl(var(--glass-bg));
-    backdrop-filter: blur(20px) saturate(1.3);
-    border: 1px solid hsl(var(--glass-border));
-    @apply rounded-xl;
+    @apply wood-panel-dark;
   }
 
   .glass-card {
-    background: var(--gradient-card);
-    backdrop-filter: blur(24px) saturate(1.4);
-    border: 1px solid hsl(var(--glass-border));
-    box-shadow: 
-      0 4px 30px hsl(222 50% 5% / 0.5),
-      inset 0 1px 0 hsl(var(--glass-highlight));
-    @apply rounded-2xl;
+    @apply wood-panel-dark;
   }
 
   .glass-premium {
-    background: var(--gradient-premium);
-    backdrop-filter: blur(30px) saturate(1.5);
-    border: 1px solid hsl(222 25% 25% / 0.6);
-    box-shadow: 
-      0 8px 40px hsl(222 50% 5% / 0.6),
-      inset 0 1px 0 hsl(217 91% 70% / 0.06),
-      inset 0 -1px 0 hsl(222 50% 5% / 0.3);
-    @apply rounded-2xl;
+    @apply wood-panel;
   }
 
   .glass-score {
-    background: linear-gradient(145deg, hsl(222 42% 12% / 0.92), hsl(222 42% 7% / 0.96));
-    backdrop-filter: blur(30px) saturate(1.5);
-    border: 1px solid hsl(222 25% 22% / 0.6);
-    box-shadow:
-      0 4px 24px hsl(222 50% 5% / 0.4),
-      inset 0 1px 0 hsl(var(--glass-highlight));
-    @apply rounded-2xl;
+    @apply wood-panel-dark;
   }
 
   .glass-nav {
-    background: linear-gradient(180deg, hsl(222 45% 11% / 0.95), hsl(222 45% 8% / 0.98));
-    backdrop-filter: blur(30px) saturate(1.6);
-    border: 1px solid hsl(222 25% 22% / 0.5);
-    box-shadow: 
-      0 -8px 40px hsl(222 50% 5% / 0.5),
-      inset 0 1px 0 hsl(217 60% 50% / 0.06);
+    @apply wood-shelf;
   }
 
   /* ── Glow Effects ──────────────────────────── */

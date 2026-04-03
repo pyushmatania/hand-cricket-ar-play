@@ -10,15 +10,18 @@ interface CardFrameProps {
   onClick?: () => void;
 }
 
-const rarityStyles: Record<Rarity, string> = {
-  common:
-    "border-[hsl(var(--rarity-common))] shadow-[0_4px_12px_rgba(0,0,0,0.3),inset_0_1px_2px_rgba(255,255,255,0.1)]",
-  rare:
-    "border-game-blue shadow-[0_4px_16px_hsl(207_90%_54%/0.2),inset_0_1px_2px_rgba(255,255,255,0.1)]",
-  epic:
-    "border-game-purple shadow-[0_4px_16px_hsl(291_47%_51%/0.25),inset_0_1px_2px_rgba(255,255,255,0.1)]",
-  legendary:
-    "border-game-gold shadow-[0_4px_20px_hsl(51_100%_50%/0.3),inset_0_1px_2px_rgba(255,255,255,0.15)] animate-border-glow",
+const rarityBorder: Record<Rarity, string> = {
+  common: "border-[hsl(25_40%_14%)]",
+  rare: "border-[hsl(207_60%_35%)]",
+  epic: "border-[hsl(291_40%_35%)]",
+  legendary: "border-[hsl(43_80%_40%)] animate-border-glow",
+};
+
+const rarityGlow: Record<Rarity, string> = {
+  common: "",
+  rare: "shadow-[0_0_12px_hsl(207_90%_54%/0.15)]",
+  epic: "shadow-[0_0_16px_hsl(291_47%_51%/0.2)]",
+  legendary: "shadow-[0_0_20px_hsl(51_100%_50%/0.25)]",
 };
 
 export default function CardFrame({
@@ -31,8 +34,9 @@ export default function CardFrame({
     <div
       onClick={onClick}
       className={cn(
-        "rounded-2xl border-[3px] bg-gradient-to-b from-[hsl(222_40%_13%/0.9)] to-[hsl(222_40%_8%/0.95)] backdrop-blur-md overflow-hidden",
-        rarityStyles[rarity],
+        "wood-panel-dark metal-corners rounded-2xl border-[3px] overflow-hidden",
+        rarityBorder[rarity],
+        rarityGlow[rarity],
         onClick && "cursor-pointer active:scale-[0.97] transition-transform",
         className
       )}

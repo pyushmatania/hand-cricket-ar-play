@@ -22,17 +22,11 @@ export default function BottomNav() {
     <div className="fixed bottom-0 left-0 right-0 z-50">
       <div className="max-w-lg mx-auto">
         {/* Fade-out gradient above nav */}
-        <div className="h-8 bg-gradient-to-t from-[hsl(240_30%_8%)] to-transparent pointer-events-none" />
+        <div className="h-8 bg-gradient-to-t from-[hsl(25_40%_10%)] to-transparent pointer-events-none" />
 
-        <div className="relative border-t-[2px]"
-          style={{
-            background: "linear-gradient(to top, hsl(240 30% 7%), hsl(222 40% 11%))",
-            borderColor: "hsl(222 25% 20% / 0.5)",
-            boxShadow: "0 -4px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.04)",
-          }}>
-          
-          {/* Top highlight line */}
-          <div className="absolute top-0 left-[10%] right-[10%] h-px" style={{ background: "linear-gradient(to right, transparent, hsl(222 40% 30% / 0.3), transparent)" }} />
+        <div className="relative wood-shelf">
+          {/* Wood grain highlight */}
+          <div className="absolute top-0 left-[10%] right-[10%] h-px" style={{ background: "linear-gradient(to right, transparent, hsl(35 30% 30% / 0.4), transparent)" }} />
 
           <div className="flex items-end justify-around px-1 pt-1 pb-[env(safe-area-inset-bottom,6px)]">
             {NAV_ITEMS.map((item) => {
@@ -61,7 +55,7 @@ export default function BottomNav() {
                         background: isActive
                           ? "linear-gradient(to bottom, hsl(122,50%,55%), hsl(122,39%,35%))"
                           : "linear-gradient(to bottom, hsl(122,39%,49%), hsl(122,39%,30%))",
-                        border: "3px solid hsl(240 30% 9%)",
+                        border: "3px solid hsl(25 30% 10%)",
                         boxShadow: isActive
                           ? "0 4px 20px hsl(122 39% 49% / 0.5), 0 0 30px hsl(122 39% 49% / 0.2), inset 0 2px 4px rgba(255,255,255,0.25), 0 6px 0 hsl(122,39%,25%)"
                           : "0 4px 12px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.15), 0 4px 0 hsl(122,39%,22%)",
@@ -77,19 +71,19 @@ export default function BottomNav() {
                     </motion.div>
                   )}
 
-                  {/* Regular icon with 3D container */}
+                  {/* Regular icon on wooden pedestal */}
                   {!isCenter && (
                     <div className="relative">
                       <motion.div
-                        animate={isActive ? { y: -2 } : { y: 0 }}
+                        animate={isActive ? { y: -4 } : { y: 0 }}
                         transition={{ type: "spring", stiffness: 400, damping: 20 }}
                         className="w-10 h-10 rounded-xl flex items-center justify-center relative"
                         style={{
                           background: isActive
-                            ? `linear-gradient(135deg, ${item.accent}25, ${item.accent}10)`
+                            ? `linear-gradient(135deg, ${item.accent}30, ${item.accent}10)`
                             : "transparent",
                           boxShadow: isActive
-                            ? `0 2px 10px ${item.accent}30`
+                            ? `0 4px 12px ${item.accent}40, 0 2px 0 hsl(25 30% 10%)`
                             : "none",
                         }}
                       >
@@ -117,13 +111,15 @@ export default function BottomNav() {
                     </div>
                   )}
 
+                  {/* Carved/engraved label */}
                   <span
                     className={cn(
                       "text-[8px] font-game-display tracking-wider transition-colors duration-200",
                       isCenter ? "mt-10" : "mt-0",
                     )}
                     style={{
-                      color: isActive ? item.accent : "hsl(var(--muted-foreground) / 0.35)",
+                      color: isActive ? item.accent : "hsl(35 25% 40% / 0.5)",
+                      textShadow: isActive ? "none" : "0 1px 0 rgba(0,0,0,0.5)",
                     }}
                   >
                     {item.label.toUpperCase()}

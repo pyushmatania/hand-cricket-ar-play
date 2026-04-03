@@ -106,10 +106,11 @@ export default function HomePage() {
   const nextArena = ARENA_LEVELS[ARENA_LEVELS.indexOf(currentArena) + 1] || currentArena;
 
   return (
-    <div className="min-h-screen bg-[hsl(240_30%_6%)] relative overflow-hidden pb-28">
-      {/* Background sky gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[hsl(220_60%_18%)] via-[hsl(240_30%_8%)] to-[hsl(240_30%_6%)] pointer-events-none" />
-      <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[hsl(30_80%_50%/0.08)] to-transparent pointer-events-none" />
+    <div className="min-h-screen relative overflow-hidden pb-28 scallop-bg">
+      {/* Vignette overlay */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(222 47% 3% / 0.7) 100%)" }} />
+      {/* Warm top glow */}
+      <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[hsl(30_80%_50%/0.06)] to-transparent pointer-events-none" />
 
       {/* Top Bar */}
       <TopBar coins={profile?.coins ?? 0} runs={profile?.xp ?? 0} />
@@ -127,7 +128,7 @@ export default function HomePage() {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate("/shop")}
-            className="relative bg-gradient-to-br from-game-gold/20 to-game-gold/5 border-2 border-game-gold/30 rounded-2xl p-3 flex flex-col items-center gap-1 overflow-hidden"
+            className="relative wood-panel metal-corners rounded-2xl p-3 flex flex-col items-center gap-1 overflow-hidden"
           >
             <motion.div
               className="absolute inset-0 border-2 border-game-gold/40 rounded-2xl"
@@ -145,7 +146,7 @@ export default function HomePage() {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate("/game/daily")}
-            className="bg-gradient-to-br from-game-blue/20 to-game-blue/5 border-2 border-game-blue/30 rounded-2xl p-3 flex flex-col items-center gap-1"
+            className="wood-panel-dark metal-corners rounded-2xl p-3 flex flex-col items-center gap-1"
           >
             <span className="text-3xl">📅</span>
             <span className="font-game-display text-[9px] text-game-blue tracking-wider">
@@ -274,12 +275,12 @@ export default function HomePage() {
               key={i}
               whileTap={{ scale: 0.9 }}
               onClick={() => slot.state === "ready" ? navigate("/shop") : undefined}
-              className={`relative rounded-2xl p-2 flex flex-col items-center justify-center min-h-[80px] border-2 transition-all ${
+              className={`relative rounded-2xl p-2 flex flex-col items-center justify-center min-h-[80px] transition-all ${
                 slot.state === "ready"
-                  ? "bg-gradient-to-b from-game-gold/20 to-game-gold/5 border-game-gold/40"
+                  ? "wood-panel border-[3px] border-[hsl(43_80%_40%)]"
                   : slot.state === "locked"
-                  ? "bg-gradient-to-b from-game-medium to-game-dark border-[hsl(222_25%_22%/0.5)]"
-                  : "bg-game-dark/40 border-dashed border-[hsl(222_25%_22%/0.3)]"
+                  ? "wood-panel-dark border-[3px] border-[hsl(222_30%_12%)]"
+                  : "wood-panel-dark border-[3px] border-dashed border-[hsl(222_25%_20%/0.4)] opacity-60"
               }`}
             >
               {slot.state === "ready" && (
@@ -328,7 +329,7 @@ export default function HomePage() {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate("/game/multiplayer")}
-            className="bg-gradient-to-br from-game-orange/20 to-game-red/10 border-2 border-game-orange/30 rounded-2xl p-3 flex items-center gap-3"
+            className="wood-panel-dark metal-corners rounded-2xl p-3 flex items-center gap-3"
           >
             <span className="text-2xl">⚔️</span>
             <div className="text-left">
@@ -339,7 +340,7 @@ export default function HomePage() {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate("/game/tournament")}
-            className="bg-gradient-to-br from-game-purple/20 to-game-blue/10 border-2 border-game-purple/30 rounded-2xl p-3 flex items-center gap-3"
+            className="wood-panel-dark metal-corners rounded-2xl p-3 flex items-center gap-3"
           >
             <span className="text-2xl">🏆</span>
             <div className="text-left">
@@ -359,7 +360,7 @@ export default function HomePage() {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate("/shop")}
-            className="bg-gradient-to-br from-game-teal/20 to-game-blue/10 border-2 border-game-teal/30 rounded-2xl p-3 flex items-center gap-3"
+            className="wood-panel metal-corners rounded-2xl p-3 flex items-center gap-3"
           >
             <span className="text-2xl">🛒</span>
             <div className="text-left">
@@ -370,7 +371,7 @@ export default function HomePage() {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate("/daily-rewards")}
-            className="bg-gradient-to-br from-game-green/20 to-game-teal/10 border-2 border-game-green/30 rounded-2xl p-3 flex items-center gap-3"
+            className="wood-panel metal-corners rounded-2xl p-3 flex items-center gap-3"
           >
             <span className="text-2xl">🎁</span>
             <div className="text-left">
@@ -387,10 +388,7 @@ export default function HomePage() {
           transition={{ delay: 0.47 }}
           whileTap={{ scale: 0.97 }}
           onClick={() => navigate("/battle-pass")}
-          className="w-full mb-4 rounded-2xl p-3 flex items-center gap-3 border-2 border-secondary/30"
-          style={{
-            background: "linear-gradient(135deg, hsl(45 93% 58% / 0.12), hsl(36 90% 48% / 0.06))",
-          }}
+          className="w-full mb-4 wood-panel metal-corners rounded-2xl p-3 flex items-center gap-3"
         >
           <span className="text-2xl">⚔️</span>
           <div className="flex-1 text-left">
