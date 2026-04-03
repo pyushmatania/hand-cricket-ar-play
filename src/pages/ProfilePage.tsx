@@ -9,6 +9,7 @@ import PlayerAvatar from "@/components/PlayerAvatar";
 import TrophyCase from "@/components/TrophyCase";
 import RankBadge from "@/components/RankBadge";
 import FriendStatsModal from "@/components/FriendStatsModal";
+import XpHistoryFeed from "@/components/XpHistoryFeed";
 import { usePvpStats } from "@/hooks/usePvpStats";
 import { getRankTier, getNextTier, calculateRankPoints } from "@/lib/rankTiers";
 
