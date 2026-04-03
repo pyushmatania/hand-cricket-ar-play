@@ -33,6 +33,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const [matchConfig, setMatchConfig] = useState<MatchConfig | null>(null);
   const [showOverSelector, setShowOverSelector] = useState(true);
   const [playerXP, setPlayerXP] = useState(0);
+  const [matchRewards, setMatchRewards] = useState<any>(null);
 
   // Ceremony states
   const [showPreMatch, setShowPreMatch] = useState(false);
