@@ -358,6 +358,12 @@ export const SFX = {
     playNote(988, 0.15, 0.2, 0.1);
     playNote(1175, 0.2, 0.32, 0.1);
   },
+
+  /** Friend came online — gentle two-note chime */
+  friendOnline() {
+    playNote(880, 0.1, 0, 0.07);
+    playNote(1175, 0.18, 0.12, 0.09);
+  },
 };
 
 /** Haptic feedback using Vibration API */

@@ -43,6 +43,13 @@ export function usePresence(): PresenceData {
         }
         setOnlineUsers(ids);
       })
+      .on("presence", { event: "join" }, ({ key }) => {
+        // Play chime when someone else comes online
+        if (key && key !== user.id) {
+          SFX.friendOnline();
+          Haptics.light();
+        }
+      })
       .on("presence", { event: "leave" }, ({ key }) => {
         if (key) {
           lastSeenRef.current.set(key, new Date().toISOString());
