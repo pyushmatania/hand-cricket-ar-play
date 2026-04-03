@@ -728,58 +728,70 @@ export default function LeaderboardPage() {
                   {/* Player of the Week with confetti */}
                   <PotwWithConfetti player={playerOfWeek} loading={potwLoading} />
 
-                  {/* Top 3 podium */}
+                  {/* Top 3 podium — Supercell style */}
                   {top3.length >= 3 && (
-                    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="flex items-end justify-center gap-3 mb-5">
+                    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="flex items-end justify-center gap-2 mb-6 pt-4">
                       {[top3[1], top3[0], top3[2]].map((p, i) => {
-                        const heights = ["h-28", "h-36", "h-24"];
-                        const sizes = ["text-3xl", "text-4xl", "text-2xl"];
+                        const heights = ["h-24", "h-32", "h-20"];
                         const rank = i === 0 ? 2 : i === 1 ? 1 : 3;
                         const isMe = user && p.user_id === user.id;
                         const tier = getRankTier(p);
-                        const glows = [
-                          "shadow-[0_0_15px_hsl(192_91%_70%/0.15)]",
-                          "shadow-[0_0_25px_hsl(45_93%_58%/0.25)]",
-                          "shadow-[0_0_10px_hsl(30_70%_55%/0.1)]",
+                        const podiumBorders = [
+                          "border-[hsl(210_10%_70%)] from-[hsl(210_10%_70%/0.2)] to-[hsl(210_10%_50%/0.05)]",
+                          "border-game-gold from-[hsl(51_100%_50%/0.25)] to-[hsl(43_96%_42%/0.08)]",
+                          "border-[hsl(25_60%_50%)] from-[hsl(25_60%_50%/0.15)] to-[hsl(25_60%_40%/0.05)]",
                         ];
-                        const podiumColors = [
-                          "from-accent/15 to-accent/5",
-                          "from-score-gold/15 to-score-gold/5",
-                          "from-secondary/10 to-secondary/5",
+                        const podiumGlows = [
+                          "shadow-[0_0_16px_hsl(210_10%_70%/0.2)]",
+                          "shadow-[0_0_30px_hsl(51_100%_50%/0.3)]",
+                          "shadow-[0_0_12px_hsl(25_60%_50%/0.15)]",
                         ];
+                        const crownSize = ["text-xl", "text-3xl", "text-lg"];
+                        const crowns = ["🥈", "👑", "🥉"];
                         return (
                           <motion.div key={p.user_id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 + i * 0.1 }}
+                            initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            transition={{ delay: 0.2 + i * 0.12, type: "spring", stiffness: 200, damping: 20 }}
                             className={`flex flex-col items-center ${mainTab === "friends" && !isMe ? "cursor-pointer active:scale-[0.97] transition-transform" : ""}`}
                             onClick={() => { if (mainTab === "friends" && !isMe) setPreviewFriendId(p.user_id); }}>
+                            {/* Crown/medal floating above */}
                             <motion.span
-                              animate={{ y: [0, -3, 0] }}
-                              transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
-                              className={`${sizes[i]} mb-1`}>{getBadge(rank)}</motion.span>
-                            <div className="mb-1 relative">
-                              <PlayerAvatar avatarUrl={p.avatar_url} avatarIndex={p.avatar_index ?? 0} size="sm" />
+                              animate={{ y: [0, -4, 0] }}
+                              transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.4, ease: "easeInOut" }}
+                              className={`${crownSize[i]} mb-1 drop-shadow-lg`}>{crowns[i]}</motion.span>
+                            {/* Avatar */}
+                            <div className="mb-1.5 relative">
+                              <div className={`rounded-full border-2 ${i === 1 ? "border-game-gold shadow-[0_0_12px_hsl(51_100%_50%/0.4)]" : i === 0 ? "border-[hsl(210_10%_70%)]" : "border-[hsl(25_60%_50%)]"}`}>
+                                <PlayerAvatar avatarUrl={p.avatar_url} avatarIndex={p.avatar_index ?? 0} size="sm" />
+                              </div>
                               {(p.current_streak ?? 0) >= 3 && (
-                                <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-out-red/90 flex items-center justify-center">
-                                  <span className="text-[6px] text-white font-display font-black">🔥</span>
+                                <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-game-red border-2 border-game-dark flex items-center justify-center">
+                                  <span className="text-[7px] text-white font-game-display">🔥</span>
                                 </div>
                               )}
                             </div>
-                            <div className={`w-20 ${heights[i]} rounded-t-2xl glass-premium border ${isMe ? "border-primary/30" : "border-primary/10"} flex flex-col items-center justify-end pb-2 px-2 ${glows[i]} bg-gradient-to-t ${podiumColors[i]} relative overflow-hidden`}>
-                              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                              <motion.span
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                transition={{ delay: 0.4 + i * 0.1, type: "spring" }}
-                                className="font-display text-xl font-black text-secondary leading-none" style={{ textShadow: "0 0 15px hsl(45 93% 58% / 0.3)" }}>{getScore(p)}</motion.span>
-                              <span className="text-[6px] text-muted-foreground font-display tracking-widest mt-0.5">{SORT_OPTIONS[sortBy].label}</span>
+                            {/* Podium pillar */}
+                            <div className={`w-[5.5rem] ${heights[i]} rounded-t-2xl border-2 border-b-4 bg-gradient-to-t ${podiumBorders[i]} ${podiumGlows[i]} flex flex-col items-center justify-center px-2 relative overflow-hidden`}>
+                              <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                              <span className={`font-game-display text-2xl ${i === 1 ? "text-game-gold" : "text-foreground"}`} style={{ textShadow: i === 1 ? "0 0 15px hsl(51 100% 50% / 0.4)" : "none" }}>
+                                {getScore(p)}
+                              </span>
+                              <span className="text-[6px] text-muted-foreground font-game-display tracking-widest">{SORT_OPTIONS[sortBy].label}</span>
                               {(p.xp ?? 0) > 0 && (
-                                <span className="text-[5px] text-primary/70 font-display mt-0.5">✨{p.xp}</span>
+                                <span className="text-[6px] text-game-blue font-game-display mt-0.5">✨{p.xp}</span>
                               )}
                             </div>
-                            <div className="w-20 glass-card border-t-0 rounded-b-xl py-1.5 text-center">
-                              <span className={`text-[7px] font-display font-bold block truncate px-1 ${isMe ? "text-primary" : "text-foreground"}`}>{p.display_name}{isMe && " ★"}</span>
+                            {/* Name plate */}
+                            <div className={`w-[5.5rem] rounded-b-xl py-1.5 text-center border-x-2 border-b-2 ${i === 1 ? "border-game-gold/40 bg-game-gold/5" : i === 0 ? "border-[hsl(210_10%_70%/0.3)] bg-[hsl(210_10%_70%/0.03)]" : "border-[hsl(25_60%_50%/0.3)] bg-[hsl(25_60%_50%/0.03)]"}`}>
+                              <span className={`text-[8px] font-game-card font-bold block truncate px-1 ${isMe ? "text-game-blue" : "text-foreground"}`}>{p.display_name}{isMe && " ★"}</span>
+                              <span className={`text-[6px] ${tier.color} font-game-display`}>{tier.emoji} {tier.name}</span>
+                            </div>
+                          </motion.div>
+                        );
+                      })}
+                    </motion.div>
+                  )}
                               <span className={`text-[6px] ${tier.color} font-display`}>{tier.emoji} {tier.name}</span>
                             </div>
                           </motion.div>
