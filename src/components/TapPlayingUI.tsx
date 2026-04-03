@@ -18,6 +18,7 @@ import WicketBreakdownCard, { type WicketBreakdownData } from "./WicketBreakdown
 import pitch3d from "@/assets/pitch-3d.jpg";
 import { getBestArena } from "@/lib/arenas";
 import GameButton from "./shared/GameButton";
+import { getBatSkin } from "@/lib/cosmetics";
 
 /* ── Move button config ── */
 const MOVES: { move: Move; label: string; emoji: string; color: string; border: string; glow: string }[] = [
