@@ -15,6 +15,7 @@ import EnhancedPreMatch from "./EnhancedPreMatch";
 import EnhancedPostMatch from "./EnhancedPostMatch";
 import TapPlayingUI from "./TapPlayingUI";
 import OverSelector from "./OverSelector";
+import { useEquippedCosmetics } from "@/hooks/useEquippedCosmetics";
 
 const AI_NAME = "Rohit AI";
 const AI_EMOJI = "🏏";
