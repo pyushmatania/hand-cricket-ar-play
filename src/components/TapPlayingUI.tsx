@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { useScreenShake } from "@/hooks/useScreenShake";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Move, BallResult, GameResult, InningsPhase, MatchConfig } from "@/hooks/useHandCricket";
 import { SFX, Haptics } from "@/lib/sounds";
