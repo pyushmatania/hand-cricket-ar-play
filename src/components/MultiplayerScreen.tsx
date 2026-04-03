@@ -334,6 +334,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
   useEffect(() => {
     if (phase !== "lobby") return;
     loadGames();
+    loadLobbyFriends();
     const loadInterval = setInterval(loadGames, 5000);
     // Tick lobby game timers every second
     const tickInterval = setInterval(() => {
