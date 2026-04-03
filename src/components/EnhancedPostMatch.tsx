@@ -12,6 +12,8 @@ import WagonWheel from "./WagonWheel";
 import type { BallResult } from "@/hooks/useHandCricket";
 import victoryTrophy from "@/assets/victory-trophy.png";
 import GameButton from "./shared/GameButton";
+import ShareButton from "./share/ShareButton";
+import MatchShareCard from "./share/MatchShareCard";
 import LevelUpModal, { type MatchRewards } from "./LevelUpModal";
 
 interface RivalryStats {
