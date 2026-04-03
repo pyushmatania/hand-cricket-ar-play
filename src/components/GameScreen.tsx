@@ -86,15 +86,15 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickConfiguredMatchCommentators(commentaryVoice));
   const prevPhaseRef = useRef(game.phase);
 
-  // Ambient stadium music for AR mode
+  // Ambient stadium music for AR mode — arena-specific
   useEffect(() => {
     if (soundEnabled && musicEnabled && !game.result) {
-      startAmbientStadium(ambientVolume);
+      startAmbientStadium(ambientVolume, arenaId);
     } else {
       stopAmbientStadium();
     }
     return () => { stopAmbientStadium(); };
-  }, [soundEnabled, musicEnabled, game.result]);
+  }, [soundEnabled, musicEnabled, game.result, arenaId]);
 
   useEffect(() => {
     if (soundEnabled && musicEnabled) setAmbientVolume(ambientVolume);
