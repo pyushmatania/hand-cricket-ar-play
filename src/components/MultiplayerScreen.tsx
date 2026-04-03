@@ -413,7 +413,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
           }
 
           // Guest-side innings break detection
-          if ((updated as any).phase === "innings_break" && user?.id !== updated.host_id && !showInningsBreak) {
+          if ((updated as any).phase === "innings_break" && user?.id !== updated.host_id && !showInningsBreakRef.current) {
             // updated.host_batting is already the NEW value (post-flip).
             // Pre-flip: old_host_batting = !updated.host_batting
             // Guest was batting in innings 1 iff host was NOT batting = !old_host_batting = updated.host_batting
