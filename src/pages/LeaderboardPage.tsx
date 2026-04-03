@@ -178,7 +178,7 @@ export default function LeaderboardPage() {
     if (mainTab === "global" || mainTab === "rage") loadGlobal();
     if (mainTab === "friends") loadFriends();
     if (mainTab === "rivalry") loadRivalFriends();
-    if (mainTab === "seasons") { loadSeasonData(); loadArchivedSeasons(); }
+    if (mainTab === "seasons") { loadSeasonData(); loadArchivedSeasons(); triggerAutoSnapshot(); }
   }, [mainTab, sortBy, seasonWeeksAgo]);
 
   // Load sparklines when active list changes
