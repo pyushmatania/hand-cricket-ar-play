@@ -261,6 +261,7 @@ export default function MatchHistoryPage() {
               );
             })}
           </div>
+          </ScrollHint>
         </motion.div>
 
         {/* Match List */}

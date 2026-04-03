@@ -491,7 +491,8 @@ export default function LeaderboardPage() {
                   {opt.icon} {opt.label}
                 </button>
               ))}
-          </div>
+            </div>
+          </ScrollHint>
         )}
 
         {/* Most Active Today ticker */}
