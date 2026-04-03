@@ -5,6 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { usePresence, formatLastSeen } from "@/hooks/usePresence";
+import { useUnreadMessages } from "@/hooks/useUnreadMessages";
 import OddEvenToss from "./OddEvenToss";
 import SpinningCricketBall from "./SpinningCricketBall";
 import WaitingRoom from "./WaitingRoom";
@@ -102,6 +103,7 @@ function gameTypeLabel(gameType: GameType): string {
 export default function MultiplayerScreen({ onHome }: Props) {
   const { user } = useAuth();
   const { commentaryVoice, multiplayerCeremoniesEnabled } = useSettings();
+  const { unreadCount, markRead } = useUnreadMessages();
   const onlineUsers = usePresence();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -1123,10 +1125,15 @@ export default function MultiplayerScreen({ onHome }: Props) {
                 🎮 JOIN
               </button>
               <button onClick={() => setLobbyTab("friends")}
-                className={`flex-1 py-2.5 rounded-lg font-display text-[10px] font-bold tracking-widest transition-all ${
+                className={`flex-1 py-2.5 rounded-lg font-display text-[10px] font-bold tracking-widest transition-all relative ${
                   lobbyTab === "friends" ? "bg-primary text-primary-foreground" : "text-muted-foreground"
                 }`}>
                 👥 FRIENDS
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full bg-destructive text-destructive-foreground text-[8px] font-bold flex items-center justify-center shadow-[0_0_8px_hsl(var(--destructive)/0.5)]">
+                    {unreadCount > 99 ? "99+" : unreadCount}
+                  </span>
+                )}
               </button>
               <button onClick={() => setLobbyTab("create")}
                 className={`flex-1 py-2.5 rounded-lg font-display text-[10px] font-bold tracking-widest transition-all ${
@@ -1170,6 +1177,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
                       key={`chat-${chattingFriend.user_id}`}
                       friend={chattingFriend}
                       onBack={() => setChattingFriend(null)}
+                      onOpen={() => markRead(chattingFriend.user_id)}
                     />
                   ) : (
                     <motion.div key="friend-list" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-2">

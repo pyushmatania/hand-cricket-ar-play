@@ -39,9 +39,10 @@ interface ChatMessage {
 interface LobbyChatProps {
   friend: Friend;
   onBack: () => void;
+  onOpen?: () => void;
 }
 
-export default function LobbyChat({ friend, onBack }: LobbyChatProps) {
+export default function LobbyChat({ friend, onBack, onOpen }: LobbyChatProps) {
   const { user } = useAuth();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -53,6 +54,9 @@ export default function LobbyChat({ friend, onBack }: LobbyChatProps) {
   const scrollToBottom = useCallback(() => {
     setTimeout(() => scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" }), 50);
   }, []);
+
+  // Mark as read on open
+  useEffect(() => { onOpen?.(); }, []);
 
   // Load recent messages
   useEffect(() => {
