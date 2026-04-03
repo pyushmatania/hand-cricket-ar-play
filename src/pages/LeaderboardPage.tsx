@@ -16,7 +16,7 @@ import PlayerAvatar from "@/components/PlayerAvatar";
 import FormSparkline from "@/components/FormSparkline";
 import PlayerOfTheWeek from "@/components/PlayerOfTheWeek";
 import MostActiveTicker from "@/components/MostActiveTicker";
-import CanvasFireworks from "@/components/CanvasFireworks";
+
 import FriendsNetworkGraph from "@/components/FriendsNetworkGraph";
 import SeasonCountdown from "@/components/SeasonCountdown";
 import { getRankTier } from "@/lib/rankTiers";
