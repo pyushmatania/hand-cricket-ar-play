@@ -405,13 +405,14 @@ export default function MultiplayerScreen({ onHome }: Props) {
             resolveTurn(updated);
           }
 
+          // Extract payload early so it's available for all checks below
+          const payload_data = (updated as any).round_result_payload;
+
           // Guest-side: reconstruct ball result from round_result_payload
           if (user?.id !== updated.host_id && payload_data?.hostMove && payload_data?.guestMove && !payload_data?.tease) {
             const hostMove = payload_data.hostMove;
             const guestMove = payload_data.guestMove;
             const battingIsHost = updated.host_batting;
-            // After innings change, host_batting is already flipped, so for this turn's result
-            // we need the pre-flip value. If isInningsChange, the batting side was the opposite.
             const effectiveBattingIsHost = payload_data.isInningsChange ? !battingIsHost : battingIsHost;
             const isOut = hostMove === guestMove;
             const guestIsBatting = !effectiveBattingIsHost;
@@ -440,7 +441,6 @@ export default function MultiplayerScreen({ onHome }: Props) {
 
             setLastBallResult(guestBallResult);
             setPvpBallHistory(prev => {
-              // Prevent duplicate adds by checking turn number
               if (prev.length >= (updated.current_turn)) return prev;
               return [...prev, guestBallResult];
             });
@@ -449,7 +449,6 @@ export default function MultiplayerScreen({ onHome }: Props) {
           }
 
           // Check for incoming tease
-          const payload_data = (updated as any).round_result_payload;
           if (payload_data?.tease && payload_data?.from !== user?.id) {
             setReceivedTease(payload_data.tease);
             setTimeout(() => setReceivedTease(null), 4000);
