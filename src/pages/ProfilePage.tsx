@@ -688,7 +688,25 @@ export default function ProfilePage() {
                         </div>
                       )}
                       {unlocked ? (
-                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-game-green/20 flex items-center justify-center z-10"><span className="text-[8px]">✅</span></div>
+                        <div className="absolute top-2 right-2 flex items-center gap-1 z-10">
+                          <span className="text-[8px]">✅</span>
+                          <ShareButton
+                            renderCard={() => (
+                              <AchievementShareCard
+                                playerName={profile?.display_name || "Player"}
+                                achievementTitle={a.title}
+                                achievementIcon={a.icon}
+                                achievementTier={a.tier}
+                                description={a.desc}
+                              />
+                            )}
+                            title={`🏏 Achievement: ${a.title}`}
+                            text={`I just unlocked "${a.title}" in Hand Cricket! ${a.icon}`}
+                            variant="ghost"
+                            size="sm"
+                            className="!px-1.5 !py-0.5 !text-[6px] !rounded-lg"
+                          />
+                        </div>
                       ) : (
                         <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-muted/30 flex items-center justify-center z-10"><span className="text-[7px]">🔒</span></div>
                       )}
