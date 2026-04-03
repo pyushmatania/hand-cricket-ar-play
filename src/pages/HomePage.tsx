@@ -15,6 +15,8 @@ import { Settings } from "lucide-react";
 import floatingIsland from "@/assets/floating-island.png";
 import avatarFrame from "@/assets/avatar-frame.png";
 import { getChestTier } from "@/lib/chests";
+import { getCurrentSeasonalTheme } from "@/lib/seasonalThemes";
+import SeasonalIslandOverlay from "@/components/SeasonalIslandOverlay";
 
 interface ProfileData {
   total_matches: number;
@@ -60,6 +62,7 @@ export default function HomePage() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [recentMatch, setRecentMatch] = useState<RecentMatch | null>(null);
   const { rivals, loading: rivalsLoading } = useRivals();
+  const seasonalTheme = getCurrentSeasonalTheme();
 
   useEffect(() => {
     const seen = localStorage.getItem("hc_onboarding_done");
@@ -267,17 +270,47 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Floating island with hover animation */}
+          {/* Seasonal banner */}
+          {seasonalTheme?.banner && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="absolute top-8 left-1/2 -translate-x-1/2 z-20"
+            >
+              <div
+                className="px-4 py-1 rounded-full font-display text-[8px] font-bold tracking-[0.15em] whitespace-nowrap"
+                style={{
+                  background: "linear-gradient(135deg, hsl(0 0% 0% / 0.6), hsl(0 0% 0% / 0.4))",
+                  border: `1.5px solid ${seasonalTheme.bannerColor}44`,
+                  color: seasonalTheme.bannerColor,
+                  boxShadow: `0 0 12px ${seasonalTheme.bannerColor}22, 0 2px 6px hsl(0 0% 0% / 0.4)`,
+                  textShadow: `0 0 8px ${seasonalTheme.bannerColor}66`,
+                }}
+              >
+                <motion.span
+                  animate={{ opacity: [0.8, 1, 0.8] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  {seasonalTheme.banner}
+                </motion.span>
+              </div>
+            </motion.div>
+          )}
+
           <motion.div
             animate={{ y: [0, -8, 0] }}
             transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
             className="relative mx-auto"
             style={{ maxWidth: 320 }}
           >
+            {/* Seasonal overlay */}
+            {seasonalTheme && <SeasonalIslandOverlay theme={seasonalTheme} />}
+
             <img
               src={floatingIsland}
               alt={`${currentArena.name} Stadium Island`}
               className="w-full h-auto drop-shadow-[0_20px_40px_rgba(0,0,0,0.6)]"
+              style={{ filter: seasonalTheme?.imageFilter }}
               width={768}
               height={768}
             />
