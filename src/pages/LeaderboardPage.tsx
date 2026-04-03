@@ -722,7 +722,7 @@ export default function LeaderboardPage() {
               ) : (
                 <>
                   {/* Player of the Week with confetti */}
-                  <PotwWithConfetti player={playerOfWeek} loading={potwLoading} />
+                  <PotwWithoutConfetti player={playerOfWeek} loading={potwLoading} />
 
                   {/* Top 3 podium — Supercell style */}
                   {top3.length >= 3 && (
