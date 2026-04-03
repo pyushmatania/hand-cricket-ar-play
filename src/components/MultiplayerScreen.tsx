@@ -365,7 +365,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
         { event: "UPDATE", schema: "public", table: "multiplayer_games", filter: `id=eq.${currentGame.id}` },
         (payload) => {
           const updated = payload.new as MultiplayerGame;
-          const prevPhase = phase;
+          const prevPhase = phaseRef.current;
           const nextPhase = statusToPhase(updated.status);
           
           setCurrentGame(updated);
