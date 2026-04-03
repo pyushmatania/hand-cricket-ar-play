@@ -227,6 +227,7 @@ export function useMatchSaver() {
                 }
 
                 if (done) {
+                  xpEntries.push({ user_id: user.id, amount: CHALLENGE_XP, source: "challenge_complete" });
                   totalChallengeXp += CHALLENGE_XP;
                   totalChallengeCoins += CHALLENGE_COINS;
 
