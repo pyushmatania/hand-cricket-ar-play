@@ -30,6 +30,9 @@ function getTodayKey(): string {
 const DAILY_CONFIG: MatchConfig = { overs: 5, wickets: 3 };
 
 export default function DailyChallengeScreen({ onHome }: Props) {
+  const location = useLocation();
+  const arenaImage = (location.state as any)?.arenaImage as string | undefined;
+  const arenaId = (location.state as any)?.arenaId as string | undefined;
   const { soundEnabled, hapticsEnabled, crowdEnabled, commentaryVoice, dailyCeremoniesEnabled } = useSettings();
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();

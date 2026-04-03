@@ -35,6 +35,9 @@ const AI_OPPONENTS = [
 interface Props { onHome: () => void; }
 
 export default function TournamentScreen({ onHome }: Props) {
+  const location = useLocation();
+  const arenaImage = (location.state as any)?.arenaImage as string | undefined;
+  const arenaId = (location.state as any)?.arenaId as string | undefined;
   const { soundEnabled, hapticsEnabled, commentaryVoice, tournamentCeremoniesEnabled } = useSettings();
   const { user } = useAuth();
   const { game, startGame, playBall, resetGame } = useHandCricket();
