@@ -39,10 +39,11 @@ const CATEGORIES = [
 export default function ShopPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [items, setItems] = useState<ShopItem[]>([]);
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [coins, setCoins] = useState(0);
-  const [category, setCategory] = useState("all");
+  const [category, setCategory] = useState(() => searchParams.get("category") || "all");
   const [selectedItem, setSelectedItem] = useState<ShopItem | null>(null);
   const [purchasing, setPurchasing] = useState(false);
   const [chestItem, setChestItem] = useState<ShopItem | null>(null);
