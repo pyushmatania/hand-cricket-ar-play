@@ -18,17 +18,8 @@ import WicketBreakdownCard, { type WicketBreakdownData } from "./WicketBreakdown
 import pitch3d from "@/assets/pitch-3d.jpg";
 import { getBestArena } from "@/lib/arenas";
 import GameButton from "./shared/GameButton";
-import { getBatSkin } from "@/lib/cosmetics";
-
-/* ── Move button config ── */
-const MOVES: { move: Move; label: string; emoji: string; color: string; border: string; glow: string }[] = [
-  { move: "DEF", label: "DEF", emoji: "✊", color: "from-[hsl(210_10%_40%)] to-[hsl(210_10%_30%)]", border: "border-[hsl(210_10%_22%)]", glow: "" },
-  { move: 1, label: "1", emoji: "☝️", color: "from-[hsl(200_70%_45%)] to-[hsl(200_70%_35%)]", border: "border-[hsl(200_70%_28%)]", glow: "shadow-[0_0_12px_hsl(200_70%_45%/0.3)]" },
-  { move: 2, label: "2", emoji: "✌️", color: "from-game-green to-[hsl(122_39%_38%)]", border: "border-[hsl(122_39%_28%)]", glow: "shadow-[0_0_12px_hsl(122_39%_49%/0.3)]" },
-  { move: 3, label: "3", emoji: "🤟", color: "from-game-gold to-[hsl(43_96%_42%)]", border: "border-[hsl(43_96%_32%)]", glow: "shadow-[0_0_12px_hsl(43_96%_56%/0.3)]" },
-  { move: 4, label: "4", emoji: "🖖", color: "from-[hsl(25_90%_55%)] to-[hsl(25_90%_42%)]", border: "border-[hsl(25_90%_32%)]", glow: "shadow-[0_0_14px_hsl(25_90%_55%/0.35)]" },
-  { move: 6, label: "6", emoji: "👍", color: "from-[hsl(280_70%_55%)] to-[hsl(280_70%_42%)]", border: "border-[hsl(280_70%_32%)]", glow: "shadow-[0_0_16px_hsl(280_70%_55%/0.4)]" },
-];
+import { getBatSkin, getButtonStyle } from "@/lib/cosmetics";
+import type { Move } from "@/hooks/useHandCricket";
 
 export interface TapPlayingUIProps {
   phase: InningsPhase;
