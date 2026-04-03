@@ -50,6 +50,7 @@ export interface TapPlayingUIProps {
   arenaImage?: string;
   arenaId?: string;
   equippedBatSkin?: string | null;
+  equippedButtonStyle?: string | null;
 }
 
 export default function TapPlayingUI({
