@@ -128,7 +128,7 @@ export default function HomePage() {
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate("/shop")}
-            className="relative bg-gradient-to-br from-game-gold/20 to-game-gold/5 border-2 border-game-gold/30 rounded-2xl p-3 flex flex-col items-center gap-1 overflow-hidden"
+            className="relative wood-panel metal-corners rounded-2xl p-3 flex flex-col items-center gap-1 overflow-hidden"
           >
             <motion.div
               className="absolute inset-0 border-2 border-game-gold/40 rounded-2xl"
