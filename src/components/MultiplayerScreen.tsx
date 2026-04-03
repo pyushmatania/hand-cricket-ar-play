@@ -405,6 +405,49 @@ export default function MultiplayerScreen({ onHome }: Props) {
             resolveTurn(updated);
           }
 
+          // Guest-side: reconstruct ball result from round_result_payload
+          if (user?.id !== updated.host_id && payload_data?.hostMove && payload_data?.guestMove && !payload_data?.tease) {
+            const hostMove = payload_data.hostMove;
+            const guestMove = payload_data.guestMove;
+            const battingIsHost = updated.host_batting;
+            // After innings change, host_batting is already flipped, so for this turn's result
+            // we need the pre-flip value. If isInningsChange, the batting side was the opposite.
+            const effectiveBattingIsHost = payload_data.isInningsChange ? !battingIsHost : battingIsHost;
+            const isOut = hostMove === guestMove;
+            const guestIsBatting = !effectiveBattingIsHost;
+
+            let ballRuns: number | "OUT";
+            if (isOut) {
+              ballRuns = "OUT";
+            } else {
+              const battingMove = effectiveBattingIsHost ? hostMove : guestMove;
+              const bowlingMove = effectiveBattingIsHost ? guestMove : hostMove;
+              let r: number;
+              if (battingMove === "DEF") {
+                r = bowlingMove === "DEF" ? 0 : parseInt(bowlingMove);
+              } else {
+                r = parseInt(battingMove);
+              }
+              ballRuns = guestIsBatting ? r : -r;
+            }
+
+            const guestBallResult: BallResult = {
+              userMove: guestMove as Move,
+              aiMove: hostMove as Move,
+              runs: ballRuns,
+              description: payload_data.text || "",
+            };
+
+            setLastBallResult(guestBallResult);
+            setPvpBallHistory(prev => {
+              // Prevent duplicate adds by checking turn number
+              if (prev.length >= (updated.current_turn)) return prev;
+              return [...prev, guestBallResult];
+            });
+            setLastResult(payload_data.text || null);
+            setTimeout(() => { setLastResult(null); setLastBallResult(null); }, 2500);
+          }
+
           // Check for incoming tease
           const payload_data = (updated as any).round_result_payload;
           if (payload_data?.tease && payload_data?.from !== user?.id) {
