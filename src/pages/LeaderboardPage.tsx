@@ -543,10 +543,13 @@ export default function LeaderboardPage() {
                       <button onClick={() => setSeasonWeeksAgo(w => Math.max(0, w - 1))} disabled={seasonWeeksAgo === 0} className="w-8 h-8 rounded-lg glass-card flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30">▶</button>
                     </div>
                     {seasonWeeksAgo === 0 && (
-                      <div className="flex items-center gap-1.5 justify-center">
-                        <span className="w-2 h-2 rounded-full bg-neon-green animate-pulse" />
-                        <span className="text-[7px] text-neon-green font-display tracking-widest">COMPETING NOW</span>
-                      </div>
+                      <>
+                        <div className="flex items-center gap-1.5 justify-center mb-2">
+                          <span className="w-2 h-2 rounded-full bg-neon-green animate-pulse" />
+                          <span className="text-[7px] text-neon-green font-display tracking-widest">COMPETING NOW</span>
+                        </div>
+                        <SeasonCountdown endDate={getWeekRange(0).end} />
+                      </>
                     )}
                   </div>
                   {seasonEntries.length === 0 ? (
