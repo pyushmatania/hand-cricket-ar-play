@@ -52,6 +52,7 @@ export default function DailyChallengeScreen({ onHome }: Props) {
   const [tossInfo, setTossInfo] = useState<{ winner: string; battingFirst: string } | null>(null);
   const [pendingBatFirst, setPendingBatFirst] = useState<boolean | null>(null);
   const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickConfiguredMatchCommentators(commentaryVoice));
+  const [matchWeather] = useState<Weather>(() => rollWeather());
 
   const dailyTarget = getDailyTarget();
   const todayKey = getTodayKey();
