@@ -169,7 +169,7 @@ export default function TournamentScreen({ onHome }: Props) {
   const winsCount = rounds.filter(r => r.result === "win").length;
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-background flex flex-col overflow-hidden">
       <div className="absolute inset-0 stadium-gradient pointer-events-none" />
       <div className="absolute inset-0 vignette pointer-events-none" />
       <div className="absolute inset-x-0 bottom-0 h-48 bg-[radial-gradient(ellipse_at_center,hsl(142_71%_45%/0.12),hsl(142_71%_45%/0.04)_55%,transparent_70%)] pointer-events-none" />
@@ -185,7 +185,7 @@ export default function TournamentScreen({ onHome }: Props) {
         <RulesSheet />
       </div>
 
-      <div className="relative z-10 flex-1 flex flex-col gap-2 px-4 pb-3 max-w-lg mx-auto w-full overflow-hidden">
+      <div className="relative z-10 flex-1 flex flex-col gap-2 px-4 pb-[env(safe-area-inset-bottom,16px)] max-w-lg mx-auto w-full overflow-y-auto overflow-x-hidden">
         {/* BRACKET VIEW */}
         {phase === "bracket" && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3 mt-2">

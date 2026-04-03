@@ -142,7 +142,7 @@ export default function DailyChallengeScreen({ onHome }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-background flex flex-col overflow-hidden">
       <div className="absolute inset-0 stadium-gradient pointer-events-none" />
       <div className="absolute inset-0 vignette pointer-events-none" />
       <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[500px] h-[300px] pointer-events-none"
@@ -188,7 +188,7 @@ export default function DailyChallengeScreen({ onHome }: Props) {
         <RulesSheet />
       </div>
 
-      <div className="relative z-10 flex-1 flex flex-col gap-3 px-4 pb-4 max-w-lg mx-auto w-full overflow-hidden">
+      <div className="relative z-10 flex-1 flex flex-col gap-3 px-4 pb-[env(safe-area-inset-bottom,16px)] max-w-lg mx-auto w-full overflow-y-auto overflow-x-hidden">
         {/* INTRO */}
         {phase === "intro" && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex-1 flex flex-col items-center justify-center gap-4">

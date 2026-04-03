@@ -615,12 +615,23 @@ export default function TapPlayingUI({
 
       {/* Game over */}
       {phase === "finished" && (
-        <div className="mt-auto">
+        <div className="mt-auto pb-4">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
-            <div className="rounded-2xl px-3 py-2 text-center bg-[hsl(220_20%_14%/0.8)] border border-white/10">
-              <p className="font-game-display text-sm font-bold text-white tracking-wider">
-                {result === "win" ? `🏆 ${playerName.toUpperCase()} WINS!` : result === "loss" ? `${opponentName} wins!` : "🤝 A TIE!"}
+            <div className="rounded-2xl px-3 py-3 text-center bg-[hsl(220_20%_14%/0.9)] border border-white/10">
+              <p className="font-game-display text-lg font-bold text-white tracking-wider">
+                {result === "win" ? `🏆 ${playerName.toUpperCase()} WINS!` : result === "loss" ? `😞 ${opponentName} wins!` : "🤝 A TIE!"}
               </p>
+              <div className="flex items-center justify-center gap-4 mt-2">
+                <div className="text-center">
+                  <span className="font-game-display text-2xl font-black text-game-green block">{userScore}</span>
+                  <span className="text-[7px] text-white/40 font-game-display tracking-wider">{playerName.toUpperCase().slice(0, 10)}</span>
+                </div>
+                <span className="text-white/30 font-game-display text-sm">vs</span>
+                <div className="text-center">
+                  <span className="font-game-display text-2xl font-black text-game-gold block">{aiScore}</span>
+                  <span className="text-[7px] text-white/40 font-game-display tracking-wider">{opponentName.toUpperCase().slice(0, 10)}</span>
+                </div>
+              </div>
             </div>
             <div className="flex gap-2">
               <GameButton variant="primary" size="lg" bounce onClick={onReset} className="flex-1">
