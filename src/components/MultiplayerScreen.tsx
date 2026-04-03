@@ -773,7 +773,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
     setLobbyFriends(profiles || []);
   };
 
-
+  const loadOpponentName = async (game: MultiplayerGame) => {
     const oppId = user?.id === game.host_id ? game.guest_id : game.host_id;
     if (!oppId) return;
     const { data } = await supabase.from("profiles").select("display_name, avatar_index").eq("user_id", oppId).single();
