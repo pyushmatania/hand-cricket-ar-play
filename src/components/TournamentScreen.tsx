@@ -330,6 +330,7 @@ export default function TournamentScreen({ onHome }: Props) {
               commentators={matchCommentators}
               arenaImage={arenaImage}
               arenaId={arenaId}
+              equippedBatSkin={cosmetics.batSkin}
             />
           </>
         )}

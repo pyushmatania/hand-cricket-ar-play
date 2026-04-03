@@ -35,6 +35,7 @@ export default function DailyChallengeScreen({ onHome }: Props) {
   const arenaImage = (location.state as any)?.arenaImage as string | undefined;
   const arenaId = (location.state as any)?.arenaId as string | undefined;
   const { soundEnabled, hapticsEnabled, crowdEnabled, commentaryVoice, dailyCeremoniesEnabled } = useSettings();
+  const cosmetics = useEquippedCosmetics();
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
   const [phase, setPhase] = useState<"intro" | "toss" | "playing" | "done">("intro");
