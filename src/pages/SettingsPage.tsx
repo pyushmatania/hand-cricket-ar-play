@@ -8,6 +8,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import BottomNav from "@/components/BottomNav";
 import TopStatusBar from "@/components/TopStatusBar";
 import { SYSTEM_VOICE_PERSONAS, speakWithSystemPersona } from "@/lib/systemVoices";
+import { BUTTON_STYLES } from "@/lib/cosmetics";
+import { supabase } from "@/integrations/supabase/client";
 import { speakElevenLabs } from "@/lib/elevenLabsAudio";
 
 const COMMENTARY_VOICES = [
