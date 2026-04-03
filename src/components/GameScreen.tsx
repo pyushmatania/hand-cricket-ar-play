@@ -285,6 +285,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         if (hapticsEnabled) Haptics.out();
         crowdGaspMute();
       }, 150);
+      shake("heavy");
       setFireworkType("wicket");
       if (soundEnabled) setTimeout(() => SFX.fireworkPop(), 300);
     } else if (typeof r.runs === "number") {
