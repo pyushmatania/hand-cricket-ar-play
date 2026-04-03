@@ -374,6 +374,17 @@ export default function MultiplayerScreen({ onHome }: Props) {
             setPhase(nextPhase);
           }
 
+          // When the host commits the toss result and status becomes "playing",
+          // correct the guest's role card to match the authoritative DB value.
+          // The guest's local toss runs independently and may have produced the
+          // wrong batting assignment, so we overwrite the role card here.
+          if (nextPhase === "playing" && prevPhase === "toss" && user?.id !== updated.host_id) {
+            const guestIsBatting = !updated.host_batting;
+            setRoleCardData({ isBatting: guestIsBatting, playerName: myName, opponentName });
+            setShowRoleCard(true);
+            setTimeout(() => setShowRoleCard(false), 3000);
+          }
+
           // Only the host resolves turns to prevent double-execution
           if (updated.host_move && updated.guest_move && user?.id === updated.host_id) {
             resolveTurn(updated);
@@ -701,7 +712,16 @@ export default function MultiplayerScreen({ onHome }: Props) {
       const age = now - new Date(g.created_at).getTime();
       return age < GAME_EXPIRY_MS;
     });
-    if (!validGames.length) { setGames([]); return; }
+    if (!validGames.length) {
+      setGames([]);
+      // Still update ownHostedGame from the separate query result
+      setOwnHostedGame(ownData ? ({
+        ...(ownData as any),
+        host_name: myName, host_avatar_index: 0, host_wins: 0, host_total_matches: 0,
+        time_left_ms: Math.max(0, GAME_EXPIRY_MS - (now - new Date((ownData as any).created_at || "").getTime())),
+      } as LobbyGame) : null);
+      return;
+    }
     // Fetch host profiles
     const hostIds = [...new Set(validGames.map(g => g.host_id))];
     const { data: profiles } = await supabase.from("profiles").select("user_id, display_name, avatar_index, wins, total_matches").in("user_id", hostIds);
@@ -1218,7 +1238,18 @@ export default function MultiplayerScreen({ onHome }: Props) {
             playerName={myName}
             playerAvatarIndex={myAvatarIndex}
             gameType={currentGame.game_type}
-            onCancel={() => { setPhase("lobby"); setCurrentGame(null); navigate("/game/multiplayer", { replace: true }); }}
+            onCancel={async () => {
+              // Mark the game abandoned in the DB so it disappears from the lobby
+              if (currentGame) {
+                await supabase.from("multiplayer_games")
+                  .update({ status: "abandoned" as any, phase: "abandoned" as any, abandoned_by: user?.id ?? null })
+                  .eq("id", currentGame.id)
+                  .eq("status", "waiting" as any);
+              }
+              setPhase("lobby");
+              setCurrentGame(null);
+              navigate("/game/multiplayer", { replace: true });
+            }}
           />
         )}
 
@@ -1632,10 +1663,19 @@ export default function MultiplayerScreen({ onHome }: Props) {
                               setLastResult(null);
                               setLastBallResult(null);
                               setPvpBallHistory([]);
-                    setMyConsecutiveMisses(0);
+                              setMyConsecutiveMisses(0);
+                              setOppConsecutiveMisses(0);
                               pvpPostMatchShownRef.current = false;
                               pvpPreMatchShownRef.current = false;
                               setShowPvPPreMatch(false);
+                              setShowPvPPostMatch(false);
+                              // Reset per-game state so nothing from the previous match bleeds in
+                              resolvedTurnRef.current = null;
+                              autoSubmitRef.current = false;
+                              setShowInningsBreak(false);
+                              setInningsBreakStats(null);
+                              setShowRoleCard(false);
+                              setRoleCardData(null);
                               loadOpponentName(g);
                               navigate(`/game/multiplayer?game=${g.id}`, { replace: true });
                             }
@@ -1709,10 +1749,19 @@ export default function MultiplayerScreen({ onHome }: Props) {
                     setLastBallResult(null);
                     setPvpBallHistory([]);
                     setMyConsecutiveMisses(0);
+                    setOppConsecutiveMisses(0);
                     pvpPostMatchShownRef.current = false;
                     pvpPreMatchShownRef.current = false;
                     setShowPvPPreMatch(false);
+                    setShowPvPPostMatch(false);
                     setRivalryStats(null);
+                    // Reset per-game state so nothing from the previous match bleeds in
+                    resolvedTurnRef.current = null;
+                    autoSubmitRef.current = false;
+                    setShowInningsBreak(false);
+                    setInningsBreakStats(null);
+                    setShowRoleCard(false);
+                    setRoleCardData(null);
                     navigate(`/game/multiplayer?game=${(newGame as any).id}`, { replace: true });
                   }
                 }}
@@ -1743,13 +1792,25 @@ export default function MultiplayerScreen({ onHome }: Props) {
                   setPhase("lobby");
                   setCurrentGame(null);
                   setTurnCountdownMs(TURN_TIMER_MS);
+                  setCooldown(false);
+                  setLastResult(null);
+                  setLastBallResult(null);
                   setPvpBallHistory([]);
-                    setMyConsecutiveMisses(0);
+                  setMyConsecutiveMisses(0);
+                  setOppConsecutiveMisses(0);
                   pvpPostMatchShownRef.current = false;
                   pvpPreMatchShownRef.current = false;
+                  setShowPvPPreMatch(false);
+                  setShowPvPPostMatch(false);
                   setRivalryStats(null);
                   setRematchSent(false);
                   setIncomingRematch(null);
+                  resolvedTurnRef.current = null;
+                  autoSubmitRef.current = false;
+                  setShowInningsBreak(false);
+                  setInningsBreakStats(null);
+                  setShowRoleCard(false);
+                  setRoleCardData(null);
                   navigate("/game/multiplayer", { replace: true });
                 }}
                 className="flex-1 py-3.5 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display font-bold rounded-2xl glow-primary tracking-wider">
