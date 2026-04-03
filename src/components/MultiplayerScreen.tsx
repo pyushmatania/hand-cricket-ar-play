@@ -101,6 +101,7 @@ function gameTypeLabel(gameType: GameType): string {
 export default function MultiplayerScreen({ onHome }: Props) {
   const { user } = useAuth();
   const { commentaryVoice, multiplayerCeremoniesEnabled } = useSettings();
+  const onlineUsers = usePresence();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [phase, setPhase] = useState<Phase>("lobby");
