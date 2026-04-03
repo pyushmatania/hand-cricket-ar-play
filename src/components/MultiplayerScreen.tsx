@@ -1567,6 +1567,38 @@ export default function MultiplayerScreen({ onHome }: Props) {
                   </div>
                 </div>
 
+                {/* Real-time ready status */}
+                {(() => {
+                  const hostReady = currentGame?.host_move === "READY";
+                  const guestReady = currentGame?.guest_move === "READY";
+                  const meReady = isHost ? hostReady : guestReady;
+                  const oppReady = isHost ? guestReady : hostReady;
+                  return (
+                    <div className="flex items-center justify-center gap-3">
+                      <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all duration-300 ${
+                        meReady
+                          ? "bg-neon-green/15 border-neon-green/40"
+                          : "bg-muted/10 border-border/30"
+                      }`}>
+                        <span className="text-xs">{meReady ? "✅" : "⏳"}</span>
+                        <span className={`font-display text-[8px] font-bold tracking-wider ${
+                          meReady ? "text-neon-green" : "text-muted-foreground"
+                        }`}>{myName.toUpperCase().slice(0, 10)}</span>
+                      </div>
+                      <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border transition-all duration-300 ${
+                        oppReady
+                          ? "bg-neon-green/15 border-neon-green/40"
+                          : "bg-muted/10 border-border/30"
+                      }`}>
+                        <span className="text-xs">{oppReady ? "✅" : "⏳"}</span>
+                        <span className={`font-display text-[8px] font-bold tracking-wider ${
+                          oppReady ? "text-neon-green" : "text-muted-foreground"
+                        }`}>{opponentName.toUpperCase().slice(0, 10)}</span>
+                      </div>
+                    </div>
+                  );
+                })()}
+
                 {/* Role swap info */}
                 <div className="flex items-center justify-center gap-3">
                   <div className="px-3 py-2 rounded-xl bg-primary/15 border border-primary/30">
