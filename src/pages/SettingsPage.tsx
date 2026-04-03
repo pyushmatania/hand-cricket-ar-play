@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Slider } from "@/components/ui/slider";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +8,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import BottomNav from "@/components/BottomNav";
 import TopStatusBar from "@/components/TopStatusBar";
 import { SYSTEM_VOICE_PERSONAS, speakWithSystemPersona } from "@/lib/systemVoices";
+import { BUTTON_STYLES } from "@/lib/cosmetics";
+import { supabase } from "@/integrations/supabase/client";
 import { speakElevenLabs } from "@/lib/elevenLabsAudio";
 
 const COMMENTARY_VOICES = [
@@ -123,6 +125,20 @@ export default function SettingsPage() {
   const navigate = useNavigate();
   const [expandedGroup, setExpandedGroup] = useState<string | null>("AUDIO & SOUND");
   const [previewingVoice, setPreviewingVoice] = useState<string | null>(null);
+  const [selectedButtonStyle, setSelectedButtonStyle] = useState<string>("classic");
+
+  // Load current button style
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("profiles").select("equipped_button_style").eq("user_id", user.id).maybeSingle()
+      .then(({ data }) => { if ((data as any)?.equipped_button_style) setSelectedButtonStyle((data as any).equipped_button_style); });
+  }, [user]);
+
+  const handleButtonStyleChange = useCallback(async (styleId: string) => {
+    setSelectedButtonStyle(styleId);
+    if (!user) return;
+    await supabase.from("profiles").update({ equipped_button_style: styleId } as any).eq("user_id", user.id);
+  }, [user]);
 
   const previewSystemVoice = useCallback(async (personaId: string) => {
     if (previewingVoice) return;
@@ -426,6 +442,62 @@ export default function SettingsPage() {
             </AnimatePresence>
           </motion.div>
         ))}
+
+        {/* Button Style Picker */}
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
+          <SectionHeader icon="🎮" title="HAND BUTTONS" expanded={expandedGroup === "HAND BUTTONS"} onToggle={() => setExpandedGroup(expandedGroup === "HAND BUTTONS" ? null : "HAND BUTTONS")} accentColor="hsl(280,70%,55%)" />
+          <AnimatePresence>
+            {expandedGroup === "HAND BUTTONS" && (
+              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                <div className="space-y-2 pt-2 pb-1">
+                  <p className="text-[8px] text-muted-foreground font-game-body tracking-wide px-1">Choose your gameplay button design</p>
+                  {Object.values(BUTTON_STYLES).map((theme) => {
+                    const isSelected = (selectedButtonStyle || "classic") === theme.id;
+                    return (
+                      <motion.button
+                        key={theme.id}
+                        whileTap={{ scale: 0.97 }}
+                        onClick={() => handleButtonStyleChange(theme.id)}
+                        className={`w-full rounded-xl p-3 text-left border-b-[3px] active:border-b-[1px] active:translate-y-[2px] transition-all ${
+                          isSelected ? "border-[hsl(280_70%_55%/0.5)]" : "border-transparent"
+                        }`}
+                        style={{
+                          background: isSelected
+                            ? "linear-gradient(135deg, hsl(280 70% 55% / 0.15), hsl(280 70% 55% / 0.05))"
+                            : "linear-gradient(135deg, hsl(222 40% 13% / 0.9), hsl(222 40% 8% / 0.95))",
+                          boxShadow: isSelected
+                            ? "0 4px 16px hsl(280 70% 55% / 0.15), inset 0 1px 0 rgba(255,255,255,0.05)"
+                            : "0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)",
+                        }}
+                      >
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="text-xl">{theme.preview}</span>
+                          <div className="flex-1">
+                            <span className="font-game-display text-[10px] tracking-wider text-foreground block">{theme.name.toUpperCase()}</span>
+                            <span className="text-[8px] text-muted-foreground font-game-body">{theme.description}</span>
+                          </div>
+                          {isSelected && <span className="text-game-green text-sm">✓</span>}
+                        </div>
+                        {/* Preview of buttons */}
+                        <div className="flex gap-1.5 justify-center">
+                          {Object.entries(theme.moves).map(([key, mv]) => (
+                            <div
+                              key={key}
+                              className={`flex flex-col items-center gap-0.5 py-1.5 px-2 rounded-xl border-b-2 bg-gradient-to-b ${mv.color} ${mv.border} ${mv.glow}`}
+                            >
+                              <span className="text-sm leading-none">{mv.emoji}</span>
+                              <span className="text-[7px] font-game-display font-bold text-white tracking-wider">{mv.label}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
 
         {/* Account Section */}
         <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>

@@ -18,17 +18,8 @@ import WicketBreakdownCard, { type WicketBreakdownData } from "./WicketBreakdown
 import pitch3d from "@/assets/pitch-3d.jpg";
 import { getBestArena } from "@/lib/arenas";
 import GameButton from "./shared/GameButton";
-import { getBatSkin } from "@/lib/cosmetics";
-
-/* ── Move button config ── */
-const MOVES: { move: Move; label: string; emoji: string; color: string; border: string; glow: string }[] = [
-  { move: "DEF", label: "DEF", emoji: "✊", color: "from-[hsl(210_10%_40%)] to-[hsl(210_10%_30%)]", border: "border-[hsl(210_10%_22%)]", glow: "" },
-  { move: 1, label: "1", emoji: "☝️", color: "from-[hsl(200_70%_45%)] to-[hsl(200_70%_35%)]", border: "border-[hsl(200_70%_28%)]", glow: "shadow-[0_0_12px_hsl(200_70%_45%/0.3)]" },
-  { move: 2, label: "2", emoji: "✌️", color: "from-game-green to-[hsl(122_39%_38%)]", border: "border-[hsl(122_39%_28%)]", glow: "shadow-[0_0_12px_hsl(122_39%_49%/0.3)]" },
-  { move: 3, label: "3", emoji: "🤟", color: "from-game-gold to-[hsl(43_96%_42%)]", border: "border-[hsl(43_96%_32%)]", glow: "shadow-[0_0_12px_hsl(43_96%_56%/0.3)]" },
-  { move: 4, label: "4", emoji: "🖖", color: "from-[hsl(25_90%_55%)] to-[hsl(25_90%_42%)]", border: "border-[hsl(25_90%_32%)]", glow: "shadow-[0_0_14px_hsl(25_90%_55%/0.35)]" },
-  { move: 6, label: "6", emoji: "👍", color: "from-[hsl(280_70%_55%)] to-[hsl(280_70%_42%)]", border: "border-[hsl(280_70%_32%)]", glow: "shadow-[0_0_16px_hsl(280_70%_55%/0.4)]" },
-];
+import { getBatSkin, getButtonStyle } from "@/lib/cosmetics";
+const ALL_MOVE_KEYS: Move[] = ["DEF", 1, 2, 3, 4, 6];
 
 export interface TapPlayingUIProps {
   phase: InningsPhase;
@@ -59,6 +50,7 @@ export interface TapPlayingUIProps {
   arenaImage?: string;
   arenaId?: string;
   equippedBatSkin?: string | null;
+  equippedButtonStyle?: string | null;
 }
 
 export default function TapPlayingUI({
@@ -71,8 +63,10 @@ export default function TapPlayingUI({
   arenaImage,
   arenaId,
   equippedBatSkin,
+  equippedButtonStyle,
 }: TapPlayingUIProps) {
   const batSkin = getBatSkin(equippedBatSkin);
+  const btnTheme = getButtonStyle(equippedButtonStyle);
   const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, commentaryVoice, voiceEngine, commentaryLanguage, musicEnabled, ambientVolume } = useSettings();
 
   // Ambient stadium music — arena-specific
@@ -317,8 +311,13 @@ export default function TapPlayingUI({
     setWicketBreakdownData(null);
   }, []);
 
-  // Filter moves for noDefence mode
-  const activeMoves = config.noDefence ? MOVES.filter(m => m.move !== "DEF") : MOVES;
+  // Build move buttons from theme
+  const allMoves = ALL_MOVE_KEYS.map(move => {
+    const key = move === "DEF" ? "DEF" : String(move);
+    const style = btnTheme.moves[key];
+    return { move, ...style };
+  });
+  const activeMoves = config.noDefence ? allMoves.filter(m => m.move !== "DEF") : allMoves;
 
   return (
     <>
@@ -443,7 +442,7 @@ export default function TapPlayingUI({
                 <p className="text-[6px] text-white/50 font-game-display font-bold tracking-[0.2em] mb-0.5">{playerName.toUpperCase().slice(0, 8)}</p>
                 <motion.div initial={{ rotateY: 90 }} animate={{ rotateY: 0 }}
                   className="w-10 h-10 rounded-xl bg-gradient-to-br from-game-green/20 to-game-green/5 border border-game-green/25 flex items-center justify-center mx-auto">
-                  <span className="text-xl">{MOVES.find(m => m.move === lastResult?.userMove)?.emoji || "❓"}</span>
+                  <span className="text-xl">{btnTheme.moves[lastResult?.userMove === "DEF" ? "DEF" : String(lastResult?.userMove)]?.emoji || "❓"}</span>
                 </motion.div>
                 <p className="text-[8px] font-game-display font-bold text-game-green mt-0.5">{lastResult.userMove === "DEF" ? "DEF" : lastResult.userMove}</p>
               </div>
@@ -466,7 +465,7 @@ export default function TapPlayingUI({
                 <p className="text-[6px] text-white/50 font-game-display font-bold tracking-[0.2em] mb-0.5">{opponentName.toUpperCase().slice(0, 8)}</p>
                 <motion.div initial={{ rotateY: -90 }} animate={{ rotateY: 0 }} transition={{ delay: 0.1 }}
                   className="w-10 h-10 rounded-xl bg-gradient-to-br from-game-gold/15 to-game-gold/5 border border-game-gold/20 flex items-center justify-center mx-auto">
-                  <span className="text-xl">{MOVES.find(m => m.move === lastResult?.aiMove)?.emoji || opponentEmoji}</span>
+                  <span className="text-xl">{btnTheme.moves[lastResult?.aiMove === "DEF" ? "DEF" : String(lastResult?.aiMove)]?.emoji || opponentEmoji}</span>
                 </motion.div>
                 <p className="text-[8px] font-game-display font-bold text-game-gold mt-0.5">{lastResult.aiMove === "DEF" ? "DEF" : lastResult.aiMove}</p>
               </div>

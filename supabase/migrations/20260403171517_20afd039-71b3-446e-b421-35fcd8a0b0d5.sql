@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN equipped_button_style text DEFAULT 'classic';
