@@ -43,7 +43,8 @@ export default function TopBar({ coins = 1250, gems = 45, runs = 3800 }: TopBarP
           {/* Settings */}
           <button
             onClick={() => navigate("/settings")}
-            className="w-8 h-8 rounded-full bg-game-dark/60 border border-[hsl(222_25%_25%/0.5)] flex items-center justify-center active:scale-90 transition-transform"
+            className="w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-transform"
+            style={{ background: "radial-gradient(circle at 40% 40%, hsl(35 30% 50%), hsl(30 25% 30%))", boxShadow: "0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 hsl(40 40% 65% / 0.3)" }}
           >
             <Settings className="w-4 h-4 text-muted-foreground" />
           </button>
