@@ -387,7 +387,22 @@ export function useMatchSaver() {
             }
           } catch (e) { console.error("[Rivalry] notification failed", e); }
         }
+
+        const newXp = updatedStats.xp;
+        const newLevel = Math.floor(newXp / 100) + 1;
+
+        return {
+          xpEarned,
+          coinsEarned,
+          oldLevel,
+          newLevel,
+          oldRankName: oldTier.name,
+          newRankName: newTier.name,
+          streakBonus: hasStreakBonus,
+        } as MatchRewardsResult;
       }
+
+      return null;
     },
     [user]
   );
