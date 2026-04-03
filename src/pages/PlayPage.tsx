@@ -241,7 +241,7 @@ export default function PlayPage() {
   };
 
   const handleModeSelect = (modeId: string) => {
-    navigate(`/game/${modeId}`, { state: { arenaImage: selectedArena.image } });
+    navigate(`/game/${modeId}`, { state: { arenaImage: selectedArena.image, arenaId: selectedArena.id } });
   };
 
   return (

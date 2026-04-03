@@ -70,10 +70,10 @@ export default function TapPlayingUI({
 }: TapPlayingUIProps) {
   const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, commentaryVoice, voiceEngine, commentaryLanguage, musicEnabled, ambientVolume } = useSettings();
 
-  // Ambient stadium music
+  // Ambient stadium music — arena-specific
   useEffect(() => {
     if (soundEnabled && musicEnabled && !result) {
-      startAmbientStadium(ambientVolume);
+      startAmbientStadium(ambientVolume, arenaId);
     } else {
       stopAmbientStadium();
     }
