@@ -22,7 +22,7 @@ export default function TopBar({ coins = 1250, gems = 45, runs = 3800 }: TopBarP
             onClick={() => navigate("/profile")}
             className="flex items-center gap-2 active:scale-95 transition-transform"
           >
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-game-blue to-game-purple border-2 border-game-gold flex items-center justify-center text-sm">
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-game-blue to-game-purple border-2 border-[hsl(35_30%_50%)] flex items-center justify-center text-sm" style={{ boxShadow: "0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 hsl(40 40% 70% / 0.3)" }}>
               🏏
             </div>
             <div className="flex flex-col items-start">
