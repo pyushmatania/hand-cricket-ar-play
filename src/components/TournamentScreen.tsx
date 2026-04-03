@@ -320,6 +320,7 @@ export default function TournamentScreen({ onHome }: Props) {
               arenaId={arenaId}
               equippedBatSkin={cosmetics.batSkin}
               equippedButtonStyle={cosmetics.buttonStyle}
+              weather={matchWeather}
             />
           </>
         )}

@@ -12,6 +12,7 @@ import EnhancedPreMatch from "./EnhancedPreMatch";
 import EnhancedPostMatch from "./EnhancedPostMatch";
 import TapPlayingUI from "./TapPlayingUI";
 import { useEquippedCosmetics } from "@/hooks/useEquippedCosmetics";
+import { rollWeather, type Weather } from "@/lib/weather";
 import ScoreBoard from "./ScoreBoard";
 import RulesSheet from "./RulesSheet";
 
