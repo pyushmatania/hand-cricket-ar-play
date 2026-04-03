@@ -38,7 +38,12 @@ export default function CurrencyPill({
       {showPlus && (
         <button
           onClick={onPlusClick}
-          className="w-5 h-5 rounded-full bg-game-green flex items-center justify-center text-white text-xs font-bold active:scale-90 transition-transform"
+          className="w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold active:scale-90 transition-transform"
+          style={{
+            background: "linear-gradient(180deg, hsl(122 50% 50%), hsl(122 45% 38%))",
+            boxShadow: "0 2px 0 hsl(122 39% 25%), inset 0 1px 0 hsl(0 0% 100% / 0.2)",
+            border: "1px solid hsl(122 39% 20%)",
+          }}
         >
           +
         </button>
