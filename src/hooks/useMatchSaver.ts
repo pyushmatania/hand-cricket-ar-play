@@ -117,6 +117,7 @@ export function useMatchSaver() {
         if (newTier.name !== oldTier.name) {
           updatedStats.xp += RANKUP_XP;
           updatedStats.coins += RANKUP_COINS;
+          xpEntries.push({ user_id: user.id, amount: RANKUP_XP, source: "rank_up" });
           (updatedStats as any).rank_tier = newTier.name;
 
           // Save rank history
