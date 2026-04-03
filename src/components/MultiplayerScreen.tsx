@@ -1114,6 +1114,15 @@ export default function MultiplayerScreen({ onHome }: Props) {
     setLastBallResult(ballResult);
     setPvpBallHistory(prev => [...prev, ballResult]);
 
+    // Screen shake on wickets, sixes, fours
+    if (isOut) {
+      shake("heavy");
+    } else if (typeof ballRuns === "number" && Math.abs(ballRuns) >= 6) {
+      shake("medium");
+    } else if (typeof ballRuns === "number" && Math.abs(ballRuns) >= 4) {
+      shake("light");
+    }
+
     setLastResult(result);
     setTimeout(() => { setLastResult(null); setLastBallResult(null); }, 2500);
 
