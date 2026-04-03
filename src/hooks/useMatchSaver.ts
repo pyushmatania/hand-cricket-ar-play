@@ -12,12 +12,22 @@ const CHALLENGE_COINS = 100;
 const RANKUP_XP = 100;
 const RANKUP_COINS = 200;
 
+export interface MatchRewardsResult {
+  xpEarned: number;
+  coinsEarned: number;
+  oldLevel: number;
+  newLevel: number;
+  oldRankName: string | null;
+  newRankName: string | null;
+  streakBonus: boolean;
+}
+
 export function useMatchSaver() {
   const { user } = useAuth();
 
   const saveMatch = useCallback(
-    async (game: GameState, mode: string) => {
-      if (!user || game.phase !== "finished" || !game.result) return;
+    async (game: GameState, mode: string): Promise<MatchRewardsResult | null> => {
+      if (!user || game.phase !== "finished" || !game.result) return null;
 
       const matchData = {
         user_id: user.id,
@@ -41,13 +51,17 @@ export function useMatchSaver() {
         const newStreak =
           game.result === "win" ? profile.current_streak + 1 : 0;
 
+        const oldXp = (profile as any).xp || 0;
+        const oldLevel = Math.floor(oldXp / 100) + 1;
+
         // Calculate XP/coins earned
         const resultKey = game.result as "win" | "loss" | "draw";
         let xpEarned = XP_REWARDS[resultKey] || 10;
         let coinsEarned = COIN_REWARDS[resultKey] || 10;
 
         // Streak bonus
-        if (newStreak >= 3) {
+        const hasStreakBonus = newStreak >= 3;
+        if (hasStreakBonus) {
           xpEarned += newStreak * 2;
           coinsEarned += newStreak * 3;
         }
@@ -373,7 +387,22 @@ export function useMatchSaver() {
             }
           } catch (e) { console.error("[Rivalry] notification failed", e); }
         }
+
+        const newXp = updatedStats.xp;
+        const newLevel = Math.floor(newXp / 100) + 1;
+
+        return {
+          xpEarned,
+          coinsEarned,
+          oldLevel,
+          newLevel,
+          oldRankName: oldTier.name,
+          newRankName: newTier.name,
+          streakBonus: hasStreakBonus,
+        } as MatchRewardsResult;
       }
+
+      return null;
     },
     [user]
   );
