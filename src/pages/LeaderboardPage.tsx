@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import ShareButton from "@/components/share/ShareButton";
+import LeaderboardShareCard from "@/components/share/LeaderboardShareCard";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { computePvpRecord, type PvpGame } from "@/hooks/usePvpStats";
