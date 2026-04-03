@@ -494,6 +494,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
             }
           }
 
+
           // Handle ready-up: when both players have readied during innings_break, host transitions
           if ((updated as any).phase === "innings_break" && updated.host_move === "READY" && updated.guest_move === "READY" && user?.id === updated.host_id) {
             // Both ready — transition to playing
@@ -1145,6 +1146,36 @@ export default function MultiplayerScreen({ onHome }: Props) {
   };
 
   const isHost = currentGame && user?.id === currentGame.host_id;
+
+  // Innings break auto-ready countdown
+  useEffect(() => {
+    if (!showInningsBreak || inningsBreakReady) {
+      if (inningsBreakTimerRef.current) { clearInterval(inningsBreakTimerRef.current); inningsBreakTimerRef.current = null; }
+      return;
+    }
+    setInningsBreakCountdown(15);
+    inningsBreakTimerRef.current = setInterval(() => {
+      setInningsBreakCountdown(prev => {
+        if (prev <= 1) {
+          // Auto-ready
+          if (currentGame && user && !inningsBreakReady) {
+            setInningsBreakReady(true);
+            const isHostLocal = user.id === currentGame.host_id;
+            supabase.from("multiplayer_games").update(
+              isHostLocal
+                ? { host_move: "READY", host_move_submitted_at: new Date().toISOString() }
+                : { guest_move: "READY", guest_move_submitted_at: new Date().toISOString() }
+            ).eq("id", currentGame.id);
+          }
+          if (inningsBreakTimerRef.current) { clearInterval(inningsBreakTimerRef.current); inningsBreakTimerRef.current = null; }
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => { if (inningsBreakTimerRef.current) { clearInterval(inningsBreakTimerRef.current); inningsBreakTimerRef.current = null; } };
+  }, [showInningsBreak, inningsBreakReady]);
+
   const isBatting = currentGame ? (isHost ? currentGame.host_batting : !currentGame.host_batting) : false;
   const myScore = currentGame ? (isHost ? currentGame.host_score : currentGame.guest_score) : 0;
   const oppScore = currentGame ? (isHost ? currentGame.guest_score : currentGame.host_score) : 0;
