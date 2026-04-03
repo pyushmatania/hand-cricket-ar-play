@@ -4,6 +4,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import type { GameState } from "./useHandCricket";
 import { checkAndSaveRecordBreaks } from "./useRecordBreaks";
 import { getRankTier, calculateRankPoints } from "@/lib/rankTiers";
+import { ACHIEVEMENTS, detectNewAchievements, type Achievement } from "@/lib/achievements";
+import { pushAchievementToast } from "@/components/AchievementNotificationListener";
 
 const XP_REWARDS = { win: 30, loss: 10, draw: 15 };
 const COIN_REWARDS = { win: 50, loss: 10, draw: 20 };
