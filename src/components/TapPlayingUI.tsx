@@ -318,10 +318,10 @@ export default function TapPlayingUI({
       <CelebrationEffects lastResult={lastResult} gameResult={result} phase={phase} />
       <ShotResultOverlay lastResult={lastResult} triggerKey={shotOverlayKey} />
 
-      {/* 3D Cricket pitch background */}
+      {/* Arena / pitch background */}
       {phase !== "not_started" && (
         <div className="fixed inset-0 z-0 pointer-events-none">
-          <img src={pitch3d} alt="" className="w-full h-full object-cover opacity-20" style={{ objectPosition: "center 40%" }} />
+          <img src={arenaImage || pitch3d} alt="" className="w-full h-full object-cover opacity-20" style={{ objectPosition: "center 40%" }} />
           <div className="absolute inset-0 bg-gradient-to-b from-[hsl(220_25%_8%/0.7)] via-[hsl(220_25%_8%/0.4)] to-[hsl(220_25%_8%/0.85)]" />
         </div>
       )}
