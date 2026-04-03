@@ -481,6 +481,13 @@ export default function TapPlayingUI({
       {/* ── Color-coded Move Buttons ── */}
       {phase !== "not_started" && phase !== "finished" && !waitingForOpponent && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative pb-1">
+          {/* Equipped bat skin indicator */}
+          {equippedBatSkin && equippedBatSkin !== "Classic Willow" && (
+            <div className="flex items-center justify-center gap-1.5 mb-1">
+              <span className="text-sm">{batSkin.emoji}</span>
+              <span className="text-[7px] text-white/40 font-game-display tracking-wider">{equippedBatSkin.toUpperCase()}</span>
+            </div>
+          )}
           <p className="text-center text-[7px] text-white/40 font-game-display mb-1.5 tracking-[0.2em]">
             {isBatting ? "⚡ TAP YOUR SHOT" : "🎯 TAP YOUR BOWL"}
           </p>
