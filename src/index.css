@@ -40,6 +40,18 @@
 
     --radius: 0.75rem;
 
+    /* Wood & Metal texture tokens */
+    --wood-light: 28 56% 32%;
+    --wood-dark: 25 55% 18%;
+    --wood-plank: 28 45% 24%;
+    --wood-grain: 30 40% 28%;
+    --metal-bronze: 30 40% 45%;
+    --metal-iron: 220 10% 40%;
+    --metal-rivet: 35 30% 55%;
+    --leather-bg: 30 35% 20%;
+    --scallop-base: 222 40% 8%;
+    --scallop-tile: 222 35% 12%;
+
     /* Premium glass tokens */
     --glass-bg: 222 40% 12% / 0.65;
     --glass-border: 222 25% 28% / 0.5;
@@ -82,6 +94,8 @@
     --gradient-card: linear-gradient(145deg, hsl(222 40% 13% / 0.9), hsl(222 40% 8% / 0.95));
     --gradient-premium: linear-gradient(135deg, hsl(222 45% 14% / 0.95), hsl(222 50% 8% / 0.98));
     --gradient-hero: linear-gradient(180deg, hsl(217 60% 15% / 0.4) 0%, hsl(222 47% 6%) 70%);
+    --gradient-wood: linear-gradient(180deg, hsl(28 56% 32%) 0%, hsl(25 55% 18%) 100%);
+    --gradient-wood-dark: linear-gradient(180deg, hsl(28 45% 24%) 0%, hsl(25 40% 14%) 100%);
 
     --sidebar-background: 222 40% 10%;
     --sidebar-foreground: 210 40% 96%;
