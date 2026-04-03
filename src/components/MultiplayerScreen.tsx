@@ -445,7 +445,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
           }
 
           // When phase transitions from innings_break to pre_round_countdown, dismiss the overlay
-          if ((updated as any).phase === "pre_round_countdown" && showInningsBreak) {
+          if ((updated as any).phase === "pre_round_countdown" && showInningsBreakRef.current) {
             setShowInningsBreak(false);
             setInningsBreakReady(false);
             setTurnCountdownMs(TURN_TIMER_MS); // Full reset
