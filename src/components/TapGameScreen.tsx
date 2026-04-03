@@ -152,6 +152,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
           opponentWickets={game.aiWickets}
           ballHistory={game.ballHistory}
           commentators={matchCommentators}
+          matchRewards={matchRewards}
           onComplete={() => setShowPostMatch(false)}
         />
       )}
