@@ -14,6 +14,7 @@ import { useRivals } from "@/hooks/useRivals";
 import { Settings } from "lucide-react";
 import floatingIsland from "@/assets/floating-island.png";
 import avatarFrame from "@/assets/avatar-frame.png";
+import { getChestTier } from "@/lib/chests";
 
 interface ProfileData {
   total_matches: number;
@@ -51,12 +52,6 @@ const CHEST_SLOTS = [
   { state: "empty" as const, type: null, label: "", timer: "" },
 ];
 
-const CHEST_ICONS: Record<string, { emoji: string; glow: string }> = {
-  bronze: { emoji: "🪙", glow: "hsl(30 60% 45%)" },
-  silver: { emoji: "⬜", glow: "hsl(210 20% 60%)" },
-  gold: { emoji: "👑", glow: "hsl(45 100% 55%)" },
-  diamond: { emoji: "💎", glow: "hsl(200 90% 60%)" },
-};
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -401,7 +396,7 @@ export default function HomePage() {
           className="grid grid-cols-4 gap-2 mb-4"
         >
           {CHEST_SLOTS.map((slot, i) => {
-            const chestInfo = slot.type ? CHEST_ICONS[slot.type] : null;
+            const chestTier = slot.type ? getChestTier(slot.type) : null;
             const isReady = slot.state === "ready";
             const isEmpty = slot.state === "empty";
 
@@ -418,53 +413,50 @@ export default function HomePage() {
                     ? "linear-gradient(180deg, hsl(222 35% 14%), hsl(222 40% 9%))"
                     : "linear-gradient(180deg, hsl(222 38% 16%), hsl(222 42% 10%))",
                   border: isReady
-                    ? "3px solid hsl(43 80% 40%)"
+                    ? `3px solid ${chestTier?.borderColor ?? "hsl(43 80% 40%)"}`
                     : isEmpty
                     ? "3px dashed hsl(222 25% 20% / 0.4)"
                     : "3px solid hsl(222 30% 14%)",
                   boxShadow: isReady
-                    ? "0 4px 8px rgba(0,0,0,0.4), inset 0 1px 0 hsl(40 40% 45% / 0.3), 0 0 12px hsl(45 100% 55% / 0.15)"
+                    ? `0 4px 8px rgba(0,0,0,0.4), inset 0 1px 0 hsl(40 40% 45% / 0.3), 0 0 12px ${chestTier?.glowColor ?? "hsl(45 100% 55% / 0.15)"}`
                     : "0 4px 8px rgba(0,0,0,0.3), inset 0 1px 0 hsl(222 30% 25% / 0.1)",
                 }}
               >
                 {/* Ready glow pulse */}
-                {isReady && (
+                {isReady && chestTier && (
                   <motion.div
                     className="absolute inset-0 rounded-xl"
-                    style={{ boxShadow: `inset 0 0 20px ${chestInfo?.glow ?? "hsl(45 100% 55%)"}30` }}
+                    style={{ boxShadow: `inset 0 0 20px ${chestTier.glowColor}` }}
                     animate={{ opacity: [0.3, 0.8, 0.3] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
                   />
                 )}
 
-                {chestInfo ? (
+                {chestTier ? (
                   <>
-                    <span className="text-2xl mb-0.5 relative z-10">{chestInfo.emoji}</span>
+                    <img
+                      src={chestTier.image}
+                      alt={chestTier.name}
+                      width={512}
+                      height={512}
+                      loading="lazy"
+                      className="w-12 h-12 object-contain mb-0.5 relative z-10"
+                      style={{ filter: `drop-shadow(0 2px 6px ${chestTier.glowColor})` }}
+                    />
                     {isReady && (
-                      <>
-                        {/* Dark ribbon banner at bottom */}
-                        <div
-                          className="absolute bottom-0 left-0 right-0 py-1 text-center z-10"
-                          style={{
-                            background: "linear-gradient(180deg, hsl(0 0% 0% / 0.6), hsl(0 0% 0% / 0.8))",
-                          }}
-                        >
-                          <span className="font-game-display text-[8px] text-game-gold animate-pulse tracking-wider">OPEN!</span>
-                        </div>
-                      </>
+                      <div
+                        className="absolute bottom-0 left-0 right-0 py-1 text-center z-10"
+                        style={{ background: "linear-gradient(180deg, hsl(0 0% 0% / 0.6), hsl(0 0% 0% / 0.8))" }}
+                      >
+                        <span className="font-game-display text-[8px] text-game-gold animate-pulse tracking-wider">OPEN!</span>
+                      </div>
                     )}
                     {slot.state === "unlocking" && (
-                      <div className="flex flex-col items-center gap-0.5 relative z-10">
-                        <div
-                          className="absolute bottom-0 left-0 right-0 py-1 text-center"
-                          style={{
-                            background: "linear-gradient(180deg, hsl(0 0% 0% / 0.5), hsl(0 0% 0% / 0.7))",
-                            position: "relative",
-                            borderRadius: "0 0 8px 8px",
-                          }}
-                        >
-                          <span className="font-game-display text-[8px] text-white tracking-wider">{slot.timer}</span>
-                        </div>
+                      <div
+                        className="absolute bottom-0 left-0 right-0 py-1 text-center z-10"
+                        style={{ background: "linear-gradient(180deg, hsl(0 0% 0% / 0.5), hsl(0 0% 0% / 0.7))", borderRadius: "0 0 8px 8px" }}
+                      >
+                        <span className="font-game-display text-[8px] text-white tracking-wider">{slot.timer}</span>
                       </div>
                     )}
                     {slot.state === "locked" && (

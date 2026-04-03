@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import chestImg from "@/assets/chest-gold.png";
+import { getChestTier } from "@/lib/chests";
 
 interface ChestRevealProps {
   itemName: string;
@@ -9,16 +9,9 @@ interface ChestRevealProps {
   onComplete: () => void;
 }
 
-const RARITY_COLOR: Record<string, string> = {
-  common: "hsl(210, 15%, 60%)",
-  rare: "hsl(207, 90%, 54%)",
-  epic: "hsl(291, 47%, 51%)",
-  legendary: "hsl(51, 100%, 50%)",
-};
-
 export default function ChestReveal({ itemName, itemEmoji, rarity, onComplete }: ChestRevealProps) {
   const [phase, setPhase] = useState<"shake" | "open" | "reveal">("shake");
-  const color = RARITY_COLOR[rarity] || RARITY_COLOR.common;
+  const chest = getChestTier(rarity);
 
   useEffect(() => {
     const t1 = setTimeout(() => setPhase("open"), 1200);
@@ -32,7 +25,8 @@ export default function ChestReveal({ itemName, itemEmoji, rarity, onComplete }:
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[60] bg-[hsl(222_47%_4%/0.95)] flex items-center justify-center"
+      className="fixed inset-0 z-[60] flex items-center justify-center"
+      style={{ background: "hsl(222 47% 4% / 0.95)" }}
     >
       {/* Radial burst */}
       {phase !== "shake" && (
@@ -41,11 +35,11 @@ export default function ChestReveal({ itemName, itemEmoji, rarity, onComplete }:
           animate={{ scale: 3, opacity: [0, 0.6, 0] }}
           transition={{ duration: 1.5 }}
           className="absolute w-40 h-40 rounded-full"
-          style={{ background: `radial-gradient(circle, ${color}, transparent 70%)` }}
+          style={{ background: `radial-gradient(circle, ${chest.color}, transparent 70%)` }}
         />
       )}
 
-      {/* Particle sparkles */}
+      {/* Sparkle particles */}
       {phase === "reveal" && [...Array(12)].map((_, i) => (
         <motion.div
           key={i}
@@ -58,7 +52,7 @@ export default function ChestReveal({ itemName, itemEmoji, rarity, onComplete }:
           }}
           transition={{ duration: 1, delay: i * 0.05 }}
           className="absolute w-2 h-2 rounded-full"
-          style={{ background: color }}
+          style={{ background: chest.color }}
         />
       ))}
 
@@ -73,11 +67,19 @@ export default function ChestReveal({ itemName, itemEmoji, rarity, onComplete }:
             transition={{ duration: 1.2, ease: "easeInOut" }}
             className="relative"
           >
-            <img src={chestImg} alt="Chest" className="w-40 h-40 object-contain drop-shadow-[0_0_30px_hsl(51_100%_50%/0.4)]" />
+            <img
+              src={chest.image}
+              alt={chest.name}
+              width={512}
+              height={512}
+              className="w-44 h-44 object-contain"
+              style={{ filter: `drop-shadow(0 0 30px ${chest.glowColor})` }}
+            />
             <motion.div
-              animate={{ opacity: [0.3, 0.8, 0.3] }}
+              animate={{ opacity: [0.2, 0.6, 0.2] }}
               transition={{ duration: 0.5, repeat: Infinity }}
-              className="absolute inset-0 bg-game-gold/10 rounded-full blur-xl"
+              className="absolute inset-0 rounded-full blur-xl"
+              style={{ background: `${chest.color}20` }}
             />
           </motion.div>
         )}
@@ -90,7 +92,13 @@ export default function ChestReveal({ itemName, itemEmoji, rarity, onComplete }:
             transition={{ duration: 0.8 }}
             className="relative"
           >
-            <img src={chestImg} alt="Chest" className="w-40 h-40 object-contain" />
+            <img
+              src={chest.image}
+              alt={chest.name}
+              width={512}
+              height={512}
+              className="w-44 h-44 object-contain"
+            />
           </motion.div>
         )}
 
@@ -121,8 +129,8 @@ export default function ChestReveal({ itemName, itemEmoji, rarity, onComplete }:
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className={`font-game-display text-xs tracking-[0.3em] mt-2`}
-              style={{ color }}
+              className="font-game-display text-xs tracking-[0.3em] mt-2"
+              style={{ color: chest.color }}
             >
               {rarity.toUpperCase()}
             </motion.p>
