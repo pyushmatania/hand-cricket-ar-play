@@ -398,6 +398,11 @@ export function useMatchSaver() {
           } catch (e) { console.error("[Rivalry] notification failed", e); }
         }
 
+        // Batch-insert XP history
+        if (xpEntries.length > 0) {
+          await supabase.from("xp_history" as any).insert(xpEntries as any);
+        }
+
         const newXp = updatedStats.xp;
         const newLevel = Math.floor(newXp / 100) + 1;
 
