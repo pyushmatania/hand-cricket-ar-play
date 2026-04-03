@@ -2,7 +2,6 @@ import { useRef, useCallback, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import CameraFeed, { type CameraFeedHandle, type CameraFilter } from "./CameraFeed";
 import HandOverlay from "./HandOverlay";
-import ScoreBoard from "./ScoreBoard";
 import GestureDisplay from "./GestureDisplay";
 import RulesSheet from "./RulesSheet";
 import OddEvenToss from "./OddEvenToss";
@@ -56,7 +55,6 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const [showOverSelector, setShowOverSelector] = useState(true);
   const [playerXP, setPlayerXP] = useState(0);
   const [stadiumMode, setStadiumMode] = useState(true);
-  const [immersive, setImmersive] = useState(false);
   const [filter, setFilter] = useState<CameraFilter>("broadcast");
   const [gloveStyle, setGloveStyle] = useState<GloveStyle>("cricket");
   const [showFilterPicker, setShowFilterPicker] = useState(false);
@@ -289,20 +287,32 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     setShowOverSelector(true);
   };
 
-  const toggleImmersive = () => setImmersive(!immersive);
-
   const videoW = videoElementRef.current?.videoWidth || 640;
   const videoH = videoElementRef.current?.videoHeight || 480;
   const isFrontCamera = cameraRef.current?.videoRef?.current
     ? (cameraRef.current.videoRef.current.className || "").includes("scale-x-[-1]")
     : false;
 
+  const isPreGame = game.phase === "not_started" && !showPreMatch;
+  const isInGame = game.phase !== "not_started" && game.phase !== "finished";
+
   return (
-    <div className={`min-h-screen bg-background flex flex-col relative overflow-hidden ${immersive ? "immersive-mode" : ""}`}>
-      {stadiumMode && <div className="absolute inset-0 stadium-gradient pointer-events-none" />}
-      {stadiumMode && <div className="absolute inset-0 vignette pointer-events-none" />}
+    <div className="fixed inset-0 bg-black overflow-hidden">
       <CelebrationEffects lastResult={game.lastResult} gameResult={game.result} phase={game.phase} />
       <CanvasFireworks type={fireworkType} duration={fireworkType === "win" ? 5000 : 3000} />
+
+      {/* Camera fills the full screen */}
+      <div className="absolute inset-0">
+        <CameraFeed ref={cameraRef} onVideoReady={handleVideoReady} stadiumMode={stadiumMode} fullscreen filter={filter} />
+        <HandOverlay
+          landmarks={detection.landmarks}
+          videoWidth={videoW}
+          videoHeight={videoH}
+          status={detection.status}
+          gloveStyle={gloveStyle}
+          mirrored={isFrontCamera}
+        />
+      </div>
 
       {/* Pre-match ceremony */}
       {showPreMatch && tossInfo && (
@@ -330,267 +340,243 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         />
       )}
 
-      {/* Top ambient glow */}
-      <div
-        className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[500px] h-[300px] pointer-events-none"
-        style={{ background: "radial-gradient(ellipse, hsl(217 91% 60% / 0.06) 0%, transparent 70%)" }}
-      />
-
-      {/* Top bar */}
-      {!immersive && (
-        <div className="relative z-10 flex items-center justify-between px-3 pt-3 pb-1">
-          <motion.button
-            whileTap={{ scale: 0.9 }}
-            onClick={onHome}
-            className="w-9 h-9 rounded-xl glass-premium flex items-center justify-center text-sm"
+      {/* ── TOP BAR ── always visible as overlay */}
+      <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-3 pt-3 pb-2 bg-gradient-to-b from-black/60 to-transparent pointer-events-auto">
+        <motion.button
+          whileTap={{ scale: 0.9 }}
+          onClick={onHome}
+          className="w-9 h-9 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-sm text-white"
+        >
+          ←
+        </motion.button>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10">
+          <div className="w-1.5 h-1.5 rounded-full bg-out-red animate-pulse" />
+          <span className="font-display text-[9px] tracking-[0.2em] text-white font-bold">AR CRICKET</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <button
+            onClick={() => setStadiumMode(!stadiumMode)}
+            className={`w-8 h-8 rounded-xl flex items-center justify-center text-[10px] active:scale-90 transition-all ${
+              stadiumMode ? "bg-primary/30 border border-primary/40" : "bg-black/50 border border-white/10"
+            } backdrop-blur-md`}
           >
-            ←
-          </motion.button>
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full glass-card">
-            <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-            <span className="font-display text-[9px] tracking-[0.2em] text-primary font-bold">HAND CRICKET AR</span>
+            🏟️
+          </button>
+          <button
+            onClick={() => setShowFilterPicker(!showFilterPicker)}
+            className="w-8 h-8 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-[10px] active:scale-90 transition-all"
+          >
+            🎨
+          </button>
+          <button
+            onClick={() => {
+              const opts: GloveStyle[] = ["cricket", "neon", "outline", "off"];
+              setGloveStyle(opts[(opts.indexOf(gloveStyle) + 1) % opts.length]);
+            }}
+            className={`w-8 h-8 rounded-xl flex items-center justify-center text-[10px] active:scale-90 transition-all ${
+              gloveStyle !== "off" ? "bg-primary/30 border border-primary/40" : "bg-black/50 border border-white/10"
+            } backdrop-blur-md`}
+          >
+            🧤
+          </button>
+          <RulesSheet />
+        </div>
+      </div>
+
+      {/* Filter picker dropdown */}
+      <AnimatePresence>
+        {showFilterPicker && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="absolute top-14 right-3 z-40 bg-black/80 backdrop-blur-xl border border-white/10 rounded-xl p-2.5 space-y-2"
+          >
+            <p className="text-[7px] font-display font-bold text-white/60 tracking-widest px-1">FILTER</p>
+            <div className="flex gap-1">
+              {FILTER_OPTIONS.map((f) => (
+                <button
+                  key={f.key}
+                  onClick={() => { setFilter(f.key); setShowFilterPicker(false); }}
+                  className={`px-2 py-1.5 rounded-lg text-[9px] font-bold transition-all ${
+                    filter === f.key ? "bg-primary/30 text-primary border border-primary/30" : "bg-white/10 text-white/60 border border-transparent"
+                  }`}
+                >
+                  {f.icon}
+                </button>
+              ))}
+            </div>
+            <p className="text-[7px] font-display font-bold text-white/60 tracking-widest px-1 pt-0.5">GLOVE</p>
+            <div className="flex gap-1">
+              {GLOVE_OPTIONS.map((g) => (
+                <button
+                  key={g.key}
+                  onClick={() => { setGloveStyle(g.key); setShowFilterPicker(false); }}
+                  className={`px-2 py-1.5 rounded-lg text-[9px] font-bold transition-all ${
+                    gloveStyle === g.key ? "bg-primary/30 text-primary border border-primary/30" : "bg-white/10 text-white/60 border border-transparent"
+                  }`}
+                >
+                  {g.label}
+                </button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── IN-GAME OVERLAYS ── */}
+      {isInGame && (
+        <div className="absolute inset-0 z-20 flex flex-col justify-between pointer-events-none">
+          {/* Score strip at top (below top bar) */}
+          <div className="pt-16 px-3 pointer-events-auto">
+            <ImmersiveScoreStrip game={game} playerName={playerName} aiName={opponentName} />
           </div>
-          <div className="flex items-center gap-1.5">
-            <button
-              onClick={() => setStadiumMode(!stadiumMode)}
-              className={`w-8 h-8 rounded-xl flex items-center justify-center text-[10px] active:scale-90 transition-all ${
-                stadiumMode ? "glass-premium border border-primary/20" : "glass-card"
-              }`}
-            >
-              🏟️
+
+          {/* Center: countdown / fist prompt / next ball / live gesture preview */}
+          <div className="flex items-center justify-center pointer-events-none">
+            <AnimatePresence mode="wait">
+              {detection.phase === "countdown" && detection.countdownValue && (
+                <motion.div
+                  key={`cd-${detection.countdownValue}`}
+                  initial={{ scale: 2.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.5, opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="text-center"
+                >
+                  <p className="font-display text-[96px] font-black text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.8)] leading-none">
+                    {detection.countdownValue}
+                  </p>
+                  <p className="font-display text-sm font-bold text-white/70 tracking-[0.2em]">GET READY</p>
+                </motion.div>
+              )}
+              {detection.phase === "wait_for_fist" && (
+                <motion.div
+                  key="fist"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="text-center bg-black/50 backdrop-blur-md rounded-2xl px-6 py-4 border border-white/10"
+                >
+                  <motion.p
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="text-5xl mb-2"
+                  >
+                    ✊
+                  </motion.p>
+                  <p className="font-display text-sm font-black text-white tracking-wider">SHOW FIST TO START</p>
+                  <p className="text-[10px] text-white/60 mt-1">Hold fist steady to begin</p>
+                </motion.div>
+              )}
+              {detection.phase === "tracking_active" && detection.detectedMove && (
+                <motion.div
+                  key={`live-${detection.detectedMove}`}
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.8, opacity: 0 }}
+                  className="text-center"
+                >
+                  <motion.p
+                    animate={{ scale: [1, 1.05, 1] }}
+                    transition={{ duration: 0.5, repeat: Infinity }}
+                    className="font-display text-7xl font-black text-white drop-shadow-[0_0_30px_rgba(255,255,255,0.6)]"
+                  >
+                    {detection.detectedMove === "DEF" ? "✊" : detection.detectedMove === 6 ? "👍" : `${detection.detectedMove}`}
+                  </motion.p>
+                  <div className="mt-1 h-1 w-24 mx-auto rounded-full bg-white/20 overflow-hidden">
+                    <motion.div
+                      className="h-full rounded-full bg-primary"
+                      style={{ width: `${Math.round(detection.confidence * 100)}%` }}
+                    />
+                  </div>
+                </motion.div>
+              )}
+              {detection.phase === "cooldown" && (
+                <motion.div
+                  key="cooldown"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="text-center bg-black/50 backdrop-blur-md rounded-2xl px-6 py-4 border border-white/10"
+                >
+                  <motion.p
+                    animate={{ scale: [1, 1.15, 1] }}
+                    transition={{ duration: 0.8, repeat: Infinity }}
+                    className="text-4xl mb-1"
+                  >
+                    🏏
+                  </motion.p>
+                  <p className="font-display text-sm font-black text-white tracking-wider">NEXT BALL</p>
+                  <p className="text-[10px] text-white/60 mt-1">Get ready…</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Bottom: gesture display */}
+          <div className="pb-4 px-3 pointer-events-auto space-y-2">
+            <GestureDisplay
+              status={detection.status}
+              detectedMove={detection.detectedMove}
+              capturedMove={detection.capturedMove}
+              confidence={detection.confidence}
+              lastResult={game.lastResult}
+              isBatting={game.isBatting}
+              hint={detection.hint}
+              handDetected={detection.handDetected}
+              compact
+            />
+            <button onClick={handleStartNew} className="text-[10px] text-white/30 underline self-center block w-full text-center active:scale-95 font-display tracking-wider">
+              Reset Match
             </button>
-            <button
-              onClick={toggleImmersive}
-              className={`w-8 h-8 rounded-xl flex items-center justify-center text-[10px] active:scale-90 transition-all ${
-                immersive ? "glass-premium border border-accent/20" : "glass-card"
-              }`}
-            >
-              📺
-            </button>
-            <RulesSheet />
           </div>
         </div>
       )}
 
-      {/* Main content */}
-      <div className={`relative z-10 flex-1 flex flex-col ${immersive ? "px-0 pb-0" : "gap-2 px-3 pb-3"} max-w-lg mx-auto w-full`}>
-        {/* Camera + overlay */}
-        <div className={immersive ? "flex-1 relative" : "relative"}>
-          <CameraFeed ref={cameraRef} onVideoReady={handleVideoReady} stadiumMode={stadiumMode} fullscreen={immersive} filter={filter} />
-          <HandOverlay
-            landmarks={detection.landmarks}
-            videoWidth={videoW}
-            videoHeight={videoH}
-            status={detection.status}
-            gloveStyle={gloveStyle}
-            mirrored={isFrontCamera}
-          />
-
-          {/* Next Ball overlay */}
-          <AnimatePresence>
-            {detection.phase === "cooldown" && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                className="absolute inset-0 z-[15] flex items-center justify-center pointer-events-none"
-              >
-                <div className="bg-card/80 backdrop-blur-xl rounded-2xl px-6 py-4 border border-primary/30 text-center">
-                  <motion.p
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 1, repeat: Infinity }}
-                    className="text-3xl mb-1"
-                  >
-                    🏏
-                  </motion.p>
-                  <p className="font-display text-sm font-black text-primary tracking-wider">NEXT BALL</p>
-                  <p className="text-[10px] text-muted-foreground mt-1">Get ready…</p>
-                </div>
-              </motion.div>
+      {/* ── PRE-GAME UI (OverSelector / Toss) — bottom sheet overlay ── */}
+      {isPreGame && (
+        <div className="absolute bottom-0 left-0 right-0 z-30 max-w-lg mx-auto w-full px-3 pb-4">
+          <div className="bg-black/70 backdrop-blur-xl rounded-t-3xl border-t border-x border-white/10 px-4 pt-4 pb-6 space-y-3">
+            {showOverSelector && (
+              <OverSelector playerXP={playerXP} onSelect={handleOverSelect} />
             )}
-          </AnimatePresence>
-
-          {/* Filter/Glove toggles */}
-          <div className="absolute top-2 right-12 flex gap-1 z-[6]">
-            <button
-              onClick={() => setShowFilterPicker(!showFilterPicker)}
-              className="w-7 h-7 rounded-full bg-card/70 backdrop-blur-md border border-glass flex items-center justify-center text-[10px] active:scale-90 transition-transform"
-            >
-              🎨
-            </button>
-            <button
-              onClick={() => {
-                const opts: GloveStyle[] = ["cricket", "neon", "outline", "off"];
-                const idx = opts.indexOf(gloveStyle);
-                setGloveStyle(opts[(idx + 1) % opts.length]);
-              }}
-              className={`w-7 h-7 rounded-full backdrop-blur-md border flex items-center justify-center text-[10px] active:scale-90 transition-transform ${
-                gloveStyle !== "off" ? "bg-primary/20 border-primary/40" : "bg-card/70 border-glass"
-              }`}
-            >
-              🧤
-            </button>
+            {!showOverSelector && matchConfig && tossChoice === null && (
+              <OddEvenToss
+                onResult={handleTossResult}
+                onTossComplete={handleTossComplete}
+                playerName={playerName}
+                opponentName={opponentName}
+              />
+            )}
           </div>
-
-          {/* Filter picker */}
-          <AnimatePresence>
-            {showFilterPicker && (
-              <motion.div
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                className="absolute top-11 right-10 z-[7] bg-card/90 backdrop-blur-xl border border-glass rounded-xl p-2.5 space-y-2"
-              >
-                <p className="text-[7px] font-display font-bold text-muted-foreground tracking-widest px-1">FILTER</p>
-                <div className="flex gap-1">
-                  {FILTER_OPTIONS.map((f) => (
-                    <button
-                      key={f.key}
-                      onClick={() => { setFilter(f.key); setShowFilterPicker(false); }}
-                      className={`px-2 py-1.5 rounded-lg text-[9px] font-bold transition-all ${
-                        filter === f.key ? "bg-primary/20 text-primary border border-primary/30" : "bg-muted/50 text-muted-foreground border border-transparent"
-                      }`}
-                    >
-                      {f.icon}
-                    </button>
-                  ))}
-                </div>
-                <p className="text-[7px] font-display font-bold text-muted-foreground tracking-widest px-1 pt-0.5">GLOVE</p>
-                <div className="flex gap-1">
-                  {GLOVE_OPTIONS.map((g) => (
-                    <button
-                      key={g.key}
-                      onClick={() => { setGloveStyle(g.key); setShowFilterPicker(false); }}
-                      className={`px-2 py-1.5 rounded-lg text-[9px] font-bold transition-all ${
-                        gloveStyle === g.key ? "bg-primary/20 text-primary border border-primary/30" : "bg-muted/50 text-muted-foreground border border-transparent"
-                      }`}
-                    >
-                      {g.label}
-                    </button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Immersive overlays */}
-          {immersive && game.phase !== "not_started" && (
-            <div className="absolute inset-0 z-20 flex flex-col justify-between pointer-events-none p-2">
-              <div className="pointer-events-auto">
-                <div className="flex items-center justify-between mb-1">
-                  <button onClick={toggleImmersive} className="text-[9px] text-foreground/70 font-display font-bold bg-card/60 backdrop-blur-md rounded-lg px-2 py-1">
-                    ✕ EXIT
-                  </button>
-                  <div className="text-[8px] font-display text-primary font-bold bg-card/60 backdrop-blur-md rounded-lg px-2 py-1 flex items-center gap-1.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-out-red animate-pulse" />
-                    LIVE
-                  </div>
-                </div>
-                <ImmersiveScoreStrip game={game} playerName={playerName} aiName={opponentName} />
-              </div>
-              <div className="pointer-events-auto space-y-1">
-                <GestureDisplay
-                  status={detection.status}
-                  detectedMove={detection.detectedMove}
-                  capturedMove={detection.capturedMove}
-                  confidence={detection.confidence}
-                  lastResult={game.lastResult}
-                  isBatting={game.isBatting}
-                  hint={detection.hint}
-                  handDetected={detection.handDetected}
-                  compact
-                />
-              </div>
-            </div>
-          )}
         </div>
+      )}
 
-        {/* Over Selector — shown first */}
-        {showOverSelector && game.phase === "not_started" && tossChoice === null && !showPreMatch && (
-          <OverSelector playerXP={playerXP} onSelect={handleOverSelect} />
-        )}
-
-        {/* Odd/Even Toss — after over selection */}
-        {!showOverSelector && matchConfig && game.phase === "not_started" && tossChoice === null && !showPreMatch && (
-          <OddEvenToss
-            onResult={handleTossResult}
-            onTossComplete={handleTossComplete}
-            playerName={playerName}
-            opponentName={opponentName}
-          />
-        )}
-
-        {/* Phase-based countdown overlay */}
-        <AnimatePresence>
-          {detection.phase === "countdown" && detection.countdownValue && (
-            <motion.div
-              key={detection.countdownValue}
-              initial={{ scale: 2, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.5, opacity: 0 }}
-              className="glass-score p-6 text-center"
-            >
-              <p className="font-display text-5xl font-black text-primary text-glow">{detection.countdownValue}</p>
-              <p className="text-xs text-muted-foreground mt-2 font-semibold">Get ready…</p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Fist prompt */}
-        {detection.phase === "wait_for_fist" && game.phase !== "not_started" && game.phase !== "finished" && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-score p-5 text-center space-y-2">
-            <motion.p
-              animate={{ scale: [1, 1.15, 1] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="text-4xl"
-            >
-              ✊
-            </motion.p>
-            <p className="font-display text-sm font-black text-foreground tracking-wider">Show FIST to start</p>
-            <p className="text-[10px] text-muted-foreground">Make a fist and hold steady</p>
+      {/* ── FINISHED overlay ── */}
+      {game.phase === "finished" && (
+        <div className="absolute inset-0 z-30 flex flex-col items-center justify-end pb-10 px-6 bg-black/40">
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-xs space-y-3">
+            <ImmersiveScoreStrip game={game} playerName={playerName} aiName={opponentName} />
+            <div className="flex gap-3">
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={handleStartNew}
+                className="flex-1 py-3 bg-primary text-primary-foreground font-display font-bold rounded-2xl tracking-wider shadow-[0_0_20px_hsl(217_91%_60%/0.4)] border border-primary/30"
+              >
+                ⚡ NEW MATCH
+              </motion.button>
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={onHome}
+                className="flex-1 py-3 bg-black/60 backdrop-blur-md text-white font-display font-bold rounded-2xl tracking-wider border border-white/10"
+              >
+                HOME
+              </motion.button>
+            </div>
           </motion.div>
-        )}
-
-        {!immersive && game.phase !== "not_started" && <ScoreBoard game={game} playerName={playerName} aiName={opponentName} aiEmoji="🏏" />}
-
-        {!immersive && game.phase !== "not_started" && (
-          <GestureDisplay
-            status={detection.status}
-            detectedMove={detection.detectedMove}
-            capturedMove={detection.capturedMove}
-            confidence={detection.confidence}
-            lastResult={game.lastResult}
-            isBatting={game.isBatting}
-            hint={detection.hint}
-            handDetected={detection.handDetected}
-          />
-        )}
-
-        {game.phase === "finished" && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex gap-3">
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              onClick={handleStartNew}
-              className="flex-1 py-3 bg-gradient-to-r from-primary to-primary/70 text-primary-foreground font-display font-bold rounded-2xl tracking-wider shadow-[0_0_20px_hsl(217_91%_60%/0.2)] border border-primary/30"
-            >
-              ⚡ NEW MATCH
-            </motion.button>
-            <motion.button
-              whileTap={{ scale: 0.95 }}
-              onClick={onHome}
-              className="flex-1 py-3 glass-premium text-foreground font-display font-bold rounded-2xl tracking-wider border border-primary/10"
-            >
-              HOME
-            </motion.button>
-          </motion.div>
-        )}
-
-        {!immersive && game.phase !== "not_started" && game.phase !== "finished" && (
-          <button onClick={handleStartNew} className="text-[10px] text-muted-foreground/50 underline self-center mt-1 active:scale-95 font-display tracking-wider">
-            Reset Match
-          </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

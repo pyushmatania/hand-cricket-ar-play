@@ -12,7 +12,7 @@ interface Props {
 }
 
 const TIPS = [
-  "Tip: DEF blocks but scores 0 runs",
+  "Tip: DEF (fist) — if bowler defends, batsman scores the bowler's number",
   "Tip: 6 is risky but rewarding",
   "Tip: Watch your opponent's patterns",
   "Tip: Reserve time is precious — play fast!",

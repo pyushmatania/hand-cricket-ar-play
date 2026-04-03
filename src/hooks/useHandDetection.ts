@@ -240,14 +240,7 @@ export function useHandDetection(videoRef: React.RefObject<HTMLVideoElement | nu
         return;
       }
 
-      // If hand is showing fist (def), just reset buffer — waiting for a move
-      if (raw === "def") {
-        predictionBufferRef.current = [];
-        setState((s) => ({ ...s, detectedMove: null, confidence: 0 }));
-        return;
-      }
-
-      // Accumulate votes for non-fist gestures
+      // Accumulate votes for all valid gestures including def (fist = DEF shot)
       predictionBufferRef.current.push(raw);
       if (predictionBufferRef.current.length > VOTE_WINDOW_SIZE) {
         predictionBufferRef.current.shift();
@@ -255,7 +248,7 @@ export function useHandDetection(videoRef: React.RefObject<HTMLVideoElement | nu
 
       const counts = new Map<RawGesture, number>();
       for (const vote of predictionBufferRef.current) {
-        if (VALID_GESTURES.includes(vote) && vote !== "def") {
+        if (VALID_GESTURES.includes(vote)) {
           counts.set(vote, (counts.get(vote) ?? 0) + 1);
         }
       }
