@@ -30,6 +30,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const arenaId = (location.state as any)?.arenaId as string | undefined;
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
+  const cosmetics = useEquippedCosmetics();
   const { soundEnabled, hapticsEnabled, crowdEnabled, commentaryVoice, tapCeremoniesEnabled } = useSettings();
   const { user } = useAuth();
   const savedRef = useRef(false);
