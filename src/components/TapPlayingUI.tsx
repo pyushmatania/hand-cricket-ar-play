@@ -66,6 +66,7 @@ export default function TapPlayingUI({
   isPvP = false, waitingForOpponent = false, cooldownOverride,
   extraContent, modeLabel = "TAP MODE", matchConfig, innings1Balls, commentators,
   arenaImage,
+  arenaId,
 }: TapPlayingUIProps) {
   const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, commentaryVoice, voiceEngine, commentaryLanguage, musicEnabled, ambientVolume } = useSettings();
 
