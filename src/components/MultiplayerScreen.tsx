@@ -100,6 +100,18 @@ function gameTypeLabel(gameType: GameType): string {
   return "AR DUEL";
 }
 
+type TossChoice = "odd" | "even";
+
+function getMultiplayerTossChoices(gameId: string, isHostPlayer: boolean): { playerChoice: TossChoice; opponentChoice: TossChoice } {
+  const checksum = Array.from(gameId).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  const hostChoice: TossChoice = checksum % 2 === 0 ? "even" : "odd";
+  const guestChoice: TossChoice = hostChoice === "odd" ? "even" : "odd";
+
+  return isHostPlayer
+    ? { playerChoice: hostChoice, opponentChoice: guestChoice }
+    : { playerChoice: guestChoice, opponentChoice: hostChoice };
+}
+
 export default function MultiplayerScreen({ onHome }: Props) {
   const { user } = useAuth();
   const { commentaryVoice, multiplayerCeremoniesEnabled } = useSettings();
@@ -400,8 +412,13 @@ export default function MultiplayerScreen({ onHome }: Props) {
             setTimeout(() => setShowRoleCard(false), 3000);
           }
 
-          // Only the host resolves turns to prevent double-execution
-          if (updated.host_move && updated.guest_move && user?.id === updated.host_id) {
+          // Only resolve actual gameplay turns, not innings-break ready states.
+          if (
+            user?.id === updated.host_id &&
+            updated.host_move &&
+            updated.guest_move &&
+            (updated.phase === "action_window" || updated.phase === "resolving_turn")
+          ) {
             resolveTurn(updated);
           }
 
@@ -1138,6 +1155,10 @@ export default function MultiplayerScreen({ onHome }: Props) {
 
   if (!user) return null;
 
+  const multiplayerTossChoices = currentGame
+    ? getMultiplayerTossChoices(currentGame.id, user.id === currentGame.host_id)
+    : null;
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden flex flex-col">
       <div className="absolute inset-0 stadium-gradient pointer-events-none" />
@@ -1451,6 +1472,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
               playerName={myName}
               opponentName={opponentName}
               isMultiplayer={true}
+              multiplayerPlayerChoice={multiplayerTossChoices?.playerChoice ?? null}
+              multiplayerOpponentChoice={multiplayerTossChoices?.opponentChoice ?? null}
               playerAvatarIndex={myAvatarIndex}
               opponentAvatarIndex={opponentAvatarIndex}
             />
