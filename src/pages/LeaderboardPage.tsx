@@ -792,14 +792,6 @@ export default function LeaderboardPage() {
                       })}
                     </motion.div>
                   )}
-                              <span className={`text-[6px] ${tier.color} font-display`}>{tier.emoji} {tier.name}</span>
-                            </div>
-                          </motion.div>
-                        );
-                      })}
-                    </motion.div>
-                  )}
-
                   {/* List */}
                   <div className="space-y-2">
                     {rest.map((player, i) => {
