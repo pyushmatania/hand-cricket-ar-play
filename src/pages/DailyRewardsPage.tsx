@@ -3,7 +3,6 @@ import { SFX, Haptics } from "@/lib/sounds";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useDailyLogin } from "@/hooks/useDailyLogin";
-import BottomNav from "@/components/BottomNav";
 import TopStatusBar from "@/components/TopStatusBar";
 
 /* ──── Reward Calendar Data (28-day cycle) ──── */
@@ -399,7 +398,6 @@ export default function DailyRewardsPage() {
         </motion.div>
       </div>
 
-      <BottomNav />
     </div>
   );
 }

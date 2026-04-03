@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { Virtuoso } from "react-virtuoso";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import BottomNav from "@/components/BottomNav";
 import TopStatusBar from "@/components/TopStatusBar";
 
 interface BallRecord {
@@ -148,7 +147,6 @@ export default function MatchHistoryPage() {
             SIGN IN
           </motion.button>
         </div>
-        <BottomNav />
       </div>
     );
   }
@@ -499,7 +497,6 @@ export default function MatchHistoryPage() {
         )}
       </div>
 
-      <BottomNav />
     </div>
   );
 }

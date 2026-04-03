@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import BottomNav from "@/components/BottomNav";
 import TopStatusBar from "@/components/TopStatusBar";
 import PlayerAvatar from "@/components/PlayerAvatar";
 import FriendStatsModal from "@/components/FriendStatsModal";
@@ -604,7 +603,6 @@ export default function FriendsPage() {
         />
       )}
 
-      <BottomNav />
     </div>
   );
 }

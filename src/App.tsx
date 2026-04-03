@@ -10,6 +10,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { SettingsProvider } from "@/contexts/SettingsContext";
 import PageTransition from "@/components/PageTransition";
 import SplashScreen from "@/components/SplashScreen";
+import BottomNav from "@/components/BottomNav";
 import MatchInviteNotification from "@/components/MatchInviteNotification";
 import ChatNotificationListener from "@/components/ChatNotificationListener";
 
@@ -92,6 +93,7 @@ const App = () => {
                 <MatchInviteNotification />
                 <ChatNotificationListener />
                 <AnimatedRoutes />
+                <BottomNav />
               </BrowserRouter>
             )}
           </TooltipProvider>

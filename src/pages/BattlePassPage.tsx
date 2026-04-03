@@ -8,7 +8,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import TopBar from "@/components/layout/TopBar";
-import BottomNav from "@/components/BottomNav";
 
 /* ── Season config ── */
 const SEASON_END = new Date("2026-05-01T00:00:00Z");
@@ -468,7 +467,6 @@ export default function BattlePassPage() {
         )}
       </AnimatePresence>
 
-      <BottomNav />
     </div>
   );
 }
