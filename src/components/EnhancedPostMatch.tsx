@@ -12,6 +12,8 @@ import WagonWheel from "./WagonWheel";
 import type { BallResult } from "@/hooks/useHandCricket";
 import victoryTrophy from "@/assets/victory-trophy.png";
 import GameButton from "./shared/GameButton";
+import ShareButton from "./share/ShareButton";
+import MatchShareCard from "./share/MatchShareCard";
 import LevelUpModal, { type MatchRewards } from "./LevelUpModal";
 
 interface RivalryStats {
@@ -353,11 +355,33 @@ export default function EnhancedPostMatch({
             </motion.div>
           )}
 
-          {/* Fixed bottom button */}
-          <div className="sticky bottom-0 p-4 pb-8 bg-gradient-to-t from-[hsl(220_25%_8%)] via-[hsl(220_25%_8%/0.95)] to-transparent">
-            <GameButton variant="gold" size="lg" bounce onClick={handleClose} className="w-full">
-              ⚡ CONTINUE
-            </GameButton>
+          {/* Fixed bottom buttons */}
+          <div className="sticky bottom-0 p-4 pb-8 bg-gradient-to-t from-[hsl(220_25%_8%)] via-[hsl(220_25%_8%/0.95)] to-transparent flex flex-col gap-2">
+            <div className="flex gap-2">
+              <ShareButton
+                title={`${isWin ? "🏆 Victory" : isLoss ? "Defeat" : "🤝 Tie"} — ${playerScore} vs ${opponentScore}`}
+                text={`${isWin ? "I won!" : isLoss ? "Tough loss." : "It's a tie!"} ${playerScore}-${opponentScore} on Hand Cricket 🏏`}
+                variant="primary"
+                size="md"
+                className="flex-1"
+                renderCard={() => (
+                  <MatchShareCard
+                    playerName={playerName}
+                    opponentName={opponentName}
+                    result={result}
+                    playerScore={playerScore}
+                    opponentScore={opponentScore}
+                    playerWickets={playerWickets}
+                    opponentWickets={opponentWickets}
+                    stats={stats}
+                    isPvP={isPvP}
+                  />
+                )}
+              />
+              <GameButton variant="gold" size="lg" bounce onClick={handleClose} className="flex-[2]">
+                ⚡ CONTINUE
+              </GameButton>
+            </div>
           </div>
         </motion.div>
       )}
