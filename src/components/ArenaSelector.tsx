@@ -83,6 +83,7 @@ export default function ArenaSelector({ currentTierIndex, selectedArenaId, onSel
           );
         })}
       </div>
+      </ScrollHint>
     </div>
   );
 }
