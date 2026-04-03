@@ -176,6 +176,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const setShowInningsBreak = useCallback((v: boolean) => { showInningsBreakRef.current = v; _setShowInningsBreak(v); }, []);
   const [inningsBreakReady, setInningsBreakReady] = useState(false);
   const [inningsBreakStats, setInningsBreakStats] = useState<{ batter: string; bowler: string; score: number; lastMove: string; opponentLastMove: string } | null>(null);
+  const [inningsBreakCountdown, setInningsBreakCountdown] = useState(15);
+  const inningsBreakTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
   // Post-toss role card
   const [showRoleCard, setShowRoleCard] = useState(false);
@@ -1616,6 +1618,23 @@ export default function MultiplayerScreen({ onHome }: Props) {
                   <p className="text-[10px] text-muted-foreground font-display">
                     Defend <span className="text-secondary font-black text-sm">{myScore}</span> runs
                   </p>
+                )}
+
+                {/* Auto-ready countdown */}
+                {!inningsBreakReady && (
+                  <div className="space-y-1.5">
+                    <div className="w-full h-1.5 rounded-full bg-muted/20 overflow-hidden">
+                      <motion.div
+                        className="h-full rounded-full bg-gradient-to-r from-neon-green to-neon-green/70"
+                        initial={{ width: "100%" }}
+                        animate={{ width: `${(inningsBreakCountdown / 15) * 100}%` }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    </div>
+                    <p className="text-[8px] text-muted-foreground font-display tracking-wider">
+                      Auto-ready in <span className="text-secondary font-bold">{inningsBreakCountdown}s</span>
+                    </p>
+                  </div>
                 )}
 
                 {/* Ready button */}
