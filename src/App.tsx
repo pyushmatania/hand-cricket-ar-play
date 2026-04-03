@@ -90,6 +90,7 @@ const App = () => {
             ) : (
               <BrowserRouter>
                 <MatchInviteNotification />
+                <ChatNotificationListener />
                 <AnimatedRoutes />
               </BrowserRouter>
             )}

@@ -56,8 +56,12 @@ export default function LobbyChat({ friend, onBack, onOpen }: LobbyChatProps) {
     setTimeout(() => scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" }), 50);
   }, []);
 
-  // Mark as read on open
-  useEffect(() => { onOpen?.(); }, []);
+  // Mark as read on open & suppress global toast for this friend
+  useEffect(() => {
+    onOpen?.();
+    setActiveChatPartner(friend.user_id);
+    return () => setActiveChatPartner(null);
+  }, [friend.user_id]);
 
   // Load recent messages
   useEffect(() => {
