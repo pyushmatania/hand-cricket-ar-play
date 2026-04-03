@@ -26,6 +26,7 @@ interface TapGameScreenProps {
 export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const location = useLocation();
   const arenaImage = (location.state as any)?.arenaImage as string | undefined;
+  const arenaId = (location.state as any)?.arenaId as string | undefined;
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
   const { soundEnabled, hapticsEnabled, crowdEnabled, commentaryVoice, tapCeremoniesEnabled } = useSettings();
@@ -231,6 +232,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
           matchConfig={matchConfig || undefined}
           commentators={matchCommentators}
           arenaImage={arenaImage}
+          arenaId={arenaId}
         />
       </div>
     </div>

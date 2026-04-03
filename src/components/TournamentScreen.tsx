@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -34,6 +35,9 @@ const AI_OPPONENTS = [
 interface Props { onHome: () => void; }
 
 export default function TournamentScreen({ onHome }: Props) {
+  const location = useLocation();
+  const arenaImage = (location.state as any)?.arenaImage as string | undefined;
+  const arenaId = (location.state as any)?.arenaId as string | undefined;
   const { soundEnabled, hapticsEnabled, commentaryVoice, tournamentCeremoniesEnabled } = useSettings();
   const { user } = useAuth();
   const { game, startGame, playBall, resetGame } = useHandCricket();
@@ -322,6 +326,8 @@ export default function TournamentScreen({ onHome }: Props) {
               matchConfig={matchConfig}
               innings1Balls={game.innings1Balls}
               commentators={matchCommentators}
+              arenaImage={arenaImage}
+              arenaId={arenaId}
             />
           </>
         )}

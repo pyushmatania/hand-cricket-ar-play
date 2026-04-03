@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import { useHandCricket, type Move, type MatchConfig } from "@/hooks/useHandCricket";
 import { useMatchSaver } from "@/hooks/useMatchSaver";
 import { SFX, Haptics } from "@/lib/sounds";
@@ -29,6 +30,9 @@ function getTodayKey(): string {
 const DAILY_CONFIG: MatchConfig = { overs: 5, wickets: 3 };
 
 export default function DailyChallengeScreen({ onHome }: Props) {
+  const location = useLocation();
+  const arenaImage = (location.state as any)?.arenaImage as string | undefined;
+  const arenaId = (location.state as any)?.arenaId as string | undefined;
   const { soundEnabled, hapticsEnabled, crowdEnabled, commentaryVoice, dailyCeremoniesEnabled } = useSettings();
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
@@ -276,6 +280,8 @@ export default function DailyChallengeScreen({ onHome }: Props) {
               matchConfig={DAILY_CONFIG}
               innings1Balls={game.innings1Balls}
               commentators={matchCommentators}
+              arenaImage={arenaImage}
+              arenaId={arenaId}
             />
           </>
         )}

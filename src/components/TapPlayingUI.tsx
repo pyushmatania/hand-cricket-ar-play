@@ -55,6 +55,7 @@ export interface TapPlayingUIProps {
   innings1Balls?: number;
   commentators?: [Commentator, Commentator];
   arenaImage?: string;
+  arenaId?: string;
 }
 
 export default function TapPlayingUI({
@@ -65,13 +66,14 @@ export default function TapPlayingUI({
   isPvP = false, waitingForOpponent = false, cooldownOverride,
   extraContent, modeLabel = "TAP MODE", matchConfig, innings1Balls, commentators,
   arenaImage,
+  arenaId,
 }: TapPlayingUIProps) {
   const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, commentaryVoice, voiceEngine, commentaryLanguage, musicEnabled, ambientVolume } = useSettings();
 
-  // Ambient stadium music
+  // Ambient stadium music — arena-specific
   useEffect(() => {
     if (soundEnabled && musicEnabled && !result) {
-      startAmbientStadium(ambientVolume);
+      startAmbientStadium(ambientVolume, arenaId);
     } else {
       stopAmbientStadium();
     }

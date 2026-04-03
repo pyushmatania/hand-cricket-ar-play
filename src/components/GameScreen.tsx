@@ -1,5 +1,6 @@
 import { useRef, useCallback, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import CameraFeed, { type CameraFeedHandle, type CameraFilter } from "./CameraFeed";
 import HandOverlay from "./HandOverlay";
 import GestureDisplay from "./GestureDisplay";
@@ -49,6 +50,9 @@ const GLOVE_OPTIONS: { key: GloveStyle; label: string }[] = [
 ];
 
 export default function GameScreen({ onHome }: GameScreenProps) {
+  const location = useLocation();
+  const arenaImage = (location.state as any)?.arenaImage as string | undefined;
+  const arenaId = (location.state as any)?.arenaId as string | undefined;
   const cameraRef = useRef<CameraFeedHandle>(null);
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
   const { game, startGame, playBall, resetGame } = useHandCricket();
@@ -83,15 +87,15 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickConfiguredMatchCommentators(commentaryVoice));
   const prevPhaseRef = useRef(game.phase);
 
-  // Ambient stadium music for AR mode
+  // Ambient stadium music for AR mode — arena-specific
   useEffect(() => {
     if (soundEnabled && musicEnabled && !game.result) {
-      startAmbientStadium(ambientVolume);
+      startAmbientStadium(ambientVolume, arenaId);
     } else {
       stopAmbientStadium();
     }
     return () => { stopAmbientStadium(); };
-  }, [soundEnabled, musicEnabled, game.result]);
+  }, [soundEnabled, musicEnabled, game.result, arenaId]);
 
   useEffect(() => {
     if (soundEnabled && musicEnabled) setAmbientVolume(ambientVolume);

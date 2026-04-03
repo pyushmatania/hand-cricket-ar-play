@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import PlayerAvatar from "@/components/PlayerAvatar";
 import { SFX } from "@/lib/sounds";
+import playerBatsman from "@/assets/player-batsman.png";
+import playerBowler from "@/assets/player-bowler.png";
 
 interface Props {
   playerName: string;
@@ -82,7 +84,7 @@ export default function VSIntroScreen({
           </motion.div>
 
           <div className="relative flex items-center justify-center gap-4 w-full px-6">
-            {/* Player 1 - Left */}
+            {/* Player 1 - Left (Batsman) */}
             <motion.div
               initial={{ x: "-120%", opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -95,13 +97,22 @@ export default function VSIntroScreen({
                 className="relative"
               >
                 <div className="absolute -inset-3 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 blur-xl" />
-                <PlayerAvatar avatarIndex={playerAvatarIndex} size="lg" className="border-primary/40" />
+                {/* Character art */}
+                <motion.img
+                  src={playerBatsman}
+                  alt="Batsman"
+                  className="w-28 h-36 object-contain relative z-10 drop-shadow-[0_0_20px_hsl(217_91%_60%/0.4)]"
+                  initial={{ x: -60, opacity: 0, rotate: -10 }}
+                  animate={{ x: 0, opacity: 1, rotate: 0 }}
+                  transition={{ type: "spring", damping: 12, stiffness: 80, delay: 0.3 }}
+                />
+                <PlayerAvatar avatarIndex={playerAvatarIndex} size="sm" className="border-primary/40 absolute -bottom-2 left-1/2 -translate-x-1/2 z-20" />
               </motion.div>
               <div className="text-center">
                 <span className="font-display text-sm font-black text-foreground tracking-wider block">
                   {playerName.toUpperCase()}
                 </span>
-                <span className="text-[8px] text-primary font-display font-bold tracking-widest">YOU</span>
+                <span className="text-[8px] text-primary font-display font-bold tracking-widest">BATSMAN</span>
               </div>
             </motion.div>
 
@@ -140,7 +151,7 @@ export default function VSIntroScreen({
               ))}
             </motion.div>
 
-            {/* Player 2 - Right */}
+            {/* Player 2 - Right (Bowler) */}
             <motion.div
               initial={{ x: "120%", opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -153,13 +164,22 @@ export default function VSIntroScreen({
                 className="relative"
               >
                 <div className="absolute -inset-3 rounded-2xl bg-gradient-to-br from-out-red/20 to-out-red/5 blur-xl" />
-                <PlayerAvatar avatarIndex={opponentAvatarIndex} size="lg" className="border-out-red/40" />
+                {/* Character art */}
+                <motion.img
+                  src={playerBowler}
+                  alt="Bowler"
+                  className="w-28 h-36 object-contain relative z-10 drop-shadow-[0_0_20px_hsl(0_84%_60%/0.4)]"
+                  initial={{ x: 60, opacity: 0, rotate: 10 }}
+                  animate={{ x: 0, opacity: 1, rotate: 0 }}
+                  transition={{ type: "spring", damping: 12, stiffness: 80, delay: 0.3 }}
+                />
+                <PlayerAvatar avatarIndex={opponentAvatarIndex} size="sm" className="border-out-red/40 absolute -bottom-2 left-1/2 -translate-x-1/2 z-20" />
               </motion.div>
               <div className="text-center">
                 <span className="font-display text-sm font-black text-foreground tracking-wider block">
                   {opponentName.toUpperCase()}
                 </span>
-                <span className="text-[8px] text-out-red font-display font-bold tracking-widest">RIVAL</span>
+                <span className="text-[8px] text-out-red font-display font-bold tracking-widest">BOWLER</span>
               </div>
             </motion.div>
           </div>

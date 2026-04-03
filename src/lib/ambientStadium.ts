@@ -1,5 +1,5 @@
 // Ambient stadium atmosphere — generative Web Audio loop
-// Layers: crowd murmur, distant chanting rhythm, soft pad drone
+// Layers vary by arena: classroom (kids), street (neighborhood), IPL (massive crowd)
 
 let ctx: AudioContext | null = null;
 let masterGain: GainNode | null = null;
@@ -12,6 +12,68 @@ let baseVolume = 0.3;
 let boosting = false;
 let boostTimeout: ReturnType<typeof setTimeout> | null = null;
 let silenceTimeout: ReturnType<typeof setTimeout> | null = null;
+let currentArenaId: string | null = null;
+
+export type ArenaAudioProfile = "school" | "street" | "ipl";
+
+interface ArenaAudioConfig {
+  noiseGain: number;
+  noiseBandpass: number;
+  noiseQ: number;
+  noiseBrownianFactor: number;
+  droneFreq1: number;
+  droneFreq2: number;
+  droneGain: number;
+  chantBaseFreq: number;
+  chantGain: number;
+  chantIntervalMs: number;
+  chantVariance: number;
+}
+
+const ARENA_AUDIO: Record<ArenaAudioProfile, ArenaAudioConfig> = {
+  // Classroom: kids chattering, higher pitch, lighter
+  school: {
+    noiseGain: 0.2,
+    noiseBandpass: 700,
+    noiseQ: 0.8,
+    noiseBrownianFactor: 0.06,
+    droneFreq1: 180,
+    droneFreq2: 270,
+    droneGain: 0.04,
+    chantBaseFreq: 400,
+    chantGain: 0.04,
+    chantIntervalMs: 1800,
+    chantVariance: 100,
+  },
+  // Street: neighborhood sounds, mid-range, organic
+  street: {
+    noiseGain: 0.3,
+    noiseBandpass: 500,
+    noiseQ: 0.5,
+    noiseBrownianFactor: 0.05,
+    droneFreq1: 140,
+    droneFreq2: 200,
+    droneGain: 0.06,
+    chantBaseFreq: 300,
+    chantGain: 0.05,
+    chantIntervalMs: 2200,
+    chantVariance: 80,
+  },
+  // IPL: massive roaring crowds, deep bass, powerful
+  ipl: {
+    noiseGain: 0.45,
+    noiseBandpass: 350,
+    noiseQ: 0.4,
+    noiseBrownianFactor: 0.04,
+    droneFreq1: 80,
+    droneFreq2: 130,
+    droneGain: 0.1,
+    chantBaseFreq: 200,
+    chantGain: 0.08,
+    chantIntervalMs: 2800,
+    chantVariance: 50,
+  },
+};
 
 function getCtx(): AudioContext {
   if (!ctx) ctx = new AudioContext();
@@ -19,13 +81,20 @@ function getCtx(): AudioContext {
   return ctx;
 }
 
-function createCrowdNoise(ac: AudioContext, dest: AudioNode) {
+function getArenaConfig(arenaId?: string): ArenaAudioConfig {
+  if (arenaId && arenaId in ARENA_AUDIO) return ARENA_AUDIO[arenaId as ArenaAudioProfile];
+  // Map unknown arena ids to closest profile
+  if (arenaId === "classroom") return ARENA_AUDIO.school;
+  return ARENA_AUDIO.ipl; // default to IPL
+}
+
+function createCrowdNoise(ac: AudioContext, dest: AudioNode, cfg: ArenaAudioConfig) {
   const len = ac.sampleRate * 4;
   const buf = ac.createBuffer(2, len, ac.sampleRate);
   for (let ch = 0; ch < 2; ch++) {
     const d = buf.getChannelData(ch);
     for (let i = 0; i < len; i++) {
-      d[i] = (i === 0 ? 0 : d[i - 1]) + (Math.random() * 2 - 1) * 0.04;
+      d[i] = (i === 0 ? 0 : d[i - 1]) + (Math.random() * 2 - 1) * cfg.noiseBrownianFactor;
       d[i] *= 0.95;
     }
   }
@@ -35,11 +104,11 @@ function createCrowdNoise(ac: AudioContext, dest: AudioNode) {
 
   const bp = ac.createBiquadFilter();
   bp.type = "bandpass";
-  bp.frequency.value = 400;
-  bp.Q.value = 0.6;
+  bp.frequency.value = cfg.noiseBandpass;
+  bp.Q.value = cfg.noiseQ;
 
   const g = ac.createGain();
-  g.gain.value = 0.35;
+  g.gain.value = cfg.noiseGain;
 
   src.connect(bp);
   bp.connect(g);
@@ -48,17 +117,17 @@ function createCrowdNoise(ac: AudioContext, dest: AudioNode) {
   return src;
 }
 
-function createDrone(ac: AudioContext, dest: AudioNode) {
+function createDrone(ac: AudioContext, dest: AudioNode, cfg: ArenaAudioConfig) {
   const o1 = ac.createOscillator();
   const o2 = ac.createOscillator();
   o1.type = "sine";
   o2.type = "sine";
-  o1.frequency.value = 110;
-  o2.frequency.value = 165;
+  o1.frequency.value = cfg.droneFreq1;
+  o2.frequency.value = cfg.droneFreq2;
   o2.detune.value = 5;
 
   const g = ac.createGain();
-  g.gain.value = 0.08;
+  g.gain.value = cfg.droneGain;
 
   o1.connect(g);
   o2.connect(g);
@@ -68,16 +137,16 @@ function createDrone(ac: AudioContext, dest: AudioNode) {
   return { o1, o2 };
 }
 
-function startChantPulse(ac: AudioContext, dest: AudioNode) {
+function startChantPulse(ac: AudioContext, dest: AudioNode, cfg: ArenaAudioConfig) {
   const pulse = () => {
     try {
       const t = ac.currentTime;
       const osc = ac.createOscillator();
       const g = ac.createGain();
       osc.type = "sine";
-      osc.frequency.value = 220 + Math.random() * 60;
+      osc.frequency.value = cfg.chantBaseFreq + Math.random() * cfg.chantVariance;
       g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(0.06, t + 0.8);
+      g.gain.linearRampToValueAtTime(cfg.chantGain, t + 0.8);
       g.gain.exponentialRampToValueAtTime(0.001, t + 2.2);
       osc.connect(g);
       g.connect(dest);
@@ -85,28 +154,34 @@ function startChantPulse(ac: AudioContext, dest: AudioNode) {
       osc.stop(t + 2.5);
     } catch { /* ignore */ }
   };
-  const id = setInterval(pulse, 2500 + Math.random() * 1500);
+  const id = setInterval(pulse, cfg.chantIntervalMs + Math.random() * 1500);
   pulse();
   return id;
 }
 
-export function startAmbientStadium(volume = 0.3) {
+export function startAmbientStadium(volume = 0.3, arenaId?: string) {
+  // If arena changed, restart with new profile
+  if (running && arenaId !== currentArenaId) {
+    stopAmbientStadium();
+  }
   if (running) {
     setAmbientVolume(volume);
     return;
   }
   try {
     const ac = getCtx();
+    const cfg = getArenaConfig(arenaId);
+    currentArenaId = arenaId || null;
     baseVolume = Math.max(0, Math.min(1, volume));
     masterGain = ac.createGain();
     masterGain.gain.value = baseVolume;
     masterGain.connect(ac.destination);
 
-    noiseSource = createCrowdNoise(ac, masterGain);
-    const drone = createDrone(ac, masterGain);
+    noiseSource = createCrowdNoise(ac, masterGain, cfg);
+    const drone = createDrone(ac, masterGain, cfg);
     droneOsc1 = drone.o1;
     droneOsc2 = drone.o2;
-    chantInterval = startChantPulse(ac, masterGain);
+    chantInterval = startChantPulse(ac, masterGain, cfg);
     running = true;
   } catch { /* Audio not supported */ }
 }
@@ -130,6 +205,7 @@ export function stopAmbientStadium() {
   masterGain = null;
   boosting = false;
   running = false;
+  currentArenaId = null;
 }
 
 export function setAmbientVolume(v: number) {
