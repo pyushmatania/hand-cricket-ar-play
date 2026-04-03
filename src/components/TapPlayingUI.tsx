@@ -19,7 +19,7 @@ import pitch3d from "@/assets/pitch-3d.jpg";
 import { getBestArena } from "@/lib/arenas";
 import GameButton from "./shared/GameButton";
 import { getBatSkin, getButtonStyle } from "@/lib/cosmetics";
-import type { Move } from "@/hooks/useHandCricket";
+const ALL_MOVE_KEYS: Move[] = ["DEF", 1, 2, 3, 4, 6];
 
 export interface TapPlayingUIProps {
   phase: InningsPhase;
