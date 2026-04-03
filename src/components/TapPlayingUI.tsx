@@ -491,30 +491,105 @@ export default function TapPlayingUI({
             {isBatting ? "⚡ TAP YOUR SHOT" : "🎯 TAP YOUR BOWL"}
           </p>
           <div className={`grid gap-2 ${activeMoves.length === 5 ? "grid-cols-5" : "grid-cols-3"}`}>
-            {activeMoves.map((m) => (
-              <motion.button
-                key={m.label}
-                whileTap={{ scale: 0.85, y: 2 }}
-                onClick={() => handleMove(m.move)}
-                disabled={effectiveCooldown}
-                className={`relative flex flex-col items-center gap-0.5 py-2.5 rounded-2xl font-game-display font-black text-white border-b-4 transition-all active:border-b-2 active:translate-y-[2px] ${
-                  effectiveCooldown
-                    ? "opacity-30 cursor-not-allowed bg-white/5 border-transparent"
-                    : `bg-gradient-to-b ${m.color} ${m.border} ${m.glow}`
-                }`}
-              >
-                <span className="text-xl leading-none">{m.emoji}</span>
-                <span className="text-[10px] tracking-wider">{m.label}</span>
-                {effectiveCooldown && lastPlayed === m.move && (
-                  <motion.div
-                    initial={{ scaleX: 1 }}
-                    animate={{ scaleX: 0 }}
-                    transition={{ duration: 0.8, ease: "linear" }}
-                    className="absolute bottom-1 left-2 right-2 h-0.5 bg-white/50 rounded-full origin-left"
-                  />
-                )}
-              </motion.button>
-            ))}
+            {activeMoves.map((m, i) => {
+              const styleId = btnTheme.id;
+              // Per-style entrance variants
+              const entranceVariants: Record<string, any> = {
+                classic: {
+                  initial: { opacity: 0, y: 20 },
+                  animate: { opacity: 1, y: 0 },
+                  transition: { delay: i * 0.05, type: "spring", stiffness: 400, damping: 20 },
+                },
+                neon: {
+                  initial: { opacity: 0, scale: 0.5 },
+                  animate: {
+                    opacity: 1,
+                    scale: [0.5, 1.15, 0.95, 1],
+                    boxShadow: [
+                      "0 0 0px transparent",
+                      "0 0 30px hsl(300 100% 50% / 0.6)",
+                      "0 0 15px hsl(300 100% 50% / 0.3)",
+                      "0 0 20px hsl(300 100% 50% / 0.2)",
+                    ],
+                  },
+                  transition: { delay: i * 0.07, duration: 0.6, ease: "easeOut" },
+                },
+                manga: {
+                  initial: { opacity: 0, x: i % 2 === 0 ? -40 : 40, rotate: i % 2 === 0 ? -15 : 15 },
+                  animate: { opacity: 1, x: 0, rotate: 0 },
+                  transition: { delay: i * 0.06, type: "spring", stiffness: 500, damping: 18 },
+                },
+                skeleton: {
+                  initial: { opacity: 0 },
+                  animate: {
+                    opacity: [0, 1, 0.2, 0.9, 0.3, 1],
+                  },
+                  transition: { delay: i * 0.08, duration: 0.8, ease: "linear" },
+                },
+                royal: {
+                  initial: { opacity: 0, scale: 0.3, rotate: -180 },
+                  animate: { opacity: 1, scale: 1, rotate: 0 },
+                  transition: { delay: i * 0.08, type: "spring", stiffness: 300, damping: 15 },
+                },
+              };
+              const motionProps = entranceVariants[styleId] || entranceVariants.classic;
+
+              return (
+                <motion.button
+                  key={m.label}
+                  initial={motionProps.initial}
+                  animate={motionProps.animate}
+                  transition={motionProps.transition}
+                  whileTap={{ scale: 0.85, y: 2 }}
+                  onClick={() => handleMove(m.move)}
+                  disabled={effectiveCooldown}
+                  className={`relative flex flex-col items-center gap-0.5 py-2.5 rounded-2xl font-game-display font-black text-white border-b-4 transition-all active:border-b-2 active:translate-y-[2px] overflow-hidden ${
+                    effectiveCooldown
+                      ? "opacity-30 cursor-not-allowed bg-white/5 border-transparent"
+                      : `bg-gradient-to-b ${m.color} ${m.border} ${m.glow}`
+                  }`}
+                >
+                  {/* Neon pulse ring */}
+                  {styleId === "neon" && !effectiveCooldown && (
+                    <motion.div
+                      animate={{ scale: [1, 1.6, 1], opacity: [0.4, 0, 0.4] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+                      className="absolute inset-0 rounded-2xl border-2 border-current pointer-events-none"
+                      style={{ borderColor: "hsl(300 100% 60% / 0.3)" }}
+                    />
+                  )}
+                  {/* Manga slash line */}
+                  {styleId === "manga" && !effectiveCooldown && (
+                    <motion.div
+                      initial={{ x: "-120%", opacity: 0 }}
+                      animate={{ x: ["120%"], opacity: [0, 0.7, 0] }}
+                      transition={{ duration: 0.6, delay: 0.3 + i * 0.1 }}
+                      className="absolute inset-y-0 w-[3px] bg-white pointer-events-none"
+                      style={{ transform: "skewX(-20deg)" }}
+                    />
+                  )}
+                  {/* Skeleton scan line */}
+                  {styleId === "skeleton" && !effectiveCooldown && (
+                    <motion.div
+                      animate={{ y: ["-100%", "200%"] }}
+                      transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2, ease: "linear" }}
+                      className="absolute left-0 right-0 h-[2px] pointer-events-none"
+                      style={{ background: "linear-gradient(90deg, transparent, hsl(180 60% 60% / 0.5), transparent)" }}
+                    />
+                  )}
+                  <span className="text-xl leading-none relative z-10">{m.emoji}</span>
+                  <span className="text-[10px] tracking-wider relative z-10">{m.label}</span>
+                  {effectiveCooldown && lastPlayed === m.move && (
+                    <motion.div
+                      initial={{ scaleX: 1 }}
+                      animate={{ scaleX: 0 }}
+                      transition={{ duration: 0.8, ease: "linear" }}
+                      className="absolute bottom-1 left-2 right-2 h-0.5 bg-white/50 rounded-full origin-left"
+                    />
+                  )}
+                </motion.button>
+              );
+            })}
           </div>
           {!isPvP && (
             <button onClick={onReset}
