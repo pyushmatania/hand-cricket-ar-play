@@ -97,8 +97,13 @@ export default function EnhancedPostMatch({
 
   const handleClose = () => {
     stopMusic();
-    setVisible(false);
-    setTimeout(stableOnComplete, 300);
+    if (matchRewards && (matchRewards.newLevel > matchRewards.oldLevel || (matchRewards.newRankName !== matchRewards.oldRankName))) {
+      setVisible(false);
+      setShowLevelUp(true);
+    } else {
+      setVisible(false);
+      setTimeout(stableOnComplete, 300);
+    }
   };
 
   const overs = stats.totalBalls > 0 ? `${Math.floor(stats.totalBalls / 6)}.${stats.totalBalls % 6}` : "0.0";
