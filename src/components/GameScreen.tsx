@@ -1,4 +1,5 @@
 import { useRef, useCallback, useState, useEffect } from "react";
+import { useScreenShake } from "@/hooks/useScreenShake";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import CameraFeed, { type CameraFeedHandle, type CameraFilter } from "./CameraFeed";
@@ -58,6 +59,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
   const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, voiceEngine, commentaryVoice, commentaryLanguage, musicEnabled, ambientVolume, arCeremoniesEnabled } = useSettings();
+  const shake = useScreenShake();
   const detection = useHandDetection(videoElementRef);
   const [matchConfig, setMatchConfig] = useState<import("@/hooks/useHandCricket").MatchConfig | null>(null);
   const [showOverSelector, setShowOverSelector] = useState(true);
@@ -283,12 +285,14 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         if (hapticsEnabled) Haptics.out();
         crowdGaspMute();
       }, 150);
+      shake("heavy");
       setFireworkType("wicket");
       if (soundEnabled) setTimeout(() => SFX.fireworkPop(), 300);
     } else if (typeof r.runs === "number") {
       const abs = Math.abs(r.runs);
       if (abs === 6) {
         setTimeout(() => { if (soundEnabled) SFX.six(); if (hapticsEnabled) Haptics.heavy(); crowdRoar("six"); }, 100);
+        shake("medium");
         setFireworkType("six");
         if (soundEnabled) {
           setTimeout(() => SFX.fireworkWhoosh(), 400);
@@ -297,6 +301,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         if (hapticsEnabled) setTimeout(() => Haptics.firework(), 800);
       } else if (abs === 4) {
         setTimeout(() => { if (soundEnabled) SFX.four(); if (hapticsEnabled) Haptics.medium(); crowdRoar("four"); }, 100);
+        shake("light");
         setFireworkType("four");
         if (soundEnabled) setTimeout(() => SFX.fireworkPop(), 400);
       } else {

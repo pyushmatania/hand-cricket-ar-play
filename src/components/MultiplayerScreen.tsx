@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useScreenShake } from "@/hooks/useScreenShake";
 import { AVATAR_PRESETS } from "@/lib/avatars";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -118,6 +119,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const { commentaryVoice, multiplayerCeremoniesEnabled } = useSettings();
   const { unreadCount, markRead } = useUnreadMessages();
   const onlineUsers = usePresence();
+  const shake = useScreenShake();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [phase, _setPhase] = useState<Phase>("lobby");
@@ -464,6 +466,14 @@ export default function MultiplayerScreen({ onHome }: Props) {
               if (prev.length >= (updated.current_turn)) return prev;
               return [...prev, guestBallResult];
             });
+            // Screen shake for guest
+            if (isOut) {
+              shake("heavy");
+            } else if (typeof ballRuns === "number" && Math.abs(ballRuns) >= 6) {
+              shake("medium");
+            } else if (typeof ballRuns === "number" && Math.abs(ballRuns) >= 4) {
+              shake("light");
+            }
             setLastResult(payload_data.text || null);
             setTimeout(() => { setLastResult(null); setLastBallResult(null); }, 2500);
           }
@@ -1111,6 +1121,15 @@ export default function MultiplayerScreen({ onHome }: Props) {
 
     setLastBallResult(ballResult);
     setPvpBallHistory(prev => [...prev, ballResult]);
+
+    // Screen shake on wickets, sixes, fours
+    if (isOut) {
+      shake("heavy");
+    } else if (typeof ballRuns === "number" && Math.abs(ballRuns) >= 6) {
+      shake("medium");
+    } else if (typeof ballRuns === "number" && Math.abs(ballRuns) >= 4) {
+      shake("light");
+    }
 
     setLastResult(result);
     setTimeout(() => { setLastResult(null); setLastBallResult(null); }, 2500);
