@@ -93,6 +93,7 @@ const App = () => {
                 <MatchInviteNotification />
                 <ChatNotificationListener />
                 <AnimatedRoutes />
+                <BottomNav />
               </BrowserRouter>
             )}
           </TooltipProvider>
