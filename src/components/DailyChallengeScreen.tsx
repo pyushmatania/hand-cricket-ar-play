@@ -92,7 +92,9 @@ export default function DailyChallengeScreen({ onHome }: Props) {
   useEffect(() => {
     if (game.phase === "finished" && !savedRef.current) {
       savedRef.current = true;
-      saveMatch(game, "daily");
+      saveMatch(game, "daily").then((rewards) => {
+        if (rewards) setMatchRewards(rewards);
+      });
       localStorage.setItem(`hc_daily_${todayKey}`, String(game.userScore));
       setBestToday(game.userScore);
       setAlreadyPlayed(true);
