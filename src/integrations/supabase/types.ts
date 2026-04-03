@@ -359,6 +359,7 @@ export type Database = {
           draws: number
           equipped_avatar_frame: string | null
           equipped_bat_skin: string | null
+          equipped_button_style: string | null
           equipped_vs_effect: string | null
           has_premium_pass: boolean
           high_score: number
@@ -390,6 +391,7 @@ export type Database = {
           draws?: number
           equipped_avatar_frame?: string | null
           equipped_bat_skin?: string | null
+          equipped_button_style?: string | null
           equipped_vs_effect?: string | null
           has_premium_pass?: boolean
           high_score?: number
@@ -421,6 +423,7 @@ export type Database = {
           draws?: number
           equipped_avatar_frame?: string | null
           equipped_bat_skin?: string | null
+          equipped_button_style?: string | null
           equipped_vs_effect?: string | null
           has_premium_pass?: boolean
           high_score?: number
