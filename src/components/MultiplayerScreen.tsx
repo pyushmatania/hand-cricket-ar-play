@@ -176,6 +176,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const setShowInningsBreak = useCallback((v: boolean) => { showInningsBreakRef.current = v; _setShowInningsBreak(v); }, []);
   const [inningsBreakReady, setInningsBreakReady] = useState(false);
   const [inningsBreakStats, setInningsBreakStats] = useState<{ batter: string; bowler: string; score: number; lastMove: string; opponentLastMove: string } | null>(null);
+  const [inningsBreakCountdown, setInningsBreakCountdown] = useState(15);
+  const inningsBreakTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   
   // Post-toss role card
   const [showRoleCard, setShowRoleCard] = useState(false);
@@ -491,6 +493,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
               stopTimer();
             }
           }
+
 
           // Handle ready-up: when both players have readied during innings_break, host transitions
           if ((updated as any).phase === "innings_break" && updated.host_move === "READY" && updated.guest_move === "READY" && user?.id === updated.host_id) {
@@ -1143,6 +1146,36 @@ export default function MultiplayerScreen({ onHome }: Props) {
   };
 
   const isHost = currentGame && user?.id === currentGame.host_id;
+
+  // Innings break auto-ready countdown
+  useEffect(() => {
+    if (!showInningsBreak || inningsBreakReady) {
+      if (inningsBreakTimerRef.current) { clearInterval(inningsBreakTimerRef.current); inningsBreakTimerRef.current = null; }
+      return;
+    }
+    setInningsBreakCountdown(15);
+    inningsBreakTimerRef.current = setInterval(() => {
+      setInningsBreakCountdown(prev => {
+        if (prev <= 1) {
+          // Auto-ready
+          if (currentGame && user && !inningsBreakReady) {
+            setInningsBreakReady(true);
+            const isHostLocal = user.id === currentGame.host_id;
+            supabase.from("multiplayer_games").update(
+              isHostLocal
+                ? { host_move: "READY", host_move_submitted_at: new Date().toISOString() }
+                : { guest_move: "READY", guest_move_submitted_at: new Date().toISOString() }
+            ).eq("id", currentGame.id);
+          }
+          if (inningsBreakTimerRef.current) { clearInterval(inningsBreakTimerRef.current); inningsBreakTimerRef.current = null; }
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => { if (inningsBreakTimerRef.current) { clearInterval(inningsBreakTimerRef.current); inningsBreakTimerRef.current = null; } };
+  }, [showInningsBreak, inningsBreakReady]);
+
   const isBatting = currentGame ? (isHost ? currentGame.host_batting : !currentGame.host_batting) : false;
   const myScore = currentGame ? (isHost ? currentGame.host_score : currentGame.guest_score) : 0;
   const oppScore = currentGame ? (isHost ? currentGame.guest_score : currentGame.host_score) : 0;
@@ -1616,6 +1649,23 @@ export default function MultiplayerScreen({ onHome }: Props) {
                   <p className="text-[10px] text-muted-foreground font-display">
                     Defend <span className="text-secondary font-black text-sm">{myScore}</span> runs
                   </p>
+                )}
+
+                {/* Auto-ready countdown */}
+                {!inningsBreakReady && (
+                  <div className="space-y-1.5">
+                    <div className="w-full h-1.5 rounded-full bg-muted/20 overflow-hidden">
+                      <motion.div
+                        className="h-full rounded-full bg-gradient-to-r from-neon-green to-neon-green/70"
+                        initial={{ width: "100%" }}
+                        animate={{ width: `${(inningsBreakCountdown / 15) * 100}%` }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    </div>
+                    <p className="text-[8px] text-muted-foreground font-display tracking-wider">
+                      Auto-ready in <span className="text-secondary font-bold">{inningsBreakCountdown}s</span>
+                    </p>
+                  </div>
                 )}
 
                 {/* Ready button */}
