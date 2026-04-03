@@ -62,6 +62,7 @@ export default function HomePage() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [recentMatch, setRecentMatch] = useState<RecentMatch | null>(null);
   const { rivals, loading: rivalsLoading } = useRivals();
+  const seasonalTheme = getCurrentSeasonalTheme();
 
   useEffect(() => {
     const seen = localStorage.getItem("hc_onboarding_done");
