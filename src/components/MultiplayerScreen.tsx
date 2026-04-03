@@ -12,6 +12,7 @@ import VSIntroScreen from "./VSIntroScreen";
 import TapPlayingUI from "./TapPlayingUI";
 import EnhancedPreMatch from "./EnhancedPreMatch";
 import EnhancedPostMatch from "./EnhancedPostMatch";
+import LobbyChat from "./LobbyChat";
 import { pickConfiguredMatchCommentators, type Commentator } from "@/lib/commentaryDuo";
 import { useSettings } from "@/contexts/SettingsContext";
 import type { Move, BallResult } from "@/hooks/useHandCricket";
