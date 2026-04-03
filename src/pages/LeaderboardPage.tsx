@@ -458,22 +458,24 @@ export default function LeaderboardPage() {
         </motion.div>
 
         {/* Scrollable tab bar — game-styled */}
-        <div className="flex gap-1 mb-4 bg-game-dark/80 rounded-2xl p-1 overflow-x-auto no-scrollbar border border-[hsl(222_25%_22%/0.5)]">
-          {mainTabs.map((t) => (
-            <button
-              key={t.key}
-              onClick={() => setMainTab(t.key)}
-              className={`shrink-0 px-3 py-2.5 rounded-xl font-game-display text-[7px] tracking-widest transition-all flex items-center gap-1 ${
-                mainTab === t.key
-                  ? "bg-gradient-to-b from-game-gold to-[hsl(43_96%_42%)] text-game-dark border-b-2 border-[hsl(43_96%_32%)] shadow-[0_2px_8px_hsl(51_100%_50%/0.3)] font-bold"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              <span className="text-sm">{t.icon}</span>
-              {t.label}
-            </button>
-          ))}
-        </div>
+        <ScrollHint>
+          <div className="flex gap-1 mb-4 bg-game-dark/80 rounded-2xl p-1 border border-[hsl(222_25%_22%/0.5)]">
+            {mainTabs.map((t) => (
+              <button
+                key={t.key}
+                onClick={() => setMainTab(t.key)}
+                className={`shrink-0 px-3 py-2.5 rounded-xl font-game-display text-[7px] tracking-widest transition-all flex items-center gap-1 ${
+                  mainTab === t.key
+                    ? "bg-gradient-to-b from-game-gold to-[hsl(43_96%_42%)] text-game-dark border-b-2 border-[hsl(43_96%_32%)] shadow-[0_2px_8px_hsl(51_100%_50%/0.3)] font-bold"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <span className="text-sm">{t.icon}</span>
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </ScrollHint>
 
         {/* Sort options — game-styled chips */}
         {(mainTab === "global" || mainTab === "friends") && (
