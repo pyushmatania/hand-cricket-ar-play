@@ -125,6 +125,20 @@ export default function SettingsPage() {
   const navigate = useNavigate();
   const [expandedGroup, setExpandedGroup] = useState<string | null>("AUDIO & SOUND");
   const [previewingVoice, setPreviewingVoice] = useState<string | null>(null);
+  const [selectedButtonStyle, setSelectedButtonStyle] = useState<string>("classic");
+
+  // Load current button style
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("profiles").select("equipped_button_style").eq("user_id", user.id).maybeSingle()
+      .then(({ data }) => { if ((data as any)?.equipped_button_style) setSelectedButtonStyle((data as any).equipped_button_style); });
+  }, [user]);
+
+  const handleButtonStyleChange = useCallback(async (styleId: string) => {
+    setSelectedButtonStyle(styleId);
+    if (!user) return;
+    await supabase.from("profiles").update({ equipped_button_style: styleId } as any).eq("user_id", user.id);
+  }, [user]);
 
   const previewSystemVoice = useCallback(async (personaId: string) => {
     if (previewingVoice) return;
