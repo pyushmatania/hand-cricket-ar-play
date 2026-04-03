@@ -17,6 +17,7 @@ import TapPlayingUI from "./TapPlayingUI";
 import OverSelector from "./OverSelector";
 import { useEquippedCosmetics } from "@/hooks/useEquippedCosmetics";
 import TournamentFixtureCard from "./TournamentFixtureCard";
+import { rollWeather, type Weather } from "@/lib/weather";
 
 type Round = {
   round: number;
