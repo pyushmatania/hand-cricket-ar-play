@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useScreenShake } from "@/hooks/useScreenShake";
 import { AVATAR_PRESETS } from "@/lib/avatars";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
