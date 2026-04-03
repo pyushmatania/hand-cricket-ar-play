@@ -12,6 +12,7 @@ import FriendStatsModal from "@/components/FriendStatsModal";
 import XpHistoryFeed from "@/components/XpHistoryFeed";
 import { usePvpStats } from "@/hooks/usePvpStats";
 import { getRankTier, getNextTier, calculateRankPoints } from "@/lib/rankTiers";
+import CosmeticsCarousel from "@/components/CosmeticsCarousel";
 
 /* ─── Types ─── */
 interface BallRecord {
