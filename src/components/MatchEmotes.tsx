@@ -69,7 +69,7 @@ export default function MatchEmotes({ disabled, onEmoteSent }: MatchEmotesProps)
               initial={{ opacity: 0, scale: 0.3, y: 40 }}
               animate={{ opacity: 1, scale: 1, y: -20 }}
               exit={{ opacity: 0, scale: 0.5, y: -60 }}
-              transition={{ duration: 0.5, exit: { duration: 0.4 } }}
+              transition={{ duration: 0.5 }}
               className="absolute"
               style={{
                 bottom: "35%",
