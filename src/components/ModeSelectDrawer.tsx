@@ -76,11 +76,38 @@ function LockOverlay({ rank }: { rank: string }) {
 }
 
 function LiveIndicator() {
-  const count = Math.floor(Math.random() * 20) + 3;
+  const [count, setCount] = useState(() => Math.floor(Math.random() * 20) + 8);
+  useEffect(() => {
+    const t = setInterval(() => setCount(c => Math.max(3, c + (Math.random() > 0.5 ? 1 : -1))), 4000);
+    return () => clearInterval(t);
+  }, []);
   return (
-    <span className="flex items-center gap-1 font-game-body text-[8px] text-muted-foreground">
+    <span className="flex items-center gap-1 font-game-body text-[8px]" style={{ color: "hsl(142 60% 55%)" }}>
       <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "hsl(142 71% 50%)" }} />
-      {count} online
+      {count} playing now
+    </span>
+  );
+}
+
+function DailyResetTimer() {
+  const [timeLeft, setTimeLeft] = useState("");
+  useEffect(() => {
+    const calc = () => {
+      const now = new Date();
+      const next = new Date(now);
+      next.setUTCHours(24, 0, 0, 0);
+      const diff = next.getTime() - now.getTime();
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      setTimeLeft(`${h}h ${m}m`);
+    };
+    calc();
+    const t = setInterval(calc, 60000);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <span className="flex items-center gap-1 font-game-body text-[8px]" style={{ color: "hsl(43 80% 55%)" }}>
+      <span className="text-[8px]">⏱</span> Resets in {timeLeft}
     </span>
   );
 }
