@@ -526,8 +526,13 @@ export default function TapPlayingUI({
       {/* ── Hand Selector — Doc 1 §3.6: 72px round buttons, 3×2 grid ── */}
       {phase !== "not_started" && phase !== "finished" && !waitingForOpponent && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative pb-1">
-          <p className="text-center text-[7px] font-display mb-2 tracking-[0.2em] text-[#64748B]">
-            {isBatting ? "⚡ TAP YOUR SHOT" : "🎯 TAP YOUR BOWL"}
+          <div className="flex items-center justify-between mb-2 px-1">
+            <div className="w-9" />
+            <p className="text-center text-[7px] font-display tracking-[0.2em] text-[#64748B]">
+              {isBatting ? "⚡ TAP YOUR SHOT" : "🎯 TAP YOUR BOWL"}
+            </p>
+            <MatchEmotes disabled={effectiveCooldown} />
+          </div>
           </p>
           <div
             className="grid grid-cols-3 gap-3 px-4 py-3"
