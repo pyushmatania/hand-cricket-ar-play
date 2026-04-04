@@ -434,11 +434,24 @@ export default function LeaderboardPage() {
     { key: "network", label: "NETWORK", icon: "🕸️" },
   ];
 
+  const LEATHER_BG = "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)";
+  const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
+  const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
+  const CHALK_BORDER = "2px dashed hsl(43 30% 30% / 0.25)";
+
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden pb-24">
-      <div className="absolute inset-0 bg-gradient-to-b from-[hsl(222_55%_10%)] to-background pointer-events-none" />
+    <div className="min-h-screen relative overflow-hidden"
+      style={{ background: LEATHER_BG, paddingBottom: "calc(68px + env(safe-area-inset-bottom, 16px) + 16px)" }}
+    >
+      {/* Leather grain */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{ backgroundImage: LEATHER_GRAIN, backgroundRepeat: "repeat" }} />
+      {/* Vignette */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }} />
+      {/* Floodlight glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] pointer-events-none"
-        style={{ background: "radial-gradient(ellipse, hsl(51 100% 50% / 0.04) 0%, transparent 70%)" }} />
+        style={{ background: "radial-gradient(ellipse, hsl(43 90% 55% / 0.04) 0%, transparent 70%)" }} />
       <TopStatusBar />
 
       <div className="relative z-10 max-w-lg mx-auto px-4 pt-4">
