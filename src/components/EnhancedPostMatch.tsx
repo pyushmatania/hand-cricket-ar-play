@@ -209,13 +209,9 @@ export default function EnhancedPostMatch({
             >
               {/* Trophy / Emoji */}
               {isWin ? (
-                <motion.img
-                  src={victoryTrophy}
-                  alt="Victory"
-                  initial={{ scale: 0, rotate: -20 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ type: "spring", damping: 8, delay: 0.3 }}
-                  className="w-28 h-28 mx-auto mb-3 drop-shadow-[0_0_40px_hsl(43_96%_56%/0.6)]"
+                <div className="mb-3">
+                  <TrophyCeremony playerName={playerName} stars={stars} />
+                </div>
                 />
               ) : (
                 <motion.span
