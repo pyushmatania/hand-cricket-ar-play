@@ -19,6 +19,7 @@ const COMPETITIVE = [
   { id: "tournament", label: "TOURNAMENT", desc: "Create/Join", emoji: "🏆" },
   { id: "cricket-wars", label: "CRICKET WARS", desc: "Clan vs Clan", emoji: "⚔️" },
   { id: "royale", label: "CRICKET ROYALE", desc: "Last Player", emoji: "👑" },
+  { id: "auction", label: "AUCTION LEAGUE", desc: "Bid & Battle", emoji: "💰" },
 ];
 
 interface ModeSelectDrawerProps {
