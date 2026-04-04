@@ -14,6 +14,8 @@ import VSIntroScreen from "./VSIntroScreen";
 import TapPlayingUI from "./TapPlayingUI";
 import EnhancedPreMatch from "./EnhancedPreMatch";
 import EnhancedPostMatch from "./EnhancedPostMatch";
+import JumbotronZoom from "./JumbotronZoom";
+import PostMatchPressConference from "./PostMatchPressConference";
 import LobbyChat from "./LobbyChat";
 import EmotePicker, { type EmoteId } from "./EmotePicker";
 import EmoteBubble from "./EmoteBubble";
@@ -136,6 +138,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [myAvatarIndex, setMyAvatarIndex] = useState(0);
   const [myName, setMyName] = useState("You");
   const [showVSIntro, setShowVSIntro] = useState(false);
+  const [showJumbotron, setShowJumbotron] = useState(false);
+  const [showPressConference, setShowPressConference] = useState(false);
   const [cooldown, setCooldown] = useState(false);
   const [lastResult, setLastResult] = useState<string | null>(null);
   const [lastBallResult, setLastBallResult] = useState<BallResult | null>(null);
@@ -397,9 +401,10 @@ export default function MultiplayerScreen({ onHome }: Props) {
             loadOpponentName(updated);
           }
 
-          if (prevPhase === "waiting" && nextPhase === "toss" && !showVSIntro) {
+          if (prevPhase === "waiting" && nextPhase === "toss" && !showVSIntro && !showJumbotron) {
             if (multiplayerCeremoniesEnabled) {
-              setShowVSIntro(true);
+              // Doc 5 §4.2: Show jumbotron zoom first, then VS intro
+              setShowJumbotron(true);
               if (!pvpPreMatchShownRef.current) {
                 pvpPreMatchShownRef.current = true;
               }
@@ -539,7 +544,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
             if (!pvpPostMatchShownRef.current) {
               pvpPostMatchShownRef.current = true;
               if (multiplayerCeremoniesEnabled) {
-                setTimeout(() => setShowPvPPostMatch(true), 1000);
+                // Doc 5 §4.3: Show press conference first, then post-match
+                setTimeout(() => setShowPressConference(true), 1000);
               }
             }
           }
@@ -2208,6 +2214,19 @@ export default function MultiplayerScreen({ onHome }: Props) {
         </div>
       )}
 
+      {/* Doc 5 §4.2: Jumbotron Zoom Transition — plays before VS Intro */}
+      {showJumbotron && (
+        <JumbotronZoom
+          team1Name={myName}
+          team2Name={opponentName}
+          onComplete={() => {
+            setShowJumbotron(false);
+            setShowVSIntro(true);
+          }}
+          duration={2000}
+        />
+      )}
+
       {/* VS Intro Overlay */}
       {showVSIntro && (
         <VSIntroScreen
@@ -2223,6 +2242,26 @@ export default function MultiplayerScreen({ onHome }: Props) {
             } else if (currentGame) {
               setPhase(statusToPhase(currentGame.status));
             }
+          }}
+        />
+      )}
+
+      {/* Doc 5 §4.3: Post-Match Press Conference — plays before post-match stats */}
+      {showPressConference && currentGame && (
+        <PostMatchPressConference
+          winnerName={currentGame.winner_id === user?.id ? myName : opponentName}
+          loserName={currentGame.winner_id === user?.id ? opponentName : myName}
+          winnerAvatarIndex={currentGame.winner_id === user?.id ? myAvatarIndex : opponentAvatarIndex}
+          loserAvatarIndex={currentGame.winner_id === user?.id ? opponentAvatarIndex : myAvatarIndex}
+          winnerScore={currentGame.winner_id === user?.id
+            ? (isHost ? currentGame.host_score : currentGame.guest_score)
+            : (isHost ? currentGame.guest_score : currentGame.host_score)}
+          loserScore={currentGame.winner_id === user?.id
+            ? (isHost ? currentGame.guest_score : currentGame.host_score)
+            : (isHost ? currentGame.host_score : currentGame.guest_score)}
+          onDismiss={() => {
+            setShowPressConference(false);
+            setShowPvPPostMatch(true);
           }}
         />
       )}
