@@ -903,7 +903,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       {game.phase === "finished" && (
         <div className="absolute inset-0 z-30 flex flex-col items-center justify-end pb-10 px-6 bg-black/40">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-xs space-y-3">
-            <ImmersiveScoreStrip game={game} playerName={playerName} aiName={opponentName} />
+            <ImmersiveScoreStrip game={game} playerName={playerName} aiName={opponentName} weather={matchWeather} />
             <div className="flex gap-3">
               <motion.button
                 whileTap={{ scale: 0.95 }}
