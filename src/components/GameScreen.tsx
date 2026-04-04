@@ -192,6 +192,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const [fireworkType, setFireworkType] = useState<FireworkType | null>(null);
 
   // Ceremony states
+  const [showEstablishingShot, setShowEstablishingShot] = useState(false);
   const [showPreMatch, setShowPreMatch] = useState(false);
   const [showPostMatch, setShowPostMatch] = useState(false);
   const [tossInfo, setTossInfo] = useState<{ winner: string; battingFirst: string } | null>(null);
