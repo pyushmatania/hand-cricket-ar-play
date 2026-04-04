@@ -331,6 +331,7 @@ export default function TapPlayingUI({
     <>
       <CelebrationEffects lastResult={lastResult} gameResult={result} phase={phase} batSkin={equippedBatSkin} />
       <ShotResultOverlay lastResult={lastResult} triggerKey={shotOverlayKey} />
+      <BallPitchAnimation lastResult={lastResult} triggerKey={shotOverlayKey} />
 
       {/* Arena / pitch background */}
       {phase !== "not_started" && (
