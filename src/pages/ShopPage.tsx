@@ -63,8 +63,10 @@ export default function ShopPage() {
 
   const handlePurchase = async (item: ShopItem) => {
     if (!user || purchasing) return;
-    if (coins < item.price) { toast.error("Not enough coins!"); return; }
+    if (coins < item.price) { toast.error("Not enough coins!"); engines.sound.playEffect('ui_error'); return; }
     setPurchasing(true);
+    engines.sound.playEffect('coin_collect');
+    engines.sound.vibrate('medium');
     const newCoins = coins - item.price;
     await supabase.from("profiles").update({ coins: newCoins } as any).eq("user_id", user.id);
     await supabase.from("user_purchases").insert({ user_id: user.id, item_id: item.id } as any);
