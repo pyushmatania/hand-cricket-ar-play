@@ -183,17 +183,39 @@ export default function CollectionPage() {
 }
 
 function PlayerDetailOverlay({ player, onClose }: { player: DBPlayer; onClose: () => void }) {
+  const { user } = useAuth();
+  const { data: userCards } = useUserCards();
+  const upgradeCard = useUpgradeCard();
   const rating = overallRating(player);
   const rarity = player.rarity || "common";
   const rarityColor = RARITY_COLORS[rarity] || "hsl(220 10% 50%)";
 
+  const userCard = userCards?.find(c => c.player_id === player.id);
+  const cardLevel = userCard?.card_level ?? 0;
+  const cardCount = userCard?.card_count ?? 0;
+  const nextCost = cardLevel > 0 && cardLevel < 6 ? UPGRADE_COSTS[cardLevel] : null;
+  const canUpgrade = nextCost ? cardCount >= nextCost.cards : false;
+
+  const statBoostTotal = Array.from({ length: cardLevel - 1 }, (_, i) => UPGRADE_COSTS[i + 1]?.statBoost ?? 0)
+    .reduce((a, b) => a + b, 0);
+
+  const handleUpgrade = async () => {
+    if (!userCard || !nextCost) return;
+    try {
+      await upgradeCard.mutateAsync({ cardId: userCard.id, currentLevel: cardLevel, cardCount });
+      toast.success(`Upgraded to Level ${cardLevel + 1}!`);
+    } catch (e: any) {
+      toast.error(e.message);
+    }
+  };
+
   const stats = [
-    { label: "POWER", key: "power", value: player.power },
-    { label: "TECHNIQUE", key: "technique", value: player.technique },
-    { label: "PACE/SPIN", key: "pace_spin", value: player.pace_spin },
-    { label: "ACCURACY", key: "accuracy", value: player.accuracy },
-    { label: "AGILITY", key: "agility", value: player.agility },
-    { label: "CLUTCH", key: "clutch", value: player.clutch },
+    { label: "POWER", key: "power", value: Math.min(100, player.power + statBoostTotal) },
+    { label: "TECHNIQUE", key: "technique", value: Math.min(100, player.technique + statBoostTotal) },
+    { label: "PACE/SPIN", key: "pace_spin", value: Math.min(100, player.pace_spin + statBoostTotal) },
+    { label: "ACCURACY", key: "accuracy", value: Math.min(100, player.accuracy + statBoostTotal) },
+    { label: "AGILITY", key: "agility", value: Math.min(100, player.agility + statBoostTotal) },
+    { label: "CLUTCH", key: "clutch", value: Math.min(100, player.clutch + statBoostTotal) },
   ];
 
   return (
@@ -201,7 +223,7 @@ function PlayerDetailOverlay({ player, onClose }: { player: DBPlayer; onClose: (
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-6"
+      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-6 overflow-y-auto"
       onClick={onClose}
     >
       <motion.div
@@ -246,6 +268,17 @@ function PlayerDetailOverlay({ player, onClose }: { player: DBPlayer; onClose: (
               {roleLabel(player.role)}
             </span>
           </div>
+          {/* Card ownership badge */}
+          {userCard && (
+            <div className="flex items-center justify-center gap-2 mt-2">
+              <span className="px-2 py-0.5 rounded-full text-[8px] font-game-display bg-game-gold/20 text-game-gold border border-game-gold/30">
+                LVL {cardLevel} • {cardCount} cards
+              </span>
+              {statBoostTotal > 0 && (
+                <span className="text-[8px] font-game-display text-green-400">+{statBoostTotal} stats</span>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Stats */}
@@ -266,6 +299,48 @@ function PlayerDetailOverlay({ player, onClose }: { player: DBPlayer; onClose: (
             </div>
           ))}
         </div>
+
+        {/* Upgrade Section */}
+        {userCard && nextCost && (
+          <div className="px-4 pb-3">
+            <div className="rounded-xl p-3" style={{ background: "hsl(222 25% 10%)", border: "1px solid hsl(222 20% 18%)" }}>
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-game-display text-[10px] text-foreground tracking-wider">
+                  UPGRADE TO LVL {cardLevel + 1}
+                </span>
+                <span className="text-[8px] font-game-body text-green-400">+{nextCost.statBoost} all stats</span>
+              </div>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="flex-1">
+                  <div className="flex justify-between text-[8px] font-game-body text-muted-foreground mb-0.5">
+                    <span>Cards: {cardCount}/{nextCost.cards}</span>
+                  </div>
+                  <div className="h-1.5 bg-border/20 rounded-full overflow-hidden">
+                    <div className="h-full rounded-full transition-all" style={{
+                      width: `${Math.min(100, (cardCount / nextCost.cards) * 100)}%`,
+                      background: cardCount >= nextCost.cards ? "hsl(142 60% 50%)" : "hsl(35 80% 50%)",
+                    }} />
+                  </div>
+                </div>
+                <div className="text-[9px] font-game-display text-game-gold">{nextCost.coins} 🪙</div>
+              </div>
+              <motion.button
+                whileTap={canUpgrade ? { scale: 0.95 } : undefined}
+                onClick={canUpgrade ? handleUpgrade : undefined}
+                disabled={!canUpgrade || upgradeCard.isPending}
+                className="w-full py-2 rounded-lg font-game-display text-[10px] tracking-wider flex items-center justify-center gap-1.5 transition-all"
+                style={{
+                  background: canUpgrade ? `linear-gradient(135deg, hsl(142 60% 40%), hsl(142 60% 30%))` : "hsl(222 20% 15%)",
+                  color: canUpgrade ? "white" : "hsl(220 10% 40%)",
+                  border: canUpgrade ? "2px solid hsl(142 50% 50%)" : "2px solid hsl(222 15% 20%)",
+                }}
+              >
+                <ArrowUp className="w-3 h-3" />
+                {upgradeCard.isPending ? "UPGRADING..." : "UPGRADE"}
+              </motion.button>
+            </div>
+          </div>
+        )}
 
         {/* Special Ability */}
         {player.special_ability_name && (
