@@ -14,39 +14,39 @@ interface ShopItemCardProps {
 }
 
 const RARITY_CONFIG: Record<string, {
-  border: string; bg: string; glow: string; label: string; color: string; stripe: string;
+  border: string; glow: string; label: string; color: string; stripe: string; accent: string;
 }> = {
   common: {
-    border: "border-[hsl(var(--rarity-common))]",
-    bg: "from-[hsl(210_15%_60%/0.08)] to-transparent",
-    glow: "",
+    border: "hsl(210 15% 45%)",
+    glow: "none",
     label: "COMMON",
-    color: "text-muted-foreground",
-    stripe: "bg-[hsl(var(--rarity-common))]",
+    color: "hsl(210 10% 55%)",
+    stripe: "hsl(210 15% 50%)",
+    accent: "hsl(210 15% 50% / 0.08)",
   },
   rare: {
-    border: "border-game-blue",
-    bg: "from-[hsl(207_90%_54%/0.1)] to-transparent",
-    glow: "shadow-[0_0_14px_hsl(207_90%_54%/0.2)]",
+    border: "hsl(207 90% 50%)",
+    glow: "0 0 14px hsl(207 90% 54% / 0.25)",
     label: "RARE",
-    color: "text-game-blue",
-    stripe: "bg-game-blue",
+    color: "hsl(207 90% 60%)",
+    stripe: "hsl(207 90% 54%)",
+    accent: "hsl(207 90% 54% / 0.1)",
   },
   epic: {
-    border: "border-game-purple",
-    bg: "from-[hsl(291_47%_51%/0.12)] to-transparent",
-    glow: "shadow-[0_0_18px_hsl(291_47%_51%/0.25)]",
+    border: "hsl(275 70% 55%)",
+    glow: "0 0 18px hsl(275 70% 55% / 0.3)",
     label: "EPIC",
-    color: "text-game-purple",
-    stripe: "bg-game-purple",
+    color: "hsl(275 70% 65%)",
+    stripe: "hsl(275 70% 55%)",
+    accent: "hsl(275 70% 55% / 0.12)",
   },
   legendary: {
-    border: "border-game-gold",
-    bg: "from-[hsl(51_100%_50%/0.15)] to-transparent",
-    glow: "shadow-[0_0_22px_hsl(51_100%_50%/0.3)]",
+    border: "hsl(43 90% 50%)",
+    glow: "0 0 22px hsl(43 100% 50% / 0.35)",
     label: "LEGENDARY",
-    color: "text-game-gold",
-    stripe: "bg-game-gold",
+    color: "hsl(43 100% 60%)",
+    stripe: "hsl(43 90% 50%)",
+    accent: "hsl(43 100% 50% / 0.15)",
   },
 };
 
@@ -61,26 +61,50 @@ export default function ShopItemCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05, type: "spring", stiffness: 300, damping: 25 }}
       onClick={() => { SFX.tap(); Haptics.light(); onClick(); }}
-      className={`relative rounded-2xl border-2 overflow-hidden cursor-pointer active:scale-[0.96] transition-transform ${r.border} ${equipped ? r.glow : ""}`}
+      className="relative rounded-2xl overflow-hidden cursor-pointer active:scale-[0.96] transition-transform"
+      style={{
+        border: `2px solid ${r.border}`,
+        boxShadow: equipped ? r.glow : "0 4px 0 hsl(25 30% 8%), 0 6px 12px rgba(0,0,0,0.4)",
+        background: "linear-gradient(180deg, hsl(28 25% 16%) 0%, hsl(25 20% 10%) 100%)",
+      }}
     >
-      {/* Rarity stripe */}
-      <div className={`h-1 ${r.stripe}`} />
+      {/* Rarity stripe - chrome */}
+      <div className="h-1.5" style={{
+        background: `linear-gradient(90deg, transparent, ${r.stripe}, transparent)`,
+      }} />
 
-      {/* Card body */}
-      <div className={`bg-gradient-to-b from-[hsl(222_40%_13%/0.9)] to-[hsl(222_40%_8%/0.95)] p-3`}>
-        <div className={`absolute inset-0 bg-gradient-to-br ${r.bg} pointer-events-none`} />
+      {/* Card body - leather texture */}
+      <div className="p-3 relative">
+        {/* Rarity accent overlay */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: `radial-gradient(ellipse at 50% 20%, ${r.accent}, transparent 70%)`,
+        }} />
 
         <div className="relative z-10">
           {/* Top badges */}
           <div className="flex items-center justify-between mb-1">
-            <span className={`text-[7px] font-game-display tracking-wider ${r.color}`}>{r.label}</span>
+            <span className="text-[7px] font-game-display tracking-wider" style={{ color: r.color }}>
+              {r.label}
+            </span>
             {equipped && (
-              <span className="text-[7px] font-game-display text-game-green tracking-wider bg-game-green/10 px-1.5 py-0.5 rounded-full border border-game-green/20">
+              <span className="text-[7px] font-game-display tracking-wider px-1.5 py-0.5 rounded-full"
+                style={{
+                  color: "hsl(142 70% 55%)",
+                  background: "hsl(142 70% 55% / 0.1)",
+                  border: "1px solid hsl(142 70% 55% / 0.25)",
+                }}
+              >
                 ✓ ON
               </span>
             )}
             {owned && !equipped && (
-              <span className="text-[7px] font-game-display text-game-blue tracking-wider bg-game-blue/10 px-1.5 py-0.5 rounded-full border border-game-blue/20">
+              <span className="text-[7px] font-game-display tracking-wider px-1.5 py-0.5 rounded-full"
+                style={{
+                  color: "hsl(207 80% 60%)",
+                  background: "hsl(207 80% 60% / 0.1)",
+                  border: "1px solid hsl(207 80% 60% / 0.2)",
+                }}
+              >
                 OWNED
               </span>
             )}
@@ -90,6 +114,7 @@ export default function ShopItemCard({
           <div className="text-center py-4">
             <motion.span
               className="text-5xl block"
+              style={{ filter: `drop-shadow(0 4px 8px rgba(0,0,0,0.5))` }}
               whileHover={{ scale: 1.15, rotate: [0, -5, 5, 0] }}
               transition={{ duration: 0.4 }}
             >
@@ -97,20 +122,31 @@ export default function ShopItemCard({
             </motion.span>
           </div>
 
-          {/* Name */}
-          <p className="font-game-card text-xs font-bold text-foreground truncate">{name}</p>
+          {/* Name - scoreboard paint */}
+          <p className="font-game-card text-xs font-bold text-foreground truncate"
+            style={{ textShadow: "0 1px 0 hsl(25 30% 8%)" }}
+          >
+            {name}
+          </p>
 
           {/* Price / status */}
           <div className="flex items-center justify-between mt-1.5">
             <span className="text-[9px] text-muted-foreground line-clamp-1 flex-1">{description.slice(0, 22)}</span>
             {!owned && (
-              <span className="font-game-display text-[10px] text-game-gold flex items-center gap-0.5 shrink-0">
+              <span className="font-game-display text-[10px] flex items-center gap-0.5 shrink-0"
+                style={{ color: "hsl(43 100% 60%)" }}
+              >
                 🪙 {price}
               </span>
             )}
           </div>
         </div>
       </div>
+
+      {/* 3D bottom edge */}
+      <div className="h-1" style={{
+        background: "linear-gradient(180deg, hsl(25 20% 8%), hsl(25 15% 5%))",
+      }} />
     </motion.div>
   );
 }
