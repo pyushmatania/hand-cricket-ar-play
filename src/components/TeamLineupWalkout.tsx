@@ -216,7 +216,7 @@ function WalkoutAvatar({ side, phase, name, emoji, avatarUrl, avatarPresetGradie
       <div
         className="w-16 h-16 rounded-full flex items-center justify-center text-3xl overflow-hidden"
         style={{
-          background: avatarGradient || defaultGradient,
+          background: resolvedBg,
           boxShadow: `0 0 30px ${ringGlow}, 0 4px 20px hsl(0 0% 0% / 0.5)`,
           border: `2px solid ${ringColor}`,
         }}
