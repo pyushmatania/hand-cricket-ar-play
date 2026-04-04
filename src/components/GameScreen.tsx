@@ -287,6 +287,41 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   useEffect(() => {
     if (!game.lastResult) return;
     const r = game.lastResult;
+
+    // ── Fire engine events for the ball result ──
+    const context = {
+      innings: game.currentInnings,
+      over: Math.floor((game.currentInnings === 1 ? game.innings1Balls : game.innings2Balls) / 6),
+      ball: (game.currentInnings === 1 ? game.innings1Balls : game.innings2Balls) % 6,
+      phase: 'middle' as const,
+      battingTeam: game.isBatting ? playerName : opponentName,
+      bowlingTeam: game.isBatting ? opponentName : playerName,
+      score: game.isBatting ? game.userScore : game.aiScore,
+      wickets: game.isBatting ? game.userWickets : game.aiWickets,
+      target: game.target,
+      requiredRunRate: null,
+      currentRunRate: 0,
+      lastFewBalls: [],
+      matchSituation: 'comfortable' as const,
+      isLastOver: false,
+      isMatchPoint: false,
+    };
+
+    if (r.runs === "OUT") {
+      engines.event.emit('WICKET_BOWLED', { ...r, context });
+    } else if (typeof r.runs === "number") {
+      if (r.runs === 6) {
+        engines.event.emit('BOUNDARY_SIX', { ...r, runs: 6, context });
+      } else if (r.runs === 4) {
+        engines.event.emit('BOUNDARY_FOUR', { ...r, runs: 4, context });
+      } else if (r.runs === 0) {
+        engines.event.emit('DOT_BALL', { ...r, context });
+      } else {
+        engines.event.emit('RUNS_SCORED', { ...r, runs: r.runs, context });
+      }
+    }
+
+    // ── Existing SFX/Haptics (legacy — will migrate fully to engines later) ──
     if (soundEnabled) SFX.batHit();
     if (r.runs === "OUT") {
       setTimeout(() => {
