@@ -77,7 +77,7 @@ function GameToggle({ enabled, onToggle, color = "green" }: { enabled: boolean; 
   );
 }
 
-/* ──── Section Header ──── */
+/* ──── Section Header — Stadium Concrete ──── */
 function SectionHeader({ icon, title, expanded, onToggle, accentColor }: {
   icon: string; title: string; expanded: boolean; onToggle: () => void; accentColor: string;
 }) {
@@ -85,11 +85,13 @@ function SectionHeader({ icon, title, expanded, onToggle, accentColor }: {
     <motion.button
       whileTap={{ scale: 0.98 }}
       onClick={onToggle}
-      className="w-full flex items-center gap-3 rounded-2xl p-3 border-b-[3px] transition-all"
+      className="w-full flex items-center gap-3 rounded-2xl p-3 border-b-[4px] transition-all"
       style={{
-        background: `linear-gradient(135deg, hsl(222 40% 14% / 0.95), hsl(222 40% 10% / 0.98))`,
-        borderColor: `${accentColor}33`,
-        boxShadow: `0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)`,
+        background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)",
+        borderColor: "hsl(25 25% 10%)",
+        border: `2px solid hsl(25 20% 22%)`,
+        borderBottom: `4px solid hsl(25 25% 10%)`,
+        boxShadow: `0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)`,
       }}
     >
       <div className="w-10 h-10 rounded-xl flex items-center justify-center border-b-2"
