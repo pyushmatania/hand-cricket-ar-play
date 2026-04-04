@@ -2249,12 +2249,17 @@ export default function MultiplayerScreen({ onHome }: Props) {
       {/* Doc 5 §4.3: Post-Match Press Conference — plays before post-match stats */}
       {showPressConference && currentGame && (
         <PostMatchPressConference
-          result={currentGame.winner_id === user?.id ? "win" : currentGame.winner_id ? "loss" : "draw"}
-          playerName={myName}
-          opponentName={opponentName}
-          playerScore={isHost ? currentGame.host_score : currentGame.guest_score}
-          opponentScore={isHost ? currentGame.guest_score : currentGame.host_score}
-          onComplete={() => {
+          winnerName={currentGame.winner_id === user?.id ? myName : opponentName}
+          loserName={currentGame.winner_id === user?.id ? opponentName : myName}
+          winnerAvatarIndex={currentGame.winner_id === user?.id ? myAvatarIndex : opponentAvatarIndex}
+          loserAvatarIndex={currentGame.winner_id === user?.id ? opponentAvatarIndex : myAvatarIndex}
+          winnerScore={currentGame.winner_id === user?.id
+            ? (isHost ? currentGame.host_score : currentGame.guest_score)
+            : (isHost ? currentGame.guest_score : currentGame.host_score)}
+          loserScore={currentGame.winner_id === user?.id
+            ? (isHost ? currentGame.guest_score : currentGame.host_score)
+            : (isHost ? currentGame.host_score : currentGame.guest_score)}
+          onDismiss={() => {
             setShowPressConference(false);
             setShowPvPPostMatch(true);
           }}
