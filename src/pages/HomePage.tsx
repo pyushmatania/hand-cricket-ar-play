@@ -190,12 +190,12 @@ export default function HomePage() {
           </div>
         </motion.div>
 
-        {/* ═══ B) CHEST BANNERS ═══ */}
+        {/* ═══ B) QUICK ACCESS BANNERS ═══ */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="grid grid-cols-2 gap-2.5 mb-4"
+          className="grid grid-cols-3 gap-2 mb-4"
         >
           <motion.button
             whileTap={{ scale: 0.95 }}
@@ -213,40 +213,62 @@ export default function HomePage() {
               transition={{ duration: 2, repeat: Infinity }}
               style={{ background: "radial-gradient(circle at center, hsl(43 90% 55% / 0.2), transparent 70%)" }}
             />
-            <span className="text-3xl relative z-10">🎁</span>
-            <span className="font-game-display text-[10px] text-foreground tracking-wider relative z-10"
+            <span className="text-2xl relative z-10">🎁</span>
+            <span className="font-game-display text-[9px] text-foreground tracking-wider relative z-10"
               style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}
             >
               Free Chest
             </span>
-            <span className="font-game-display text-[12px] tracking-wider relative z-10"
+            <span className="font-game-display text-[11px] tracking-wider relative z-10"
               style={{ color: "hsl(43 90% 55%)" }}
             >
               OPEN!
             </span>
           </motion.button>
 
-          <button className="rounded-2xl p-3 flex flex-col items-center gap-1"
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate("/collection")}
+            className="rounded-2xl p-3 flex flex-col items-center gap-1 relative overflow-hidden"
+            style={{
+              background: "linear-gradient(180deg, hsl(28 22% 16%) 0%, hsl(25 18% 11%) 100%)",
+              border: "2px solid hsl(280 50% 40%)",
+              borderBottom: "5px solid hsl(280 40% 25%)",
+              boxShadow: "0 0 16px hsl(280 60% 50% / 0.15)",
+            }}
+          >
+            <span className="text-2xl relative z-10">🃏</span>
+            <span className="font-game-display text-[9px] text-foreground tracking-wider relative z-10"
+              style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}
+            >
+              Collection
+            </span>
+            <span className="font-game-score text-[10px] relative z-10 text-muted-foreground">235 Cards</span>
+          </motion.button>
+
+          <button
+            onClick={() => navigate("/shop")}
+            className="rounded-2xl p-3 flex flex-col items-center gap-1"
             style={{
               background: "linear-gradient(180deg, hsl(28 22% 16%) 0%, hsl(25 18% 11%) 100%)",
               border: "2px solid hsl(25 20% 25%)",
               borderBottom: "5px solid hsl(25 20% 12%)",
             }}
           >
-            <span className="text-3xl">📦</span>
-            <span className="font-game-display text-[10px] text-foreground tracking-wider"
+            <span className="text-2xl">📦</span>
+            <span className="font-game-display text-[9px] text-foreground tracking-wider"
               style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}
             >
               Wicket Chest
             </span>
-            <div className="w-20 mt-1 h-[6px] rounded-full overflow-hidden"
+            <div className="w-14 mt-1 h-[5px] rounded-full overflow-hidden"
               style={{ background: "hsl(25 15% 10%)", border: "1px solid hsl(25 18% 20%)" }}
             >
               <div className="h-full rounded-full"
                 style={{ width: "72%", background: "linear-gradient(90deg, hsl(142 71% 45%), hsl(142 60% 35%))" }}
               />
             </div>
-            <span className="font-game-score text-[10px] text-muted-foreground">18/25</span>
+            <span className="font-game-score text-[9px] text-muted-foreground">18/25</span>
           </button>
         </motion.div>
 
