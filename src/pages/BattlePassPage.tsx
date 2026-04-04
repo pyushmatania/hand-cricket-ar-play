@@ -1,13 +1,19 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Lock, Star, Crown, Gift, Zap, Trophy, Clock, ChevronRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Crown, Lock, Clock, Gift } from "lucide-react";
 import { SFX, Haptics } from "@/lib/sounds";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import TopBar from "@/components/layout/TopBar";
+import TopStatusBar from "@/components/TopStatusBar";
+import CurrencyPill from "@/components/shared/CurrencyPill";
+
+/* ── Doc 1 Material Constants ── */
+const LEATHER_BG = "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)";
+const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
+const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
+const CHALK_DIVIDER = "repeating-linear-gradient(90deg, hsl(45 30% 80%) 0px, hsl(45 30% 80%) 8px, transparent 8px, transparent 14px)";
 
 /* ── Season config ── */
 const SEASON_END = new Date("2026-05-01T00:00:00Z");
@@ -57,38 +63,36 @@ function ClaimOverlay({ reward, onClose }: { reward: PassReward["free"]; onClose
   return (
     <motion.div
       className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
     >
       <motion.div
         className="flex flex-col items-center gap-4"
-        initial={{ scale: 0.5, y: 40 }}
-        animate={{ scale: 1, y: 0 }}
+        initial={{ scale: 0.5, y: 40 }} animate={{ scale: 1, y: 0 }}
         transition={{ type: "spring", damping: 14 }}
       >
-        {/* Glow ring */}
         <motion.div
           className="w-32 h-32 rounded-full flex items-center justify-center"
           style={{
-            background: "radial-gradient(circle, hsl(45 93% 58% / 0.3), transparent 70%)",
-            boxShadow: "0 0 60px hsl(45 93% 58% / 0.4), 0 0 120px hsl(45 93% 58% / 0.2)",
+            background: "radial-gradient(circle, hsl(43 90% 55% / 0.3), transparent 70%)",
+            boxShadow: "0 0 60px hsl(43 90% 55% / 0.4), 0 0 120px hsl(43 90% 55% / 0.2)",
           }}
           animate={{ scale: [1, 1.1, 1] }}
           transition={{ repeat: Infinity, duration: 2 }}
         >
           <span className="text-6xl">{reward.icon}</span>
         </motion.div>
-        <h2 className="font-game-display text-secondary text-xl">REWARD CLAIMED!</h2>
+        <h2 className="font-game-display text-xl" style={{ color: "hsl(43 90% 55%)" }}>REWARD CLAIMED!</h2>
         <p className="font-game-body text-foreground text-sm">
           {reward.label} {reward.amount ? `× ${reward.amount}` : ""}
         </p>
         <motion.button
           className="mt-4 px-8 py-3 rounded-xl font-game-display text-sm tracking-wider"
           style={{
-            background: "linear-gradient(to bottom, hsl(45 93% 58%), hsl(36 90% 45%))",
-            color: "hsl(222 47% 6%)",
-            boxShadow: "0 4px 0 hsl(36 80% 30%), 0 6px 20px hsl(45 93% 58% / 0.3)",
+            background: "linear-gradient(180deg, hsl(43 90% 55%), hsl(35 80% 42%))",
+            color: "hsl(25 40% 8%)",
+            border: "2px solid hsl(35 70% 35%)",
+            borderBottom: "5px solid hsl(35 60% 28%)",
+            boxShadow: "0 4px 16px hsl(43 90% 55% / 0.3)",
           }}
           whileTap={{ scale: 0.95, y: 2 }}
           onClick={onClose}
@@ -100,19 +104,12 @@ function ClaimOverlay({ reward, onClose }: { reward: PassReward["free"]; onClose
   );
 }
 
-/* ── Tier Card ── */
+/* ── Tier Card — Stadium Concrete ── */
 function TierCard({
-  reward,
-  currentXp,
-  isPremium,
-  claimed,
-  onClaim,
+  reward, currentXp, isPremium, claimed, onClaim,
 }: {
-  reward: PassReward;
-  currentXp: number;
-  isPremium: boolean;
-  claimed: Set<string>;
-  onClaim: (key: string, r: PassReward["free"]) => void;
+  reward: PassReward; currentXp: number; isPremium: boolean;
+  claimed: Set<string>; onClaim: (key: string, r: PassReward["free"]) => void;
 }) {
   const unlocked = currentXp >= reward.xpNeeded;
   const freeKey = `free-${reward.tier}`;
@@ -120,109 +117,118 @@ function TierCard({
   const freeClaimed = claimed.has(freeKey);
   const premClaimed = claimed.has(premKey);
 
+  const milestoneGlow = reward.milestone ? "0 0 20px hsl(43 90% 55% / 0.15)" : "none";
+
   return (
     <motion.div
-      className={cn(
-        "relative flex items-stretch gap-0 rounded-2xl overflow-hidden border-2",
-        reward.milestone
-          ? "border-secondary/60 shadow-[0_0_20px_hsl(45_93%_58%/0.2)]"
-          : unlocked
-            ? "border-primary/40"
-            : "border-border/40"
-      )}
+      className="relative flex items-stretch gap-0 rounded-2xl overflow-hidden"
       style={{
-        background: unlocked
-          ? "linear-gradient(135deg, hsl(222 40% 12%), hsl(222 40% 16%))"
-          : "hsl(222 40% 8%)",
+        background: CONCRETE_CARD,
+        border: reward.milestone
+          ? "2px solid hsl(43 70% 45% / 0.5)"
+          : unlocked
+            ? "2px solid hsl(142 50% 35% / 0.3)"
+            : "2px solid hsl(25 18% 22%)",
+        borderBottom: reward.milestone
+          ? "5px solid hsl(43 60% 28%)"
+          : unlocked
+            ? "5px solid hsl(142 40% 20%)"
+            : "5px solid hsl(25 20% 10%)",
+        boxShadow: `0 3px 8px hsl(0 0% 0% / 0.3), ${milestoneGlow}`,
       }}
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: reward.tier * 0.04 }}
     >
-      {/* Tier badge */}
-      <div
-        className={cn(
-          "flex flex-col items-center justify-center w-14 shrink-0",
-          reward.milestone ? "bg-secondary/20" : "bg-muted/50"
-        )}
+      {/* Tier badge — Scoreboard Paint */}
+      <div className="flex flex-col items-center justify-center w-14 shrink-0"
+        style={{
+          background: reward.milestone
+            ? "linear-gradient(180deg, hsl(43 60% 22%), hsl(43 50% 14%))"
+            : "linear-gradient(180deg, hsl(25 20% 14%), hsl(25 15% 10%))",
+          borderRight: "1px solid hsl(25 18% 18%)",
+        }}
       >
-        <span className={cn(
-          "font-game-display text-lg",
-          reward.milestone ? "text-secondary" : unlocked ? "text-primary" : "text-muted-foreground"
-        )}>
+        <span className="font-game-score text-lg font-black" style={{
+          color: reward.milestone ? "hsl(43 90% 55%)" : unlocked ? "hsl(142 71% 55%)" : "hsl(25 15% 40%)",
+        }}>
           {reward.tier}
         </span>
-        {reward.milestone && <Crown className="w-3.5 h-3.5 text-secondary mt-0.5" />}
+        {reward.milestone && <Crown className="w-3.5 h-3.5 mt-0.5" style={{ color: "hsl(43 90% 55%)" }} />}
       </div>
 
       {/* Free reward */}
-      <div className="flex-1 flex items-center gap-2 px-3 py-3 border-r border-border/30">
+      <div className="flex-1 flex items-center gap-2 px-3 py-3" style={{ borderRight: "1px solid hsl(25 18% 18%)" }}>
         <span className="text-2xl">{reward.free.icon}</span>
         <div className="flex-1 min-w-0">
           <p className="font-game-body text-[11px] text-foreground truncate">{reward.free.label}</p>
           {reward.free.amount && (
-            <p className="font-game-display text-xs text-muted-foreground">×{reward.free.amount}</p>
+            <p className="font-game-score text-xs" style={{ color: "hsl(25 15% 45%)" }}>×{reward.free.amount}</p>
           )}
         </div>
         {unlocked && !freeClaimed ? (
           <motion.button
-            className="px-2 py-1 rounded-lg text-[10px] font-game-display"
+            className="px-2 py-1 rounded-lg text-[10px] font-game-display tracking-wider"
             style={{
-              background: "linear-gradient(to bottom, hsl(122 39% 49%), hsl(122 39% 38%))",
+              background: "linear-gradient(180deg, hsl(142 71% 50%), hsl(142 65% 38%))",
               color: "white",
-              boxShadow: "0 2px 0 hsl(122 39% 28%)",
+              borderBottom: "3px solid hsl(142 55% 25%)",
+              boxShadow: "0 2px 8px hsl(142 71% 45% / 0.3)",
             }}
-            whileTap={{ scale: 0.9 }}
+            whileTap={{ scale: 0.9, y: 1 }}
             onClick={() => onClaim(freeKey, reward.free)}
           >
             CLAIM
           </motion.button>
         ) : freeClaimed ? (
-          <span className="text-[10px] text-accent font-game-display">✓</span>
+          <span className="text-[10px] font-game-display font-bold" style={{ color: "hsl(142 71% 55%)" }}>✓</span>
         ) : (
-          <Lock className="w-3.5 h-3.5 text-muted-foreground/50" />
+          <Lock className="w-3.5 h-3.5" style={{ color: "hsl(25 15% 30%)" }} />
         )}
       </div>
 
       {/* Premium reward */}
-      <div className={cn(
-        "flex-1 flex items-center gap-2 px-3 py-3 relative",
-        !isPremium && "opacity-50"
-      )}>
+      <div className={`flex-1 flex items-center gap-2 px-3 py-3 relative ${!isPremium ? "opacity-50" : ""}`}>
         {!isPremium && (
-          <div className="absolute inset-0 bg-[hsl(222_40%_8%/0.6)] backdrop-blur-[1px] z-10 flex items-center justify-center">
-            <Lock className="w-4 h-4 text-secondary/60" />
+          <div className="absolute inset-0 z-10 flex items-center justify-center" style={{
+            background: "hsl(25 20% 10% / 0.6)",
+            backdropFilter: "blur(1px)",
+          }}>
+            <Lock className="w-4 h-4" style={{ color: "hsl(43 70% 50% / 0.6)" }} />
           </div>
         )}
         <span className="text-2xl">{reward.premium.icon}</span>
         <div className="flex-1 min-w-0">
-          <p className="font-game-body text-[11px] text-secondary truncate">{reward.premium.label}</p>
+          <p className="font-game-body text-[11px] truncate" style={{ color: "hsl(43 90% 60%)" }}>{reward.premium.label}</p>
           {reward.premium.amount && (
-            <p className="font-game-display text-xs text-muted-foreground">×{reward.premium.amount}</p>
+            <p className="font-game-score text-xs" style={{ color: "hsl(25 15% 45%)" }}>×{reward.premium.amount}</p>
           )}
         </div>
         {isPremium && unlocked && !premClaimed ? (
           <motion.button
-            className="px-2 py-1 rounded-lg text-[10px] font-game-display"
+            className="px-2 py-1 rounded-lg text-[10px] font-game-display tracking-wider"
             style={{
-              background: "linear-gradient(to bottom, hsl(45 93% 58%), hsl(36 90% 45%))",
-              color: "hsl(222 47% 6%)",
-              boxShadow: "0 2px 0 hsl(36 80% 30%)",
+              background: "linear-gradient(180deg, hsl(43 90% 55%), hsl(35 80% 42%))",
+              color: "hsl(25 40% 8%)",
+              borderBottom: "3px solid hsl(35 60% 28%)",
+              boxShadow: "0 2px 8px hsl(43 90% 55% / 0.3)",
             }}
-            whileTap={{ scale: 0.9 }}
+            whileTap={{ scale: 0.9, y: 1 }}
             onClick={() => onClaim(premKey, reward.premium)}
           >
             CLAIM
           </motion.button>
         ) : isPremium && premClaimed ? (
-          <span className="text-[10px] text-secondary font-game-display">✓</span>
+          <span className="text-[10px] font-game-display font-bold" style={{ color: "hsl(43 90% 55%)" }}>✓</span>
         ) : null}
       </div>
     </motion.div>
   );
 }
 
-/* ── Main Page ── */
+/* ══════════════════════════════════════════════
+   BATTLE PASS PAGE — Doc 1 Material System
+   ══════════════════════════════════════════════ */
 export default function BattlePassPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -235,7 +241,6 @@ export default function BattlePassPage() {
   const [claimingReward, setClaimingReward] = useState<PassReward["free"] | null>(null);
   const [purchasing, setPurchasing] = useState(false);
 
-  // Load profile
   useEffect(() => {
     if (!user) return;
     const load = async () => {
@@ -304,14 +309,12 @@ export default function BattlePassPage() {
     setClaimingReward(reward);
     setClaimed((prev) => new Set(prev).add(key));
 
-    // Persist coin/XP/gem rewards to the database
     const updates: Record<string, number> = {};
     if (reward.label === "Coins" && reward.amount) {
       updates.coins = coins + reward.amount;
       setCoins((c) => c + reward.amount!);
     }
     if (reward.label === "Gems" && reward.amount) {
-      // Gems are stored as coins (1 gem = 10 coins)
       const coinValue = reward.amount * 10;
       updates.coins = coins + coinValue;
       setCoins((c) => c + coinValue);
@@ -326,43 +329,57 @@ export default function BattlePassPage() {
     }
 
     if (Object.keys(updates).length > 0) {
-      const { error } = await supabase
-        .from("profiles")
-        .update(updates)
-        .eq("user_id", user.id);
-      if (error) {
-        toast({ title: "Failed to save reward", description: error.message, variant: "destructive" });
-      }
+      const { error } = await supabase.from("profiles").update(updates).eq("user_id", user.id);
+      if (error) toast({ title: "Failed to save reward", description: error.message, variant: "destructive" });
     }
   }, [user, claimed, coins, currentXp, toast]);
 
   return (
-    <div className="min-h-screen bg-background pb-28 relative">
-      <TopBar />
+    <div className="min-h-screen relative overflow-hidden pb-28" style={{ background: LEATHER_BG }}>
+      {/* Leather grain */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: LEATHER_GRAIN, backgroundRepeat: "repeat" }} />
+      {/* Vignette */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }} />
 
-      {/* Header */}
-      <div className="px-4 pt-2 pb-3">
-        <div className="flex items-center gap-3 mb-3">
-          <button onClick={() => navigate(-1)} className="text-muted-foreground">
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          <div>
-            <h1 className="font-game-display text-lg text-foreground tracking-wide">BATTLE PASS</h1>
-            <p className="font-game-body text-[10px] text-secondary tracking-wider">{SEASON_LABEL}</p>
+      <TopStatusBar />
+
+      <div className="relative z-10 max-w-lg mx-auto px-4 pt-3">
+
+        {/* ═══ Header — Floodlight Chrome ═══ */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-3 mb-4">
+          <motion.button whileTap={{ scale: 0.9 }} onClick={() => navigate(-1)}
+            className="w-10 h-10 rounded-xl flex items-center justify-center font-game-body text-sm text-foreground"
+            style={{
+              background: "linear-gradient(180deg, hsl(28 20% 22%) 0%, hsl(25 18% 15%) 100%)",
+              border: "2px solid hsl(43 50% 35%)",
+              boxShadow: "0 3px 0 hsl(25 30% 10%), inset 0 1px 0 hsl(43 40% 45% / 0.3)",
+            }}>
+            ←
+          </motion.button>
+          <div className="flex-1">
+            <h1 className="font-game-title text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(25 40% 8%)" }}>
+              Battle Pass
+            </h1>
+            <span className="text-[9px] font-game-display tracking-[0.2em]" style={{ color: "hsl(43 90% 55%)" }}>
+              {SEASON_LABEL}
+            </span>
           </div>
-        </div>
+          <CurrencyPill icon="🪙" value={coins} showPlus={false} />
+        </motion.div>
 
-        {/* Season countdown */}
-        <div
-          className="rounded-xl p-3 flex items-center justify-between border"
+        {/* ═══ Season Countdown — Stadium Concrete ═══ */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
+          className="rounded-2xl p-3 flex items-center justify-between mb-4"
           style={{
-            background: "linear-gradient(135deg, hsl(222 40% 10%), hsl(222 40% 14%))",
-            borderColor: "hsl(222 25% 22% / 0.5)",
-          }}
-        >
+            background: CONCRETE_CARD,
+            border: "2px solid hsl(25 18% 22%)",
+            borderBottom: "5px solid hsl(25 20% 10%)",
+            boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
+          }}>
           <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4 text-primary" />
-            <span className="font-game-body text-[11px] text-muted-foreground">Season ends in</span>
+            <Clock className="w-4 h-4" style={{ color: "hsl(207 90% 55%)" }} />
+            <span className="font-game-display text-[9px] tracking-wider text-muted-foreground">SEASON ENDS</span>
           </div>
           <div className="flex gap-1.5">
             {[
@@ -371,93 +388,119 @@ export default function BattlePassPage() {
               { val: countdown.m, label: "M" },
               { val: countdown.s, label: "S" },
             ].map((u) => (
-              <div
-                key={u.label}
-                className="flex flex-col items-center rounded-lg px-2 py-1"
-                style={{ background: "hsl(222 40% 8%)", border: "1px solid hsl(222 25% 20% / 0.4)" }}
-              >
-                <span className="font-game-display text-sm text-foreground leading-none">
+              <div key={u.label} className="flex flex-col items-center rounded-lg px-2 py-1"
+                style={{
+                  background: "linear-gradient(180deg, hsl(25 20% 12%), hsl(25 15% 9%))",
+                  border: "1px solid hsl(25 15% 18%)",
+                }}>
+                <span className="font-game-score text-sm font-black text-foreground leading-none">
                   {String(u.val).padStart(2, "0")}
                 </span>
-                <span className="font-game-body text-[8px] text-muted-foreground">{u.label}</span>
+                <span className="font-game-display text-[7px] text-muted-foreground">{u.label}</span>
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
 
-        {/* XP Progress */}
-        <div className="mt-3">
-          <div className="flex justify-between items-center mb-1">
-            <span className="font-game-body text-[10px] text-muted-foreground uppercase tracking-wider">
-              Tier {currentTier} → {currentTier + 1}
+        {/* ═══ XP Progress — Scoreboard Paint ═══ */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+          className="rounded-2xl p-3.5 mb-4"
+          style={{
+            background: CONCRETE_CARD,
+            border: "2px solid hsl(25 18% 22%)",
+            borderBottom: "5px solid hsl(25 20% 10%)",
+          }}>
+          <div className="flex justify-between items-center mb-1.5">
+            <span className="font-game-display text-[9px] tracking-wider text-muted-foreground">
+              TIER {currentTier} → {currentTier + 1}
             </span>
-            <span className="font-game-display text-[11px] text-primary">
+            <span className="font-game-score text-sm font-black" style={{ color: "hsl(207 90% 55%)" }}>
               {currentXp} XP
             </span>
           </div>
-          <div className="h-3 bg-muted rounded-lg border border-border/40 overflow-hidden">
+          <div className="h-3 rounded-full overflow-hidden" style={{
+            background: "linear-gradient(180deg, hsl(25 30% 10%), hsl(25 25% 14%))",
+            border: "1px solid hsl(25 20% 8%)",
+            boxShadow: "inset 0 1px 3px hsl(0 0% 0% / 0.5)",
+          }}>
             <motion.div
-              className="h-full rounded-lg"
+              className="h-full rounded-full"
               style={{
-                background: "linear-gradient(to right, hsl(217 91% 60%), hsl(217 91% 72%))",
-                boxShadow: "0 0 8px hsl(217 91% 60% / 0.5)",
+                background: "linear-gradient(90deg, hsl(207 90% 50%), hsl(168 80% 50%))",
+                boxShadow: "0 0 8px hsl(207 90% 50% / 0.4)",
               }}
               initial={{ width: 0 }}
               animate={{ width: `${progressPct}%` }}
               transition={{ duration: 0.8, ease: "easeOut" }}
             />
           </div>
-        </div>
+        </motion.div>
 
-        {/* Premium unlock */}
+        {/* ═══ Premium Unlock — Jersey Mesh ═══ */}
         {!isPremium && (
           <motion.button
-            className="w-full mt-3 py-3 rounded-xl font-game-display text-sm tracking-wider flex items-center justify-center gap-2"
+            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
+            className="w-full mb-4 py-3.5 rounded-2xl font-game-display text-sm tracking-wider flex items-center justify-center gap-2 relative overflow-hidden"
             style={{
-              background: "linear-gradient(135deg, hsl(45 93% 58%), hsl(36 90% 48%))",
-              color: "hsl(222 47% 6%)",
-              boxShadow: "0 4px 0 hsl(36 80% 30%), 0 6px 20px hsl(45 93% 58% / 0.25)",
+              background: "linear-gradient(180deg, hsl(43 90% 55%) 0%, hsl(35 80% 42%) 100%)",
+              border: "2px solid hsl(43 70% 45% / 0.5)",
+              borderBottom: "6px solid hsl(35 60% 28%)",
+              color: "hsl(25 40% 8%)",
+              textShadow: "0 1px 0 hsl(43 80% 70% / 0.3)",
+              boxShadow: "0 6px 24px hsl(43 90% 55% / 0.3), inset 0 1px 0 hsl(43 80% 70% / 0.4)",
             }}
             whileTap={{ scale: 0.97, y: 2 }}
             onClick={handlePurchasePremium}
             disabled={purchasing}
           >
-            <Crown className="w-4 h-4" />
-            {purchasing ? "PURCHASING..." : `UNLOCK PREMIUM PASS — 500 Coins (${coins} available)`}
+            {/* Jersey mesh texture */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
+              style={{ backgroundImage: "radial-gradient(circle, hsl(0 0% 100%) 0.5px, transparent 0.5px)", backgroundSize: "4px 4px" }} />
+            <Crown className="w-4 h-4 relative z-10" />
+            <span className="relative z-10">
+              {purchasing ? "PURCHASING..." : `UNLOCK PREMIUM — 500 🪙`}
+            </span>
           </motion.button>
         )}
         {isPremium && (
-          <div className="mt-3 flex items-center gap-2 justify-center">
-            <Crown className="w-4 h-4 text-secondary" />
-            <span className="font-game-display text-xs text-secondary tracking-wider">PREMIUM ACTIVE</span>
-          </div>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }}
+            className="mb-4 flex items-center gap-2 justify-center py-2 rounded-xl"
+            style={{
+              background: "hsl(43 60% 20% / 0.2)",
+              border: "1px solid hsl(43 70% 45% / 0.3)",
+            }}>
+            <Crown className="w-4 h-4" style={{ color: "hsl(43 90% 55%)" }} />
+            <span className="font-game-display text-xs tracking-wider" style={{ color: "hsl(43 90% 55%)" }}>PREMIUM ACTIVE</span>
+          </motion.div>
         )}
-      </div>
 
-      {/* Track header */}
-      <div className="px-4 mb-2 flex items-center gap-4">
-        <div className="flex-1 flex items-center gap-1">
-          <Gift className="w-3.5 h-3.5 text-accent" />
-          <span className="font-game-body text-[10px] text-muted-foreground uppercase tracking-wider">Free</span>
-        </div>
-        <div className="flex-1 flex items-center gap-1 justify-end">
-          <Crown className="w-3.5 h-3.5 text-secondary" />
-          <span className="font-game-body text-[10px] text-secondary/70 uppercase tracking-wider">Premium</span>
-        </div>
-      </div>
+        {/* ═══ Track Header — Chalk divider ═══ */}
+        <div className="h-px mb-3 mx-2 opacity-20" style={{ background: CHALK_DIVIDER }} />
 
-      {/* Reward tiers */}
-      <div className="px-4 space-y-2 pb-4">
-        {REWARDS.map((r) => (
-          <TierCard
-            key={r.tier}
-            reward={r}
-            currentXp={currentXp}
-            isPremium={isPremium}
-            claimed={claimed}
-            onClaim={handleClaim}
-          />
-        ))}
+        <div className="flex items-center gap-4 px-2 mb-3">
+          <div className="flex-1 flex items-center gap-1.5">
+            <Gift className="w-3.5 h-3.5" style={{ color: "hsl(142 71% 55%)" }} />
+            <span className="font-game-display text-[8px] tracking-widest text-muted-foreground">FREE</span>
+          </div>
+          <div className="flex-1 flex items-center gap-1.5 justify-end">
+            <Crown className="w-3.5 h-3.5" style={{ color: "hsl(43 90% 55%)" }} />
+            <span className="font-game-display text-[8px] tracking-widest" style={{ color: "hsl(43 70% 50% / 0.7)" }}>PREMIUM</span>
+          </div>
+        </div>
+
+        {/* ═══ Reward Tiers — Stadium Concrete Cards ═══ */}
+        <div className="space-y-2 pb-4">
+          {REWARDS.map((r) => (
+            <TierCard
+              key={r.tier}
+              reward={r}
+              currentXp={currentXp}
+              isPremium={isPremium}
+              claimed={claimed}
+              onClaim={handleClaim}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Claim overlay */}
@@ -466,7 +509,6 @@ export default function BattlePassPage() {
           <ClaimOverlay reward={claimingReward} onClose={() => setClaimingReward(null)} />
         )}
       </AnimatePresence>
-
     </div>
   );
 }

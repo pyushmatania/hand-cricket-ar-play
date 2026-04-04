@@ -5,6 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { useDailyLogin } from "@/hooks/useDailyLogin";
 import TopStatusBar from "@/components/TopStatusBar";
 
+/* ── Doc 1 Material Constants ── */
+const LEATHER_BG = "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)";
+const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
+const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
+const CHALK_DIVIDER = "repeating-linear-gradient(90deg, hsl(45 30% 80%) 0px, hsl(45 30% 80%) 8px, transparent 8px, transparent 14px)";
+
 /* ──── Reward Calendar Data (28-day cycle) ──── */
 interface DayReward {
   day: number;
@@ -45,9 +51,6 @@ function buildCalendar(): DayReward[] {
 
 const CALENDAR = buildCalendar();
 
-const cardBg = "linear-gradient(135deg, hsl(222 40% 13% / 0.9), hsl(222 40% 8% / 0.95))";
-const cardShadow = "0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)";
-
 const TYPE_COLORS: Record<string, string> = {
   coins: "hsl(51,100%,50%)",
   chest: "hsl(122,39%,49%)",
@@ -60,22 +63,22 @@ function ChestOpenOverlay({ reward, onClose }: { reward: DayReward; onClose: () 
   const color = TYPE_COLORS[reward.type];
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm"
       onClick={onClose}
     >
       <motion.div
-        initial={{ scale: 0, rotate: -15 }}
-        animate={{ scale: 1, rotate: 0 }}
-        exit={{ scale: 0.5, opacity: 0 }}
+        initial={{ scale: 0, rotate: -15 }} animate={{ scale: 1, rotate: 0 }} exit={{ scale: 0.5, opacity: 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 15 }}
-        className="rounded-3xl p-8 text-center max-w-[280px] w-full border-b-[4px]"
-        style={{ background: cardBg, boxShadow: `0 8px 40px ${color}40, ${cardShadow}`, borderColor: `${color}50` }}
+        className="rounded-3xl p-8 text-center max-w-[280px] w-full relative overflow-hidden"
+        style={{
+          background: CONCRETE_CARD,
+          border: `2px solid ${color}50`,
+          borderBottom: `5px solid ${color}30`,
+          boxShadow: `0 8px 40px ${color}40, 0 4px 12px rgba(0,0,0,0.4)`,
+        }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Glow ring */}
         <motion.div
           animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
           transition={{ repeat: Infinity, duration: 2 }}
@@ -84,8 +87,7 @@ function ChestOpenOverlay({ reward, onClose }: { reward: DayReward; onClose: () 
         />
 
         <motion.span
-          initial={{ y: -20, scale: 0 }}
-          animate={{ y: 0, scale: 1 }}
+          initial={{ y: -20, scale: 0 }} animate={{ y: 0, scale: 1 }}
           transition={{ delay: 0.2, type: "spring", stiffness: 400, damping: 10 }}
           className="text-6xl block mb-4"
         >
@@ -101,15 +103,11 @@ function ChestOpenOverlay({ reward, onClose }: { reward: DayReward; onClose: () 
           </span>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.6 }}
-          className="flex items-center justify-center gap-6 mb-6"
-        >
+        <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.6 }}
+          className="flex items-center justify-center gap-6 mb-6">
           <div className="text-center">
             <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: 2, duration: 0.3, delay: 0.8 }}
-              className="font-game-display text-2xl block leading-none" style={{ color: "hsl(51,100%,60%)" }}>
+              className="font-game-score text-2xl font-black block leading-none" style={{ color: "hsl(51,100%,60%)" }}>
               +{reward.coins}
             </motion.span>
             <span className="text-[8px] text-muted-foreground font-game-display tracking-widest">COINS</span>
@@ -117,7 +115,7 @@ function ChestOpenOverlay({ reward, onClose }: { reward: DayReward; onClose: () 
           <div className="w-px h-8" style={{ background: `${color}30` }} />
           <div className="text-center">
             <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: 2, duration: 0.3, delay: 0.9 }}
-              className="font-game-display text-2xl block leading-none" style={{ color: "hsl(207,90%,60%)" }}>
+              className="font-game-score text-2xl font-black block leading-none" style={{ color: "hsl(207,90%,60%)" }}>
               +{reward.xp}
             </motion.span>
             <span className="text-[8px] text-muted-foreground font-game-display tracking-widest">XP</span>
@@ -125,27 +123,30 @@ function ChestOpenOverlay({ reward, onClose }: { reward: DayReward; onClose: () 
         </motion.div>
 
         <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          whileTap={{ scale: 0.95 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
+          whileTap={{ scale: 0.95, y: 2 }}
           onClick={onClose}
-          className="px-8 py-3 rounded-2xl font-game-display text-sm tracking-wider border-b-[3px] active:border-b-[1px] active:translate-y-[2px]"
+          className="px-8 py-3 rounded-2xl font-game-display text-sm tracking-wider relative overflow-hidden"
           style={{
-            background: `linear-gradient(to bottom, ${color}, ${color}cc)`,
-            borderColor: `${color}80`,
+            background: `linear-gradient(180deg, ${color}, ${color}cc)`,
+            border: `2px solid ${color}60`,
+            borderBottom: `5px solid ${color}50`,
             color: "white",
             boxShadow: `0 4px 16px ${color}40`,
           }}
         >
-          COLLECT
+          <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
+            style={{ backgroundImage: "radial-gradient(circle, hsl(0 0% 100%) 0.5px, transparent 0.5px)", backgroundSize: "4px 4px" }} />
+          <span className="relative z-10">COLLECT</span>
         </motion.button>
       </motion.div>
     </motion.div>
   );
 }
 
-/* ──── Main Page ──── */
+/* ══════════════════════════════════════════════
+   DAILY REWARDS PAGE — Doc 1 Material System
+   ══════════════════════════════════════════════ */
 export default function DailyRewardsPage() {
   const navigate = useNavigate();
   const { streak, todayClaimed, STREAK_REWARDS } = useDailyLogin();
@@ -172,103 +173,146 @@ export default function DailyRewardsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-game-dark relative overflow-hidden pb-24">
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 0%, hsl(222 40% 18%) 0%, hsl(222 40% 6%) 70%)" }} />
-      <div className="absolute inset-0 vignette pointer-events-none" />
+    <div className="min-h-screen relative overflow-hidden pb-24" style={{ background: LEATHER_BG }}>
+      {/* Leather grain */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: LEATHER_GRAIN, backgroundRepeat: "repeat" }} />
+      {/* Vignette */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }} />
+
       <TopStatusBar />
 
       <AnimatePresence>
         {openingReward && <ChestOpenOverlay reward={openingReward} onClose={() => setOpeningReward(null)} />}
       </AnimatePresence>
 
-      <div className="relative z-10 max-w-lg mx-auto px-4 pt-4">
-        {/* Header */}
+      <div className="relative z-10 max-w-lg mx-auto px-4 pt-3">
+
+        {/* ═══ Header — Floodlight Chrome ═══ */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 mb-4">
           <motion.button whileTap={{ scale: 0.9 }} onClick={() => navigate(-1)}
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-sm border-b-2"
-            style={{ background: cardBg, boxShadow: cardShadow, borderColor: "hsl(var(--border) / 0.2)" }}>
+            className="w-10 h-10 rounded-xl flex items-center justify-center font-game-body text-sm text-foreground"
+            style={{
+              background: "linear-gradient(180deg, hsl(28 20% 22%) 0%, hsl(25 18% 15%) 100%)",
+              border: "2px solid hsl(43 50% 35%)",
+              boxShadow: "0 3px 0 hsl(25 30% 10%), inset 0 1px 0 hsl(43 40% 45% / 0.3)",
+            }}>
             ←
           </motion.button>
           <div className="flex-1">
-            <h1 className="font-game-display text-lg tracking-wider text-game-gold">DAILY REWARDS</h1>
-            <p className="text-[9px] text-muted-foreground font-game-body tracking-wide">Day {cycleDay} of 28 • Week {currentWeek}</p>
+            <h1 className="font-game-title text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(25 40% 8%)" }}>
+              Daily Rewards
+            </h1>
+            <span className="text-[9px] text-muted-foreground font-game-display tracking-[0.2em]">
+              DAY {cycleDay} OF 28 • WEEK {currentWeek}
+            </span>
           </div>
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-b-2"
-            style={{ background: "hsl(4 90% 58% / 0.15)", borderColor: "hsl(4 90% 58% / 0.3)" }}>
+          {/* Streak badge — Floodlight Chrome */}
+          <div className="flex items-center gap-1.5 px-3 py-2 rounded-xl"
+            style={{
+              background: "linear-gradient(180deg, hsl(4 50% 22%), hsl(4 40% 15%))",
+              border: "2px solid hsl(4 60% 35%)",
+              borderBottom: "4px solid hsl(4 40% 18%)",
+              boxShadow: "0 3px 8px hsl(4 90% 58% / 0.2)",
+            }}>
             <span className="text-sm">🔥</span>
-            <span className="font-game-display text-sm leading-none" style={{ color: "hsl(4,90%,65%)" }}>{streak}</span>
+            <span className="font-game-score text-sm font-black" style={{ color: "hsl(4,90%,65%)" }}>{streak}</span>
           </div>
         </motion.div>
 
-        {/* Streak Progress Bar */}
+        {/* ═══ Monthly Progress — Stadium Concrete ═══ */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-          className="rounded-2xl p-4 mb-4 border-b-[3px]"
-          style={{ background: cardBg, boxShadow: cardShadow, borderColor: "hsl(var(--game-gold) / 0.2)" }}>
+          className="rounded-2xl p-4 mb-4"
+          style={{
+            background: CONCRETE_CARD,
+            border: "2px solid hsl(43 50% 35% / 0.3)",
+            borderBottom: "5px solid hsl(25 20% 10%)",
+            boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
+          }}>
           <div className="flex items-center justify-between mb-2">
             <span className="font-game-display text-[10px] tracking-wider text-foreground">MONTHLY PROGRESS</span>
-            <span className="font-game-display text-[9px]" style={{ color: "hsl(51,100%,60%)" }}>
+            <span className="font-game-score text-sm font-black" style={{ color: "hsl(43 90% 55%)" }}>
               {Math.round((cycleDay / 28) * 100)}%
             </span>
           </div>
-          <div className="relative h-3 rounded-full overflow-hidden" style={{ background: "hsl(222 40% 10%)", boxShadow: "inset 0 2px 4px rgba(0,0,0,0.5)" }}>
+          <div className="relative h-3 rounded-full overflow-hidden" style={{
+            background: "linear-gradient(180deg, hsl(25 30% 10%), hsl(25 25% 14%))",
+            border: "1px solid hsl(25 20% 8%)",
+            boxShadow: "inset 0 1px 3px hsl(0 0% 0% / 0.5)",
+          }}>
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${(cycleDay / 28) * 100}%` }}
               transition={{ duration: 1, ease: "easeOut" }}
               className="h-full rounded-full"
               style={{
-                background: "linear-gradient(to right, hsl(122,39%,49%), hsl(51,100%,50%), hsl(43,96%,56%))",
-                boxShadow: "0 0 8px hsl(51 100% 50% / 0.4)",
+                background: "linear-gradient(90deg, hsl(142 71% 50%), hsl(43 90% 55%), hsl(43 96% 56%))",
+                boxShadow: "0 0 8px hsl(43 90% 55% / 0.4)",
               }}
             />
-            {/* Milestone markers */}
             {[7, 14, 21, 28].map(m => (
               <div key={m} className="absolute top-0 bottom-0 w-[2px]" style={{
                 left: `${(m / 28) * 100}%`,
-                background: cycleDay >= m ? "hsl(51,100%,70%)" : "hsl(var(--muted-foreground) / 0.2)",
+                background: cycleDay >= m ? "hsl(43 90% 65%)" : "hsl(25 15% 20%)",
               }} />
             ))}
           </div>
           <div className="flex justify-between mt-1.5">
             {[7, 14, 21, 28].map(m => (
               <span key={m} className="text-[7px] font-game-display tracking-wider"
-                style={{ color: cycleDay >= m ? "hsl(51,100%,60%)" : "hsl(var(--muted-foreground) / 0.3)" }}>
+                style={{ color: cycleDay >= m ? "hsl(43 90% 55%)" : "hsl(25 15% 35%)" }}>
                 {m === 7 ? "🎁" : m === 14 ? "👑" : m === 21 ? "🎁" : "🏆"} D{m}
               </span>
             ))}
           </div>
         </motion.div>
 
-        {/* Pass Toggle */}
+        {/* ═══ Pass Toggle — Jersey Mesh Tabs ═══ */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
-          className="flex gap-2 mb-4">
+          className="flex gap-1 mb-4 rounded-2xl p-1"
+          style={{
+            background: "linear-gradient(180deg, hsl(25 15% 16%) 0%, hsl(25 12% 12%) 100%)",
+            border: "1px solid hsl(25 20% 22% / 0.6)",
+          }}>
           {[
-            { id: false, label: "FREE PASS", icon: "🎟️", accent: "hsl(207,90%,54%)" },
-            { id: true, label: "PREMIUM PASS", icon: "👑", accent: "hsl(43,96%,56%)" },
+            { id: false, label: "FREE PASS", icon: "🎟️", hue: 207 },
+            { id: true, label: "PREMIUM", icon: "👑", hue: 43 },
           ].map(p => (
-            <motion.button key={String(p.id)} whileTap={{ scale: 0.95 }} onClick={() => setShowPremium(p.id as boolean)}
-              className="flex-1 py-2.5 rounded-xl font-game-display text-[9px] tracking-widest flex items-center justify-center gap-1.5 border-b-2 transition-all"
-              style={{
-                background: showPremium === p.id ? `${p.accent}15` : "hsl(222 40% 12% / 0.8)",
-                borderColor: showPremium === p.id ? `${p.accent}50` : "transparent",
-                color: showPremium === p.id ? p.accent : "hsl(var(--muted-foreground) / 0.4)",
-                boxShadow: showPremium === p.id ? `0 2px 12px ${p.accent}20` : "none",
-              }}>
-              <span className="text-sm">{p.icon}</span> {p.label}
+            <motion.button key={String(p.id)} whileTap={{ scale: 0.95 }}
+              onClick={() => setShowPremium(p.id as boolean)}
+              className="flex-1 py-2.5 rounded-xl font-game-display text-[9px] tracking-widest flex items-center justify-center gap-1.5 relative overflow-hidden"
+              style={showPremium === p.id ? {
+                background: `linear-gradient(180deg, hsl(${p.hue} 70% 50%) 0%, hsl(${p.hue} 60% 38%) 100%)`,
+                color: "white",
+                borderBottom: `3px solid hsl(${p.hue} 50% 25%)`,
+                boxShadow: `0 2px 8px hsl(${p.hue} 80% 45% / 0.3), inset 0 1px 0 hsl(${p.hue} 80% 65% / 0.4)`,
+              } : {
+                color: "hsl(25 15% 45%)",
+                borderBottom: "3px solid transparent",
+              }}
+            >
+              {showPremium === p.id && (
+                <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
+                  style={{ backgroundImage: "radial-gradient(circle, hsl(0 0% 100%) 0.5px, transparent 0.5px)", backgroundSize: "4px 4px" }} />
+              )}
+              <span className="text-sm relative z-10">{p.icon}</span>
+              <span className="relative z-10">{p.label}</span>
             </motion.button>
           ))}
         </motion.div>
 
-        {/* Calendar Grid */}
+        {/* Chalk divider */}
+        <div className="h-px mb-3 mx-2 opacity-20" style={{ background: CHALK_DIVIDER }} />
+
+        {/* ═══ Calendar Grid — Stadium Concrete Day Cards ═══ */}
         {weeks.map((week, wi) => (
           <motion.div key={wi} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.12 + wi * 0.06 }} className="mb-3">
             <div className="flex items-center gap-2 mb-1.5">
               <span className="font-game-display text-[8px] tracking-[0.2em]"
-                style={{ color: currentWeek === wi + 1 ? "hsl(51,100%,60%)" : "hsl(var(--muted-foreground) / 0.4)" }}>
+                style={{ color: currentWeek === wi + 1 ? "hsl(43 90% 55%)" : "hsl(25 15% 35%)" }}>
                 WEEK {wi + 1}
               </span>
-              <div className="flex-1 h-px" style={{ background: "hsl(var(--border) / 0.1)" }} />
+              <div className="flex-1 h-px opacity-20" style={{ background: CHALK_DIVIDER }} />
               {wi + 1 < currentWeek && <span className="text-[8px]">✅</span>}
             </div>
 
@@ -286,19 +330,27 @@ export default function DailyRewardsPage() {
                     key={day.day}
                     whileTap={!isLocked ? { scale: 0.9 } : {}}
                     onClick={() => handleDayClaim(day)}
-                    className="relative rounded-xl p-1.5 text-center border-b-2 transition-all"
+                    className="relative rounded-xl p-1.5 text-center"
                     style={{
                       background: isCurrent
                         ? `linear-gradient(135deg, ${color}25, ${color}08)`
                         : isPast
-                        ? "hsl(122 39% 49% / 0.08)"
-                        : "hsl(222 40% 12% / 0.6)",
-                      borderColor: isCurrent ? `${color}50` : isPast ? "hsl(122 39% 49% / 0.2)" : "transparent",
-                      boxShadow: isCurrent ? `0 2px 12px ${color}25` : "none",
+                          ? "hsl(142 40% 18% / 0.15)"
+                          : "linear-gradient(180deg, hsl(25 18% 14%), hsl(25 15% 10%))",
+                      border: isCurrent
+                        ? `2px solid ${color}50`
+                        : isPast
+                          ? "2px solid hsl(142 39% 49% / 0.2)"
+                          : "2px solid hsl(25 18% 20%)",
+                      borderBottom: isCurrent
+                        ? `4px solid ${color}30`
+                        : isPast
+                          ? "4px solid hsl(142 30% 15%)"
+                          : "4px solid hsl(25 15% 8%)",
+                      boxShadow: isCurrent ? `0 2px 12px ${color}25` : "0 2px 4px hsl(0 0% 0% / 0.2)",
                       opacity: isLocked ? 0.4 : 1,
                     }}
                   >
-                    {/* Current day pulse */}
                     {isCurrent && (
                       <motion.div
                         animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.6, 0.3] }}
@@ -309,7 +361,7 @@ export default function DailyRewardsPage() {
                     )}
 
                     <span className="text-[7px] font-game-display tracking-wider block mb-0.5"
-                      style={{ color: isCurrent ? color : isPast ? "hsl(122,70%,55%)" : "hsl(var(--muted-foreground) / 0.3)" }}>
+                      style={{ color: isCurrent ? color : isPast ? "hsl(142,70%,55%)" : "hsl(25 15% 35%)" }}>
                       D{day.day}
                     </span>
 
@@ -321,12 +373,11 @@ export default function DailyRewardsPage() {
                       {isPast ? "✅" : isLocked ? "🔒" : (showPremium ? reward.icon : day.icon)}
                     </motion.span>
 
-                    <span className="text-[6px] font-game-display block mt-0.5"
-                      style={{ color: isCurrent ? "hsl(51,100%,60%)" : "hsl(var(--muted-foreground) / 0.3)" }}>
+                    <span className="text-[6px] font-game-score font-black block mt-0.5"
+                      style={{ color: isCurrent ? "hsl(43 90% 55%)" : "hsl(25 15% 35%)" }}>
                       +{reward.coins}
                     </span>
 
-                    {/* Premium sparkle */}
                     {showPremium && !isLocked && (
                       <div className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full flex items-center justify-center text-[6px]"
                         style={{ background: "hsl(43,96%,56%)", boxShadow: "0 0 4px hsl(43 96% 56% / 0.5)" }}>
@@ -340,35 +391,48 @@ export default function DailyRewardsPage() {
           </motion.div>
         ))}
 
-        {/* Premium Upsell */}
+        {/* ═══ Premium Upsell — Jersey Mesh ═══ */}
         {!showPremium && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-            className="rounded-2xl p-4 text-center border-b-[3px] mb-4 relative overflow-hidden"
-            style={{ background: "linear-gradient(135deg, hsl(43 96% 56% / 0.08), hsl(51 100% 50% / 0.03))", boxShadow: cardShadow, borderColor: "hsl(43 96% 56% / 0.3)" }}>
-            <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: "linear-gradient(to right, transparent, hsl(43 96% 56% / 0.5), transparent)" }} />
+            className="rounded-2xl p-4 text-center mb-4 relative overflow-hidden"
+            style={{
+              background: "linear-gradient(135deg, hsl(43 40% 15% / 0.3), hsl(43 30% 12% / 0.2))",
+              border: "2px solid hsl(43 70% 45% / 0.3)",
+              borderBottom: "5px solid hsl(43 50% 20%)",
+              boxShadow: "0 3px 12px hsl(0 0% 0% / 0.3)",
+            }}>
+            <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: "linear-gradient(90deg, transparent, hsl(43 90% 55% / 0.5), transparent)" }} />
             <span className="text-3xl block mb-2">👑</span>
-            <span className="font-game-display text-sm tracking-wider block mb-1" style={{ color: "hsl(43,96%,60%)" }}>PREMIUM PASS</span>
+            <span className="font-game-display text-sm tracking-wider block mb-1" style={{ color: "hsl(43 90% 55%)" }}>PREMIUM PASS</span>
             <span className="text-[9px] text-muted-foreground font-game-body block mb-3">2× rewards on every day • Exclusive cosmetics • Mega chests</span>
-            <motion.button whileTap={{ scale: 0.95 }}
-              className="px-6 py-2.5 rounded-xl font-game-display text-[10px] tracking-wider border-b-[3px] active:border-b-[1px] active:translate-y-[2px]"
+            <motion.button whileTap={{ scale: 0.95, y: 2 }}
+              className="px-6 py-2.5 rounded-xl font-game-display text-[10px] tracking-wider relative overflow-hidden"
               style={{
-                background: "linear-gradient(to bottom, hsl(43,96%,56%), hsl(43,96%,42%))",
-                borderColor: "hsl(43,96%,32%)",
-                color: "hsl(222 40% 10%)",
-                boxShadow: "0 4px 16px hsl(43 96% 56% / 0.3)",
+                background: "linear-gradient(180deg, hsl(43 90% 55%), hsl(35 80% 42%))",
+                border: "2px solid hsl(43 70% 45% / 0.5)",
+                borderBottom: "5px solid hsl(35 60% 28%)",
+                color: "hsl(25 40% 8%)",
+                boxShadow: "0 4px 16px hsl(43 90% 55% / 0.3)",
               }}>
-              UNLOCK — 500 🪙
+              <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
+                style={{ backgroundImage: "radial-gradient(circle, hsl(0 0% 100%) 0.5px, transparent 0.5px)", backgroundSize: "4px 4px" }} />
+              <span className="relative z-10">UNLOCK — 500 🪙</span>
             </motion.button>
           </motion.div>
         )}
 
-        {/* Weekly Streak Bonus */}
+        {/* ═══ Streak Bonuses — Stadium Concrete ═══ */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
-          className="rounded-2xl p-4 border-b-[3px] mb-4"
-          style={{ background: cardBg, boxShadow: cardShadow, borderColor: "hsl(4 90% 58% / 0.2)" }}>
+          className="rounded-2xl p-4 mb-4"
+          style={{
+            background: CONCRETE_CARD,
+            border: "2px solid hsl(4 50% 30% / 0.3)",
+            borderBottom: "5px solid hsl(25 20% 10%)",
+            boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
+          }}>
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-lg">🔥</span>
-            <span className="font-game-display text-[10px] tracking-wider text-foreground">STREAK BONUSES</span>
+            <div className="w-1 h-4 rounded-full" style={{ background: "hsl(4 90% 58%)" }} />
+            <span className="font-game-display text-[10px] tracking-wider text-foreground">🔥 STREAK BONUSES</span>
           </div>
           <div className="flex gap-1.5">
             {STREAK_REWARDS.map((r, i) => {
@@ -378,17 +442,26 @@ export default function DailyRewardsPage() {
               const isCurrent = day === cycleDayInWeek;
 
               return (
-                <div key={day} className="flex-1 rounded-lg p-1.5 text-center border-b-2"
+                <div key={day} className="flex-1 rounded-lg p-1.5 text-center"
                   style={{
-                    background: isCurrent ? "hsl(4 90% 58% / 0.15)" : isPast ? "hsl(122 39% 49% / 0.08)" : "hsl(222 40% 12% / 0.6)",
-                    borderColor: isCurrent ? "hsl(4 90% 58% / 0.3)" : "transparent",
+                    background: isCurrent
+                      ? "hsl(4 50% 20% / 0.3)"
+                      : isPast
+                        ? "hsl(142 30% 18% / 0.2)"
+                        : "linear-gradient(180deg, hsl(25 18% 14%), hsl(25 15% 10%))",
+                    border: isCurrent
+                      ? "2px solid hsl(4 60% 40% / 0.4)"
+                      : "2px solid hsl(25 18% 18%)",
+                    borderBottom: isCurrent
+                      ? "3px solid hsl(4 40% 22%)"
+                      : "3px solid hsl(25 15% 8%)",
                   }}>
                   <span className="text-[10px] block">{isPast ? "✅" : isCurrent ? "🔥" : "🔒"}</span>
                   <span className="text-[6px] font-game-display tracking-wider block mt-0.5"
-                    style={{ color: isCurrent ? "hsl(4,90%,65%)" : isPast ? "hsl(122,70%,55%)" : "hsl(var(--muted-foreground) / 0.3)" }}>
+                    style={{ color: isCurrent ? "hsl(4,90%,65%)" : isPast ? "hsl(142,70%,55%)" : "hsl(25 15% 35%)" }}>
                     D{day}
                   </span>
-                  <span className="text-[5px] font-game-display block" style={{ color: "hsl(var(--muted-foreground) / 0.4)" }}>
+                  <span className="text-[5px] font-game-score font-black block" style={{ color: "hsl(25 15% 40%)" }}>
                     +{r.coins}🪙
                   </span>
                 </div>
@@ -397,7 +470,6 @@ export default function DailyRewardsPage() {
           </div>
         </motion.div>
       </div>
-
     </div>
   );
 }
