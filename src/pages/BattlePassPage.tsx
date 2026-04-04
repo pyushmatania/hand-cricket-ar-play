@@ -28,20 +28,74 @@ interface PassReward {
   milestone?: boolean;
 }
 
-const REWARDS: PassReward[] = [
-  { tier: 1, xpNeeded: 100, free: { icon: "🪙", label: "Coins", amount: 50 }, premium: { icon: "🪙", label: "Coins", amount: 150 } },
-  { tier: 2, xpNeeded: 250, free: { icon: "⭐", label: "XP Boost" }, premium: { icon: "🎨", label: "Blue Flame Bat" } },
-  { tier: 3, xpNeeded: 400, free: { icon: "🪙", label: "Coins", amount: 75 }, premium: { icon: "💎", label: "Gems", amount: 10 } },
-  { tier: 4, xpNeeded: 600, free: { icon: "📦", label: "Silver Chest" }, premium: { icon: "📦", label: "Gold Chest" } },
-  { tier: 5, xpNeeded: 850, free: { icon: "🪙", label: "Coins", amount: 100 }, premium: { icon: "🖼️", label: "Epic Frame" }, milestone: true },
-  { tier: 6, xpNeeded: 1100, free: { icon: "⚡", label: "Power Shot" }, premium: { icon: "🪙", label: "Coins", amount: 300 } },
-  { tier: 7, xpNeeded: 1400, free: { icon: "🪙", label: "Coins", amount: 100 }, premium: { icon: "✨", label: "VS Effect" } },
-  { tier: 8, xpNeeded: 1700, free: { icon: "📦", label: "Silver Chest" }, premium: { icon: "📦", label: "Mega Chest" } },
-  { tier: 9, xpNeeded: 2050, free: { icon: "🪙", label: "Coins", amount: 150 }, premium: { icon: "💎", label: "Gems", amount: 25 } },
-  { tier: 10, xpNeeded: 2500, free: { icon: "🏆", label: "Season Badge" }, premium: { icon: "👑", label: "Legendary Bat" }, milestone: true },
-  { tier: 11, xpNeeded: 3000, free: { icon: "🪙", label: "Coins", amount: 200 }, premium: { icon: "🎭", label: "Rare Avatar" } },
-  { tier: 12, xpNeeded: 3600, free: { icon: "⭐", label: "XP Boost x2" }, premium: { icon: "📦", label: "Legendary Chest" }, milestone: true },
-];
+/* ── Reward generator — 60 tiers ── */
+function generateRewards(): PassReward[] {
+  const FREE_POOL = [
+    { icon: "🪙", label: "Coins", amount: 50 },
+    { icon: "🪙", label: "Coins", amount: 75 },
+    { icon: "🪙", label: "Coins", amount: 100 },
+    { icon: "⭐", label: "XP Boost" },
+    { icon: "📦", label: "Silver Chest" },
+    { icon: "⚡", label: "Power Shot" },
+    { icon: "🪙", label: "Coins", amount: 150 },
+    { icon: "🪙", label: "Coins", amount: 200 },
+  ];
+  const PREM_POOL = [
+    { icon: "🪙", label: "Coins", amount: 150 },
+    { icon: "🪙", label: "Coins", amount: 300 },
+    { icon: "💎", label: "Gems", amount: 10 },
+    { icon: "💎", label: "Gems", amount: 25 },
+    { icon: "📦", label: "Gold Chest" },
+    { icon: "📦", label: "Mega Chest" },
+    { icon: "🎨", label: "Bat Skin" },
+    { icon: "✨", label: "VS Effect" },
+    { icon: "🖼️", label: "Epic Frame" },
+    { icon: "🎭", label: "Rare Avatar" },
+  ];
+  const MILESTONE_FREE: Record<number, PassReward["free"]> = {
+    5: { icon: "📦", label: "Gold Chest" },
+    10: { icon: "🏆", label: "Season Badge" },
+    15: { icon: "🪙", label: "Coins", amount: 300 },
+    20: { icon: "⭐", label: "XP Boost x2" },
+    25: { icon: "📦", label: "Mega Chest" },
+    30: { icon: "🏅", label: "Elite Badge" },
+    35: { icon: "🪙", label: "Coins", amount: 400 },
+    40: { icon: "📦", label: "Legendary Chest" },
+    45: { icon: "🪙", label: "Coins", amount: 500 },
+    50: { icon: "👑", label: "Champion Title" },
+    55: { icon: "💎", label: "Gems", amount: 50 },
+    60: { icon: "🏆", label: "Thunder Trophy" },
+  };
+  const MILESTONE_PREM: Record<number, PassReward["premium"]> = {
+    5: { icon: "🖼️", label: "Storm Frame" },
+    10: { icon: "👑", label: "Legendary Bat" },
+    15: { icon: "✨", label: "Lightning VS" },
+    20: { icon: "📦", label: "Legendary Chest" },
+    25: { icon: "🎭", label: "Thunder Avatar" },
+    30: { icon: "💎", label: "Gems", amount: 100 },
+    35: { icon: "🎨", label: "Inferno Bat" },
+    40: { icon: "👑", label: "Gold Crown Frame" },
+    45: { icon: "📦", label: "Ultra Chest" },
+    50: { icon: "✨", label: "Champion VS Effect" },
+    55: { icon: "🎭", label: "Legend Avatar" },
+    60: { icon: "👑", label: "⚡ THUNDER STRIKER" },
+  };
+  const rewards: PassReward[] = [];
+  for (let t = 1; t <= 60; t++) {
+    const milestone = t % 5 === 0;
+    const xp = Math.round(t * 80 + (t * t * 1.2));
+    rewards.push({
+      tier: t,
+      xpNeeded: xp,
+      free: MILESTONE_FREE[t] || FREE_POOL[(t - 1) % FREE_POOL.length],
+      premium: MILESTONE_PREM[t] || PREM_POOL[(t - 1) % PREM_POOL.length],
+      milestone,
+    });
+  }
+  return rewards;
+}
+
+const REWARDS: PassReward[] = generateRewards();
 
 /* ── Countdown hook ── */
 function useCountdown(target: Date) {
@@ -138,7 +192,7 @@ function TierCard({
       }}
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: reward.tier * 0.04 }}
+      transition={{ delay: Math.min(reward.tier * 0.015, 0.5) }}
     >
       {/* Tier badge — Scoreboard Paint */}
       <div className="flex flex-col items-center justify-center w-14 shrink-0"
@@ -412,7 +466,7 @@ export default function BattlePassPage() {
           }}>
           <div className="flex justify-between items-center mb-1.5">
             <span className="font-game-display text-[9px] tracking-wider text-muted-foreground">
-              TIER {currentTier} → {currentTier + 1}
+              TIER {currentTier}/60 → {Math.min(currentTier + 1, 60)}
             </span>
             <span className="font-game-score text-sm font-black" style={{ color: "hsl(207 90% 55%)" }}>
               {currentXp} XP
@@ -490,15 +544,28 @@ export default function BattlePassPage() {
 
         {/* ═══ Reward Tiers — Stadium Concrete Cards ═══ */}
         <div className="space-y-2 pb-4">
-          {REWARDS.map((r) => (
-            <TierCard
-              key={r.tier}
-              reward={r}
-              currentXp={currentXp}
-              isPremium={isPremium}
-              claimed={claimed}
-              onClaim={handleClaim}
-            />
+          {REWARDS.map((r, i) => (
+            <div key={r.tier}>
+              {/* Section header every 10 tiers */}
+              {r.tier % 10 === 1 && (
+                <div className="flex items-center gap-2 py-2 mb-1">
+                  <div className="flex-1 h-px opacity-20" style={{ background: CHALK_DIVIDER }} />
+                  <span className="font-game-display text-[8px] tracking-[0.3em] px-2" style={{
+                    color: r.tier <= currentTier + 1 ? "hsl(43 90% 55%)" : "hsl(25 15% 40%)",
+                  }}>
+                    {r.tier === 1 ? "TIER 1–10" : r.tier === 11 ? "TIER 11–20" : r.tier === 21 ? "TIER 21–30" : r.tier === 31 ? "TIER 31–40" : r.tier === 41 ? "TIER 41–50" : "TIER 51–60"}
+                  </span>
+                  <div className="flex-1 h-px opacity-20" style={{ background: CHALK_DIVIDER }} />
+                </div>
+              )}
+              <TierCard
+                reward={r}
+                currentXp={currentXp}
+                isPremium={isPremium}
+                claimed={claimed}
+                onClaim={handleClaim}
+              />
+            </div>
           ))}
         </div>
       </div>
