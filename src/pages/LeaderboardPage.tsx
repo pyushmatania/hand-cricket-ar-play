@@ -454,54 +454,74 @@ export default function LeaderboardPage() {
         style={{ background: "radial-gradient(ellipse, hsl(43 90% 55% / 0.04) 0%, transparent 70%)" }} />
       <TopStatusBar />
 
-      <div className="relative z-10 max-w-lg mx-auto px-4 pt-4">
-        {/* Header */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
+      <div className="relative z-10 max-w-[430px] mx-auto px-4 pt-4">
+        {/* ── Header ── */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-b from-game-gold to-[hsl(43_96%_42%)] border-b-3 border-[hsl(43_96%_32%)] flex items-center justify-center text-lg shadow-[0_4px_12px_hsl(51_100%_50%/0.3)]">
+              <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-xl"
+                style={{
+                  background: "linear-gradient(180deg, hsl(43 80% 50%) 0%, hsl(35 60% 35%) 100%)",
+                  border: "2px solid hsl(43 60% 55% / 0.5)",
+                  borderBottom: "4px solid hsl(35 50% 25%)",
+                  boxShadow: "0 4px 16px hsl(43 90% 50% / 0.3)",
+                }}
+              >
                 🏆
               </div>
               <div>
-                <h1 className="font-game-title text-lg text-foreground">Leaderboard</h1>
-                <span className="text-[8px] text-muted-foreground font-game-display tracking-[0.2em]">COMPETE & CLIMB</span>
+                <h1 className="font-game-title text-lg text-foreground" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>Leaderboard</h1>
+                <span className="font-game-display text-[8px] text-muted-foreground tracking-[0.2em]">COMPETE & CLIMB</span>
               </div>
             </div>
             {myStats && <RankBadge stats={myStats} compact />}
           </div>
         </motion.div>
 
-        {/* Scrollable tab bar — game-styled */}
+        {/* ── Tabs — Jersey Mesh ── */}
         <ScrollHint>
-          <div className="flex gap-1 mb-4 bg-game-dark/80 rounded-2xl p-1 border border-[hsl(222_25%_22%/0.5)]">
+          <div className="flex gap-1 mb-4 rounded-2xl p-1" style={{ background: "hsl(25 15% 10%)", border: "1px solid hsl(25 18% 18%)" }}>
             {mainTabs.map((t) => (
               <button
                 key={t.key}
                 onClick={() => setMainTab(t.key)}
-                className={`shrink-0 px-3 py-2.5 rounded-xl font-game-display text-[7px] tracking-widest transition-all flex items-center gap-1 ${
-                  mainTab === t.key
-                    ? "bg-gradient-to-b from-game-gold to-[hsl(43_96%_42%)] text-game-dark border-b-2 border-[hsl(43_96%_32%)] shadow-[0_2px_8px_hsl(51_100%_50%/0.3)] font-bold"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
+                className="shrink-0 px-3 py-2.5 rounded-xl font-game-display text-[7px] tracking-widest transition-all flex items-center gap-1 relative"
+                style={mainTab === t.key ? {
+                  background: "linear-gradient(180deg, hsl(43 80% 50%) 0%, hsl(35 60% 35%) 100%)",
+                  borderBottom: "3px solid hsl(35 50% 25%)",
+                  color: "hsl(25 40% 8%)",
+                  fontWeight: 700,
+                  boxShadow: "0 2px 8px hsl(43 90% 50% / 0.3)",
+                } : { color: "hsl(25 20% 50%)" }}
               >
-                <span className="text-sm">{t.icon}</span>
-                {t.label}
+                {mainTab === t.key && (
+                  <div className="absolute inset-0 pointer-events-none opacity-[0.06] rounded-xl"
+                    style={{ backgroundImage: "radial-gradient(circle, #fff 0.5px, transparent 0.5px)", backgroundSize: "4px 4px" }} />
+                )}
+                <span className="text-sm relative z-10">{t.icon}</span>
+                <span className="relative z-10">{t.label}</span>
               </button>
             ))}
           </div>
         </ScrollHint>
 
-        {/* Sort options — game-styled chips */}
+        {/* Sort options — Stadium Concrete chips */}
         {(mainTab === "global" || mainTab === "friends") && (
           <ScrollHint>
             <div className="flex gap-1.5 mb-4">
               {SORT_OPTIONS.map((opt, i) => (
                 <button key={opt.key} onClick={() => setSortBy(i)}
-                  className={`shrink-0 px-3 py-2 rounded-xl font-game-display text-[7px] tracking-widest transition-all border ${
-                    sortBy === i
-                      ? "bg-game-blue/15 text-game-blue border-game-blue/30 shadow-[0_0_8px_hsl(207_90%_54%/0.15)]"
-                      : "text-muted-foreground/60 border-transparent hover:text-muted-foreground"
-                  }`}>
+                  className="shrink-0 px-3 py-2 rounded-xl font-game-display text-[7px] tracking-widest transition-all"
+                  style={sortBy === i ? {
+                    background: "hsl(207 90% 54% / 0.15)",
+                    border: "2px solid hsl(207 90% 54% / 0.3)",
+                    color: "hsl(207 90% 60%)",
+                    boxShadow: "0 0 8px hsl(207 90% 54% / 0.15)",
+                  } : {
+                    background: "transparent",
+                    border: "2px solid transparent",
+                    color: "hsl(25 20% 40%)",
+                  }}>
                   {opt.icon} {opt.label}
                 </button>
               ))}
