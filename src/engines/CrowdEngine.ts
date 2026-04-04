@@ -165,6 +165,12 @@ export class CrowdEngine {
   setEventEngine(ee: typeof this.eventEngine): void { this.eventEngine = ee; }
   setOnMoodChange(cb: typeof this.onMoodChange): void { this.onMoodChange = cb; }
   setOnMexicanWave(cb: typeof this.onMexicanWave): void { this.onMexicanWave = cb; }
+  setThemeConfig(config: CrowdThemeConfig): void {
+    this.themeConfig = config;
+    // Adjust Mexican wave threshold — small crowds rarely do waves
+    this.mexicanWaveThreshold = config.count < 100 ? 110 : config.count < 1000 ? 95 : 90;
+  }
+  getThemeConfig(): CrowdThemeConfig { return this.themeConfig; }
 
   destroy(): void {
     this.stop();
