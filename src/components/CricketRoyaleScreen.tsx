@@ -100,7 +100,7 @@ export default function CricketRoyaleScreen({ onHome }: CricketRoyaleScreenProps
       if (hapticsEnabled) Haptics.success();
     } else {
       setPhase("result");
-      if (soundEnabled) SFX.wicket();
+      if (soundEnabled) SFX.out();
     }
   }, [game.phase]);
 
