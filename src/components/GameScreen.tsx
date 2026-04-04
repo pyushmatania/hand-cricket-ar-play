@@ -527,6 +527,16 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         />
       </div>
 
+      {/* Stadium establishing shot — plays before pre-match */}
+      {showEstablishingShot && (
+        <StadiumEstablishingShot
+          playerName={playerName}
+          opponentName={opponentName}
+          arenaName={matchTheme?.name || "Stadium"}
+          onComplete={handleEstablishingShotComplete}
+        />
+      )}
+
       {/* Pre-match ceremony */}
       {showPreMatch && tossInfo && (
         <EnhancedPreMatch
