@@ -373,7 +373,33 @@ export default function HomePage() {
         {/* ═══ F) CHEST SLOT ROW ═══ */}
         <ChestSlotsWidget />
 
-        {/* ═══ G) DAILY QUESTS ═══ */}
+        {/* ═══ G) LUCKY SPIN BANNER ═══ */}
+        <motion.button
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          whileTap={{ scale: 0.96 }}
+          onClick={() => navigate("/spin")}
+          className="mx-4 mb-3 flex items-center gap-3 rounded-xl px-4 py-3"
+          style={{
+            background: "linear-gradient(135deg, hsl(35 40% 16%), hsl(25 30% 10%))",
+            border: "2px solid hsl(35 50% 30%)",
+            boxShadow: "0 0 16px hsl(35 60% 40% / 0.15)",
+          }}
+        >
+          <motion.span
+            animate={{ rotate: [0, 15, -15, 0] }}
+            transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+            className="text-2xl"
+          >🎰</motion.span>
+          <div className="flex-1 text-left">
+            <span className="font-game-display text-xs text-foreground tracking-wider block">LUCKY SPIN</span>
+            <span className="text-[9px] font-game-body text-muted-foreground">Win coins, chests & cards!</span>
+          </div>
+          <span className="font-game-display text-[10px] text-game-gold">50 🪙</span>
+        </motion.button>
+
+        {/* ═══ H) DAILY QUESTS ═══ */}
         <DailyQuestsWidget />
       </div>
 
