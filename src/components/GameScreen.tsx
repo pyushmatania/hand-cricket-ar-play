@@ -501,9 +501,14 @@ export default function GameScreen({ onHome }: GameScreenProps) {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            className="absolute top-14 right-3 z-40 bg-black/80 backdrop-blur-xl border border-white/10 rounded-xl p-2.5 space-y-2"
+            className="absolute top-14 right-3 z-40 rounded-xl p-2.5 space-y-2"
+            style={{
+              background: "linear-gradient(180deg, hsl(25 18% 16%), hsl(25 15% 11%))",
+              border: "2px solid hsl(25 20% 22%)",
+              boxShadow: "0 4px 0 hsl(25 20% 6%), 0 6px 20px rgba(0,0,0,0.6)",
+            }}
           >
-            <p className="text-[7px] font-display font-bold text-white/60 tracking-widest px-1">FILTER</p>
+            <p className="text-[7px] font-game-display font-bold text-muted-foreground tracking-widest px-1">FILTER</p>
             <div className="flex gap-1">
               {FILTER_OPTIONS.map((f) => (
                 <button
