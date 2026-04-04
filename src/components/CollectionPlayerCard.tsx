@@ -148,9 +148,18 @@ export default function CollectionPlayerCard({ player, size = "sm", onTap, delay
               width={512}
               height={704}
             />
-          ) : player.ipl_team && TEAM_STAR_ART[player.ipl_team.toLowerCase()] ? (
+          ) : player.ipl_team && (() => {
+            const teamKey = player.ipl_team!.toLowerCase();
+            const isBowlerRole = player.role === "bowler" || player.role === "all_rounder";
+            const art = isBowlerRole ? (TEAM_BOWLER_ART[teamKey] || TEAM_STAR_ART[teamKey]) : TEAM_STAR_ART[teamKey];
+            return art;
+          })() ? (
             <img
-              src={TEAM_STAR_ART[player.ipl_team.toLowerCase()]}
+              src={(() => {
+                const teamKey = player.ipl_team!.toLowerCase();
+                const isBowlerRole = player.role === "bowler" || player.role === "all_rounder";
+                return isBowlerRole ? (TEAM_BOWLER_ART[teamKey] || TEAM_STAR_ART[teamKey]) : TEAM_STAR_ART[teamKey];
+              })()}
               alt={player.name}
               className="w-full h-full object-cover object-top opacity-60"
               loading="lazy"
