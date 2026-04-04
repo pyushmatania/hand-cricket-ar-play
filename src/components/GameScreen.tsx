@@ -223,25 +223,11 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         if (rewards) setMatchRewards(rewards);
       });
 
+      // Emit match end through engine (handles all SFX, haptics, crowd)
+      engines.event.emit('MATCH_END', { result: game.result });
+
       if (game.result === "win") {
-        if (soundEnabled) SFX.win();
-        if (hapticsEnabled) Haptics.success();
-        if (crowdEnabled) playCrowdForResult(0, true, true, "win");
         setFireworkType("win");
-        if (soundEnabled) {
-          setTimeout(() => SFX.fireworkWhoosh(), 200);
-          setTimeout(() => SFX.fireworkPop(), 600);
-          setTimeout(() => SFX.fireworkWhoosh(), 1000);
-          setTimeout(() => SFX.fireworkPop(), 1400);
-        }
-        if (hapticsEnabled) {
-          setTimeout(() => Haptics.firework(), 600);
-          setTimeout(() => Haptics.firework(), 1400);
-        }
-      } else if (game.result === "loss") {
-        if (soundEnabled) SFX.loss();
-        if (hapticsEnabled) Haptics.error();
-        if (crowdEnabled) playCrowdForResult(0, true, true, "loss");
       }
 
       if (!postMatchShownRef.current) {
