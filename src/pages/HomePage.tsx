@@ -59,6 +59,7 @@ export default function HomePage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [modeDrawerOpen, setModeDrawerOpen] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [recentMatch, setRecentMatch] = useState<RecentMatch | null>(null);
   const { rivals, loading: rivalsLoading } = useRivals();
