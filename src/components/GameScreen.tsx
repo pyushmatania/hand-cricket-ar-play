@@ -408,6 +408,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     <div className="fixed inset-0 bg-black overflow-hidden">
       <CelebrationEffects lastResult={game.lastResult} gameResult={game.result} phase={game.phase} />
       <CanvasFireworks type={fireworkType} duration={fireworkType === "win" ? 5000 : 3000} />
+      <WeatherParticles weather={matchWeather} />
 
       {/* Camera fills the full screen */}
       <div className="absolute inset-0">
