@@ -122,6 +122,8 @@ export default function SpinWheelPage() {
       setShowResult(true);
       setSpinning(false);
       spinRef.current = false;
+      engines.sound.playEffect('coin_land');
+      engines.sound.vibrate('medium');
 
       const reward = SLICES[winIndex].reward;
 
