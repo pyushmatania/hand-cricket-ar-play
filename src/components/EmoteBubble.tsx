@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { MATCH_EMOTES, type EmoteId } from "./EmotePicker";
 
-const ANIM_VARIANTS: Record<string, object> = {
+const ANIM_VARIANTS: Record<string, any> = {
   bounce: { y: [0, -20, 0, -10, 0], transition: { duration: 0.8, repeat: 1 } },
   spin: { rotate: [0, 360], transition: { duration: 0.6, repeat: 1 } },
   pulse: { scale: [1, 1.4, 1, 1.3, 1], transition: { duration: 0.7, repeat: 1 } },
