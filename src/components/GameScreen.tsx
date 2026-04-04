@@ -98,6 +98,16 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const [drsDismissal, setDrsDismissal] = useState<'lbw' | 'caught_behind' | 'caught' | null>(null);
   const [drsOutcome, setDrsOutcome] = useState<'out' | 'not_out'>('out');
 
+  // Wire Mexican Wave from CrowdEngine
+  useEffect(() => {
+    engines.crowd.setOnMexicanWave(() => {
+      const mood = engines.crowd.getMood();
+      setCrowdWaveIntensity(mood >= 95 ? 'massive' : mood >= 80 ? 'big' : 'normal');
+      setCrowdWaveActive(true);
+      setTimeout(() => setCrowdWaveActive(false), 3000);
+    });
+  }, [engines]);
+
   // Engine lifecycle managed by useEngines() hook above
   const [matchWeather] = useState(() => {
     // Pick random weather for this match
