@@ -6,6 +6,7 @@ import { useClan, type Clan } from "@/hooks/useClan";
 import { supabase } from "@/integrations/supabase/client";
 import TopBar from "@/components/layout/TopBar";
 import ClanDonations from "@/components/clan/ClanDonations";
+import ClanWars from "@/components/clan/ClanWars";
 
 const ROLE_ORDER = { leader: 0, co_leader: 1, elder: 2, member: 3 };
 const ROLE_LABELS: Record<string, string> = { leader: "👑 Leader", co_leader: "⚔️ Co-Leader", elder: "🛡️ Elder", member: "🏏 Member" };
@@ -13,7 +14,7 @@ const ROLE_COLORS: Record<string, string> = { leader: "text-secondary", co_leade
 const CLAN_EMOJIS = ["🏏", "⚡", "🔥", "💎", "🦁", "🐯", "🦅", "🐉", "⭐", "🌟", "👑", "🛡️"];
 const LEVEL_XP = [0, 100, 300, 600, 1000, 1500, 2200, 3000, 4000, 5500];
 
-type Tab = "info" | "chat" | "donate" | "browse";
+type Tab = "info" | "chat" | "donate" | "war" | "browse";
 
 export default function ClanPage() {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ export default function ClanPage() {
       <div className="relative z-10 max-w-lg mx-auto px-4 pt-2">
         {/* Tabs */}
         <div className="flex gap-1 p-1 glass-card rounded-xl mb-4">
-          {(myClan ? (["info", "chat", "donate"] as Tab[]) : (["browse"] as Tab[])).map(t => (
+          {(myClan ? (["info", "chat", "donate", "war"] as Tab[]) : (["browse"] as Tab[])).map(t => (
             <button key={t} onClick={() => { setTab(t); if (t === "browse") fetchAllClans(); }}
               className={`flex-1 py-2 rounded-lg font-display text-[10px] tracking-widest font-bold transition-all ${tab === t ? "bg-primary/20 text-primary" : "text-muted-foreground"}`}>
               {t.toUpperCase()}
@@ -66,6 +67,11 @@ export default function ClanPage() {
           {tab === "donate" && myClan && (
             <motion.div key="donate" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
               <ClanDonations clanId={myClan.id} />
+            </motion.div>
+          )}
+          {tab === "war" && myClan && myRole && (
+            <motion.div key="war" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
+              <ClanWars clan={myClan} myRole={myRole} />
             </motion.div>
           )}
           {tab === "browse" && (
