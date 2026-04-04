@@ -22,6 +22,7 @@ export interface MatchRewardsResult {
   oldRankName: string | null;
   newRankName: string | null;
   streakBonus: boolean;
+  chestAwarded?: string; // chest tier if one was awarded
 }
 
 export function useMatchSaver() {
