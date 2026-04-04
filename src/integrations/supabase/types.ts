@@ -636,6 +636,7 @@ export type Database = {
           high_score: number
           id: string
           invite_code: string
+          last_free_spin_date: string | null
           last_login_date: string | null
           login_streak: number
           losses: number
@@ -668,6 +669,7 @@ export type Database = {
           high_score?: number
           id?: string
           invite_code?: string
+          last_free_spin_date?: string | null
           last_login_date?: string | null
           login_streak?: number
           losses?: number
@@ -700,6 +702,7 @@ export type Database = {
           high_score?: number
           id?: string
           invite_code?: string
+          last_free_spin_date?: string | null
           last_login_date?: string | null
           login_streak?: number
           losses?: number
