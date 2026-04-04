@@ -79,8 +79,13 @@ export default function FriendsPage() {
 
   const loadMyCode = async () => {
     if (!user) return;
-    const { data } = await supabase.from("profiles").select("invite_code").eq("user_id", user.id).single();
-    if (data) setMyCode((data as any).invite_code || "");
+    const { data } = await supabase.from("profiles")
+      .select("user_id, display_name, wins, losses, draws, total_matches, high_score, best_streak, current_streak, abandons, invite_code, avatar_url, avatar_index, xp, coins, rank_tier")
+      .eq("user_id", user.id).single();
+    if (data) {
+      setMyCode((data as any).invite_code || "");
+      setMyProfile(data as unknown as FriendProfile);
+    }
   };
 
   const loadFriends = async () => {
