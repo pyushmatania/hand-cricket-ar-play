@@ -32,6 +32,7 @@ const ShopPage = lazy(() => import("./pages/ShopPage"));
 const DailyRewardsPage = lazy(() => import("./pages/DailyRewardsPage"));
 const BattlePassPage = lazy(() => import("./pages/BattlePassPage"));
 const CollectionPage = lazy(() => import("./pages/CollectionPage"));
+const SpinWheelPage = lazy(() => import("./pages/SpinWheelPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
