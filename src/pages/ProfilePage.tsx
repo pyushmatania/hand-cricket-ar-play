@@ -16,6 +16,8 @@ import XpHistoryFeed from "@/components/XpHistoryFeed";
 import { usePvpStats } from "@/hooks/usePvpStats";
 import { getRankTier, getNextTier, calculateRankPoints } from "@/lib/rankTiers";
 import CosmeticsCarousel from "@/components/CosmeticsCarousel";
+import { useTournamentPersistence } from "@/hooks/useTournamentPersistence";
+import { getRewardForPlacement } from "@/lib/tournamentRewards";
 
 /* ─── Types ─── */
 interface BallRecord {
