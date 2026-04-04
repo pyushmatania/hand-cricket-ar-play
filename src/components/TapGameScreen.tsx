@@ -16,7 +16,8 @@ import EnhancedPostMatch from "./EnhancedPostMatch";
 import TapPlayingUI from "./TapPlayingUI";
 import OverSelector from "./OverSelector";
 import { useEquippedCosmetics } from "@/hooks/useEquippedCosmetics";
-import { rollWeather, type Weather } from "@/lib/weather";
+import { rollWeather, getWeatherById, type Weather } from "@/lib/weather";
+import { getThemeById } from "@/lib/matchThemes";
 
 const AI_NAME = "Rohit AI";
 const AI_EMOJI = "🏏";
@@ -29,6 +30,8 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const location = useLocation();
   const arenaImage = (location.state as any)?.arenaImage as string | undefined;
   const arenaId = (location.state as any)?.arenaId as string | undefined;
+  const themeId = (location.state as any)?.themeId as string | undefined;
+  const matchTheme = getThemeById(themeId || localStorage.getItem("selectedTheme") || "gully");
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
   const cosmetics = useEquippedCosmetics();
@@ -41,7 +44,15 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const [showOverSelector, setShowOverSelector] = useState(true);
   const [playerXP, setPlayerXP] = useState(0);
   const [matchRewards, setMatchRewards] = useState<any>(null);
-  const [matchWeather] = useState<Weather>(() => rollWeather());
+  const [matchWeather] = useState<Weather>(() => {
+    const pool = matchTheme.weatherPool;
+    const weatherId = pool.length ? pool[Math.floor(Math.random() * pool.length)] : 'clear';
+    const weatherMap: Record<string, string> = {
+      clear: 'clear', overcast: 'overcast', drizzle: 'drizzle',
+      heavy_dew: 'dew', dust_storm: 'dust', night_lights: 'floodlights', golden_hour: 'golden',
+    };
+    return getWeatherById(weatherMap[weatherId] || 'clear');
+  });
   // Ceremony states
   const [showPreMatch, setShowPreMatch] = useState(false);
   const [showPostMatch, setShowPostMatch] = useState(false);
