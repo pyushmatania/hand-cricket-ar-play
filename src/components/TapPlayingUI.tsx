@@ -413,32 +413,37 @@ export default function TapPlayingUI({
         />
       )}
 
+      {/* ── Commentary Strip — Doc 1 §3.6: 44px, team-colored left border ── */}
       <AnimatePresence>
         {commentary && commentary.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: -5 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -5 }}
-            className="rounded-xl px-3 py-2 space-y-1 backdrop-blur-md"
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
+            className="rounded-lg overflow-hidden"
             style={{
-              background: "linear-gradient(135deg, hsl(var(--scoreboard-dark) / 0.95), hsl(var(--scoreboard-mid) / 0.9))",
-              border: "1px solid hsl(var(--chrome-dark) / 0.3)",
+              height: 44,
+              background: "rgba(0,0,0,0.3)",
+              borderLeft: "3px solid hsl(var(--team-primary))",
+              padding: "8px 12px",
             }}
           >
-            {commentary.map((line, i) => {
+            {commentary.slice(0, 1).map((line, i) => {
               const comm = matchCommentators.find(c => c.name === line.commentatorId || c.id === line.commentatorId) || matchCommentators[0];
               return (
-                <div key={i} className="flex items-start gap-1.5">
+                <div key={i} className="flex items-center gap-2 h-full">
                   <span className="text-[9px] flex-shrink-0">{comm.avatar}</span>
-                  <div>
-                    <span className="text-[6px] font-display font-bold tracking-wider"
-                      style={{ color: comm.id === matchCommentators[0].id ? "hsl(var(--grass-light))" : "hsl(var(--secondary))" }}
-                    >{comm.name}</span>
-                    <p className="font-body text-[9px] font-bold tracking-wide line-clamp-2"
-                      style={{ color: "hsl(var(--chalk-white) / 0.9)" }}>
-                      {line.text}
-                    </p>
-                  </div>
+                  <p className="font-body text-[13px] italic text-white/85 line-clamp-1 flex-1">
+                    {line.text}
+                  </p>
+                  <motion.div
+                    animate={{ opacity: [0.3, 1, 0.3] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="w-3 h-3 flex-shrink-0"
+                  >
+                    🔊
+                  </motion.div>
                 </div>
               );
             })}
@@ -516,114 +521,65 @@ export default function TapPlayingUI({
       {extraContent}
       <div className="flex-1 min-h-0" />
 
-      {/* ── Move Buttons — jersey mesh surface ── */}
+      {/* ── Hand Selector — Doc 1 §3.6: 72px round buttons, 3×2 grid ── */}
       {phase !== "not_started" && phase !== "finished" && !waitingForOpponent && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative pb-1">
-          {equippedBatSkin && equippedBatSkin !== "Classic Willow" && (
-            <div className="flex items-center justify-center gap-1.5 mb-1">
-              <span className="text-sm">{batSkin.emoji}</span>
-              <span className="text-[7px] font-display tracking-wider" style={{ color: "hsl(var(--chrome-mid) / 0.5)" }}>{equippedBatSkin.toUpperCase()}</span>
-            </div>
-          )}
-          <p className="text-center text-[7px] font-display mb-1.5 tracking-[0.2em]"
-            style={{ color: "hsl(var(--chrome-mid) / 0.5)" }}>
+          <p className="text-center text-[7px] font-display mb-2 tracking-[0.2em] text-[#64748B]">
             {isBatting ? "⚡ TAP YOUR SHOT" : "🎯 TAP YOUR BOWL"}
           </p>
-          <div className={`grid gap-2 ${activeMoves.length === 5 ? "grid-cols-5" : "grid-cols-3"}`}>
+          <div
+            className="grid grid-cols-3 gap-3 px-4 py-3"
+            style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.5), transparent)" }}
+          >
             {activeMoves.map((m, i) => {
-              const styleId = btnTheme.id;
-              const entranceVariants: Record<string, any> = {
-                classic: {
-                  initial: { opacity: 0, y: 20 },
-                  animate: { opacity: 1, y: 0 },
-                  transition: { delay: i * 0.05, type: "spring", stiffness: 400, damping: 20 },
-                },
-                neon: {
-                  initial: { opacity: 0, scale: 0.5 },
-                  animate: { opacity: 1, scale: [0.5, 1.15, 0.95, 1] },
-                  transition: { delay: i * 0.07, duration: 0.6, ease: "easeOut" },
-                },
-                manga: {
-                  initial: { opacity: 0, x: i % 2 === 0 ? -40 : 40, rotate: i % 2 === 0 ? -15 : 15 },
-                  animate: { opacity: 1, x: 0, rotate: 0 },
-                  transition: { delay: i * 0.06, type: "spring", stiffness: 500, damping: 18 },
-                },
-                skeleton: {
-                  initial: { opacity: 0 },
-                  animate: { opacity: [0, 1, 0.2, 0.9, 0.3, 1] },
-                  transition: { delay: i * 0.08, duration: 0.8, ease: "linear" },
-                },
-                royal: {
-                  initial: { opacity: 0, scale: 0.3, rotate: -180 },
-                  animate: { opacity: 1, scale: 1, rotate: 0 },
-                  transition: { delay: i * 0.08, type: "spring", stiffness: 300, damping: 15 },
-                },
+              const HAND_BTN_COLORS: Record<string, { bg: string; dark: string }> = {
+                "1": { bg: "linear-gradient(180deg, #4ADE80, #22C55E, #15803D)", dark: "#0F5132" },
+                "2": { bg: "linear-gradient(180deg, #67E8F9, #06B6D4, #0E7490)", dark: "#064E63" },
+                "3": { bg: "linear-gradient(180deg, #60A5FA, #3B82F6, #1D4ED8)", dark: "#1E3A6E" },
+                "4": { bg: "linear-gradient(180deg, #FDE047, #EAB308, #A16207)", dark: "#724B05" },
+                "6": { bg: "linear-gradient(180deg, #FCA5A5, #EF4444, #991B1B)", dark: "#7F1D1D" },
+                "DEF": { bg: "linear-gradient(180deg, #94A3B8, #64748B, #475569)", dark: "#334155" },
               };
-              const motionProps = entranceVariants[styleId] || entranceVariants.classic;
+              const key = m.move === "DEF" ? "DEF" : String(m.move);
+              const colors = HAND_BTN_COLORS[key] || HAND_BTN_COLORS["DEF"];
 
               return (
                 <motion.button
                   key={m.label}
-                  initial={motionProps.initial}
-                  animate={motionProps.animate}
-                  transition={motionProps.transition}
-                  whileTap={{ scale: 0.85, y: 2 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05, type: "spring", stiffness: 400, damping: 20 }}
+                  whileTap={{ scale: 0.92, y: 4 }}
                   onClick={() => handleMove(m.move)}
                   disabled={effectiveCooldown}
-                  className={`relative flex flex-col items-center gap-0.5 py-2.5 rounded-2xl font-display font-black text-white transition-all active:translate-y-[2px] overflow-hidden ${
-                    effectiveCooldown ? "opacity-30 cursor-not-allowed" : ""
-                  }`}
+                  className="flex flex-col items-center justify-center text-white mx-auto"
                   style={effectiveCooldown ? {
-                    background: "hsl(var(--concrete-dark) / 0.5)",
-                    border: "2px solid transparent",
+                    width: 72,
+                    height: 72,
+                    borderRadius: "50%",
+                    background: "rgba(51,65,85,0.5)",
+                    border: "4px solid rgba(51,65,85,0.3)",
+                    opacity: 0.4,
+                    filter: "grayscale(60%)",
                   } : {
-                    background: `linear-gradient(180deg, hsl(var(--concrete-mid)), hsl(var(--concrete-dark)))`,
-                    border: "2px solid hsl(var(--chrome-dark) / 0.4)",
-                    borderBottom: "4px solid hsl(var(--chrome-dark) / 0.6)",
-                    boxShadow: "inset 0 1px 0 hsl(var(--chrome-light) / 0.08), 0 3px 8px hsl(0 0% 0% / 0.3)",
+                    width: 72,
+                    height: 72,
+                    borderRadius: "50%",
+                    background: colors.bg,
+                    border: `4px solid ${colors.dark}`,
+                    borderBottom: `6px solid ${colors.dark}`,
+                    boxShadow: "0 6px 0 rgba(0,0,0,0.2), 0 8px 16px rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.2)",
+                    textShadow: "0 2px 4px rgba(0,0,0,0.6)",
                   }}
                 >
-                  {!effectiveCooldown && (
-                    <div className="absolute inset-0 rounded-2xl pointer-events-none opacity-[0.08]"
-                      style={{
-                        backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, hsl(var(--chalk-white)) 2px, hsl(var(--chalk-white)) 3px)",
-                      }}
-                    />
-                  )}
-                  {styleId === "neon" && !effectiveCooldown && (
-                    <motion.div
-                      animate={{ scale: [1, 1.6, 1], opacity: [0.4, 0, 0.4] }}
-                      transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
-                      className="absolute inset-0 rounded-2xl border-2 pointer-events-none"
-                      style={{ borderColor: "hsl(300 100% 60% / 0.3)" }}
-                    />
-                  )}
-                  {styleId === "manga" && !effectiveCooldown && (
-                    <motion.div
-                      initial={{ x: "-120%", opacity: 0 }}
-                      animate={{ x: ["120%"], opacity: [0, 0.7, 0] }}
-                      transition={{ duration: 0.6, delay: 0.3 + i * 0.1 }}
-                      className="absolute inset-y-0 w-[3px] pointer-events-none"
-                      style={{ background: "hsl(var(--chalk-white))", transform: "skewX(-20deg)" }}
-                    />
-                  )}
-                  {styleId === "skeleton" && !effectiveCooldown && (
-                    <motion.div
-                      animate={{ y: ["-100%", "200%"] }}
-                      transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2, ease: "linear" }}
-                      className="absolute left-0 right-0 h-[2px] pointer-events-none"
-                      style={{ background: "linear-gradient(90deg, transparent, hsl(180 60% 60% / 0.5), transparent)" }}
-                    />
-                  )}
-                  <span className="text-xl leading-none relative z-10">{m.emoji}</span>
-                  <span className="text-[10px] tracking-wider relative z-10">{m.label}</span>
+                  <span className="text-xl leading-none">{m.emoji}</span>
+                  <span className="font-heading text-xs font-bold">{m.label}</span>
                   {effectiveCooldown && lastPlayed === m.move && (
                     <motion.div
                       initial={{ scaleX: 1 }}
                       animate={{ scaleX: 0 }}
                       transition={{ duration: 0.8, ease: "linear" }}
-                      className="absolute bottom-1 left-2 right-2 h-0.5 rounded-full origin-left"
-                      style={{ background: "hsl(var(--chalk-white) / 0.5)" }}
+                      className="absolute bottom-2 left-3 right-3 h-0.5 rounded-full origin-left bg-white/50"
                     />
                   )}
                 </motion.button>
@@ -632,8 +588,7 @@ export default function TapPlayingUI({
           </div>
           {!isPvP && (
             <button onClick={onReset}
-              className="text-[8px] underline mt-1.5 active:scale-95 font-body tracking-wider w-full text-center"
-              style={{ color: "hsl(var(--chrome-mid) / 0.3)" }}>
+              className="text-[8px] underline mt-1.5 active:scale-95 font-body tracking-wider w-full text-center text-[#475569]">
               Reset Match
             </button>
           )}
