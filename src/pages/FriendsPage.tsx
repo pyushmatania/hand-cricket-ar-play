@@ -47,6 +47,12 @@ interface FriendRequest {
 
 type Tab = "friends" | "requests" | "add" | "global";
 
+/* ── Material constants ── */
+const LEATHER_BG = "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)";
+const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
+const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
+const CHALK_BORDER = "2px dashed hsl(43 30% 30% / 0.25)";
+
 export default function FriendsPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -90,12 +96,8 @@ export default function FriendsPage() {
 
   const loadRequests = async () => {
     if (!user) return;
-    // Incoming
     const { data: inc } = await supabase
-      .from("friend_requests")
-      .select("*")
-      .eq("to_user_id", user.id)
-      .eq("status", "pending");
+      .from("friend_requests").select("*").eq("to_user_id", user.id).eq("status", "pending");
     if (inc) {
       const fromIds = inc.map((r: any) => r.from_user_id);
       let names: Record<string, string> = {};
@@ -105,12 +107,8 @@ export default function FriendsPage() {
       }
       setIncoming(inc.map((r: any) => ({ ...r, from_name: names[r.from_user_id] || "Unknown" })));
     }
-    // Outgoing
     const { data: out } = await supabase
-      .from("friend_requests")
-      .select("*")
-      .eq("from_user_id", user.id)
-      .eq("status", "pending");
+      .from("friend_requests").select("*").eq("from_user_id", user.id).eq("status", "pending");
     if (out) {
       const toIds = out.map((r: any) => r.to_user_id);
       let names: Record<string, string> = {};
@@ -140,20 +138,9 @@ export default function FriendsPage() {
     setLoading(true);
     setFeedback("");
     const { data } = await supabase
-      .from("profiles")
-      .select("user_id, display_name")
-      .eq("invite_code", inviteCode.trim().toUpperCase())
-      .single();
-    if (!data) {
-      setFeedback("No player found with that code");
-      setLoading(false);
-      return;
-    }
-    if ((data as any).user_id === user.id) {
-      setFeedback("That's your own code!");
-      setLoading(false);
-      return;
-    }
+      .from("profiles").select("user_id, display_name").eq("invite_code", inviteCode.trim().toUpperCase()).single();
+    if (!data) { setFeedback("No player found with that code"); setLoading(false); return; }
+    if ((data as any).user_id === user.id) { setFeedback("That's your own code!"); setLoading(false); return; }
     await sendRequest((data as any).user_id);
     setFeedback(`Request sent to ${(data as any).display_name}!`);
     setInviteCode("");
@@ -163,10 +150,7 @@ export default function FriendsPage() {
 
   const sendRequest = async (toId: string) => {
     if (!user) return;
-    const { error } = await supabase.from("friend_requests").insert({
-      from_user_id: user.id,
-      to_user_id: toId,
-    } as any);
+    const { error } = await supabase.from("friend_requests").insert({ from_user_id: user.id, to_user_id: toId } as any);
     if (error) {
       if (error.code === "23505") setFeedback("Request already sent!");
       else setFeedback(error.message);
@@ -205,45 +189,15 @@ export default function FriendsPage() {
     if (!user) return;
     const { data: game, error: gameError } = await createMultiplayerRoom(user.id, gameType, friendId);
     if (gameError || !game) {
-      if (gameError) {
-        logPostgrestError("challengeFriend create room failed", gameError, {
-          host_id: user.id,
-          to_user_id: friendId,
-          game_type: gameType,
-        });
-      }
-
-      setFeedback(
-        gameError
-          ? `${mapCreateRoomError(gameError)} — ${formatPostgrestError(gameError)}`
-          : "Battle room creation returned no room data."
-      );
+      if (gameError) logPostgrestError("challengeFriend create room failed", gameError, { host_id: user.id, to_user_id: friendId, game_type: gameType });
+      setFeedback(gameError ? `${mapCreateRoomError(gameError)} — ${formatPostgrestError(gameError)}` : "Battle room creation returned no room data.");
       return;
     }
-    const invitePayload = {
-      game_id: (game as any).id,
-      from_user_id: user.id,
-      to_user_id: friendId,
-      game_type: gameType,
-      expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
-    } as any;
+    const invitePayload = { game_id: (game as any).id, from_user_id: user.id, to_user_id: friendId, game_type: gameType, expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString() } as any;
     const { error: inviteError } = await supabase.from("match_invites").insert(invitePayload);
     if (inviteError) {
-      logPostgrestError("challengeFriend invite insert failed", inviteError, {
-        payload: invitePayload,
-      });
-
-      const { error: cancelError } = await supabase
-        .from("multiplayer_games")
-        .update({ status: "cancelled" as any, phase: "abandoned" as any })
-        .eq("id", (game as any).id);
-
-      if (cancelError) {
-        logPostgrestError("challengeFriend cleanup room cancel failed", cancelError, {
-          game_id: (game as any).id,
-        });
-      }
-
+      logPostgrestError("challengeFriend invite insert failed", inviteError, { payload: invitePayload });
+      await supabase.from("multiplayer_games").update({ status: "cancelled" as any, phase: "abandoned" as any }).eq("id", (game as any).id);
       setFeedback(`${mapInviteInsertError(inviteError)} — ${formatPostgrestError(inviteError)}`);
       return;
     }
@@ -254,66 +208,107 @@ export default function FriendsPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden pb-24">
-      <div className="absolute inset-0 bg-gradient-to-b from-[hsl(222_55%_10%)] to-background pointer-events-none" />
+    <div
+      className="min-h-screen relative overflow-hidden"
+      style={{
+        background: LEATHER_BG,
+        paddingBottom: "calc(68px + env(safe-area-inset-bottom, 16px) + 16px)",
+      }}
+    >
+      {/* Leather grain */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{ backgroundImage: LEATHER_GRAIN, backgroundRepeat: "repeat" }} />
+      {/* Vignette */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }} />
+
       <TopStatusBar />
 
-      <div className="relative z-10 max-w-lg mx-auto px-4 pt-4">
-        {/* Header */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-b from-game-blue to-[hsl(207_90%_44%)] border-b-3 border-[hsl(207_90%_35%)] flex items-center justify-center text-lg shadow-[0_4px_12px_hsl(207_90%_54%/0.3)]">
-              👥
-            </div>
-            <div>
-              <h1 className="font-game-title text-lg text-foreground">Friends</h1>
-              <span className="text-[8px] text-muted-foreground font-game-display tracking-[0.2em]">PLAY TOGETHER</span>
-            </div>
+      <div className="relative z-10 max-w-[430px] mx-auto px-4 pt-4">
+        {/* ── Header ── */}
+        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 flex items-center gap-3">
+          <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-xl"
+            style={{
+              background: "linear-gradient(180deg, hsl(207 90% 54%) 0%, hsl(207 90% 40%) 100%)",
+              border: "2px solid hsl(207 80% 60% / 0.5)",
+              borderBottom: "4px solid hsl(207 90% 30%)",
+              boxShadow: "0 4px 16px hsl(207 90% 54% / 0.3)",
+            }}
+          >
+            👥
+          </div>
+          <div>
+            <h1 className="font-game-title text-lg text-foreground" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>Friends</h1>
+            <span className="font-game-display text-[8px] text-muted-foreground tracking-[0.2em]">PLAY TOGETHER</span>
           </div>
         </motion.div>
 
-        {/* My invite code — game card */}
+        {/* ── Invite Code Card — Floodlight Chrome ── */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="rounded-2xl border-2 border-game-gold/30 bg-gradient-to-b from-[hsl(222_40%_13%/0.9)] to-[hsl(222_40%_8%/0.95)] p-3.5 mb-4 flex items-center justify-between shadow-[0_0_16px_hsl(51_100%_50%/0.1)]"
+          className="rounded-2xl p-3.5 mb-4 flex items-center justify-between"
+          style={{
+            background: CONCRETE_CARD,
+            border: "2px solid hsl(43 60% 40%)",
+            borderBottom: "5px solid hsl(43 40% 25%)",
+            boxShadow: "0 0 20px hsl(43 90% 50% / 0.12)",
+          }}
         >
           <div>
-            <span className="text-[8px] text-muted-foreground font-game-display tracking-widest block">YOUR INVITE CODE</span>
-            <span className="font-game-display text-lg text-game-gold tracking-[0.2em]">{myCode}</span>
+            <span className="font-game-display text-[8px] text-muted-foreground tracking-widest block">YOUR INVITE CODE</span>
+            <span className="font-game-display text-lg tracking-[0.2em]" style={{ color: "hsl(43 90% 55%)", textShadow: "0 0 10px hsl(43 90% 55% / 0.3)" }}>{myCode}</span>
           </div>
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={copyCode}
-            className="px-4 py-2.5 rounded-xl bg-gradient-to-b from-game-gold to-[hsl(43_96%_42%)] border-b-2 border-[hsl(43_96%_32%)] text-game-dark font-game-display text-[8px] tracking-wider shadow-[0_2px_8px_hsl(51_100%_50%/0.3)] active:translate-y-[1px] active:border-b-0"
+            className="px-4 py-2.5 rounded-xl font-game-display text-[8px] tracking-wider relative overflow-hidden"
+            style={{
+              background: "linear-gradient(180deg, hsl(43 80% 50%) 0%, hsl(35 60% 35%) 100%)",
+              border: "2px solid hsl(43 60% 55% / 0.5)",
+              borderBottom: "4px solid hsl(35 50% 25%)",
+              color: "hsl(25 40% 8%)",
+              boxShadow: "0 2px 8px hsl(43 90% 50% / 0.25)",
+            }}
           >
             📋 COPY
           </motion.button>
         </motion.div>
 
-        {/* Tabs — game-styled */}
-        <div className="flex gap-1 mb-4 bg-game-dark/80 rounded-2xl p-1 border border-[hsl(222_25%_22%/0.5)]">
+        {/* ── Tabs — Jersey Mesh ── */}
+        <div className="flex gap-1 mb-4 rounded-2xl p-1" style={{ background: "hsl(25 15% 10%)", border: "1px solid hsl(25 18% 18%)" }}>
           {tabs.map((t) => (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`flex-1 py-2.5 rounded-xl font-game-display text-[8px] tracking-widest transition-all flex items-center justify-center gap-1 relative ${
-                tab === t.key
-                  ? "bg-gradient-to-b from-game-blue to-[hsl(207_90%_44%)] text-white border-b-2 border-[hsl(207_90%_35%)] shadow-[0_2px_8px_hsl(207_90%_54%/0.3)]"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+              className="flex-1 py-2.5 rounded-xl font-game-display text-[8px] tracking-widest transition-all flex items-center justify-center gap-1 relative"
+              style={tab === t.key ? {
+                background: "linear-gradient(180deg, hsl(207 90% 54%) 0%, hsl(207 90% 40%) 100%)",
+                borderBottom: "3px solid hsl(207 90% 30%)",
+                color: "white",
+                boxShadow: "0 2px 8px hsl(207 90% 54% / 0.3)",
+              } : { color: "hsl(25 20% 50%)" }}
             >
-              <span className="text-xs">{t.icon}</span>
-              {t.label}
+              {/* Jersey mesh on active tab */}
+              {tab === t.key && (
+                <div className="absolute inset-0 pointer-events-none opacity-[0.06] rounded-xl"
+                  style={{ backgroundImage: "radial-gradient(circle, #fff 0.5px, transparent 0.5px)", backgroundSize: "4px 4px" }} />
+              )}
+              <span className="text-xs relative z-10">{t.icon}</span>
+              <span className="relative z-10">{t.label}</span>
               {t.badge && t.badge > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-game-red border-2 border-game-dark text-white text-[7px] font-game-display flex items-center justify-center">
+                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[7px] font-bold z-20"
+                  style={{ background: "hsl(4 90% 58%)", border: "2px solid hsl(25 15% 10%)", color: "white" }}>
                   {t.badge}
                 </span>
               )}
             </button>
           ))}
         </div>
+
+        {/* Chalk divider */}
+        <div className="mb-4" style={{ borderBottom: CHALK_BORDER }} />
 
         {/* Feedback toast */}
         <AnimatePresence>
@@ -322,7 +317,8 @@ export default function FriendsPage() {
               initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="rounded-2xl border-2 border-game-green/30 bg-game-green/10 p-2.5 mb-3 text-center"
+              className="rounded-2xl p-2.5 mb-3 text-center"
+              style={{ background: "hsl(142 60% 35% / 0.15)", border: "2px solid hsl(142 60% 40% / 0.3)" }}
             >
               <span className="text-[10px] font-game-card text-foreground">{feedback}</span>
             </motion.div>
@@ -330,11 +326,11 @@ export default function FriendsPage() {
         </AnimatePresence>
 
         <AnimatePresence mode="wait">
-          {/* FRIENDS LIST */}
+          {/* ═══ FRIENDS LIST ═══ */}
           {tab === "friends" && (
             <motion.div key="friends" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               {friends.length === 0 ? (
-                <div className="rounded-2xl border-2 border-[hsl(222_25%_22%/0.5)] bg-gradient-to-b from-[hsl(222_40%_13%/0.9)] to-[hsl(222_40%_8%/0.95)] p-8 text-center">
+                <div className="rounded-2xl p-8 text-center" style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
                   <span className="text-4xl block mb-3">👥</span>
                   <span className="font-game-title text-sm text-foreground">No Friends Yet</span>
                   <p className="text-[9px] text-muted-foreground font-game-body mt-1">Add friends to play together!</p>
@@ -350,16 +346,28 @@ export default function FriendsPage() {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.06, type: "spring", stiffness: 300, damping: 25 }}
-                        className="rounded-2xl border-2 border-[hsl(222_25%_22%/0.5)] bg-gradient-to-b from-[hsl(222_40%_13%/0.9)] to-[hsl(222_40%_8%/0.95)] p-3 flex items-center gap-3 cursor-pointer active:scale-[0.97] transition-transform"
+                        className="rounded-2xl p-3 flex items-center gap-3 cursor-pointer active:scale-[0.97] transition-transform"
+                        style={{
+                          background: CONCRETE_CARD,
+                          border: isHotStreak ? "2px solid hsl(4 90% 50% / 0.5)" : "2px solid hsl(25 20% 22%)",
+                          borderBottom: "5px solid hsl(25 25% 10%)",
+                          boxShadow: isHotStreak ? "0 0 16px hsl(4 90% 50% / 0.15)" : "0 4px 16px rgba(0,0,0,0.3)",
+                        }}
                         onClick={() => setSelectedFriend(f)}
                       >
-                        {/* Avatar with streak indicator */}
+                        {/* Avatar with chrome frame */}
                         <div className="relative">
-                          <div className={`rounded-full border-2 ${isHotStreak ? "border-game-red shadow-[0_0_10px_hsl(4_90%_58%/0.3)]" : "border-[hsl(222_25%_22%)]"}`}>
+                          <div className="rounded-full"
+                            style={{
+                              border: isHotStreak ? "3px solid hsl(4 90% 55%)" : "3px solid hsl(43 60% 45%)",
+                              boxShadow: isHotStreak ? "0 0 10px hsl(4 90% 55% / 0.3)" : "0 0 8px hsl(43 60% 45% / 0.15)",
+                            }}
+                          >
                             <PlayerAvatar avatarUrl={f.avatar_url} avatarIndex={f.avatar_index ?? 0} size="sm" />
                           </div>
                           {isHotStreak && (
-                            <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-game-red border-2 border-game-dark flex items-center justify-center">
+                            <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center"
+                              style={{ background: "hsl(4 90% 55%)", border: "2px solid hsl(25 15% 10%)" }}>
                               <span className="text-[7px]">🔥</span>
                             </div>
                           )}
@@ -370,27 +378,38 @@ export default function FriendsPage() {
                           <div className="flex items-center gap-1.5">
                             <span className="font-game-card text-xs font-bold text-foreground truncate">{f.display_name}</span>
                             {f.rank_tier && (
-                              <span className="text-[7px] font-game-display text-game-gold">{f.rank_tier === "Diamond" ? "💎" : f.rank_tier === "Gold" ? "🥇" : f.rank_tier === "Silver" ? "🥈" : "🏅"}</span>
+                              <span className="text-[7px] font-game-display" style={{ color: "hsl(43 90% 55%)" }}>
+                                {f.rank_tier === "Diamond" ? "💎" : f.rank_tier === "Gold" ? "🥇" : f.rank_tier === "Silver" ? "🥈" : "🏅"}
+                              </span>
                             )}
                           </div>
                           <div className="flex items-center gap-2 mt-0.5">
                             <span className="text-[8px] text-muted-foreground font-game-body">{f.wins}W {f.losses}L</span>
-                            <span className="text-[8px] text-game-green font-game-display">{winRate}%</span>
+                            <span className="text-[8px] font-game-display" style={{ color: "hsl(142 71% 45%)" }}>{winRate}%</span>
                           </div>
                         </div>
 
-                        {/* Battle button */}
+                        {/* Battle button — Jersey Mesh */}
                         <motion.button
                           whileTap={{ scale: 0.85 }}
                           onClick={(e) => { e.stopPropagation(); setChallengeTargetId(f.user_id); }}
-                          className="px-3 py-2 rounded-xl bg-gradient-to-b from-game-red to-[hsl(4_90%_45%)] border-b-2 border-[hsl(4_90%_35%)] text-white font-game-display text-[7px] tracking-wider shadow-[0_2px_8px_hsl(4_90%_58%/0.3)] active:translate-y-[1px] active:border-b-0"
+                          className="px-3 py-2 rounded-xl font-game-display text-[7px] tracking-wider relative overflow-hidden"
+                          style={{
+                            background: "linear-gradient(180deg, hsl(4 90% 55%) 0%, hsl(4 85% 42%) 100%)",
+                            border: "2px solid hsl(4 80% 60% / 0.5)",
+                            borderBottom: "4px solid hsl(4 80% 30%)",
+                            color: "white",
+                            boxShadow: "0 2px 8px hsl(4 90% 55% / 0.3)",
+                          }}
                         >
-                          ⚔️ BATTLE
+                          <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
+                            style={{ backgroundImage: "radial-gradient(circle, #fff 0.5px, transparent 0.5px)", backgroundSize: "4px 4px" }} />
+                          <span className="relative z-10">⚔️ BATTLE</span>
                         </motion.button>
 
-                        {/* High score */}
+                        {/* High score — Scoreboard paint */}
                         <div className="text-right min-w-[40px]">
-                          <span className="font-game-display text-sm text-game-gold block leading-none">{f.high_score}</span>
+                          <span className="font-game-display text-sm block leading-none" style={{ color: "hsl(43 90% 55%)" }}>{f.high_score}</span>
                           <span className="text-[6px] text-muted-foreground font-game-display tracking-widest">HIGH</span>
                         </div>
                       </motion.div>
@@ -401,20 +420,24 @@ export default function FriendsPage() {
             </motion.div>
           )}
 
-          {/* REQUESTS */}
+          {/* ═══ REQUESTS ═══ */}
           {tab === "requests" && (
             <motion.div key="requests" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               {incoming.length > 0 && (
                 <>
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 rounded-lg bg-game-green/15 border border-game-green/25 flex items-center justify-center text-sm">📥</div>
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
+                      style={{ background: "hsl(142 60% 35% / 0.15)", border: "1px solid hsl(142 60% 40% / 0.25)" }}>📥</div>
                     <span className="font-game-display text-[8px] text-muted-foreground tracking-[0.25em]">INCOMING</span>
                   </div>
                   <div className="space-y-2 mb-4">
                     {incoming.map((r, i) => (
                       <motion.div key={r.id} initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}
-                        className="rounded-2xl border-2 border-game-green/20 bg-gradient-to-b from-[hsl(222_40%_13%/0.9)] to-[hsl(222_40%_8%/0.95)] p-3 flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-game-green/10 border border-game-green/20 flex items-center justify-center">
+                        className="rounded-2xl p-3 flex items-center gap-3"
+                        style={{ background: CONCRETE_CARD, border: "2px solid hsl(142 50% 35% / 0.3)", borderBottom: "5px solid hsl(25 25% 10%)" }}
+                      >
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                          style={{ background: "hsl(142 60% 35% / 0.1)", border: "1px solid hsl(142 60% 40% / 0.2)" }}>
                           <span className="text-lg">👤</span>
                         </div>
                         <div className="flex-1">
@@ -422,18 +445,18 @@ export default function FriendsPage() {
                           <span className="text-[8px] text-muted-foreground font-game-body">wants to be friends</span>
                         </div>
                         <div className="flex gap-1.5">
-                          <motion.button
-                            whileTap={{ scale: 0.9 }}
-                            onClick={() => acceptRequest(r.id)}
-                            className="px-3 py-2 rounded-xl bg-gradient-to-b from-game-green to-[hsl(122_39%_38%)] border-b-2 border-[hsl(122_39%_30%)] text-white font-game-display text-[7px] tracking-wider active:translate-y-[1px]"
-                          >
+                          <motion.button whileTap={{ scale: 0.9 }} onClick={() => acceptRequest(r.id)}
+                            className="px-3 py-2 rounded-xl font-game-display text-[7px] tracking-wider"
+                            style={{
+                              background: "linear-gradient(180deg, hsl(142 71% 50%) 0%, hsl(142 65% 38%) 100%)",
+                              borderBottom: "3px solid hsl(142 55% 25%)",
+                              color: "white",
+                            }}>
                             ✓ ACCEPT
                           </motion.button>
-                          <motion.button
-                            whileTap={{ scale: 0.9 }}
-                            onClick={() => rejectRequest(r.id)}
-                            className="px-2.5 py-2 rounded-xl bg-game-dark border-2 border-game-red/30 text-game-red font-game-display text-[7px] tracking-wider"
-                          >
+                          <motion.button whileTap={{ scale: 0.9 }} onClick={() => rejectRequest(r.id)}
+                            className="px-2.5 py-2 rounded-xl font-game-display text-[7px] tracking-wider"
+                            style={{ background: "hsl(25 15% 10%)", border: "2px solid hsl(4 80% 50% / 0.3)", color: "hsl(4 90% 60%)" }}>
                             ✕
                           </motion.button>
                         </div>
@@ -446,20 +469,23 @@ export default function FriendsPage() {
               {outgoing.length > 0 && (
                 <>
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 rounded-lg bg-game-gold/15 border border-game-gold/25 flex items-center justify-center text-sm">📤</div>
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
+                      style={{ background: "hsl(43 60% 40% / 0.15)", border: "1px solid hsl(43 60% 40% / 0.25)" }}>📤</div>
                     <span className="font-game-display text-[8px] text-muted-foreground tracking-[0.25em]">SENT</span>
                   </div>
                   <div className="space-y-2">
                     {outgoing.map((r) => (
-                      <div key={r.id} className="rounded-2xl border-2 border-[hsl(222_25%_22%/0.3)] bg-gradient-to-b from-[hsl(222_40%_13%/0.6)] to-[hsl(222_40%_8%/0.7)] p-3 flex items-center gap-3 opacity-60">
-                        <div className="w-10 h-10 rounded-xl bg-game-gold/10 border border-game-gold/15 flex items-center justify-center">
+                      <div key={r.id} className="rounded-2xl p-3 flex items-center gap-3 opacity-60"
+                        style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22% / 0.5)", borderBottom: "4px solid hsl(25 25% 10%)" }}>
+                        <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                          style={{ background: "hsl(43 60% 40% / 0.1)", border: "1px solid hsl(43 60% 40% / 0.15)" }}>
                           <span className="text-lg">📤</span>
                         </div>
                         <div className="flex-1">
                           <span className="font-game-card text-xs font-bold text-foreground block">{r.to_name}</span>
                           <span className="text-[8px] text-muted-foreground font-game-body">pending...</span>
                         </div>
-                        <span className="text-[9px] text-game-gold font-game-display">⏳</span>
+                        <span className="text-[9px] font-game-display" style={{ color: "hsl(43 90% 55%)" }}>⏳</span>
                       </div>
                     ))}
                   </div>
@@ -467,7 +493,7 @@ export default function FriendsPage() {
               )}
 
               {incoming.length === 0 && outgoing.length === 0 && (
-                <div className="rounded-2xl border-2 border-[hsl(222_25%_22%/0.5)] bg-gradient-to-b from-[hsl(222_40%_13%/0.9)] to-[hsl(222_40%_8%/0.95)] p-8 text-center">
+                <div className="rounded-2xl p-8 text-center" style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
                   <span className="text-4xl block mb-3">📩</span>
                   <span className="font-game-title text-sm text-foreground">No Requests</span>
                 </div>
@@ -475,11 +501,11 @@ export default function FriendsPage() {
             </motion.div>
           )}
 
-          {/* ADD FRIEND */}
+          {/* ═══ ADD FRIEND ═══ */}
           {tab === "add" && (
             <motion.div key="add" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
               {/* By invite code */}
-              <div className="rounded-2xl border-2 border-[hsl(222_25%_22%/0.5)] bg-gradient-to-b from-[hsl(222_40%_13%/0.9)] to-[hsl(222_40%_8%/0.95)] p-4">
+              <div className="rounded-2xl p-4" style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
                 <span className="text-[8px] font-game-display text-muted-foreground tracking-widest block mb-3">ADD BY INVITE CODE</span>
                 <div className="flex gap-2">
                   <input
@@ -488,13 +514,22 @@ export default function FriendsPage() {
                     onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
                     placeholder="ENTER CODE"
                     maxLength={8}
-                    className="flex-1 bg-game-dark border-2 border-[hsl(222_25%_22%)] rounded-xl px-3 py-2.5 text-sm text-foreground font-game-display tracking-widest placeholder:text-muted-foreground/30 focus:outline-none focus:border-game-blue/50 transition-all text-center"
+                    className="flex-1 rounded-xl px-3 py-2.5 text-sm text-foreground font-game-display tracking-widest placeholder:text-muted-foreground/30 focus:outline-none transition-all text-center"
+                    style={{
+                      background: "hsl(25 15% 10%)",
+                      border: "2px solid hsl(25 18% 20%)",
+                    }}
                   />
                   <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={addByCode}
                     disabled={loading || inviteCode.length < 4}
-                    className="px-5 py-2.5 rounded-xl bg-gradient-to-b from-game-green to-[hsl(122_39%_38%)] border-b-2 border-[hsl(122_39%_30%)] text-white font-game-display text-[8px] tracking-wider disabled:opacity-40 active:translate-y-[1px]"
+                    className="px-5 py-2.5 rounded-xl font-game-display text-[8px] tracking-wider disabled:opacity-40"
+                    style={{
+                      background: "linear-gradient(180deg, hsl(142 71% 50%) 0%, hsl(142 65% 38%) 100%)",
+                      borderBottom: "4px solid hsl(142 55% 25%)",
+                      color: "white",
+                    }}
                   >
                     ADD
                   </motion.button>
@@ -502,7 +537,7 @@ export default function FriendsPage() {
               </div>
 
               {/* By search */}
-              <div className="rounded-2xl border-2 border-[hsl(222_25%_22%/0.5)] bg-gradient-to-b from-[hsl(222_40%_13%/0.9)] to-[hsl(222_40%_8%/0.95)] p-4">
+              <div className="rounded-2xl p-4" style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
                 <span className="text-[8px] font-game-display text-muted-foreground tracking-widest block mb-3">SEARCH BY NAME</span>
                 <div className="flex gap-2 mb-3">
                   <input
@@ -510,14 +545,16 @@ export default function FriendsPage() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Player name..."
-                    className="flex-1 bg-game-dark border-2 border-[hsl(222_25%_22%)] rounded-xl px-3 py-2.5 text-sm text-foreground font-game-body placeholder:text-muted-foreground/30 focus:outline-none focus:border-game-blue/50 transition-all"
+                    className="flex-1 rounded-xl px-3 py-2.5 text-sm text-foreground font-game-body placeholder:text-muted-foreground/30 focus:outline-none transition-all"
+                    style={{ background: "hsl(25 15% 10%)", border: "2px solid hsl(25 18% 20%)" }}
                     onKeyDown={(e) => e.key === "Enter" && searchPlayers()}
                   />
                   <motion.button
                     whileTap={{ scale: 0.9 }}
                     onClick={searchPlayers}
                     disabled={loading || !searchQuery.trim()}
-                    className="px-4 py-2.5 rounded-xl bg-game-dark border-2 border-game-blue/30 text-game-blue font-game-display text-[9px] disabled:opacity-40"
+                    className="px-4 py-2.5 rounded-xl font-game-display text-[9px] disabled:opacity-40"
+                    style={{ background: "hsl(25 15% 10%)", border: "2px solid hsl(207 90% 54% / 0.3)", color: "hsl(207 90% 54%)" }}
                   >
                     🔍
                   </motion.button>
@@ -528,22 +565,25 @@ export default function FriendsPage() {
                       const alreadyFriend = friends.some(f => f.user_id === p.user_id);
                       const alreadySent = outgoing.some(o => o.to_user_id === p.user_id);
                       return (
-                        <div key={p.user_id} className="flex items-center gap-3 p-2.5 rounded-xl bg-game-dark/60 border border-[hsl(222_25%_22%/0.4)]">
+                        <div key={p.user_id} className="flex items-center gap-3 p-2.5 rounded-xl"
+                          style={{ background: "hsl(25 15% 10% / 0.6)", border: "1px solid hsl(25 18% 20% / 0.5)" }}>
                           <PlayerAvatar avatarUrl={p.avatar_url} avatarIndex={p.avatar_index ?? 0} size="sm" />
                           <div className="flex-1">
                             <span className="font-game-card text-[10px] font-bold text-foreground block">{p.display_name}</span>
                             <span className="text-[7px] text-muted-foreground font-game-body">{p.wins}W • {p.total_matches} matches</span>
                           </div>
                           {alreadyFriend ? (
-                            <span className="text-[8px] text-game-green font-game-display">✓ FRIENDS</span>
+                            <span className="text-[8px] font-game-display" style={{ color: "hsl(142 71% 45%)" }}>✓ FRIENDS</span>
                           ) : alreadySent ? (
-                            <span className="text-[8px] text-game-gold font-game-display">⏳ SENT</span>
+                            <span className="text-[8px] font-game-display" style={{ color: "hsl(43 90% 55%)" }}>⏳ SENT</span>
                           ) : (
-                            <motion.button
-                              whileTap={{ scale: 0.9 }}
-                              onClick={() => sendRequest(p.user_id)}
-                              className="px-3 py-1.5 rounded-xl bg-gradient-to-b from-game-green to-[hsl(122_39%_38%)] border-b-2 border-[hsl(122_39%_30%)] text-white font-game-display text-[7px] tracking-wider"
-                            >
+                            <motion.button whileTap={{ scale: 0.9 }} onClick={() => sendRequest(p.user_id)}
+                              className="px-3 py-1.5 rounded-xl font-game-display text-[7px] tracking-wider"
+                              style={{
+                                background: "linear-gradient(180deg, hsl(142 71% 50%) 0%, hsl(142 65% 38%) 100%)",
+                                borderBottom: "3px solid hsl(142 55% 25%)",
+                                color: "white",
+                              }}>
                               + ADD
                             </motion.button>
                           )}
@@ -556,49 +596,69 @@ export default function FriendsPage() {
             </motion.div>
           )}
 
-          {/* GLOBAL CHAT */}
+          {/* ═══ GLOBAL CHAT ═══ */}
           {tab === "global" && (
             <motion.div key="global" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="rounded-2xl border-2 border-[hsl(222_25%_22%/0.5)] bg-gradient-to-b from-[hsl(222_40%_13%/0.9)] to-[hsl(222_40%_8%/0.95)] p-3 h-[420px]"
+              className="rounded-2xl p-3 h-[420px]"
+              style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}
             >
               <GlobalChat />
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+
+      {/* ═══ Challenge Mode Picker ═══ */}
       {challengeTargetId && (
-        <div className="fixed inset-0 z-50 bg-[hsl(222_47%_4%/0.85)] backdrop-blur-md flex items-end justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-end justify-center p-4"
+          style={{ background: "hsl(25 30% 4% / 0.85)", backdropFilter: "blur(12px)" }}>
           <motion.div
             initial={{ y: 200, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            className="w-full max-w-sm rounded-3xl border-2 border-game-red/30 bg-gradient-to-b from-[hsl(222_40%_13%)] to-[hsl(222_40%_8%)] p-5 space-y-3 shadow-[0_0_30px_hsl(4_90%_58%/0.15)]"
+            className="w-full max-w-sm rounded-3xl p-5 space-y-3"
+            style={{
+              background: CONCRETE_CARD,
+              border: "2px solid hsl(4 80% 50% / 0.3)",
+              borderBottom: "6px solid hsl(25 25% 8%)",
+              boxShadow: "0 0 40px hsl(4 90% 50% / 0.15)",
+            }}
           >
-            <p className="font-game-title text-base text-foreground">Choose Battle Mode</p>
+            <p className="font-game-title text-base text-foreground" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>Choose Battle Mode</p>
             <p className="text-[9px] text-muted-foreground font-game-body">Send a battle invite with your chosen format.</p>
+            <div style={{ borderBottom: CHALK_BORDER }} className="my-2" />
             {([
-              { key: "ar", icon: "📸", label: "AR Mode", subtitle: "Futuristic AR showdown", color: "from-game-purple to-[hsl(291_47%_40%)]" },
-              { key: "tap", icon: "⚡", label: "Tap Mode", subtitle: "Arcade speed challenge", color: "from-game-blue to-[hsl(207_90%_44%)]" },
-              { key: "tournament", icon: "🏆", label: "Tournament", subtitle: "Championship clash", color: "from-game-gold to-[hsl(43_96%_42%)]" },
-            ] as { key: GameType; icon: string; label: string; subtitle: string; color: string }[]).map((mode) => (
+              { key: "ar" as GameType, icon: "📸", label: "AR Mode", subtitle: "Futuristic AR showdown", hue: "291" },
+              { key: "tap" as GameType, icon: "⚡", label: "Tap Mode", subtitle: "Arcade speed challenge", hue: "207" },
+              { key: "tournament" as GameType, icon: "🏆", label: "Tournament", subtitle: "Championship clash", hue: "43" },
+            ]).map((mode) => (
               <motion.button
                 key={mode.key}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => {
-                  void challengeFriend(challengeTargetId, mode.key);
-                  setChallengeTargetId(null);
+                whileTap={{ scale: 0.97, y: 2 }}
+                onClick={() => { void challengeFriend(challengeTargetId, mode.key); setChallengeTargetId(null); }}
+                className="w-full p-3.5 rounded-2xl text-left relative overflow-hidden"
+                style={{
+                  background: CONCRETE_CARD,
+                  border: `2px solid hsl(${mode.hue} 60% 45% / 0.4)`,
+                  borderBottom: `5px solid hsl(${mode.hue} 40% 20%)`,
+                  boxShadow: `0 0 16px hsl(${mode.hue} 60% 50% / 0.1)`,
                 }}
-                className={`w-full p-3.5 rounded-2xl text-left bg-gradient-to-r ${mode.color} border-b-3 border-[hsl(222_25%_15%)] active:translate-y-[1px] transition-transform`}
               >
-                <div className="flex items-center gap-3">
-                  <div className="w-11 h-11 rounded-xl bg-[hsl(222_47%_6%/0.4)] border border-white/10 flex items-center justify-center text-xl">{mode.icon}</div>
+                <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
+                  style={{ backgroundImage: "radial-gradient(circle, #fff 0.5px, transparent 0.5px)", backgroundSize: "4px 4px" }} />
+                <div className="flex items-center gap-3 relative z-10">
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl"
+                    style={{ background: `hsl(${mode.hue} 40% 15%)`, border: `1px solid hsl(${mode.hue} 50% 35% / 0.3)` }}>
+                    {mode.icon}
+                  </div>
                   <div>
-                    <p className="text-sm font-game-display text-white tracking-wider">{mode.label}</p>
-                    <p className="text-[9px] text-white/60 font-game-body">{mode.subtitle}</p>
+                    <p className="text-sm font-game-display text-foreground tracking-wider">{mode.label}</p>
+                    <p className="text-[9px] text-muted-foreground font-game-body">{mode.subtitle}</p>
                   </div>
                 </div>
               </motion.button>
             ))}
-            <button onClick={() => setChallengeTargetId(null)} className="w-full py-2.5 text-xs text-muted-foreground font-game-body hover:text-foreground transition-colors">Cancel</button>
+            <button onClick={() => setChallengeTargetId(null)}
+              className="w-full py-2.5 text-xs text-muted-foreground font-game-body hover:text-foreground transition-colors">Cancel</button>
           </motion.div>
         </div>
       )}
@@ -607,13 +667,9 @@ export default function FriendsPage() {
         <FriendStatsModal
           friend={selectedFriend}
           onClose={() => setSelectedFriend(null)}
-          onChallenge={(friendId) => {
-            setSelectedFriend(null);
-            setChallengeTargetId(friendId);
-          }}
+          onChallenge={(friendId) => { setSelectedFriend(null); setChallengeTargetId(friendId); }}
         />
       )}
-
     </div>
   );
 }
