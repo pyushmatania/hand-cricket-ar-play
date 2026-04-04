@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import OnboardingTutorial from "@/components/OnboardingTutorial";
 import { SFX, Haptics } from "@/lib/sounds";
+import floatingIsland from "@/assets/floating-island.png";
 import { useUserChests, useStartUnlock, useCollectChest, chestTimeRemaining, type UserChest } from "@/hooks/useUserChests";
 import { getChestTier } from "@/lib/chests";
 import ChestReveal from "@/components/shop/ChestReveal";
