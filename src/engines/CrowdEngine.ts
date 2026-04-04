@@ -63,29 +63,33 @@ export class CrowdEngine {
    * React to a game event — adjusts crowd mood accordingly.
    */
   reactToEvent(eventType: EventType, payload: Record<string, any>): void {
+    const speed = this.themeConfig.reactionSpeed;
+    const isPeakEvent = this.themeConfig.peakEvents.includes(eventType);
+
     switch (eventType) {
       case 'DEFENSE_SCORED':
-        this.mood += 5;
+        this.mood += 5 * speed;
         break;
       case 'RUNS_SCORED':
-        this.mood += (payload.runs || 1) * 4;
+        this.mood += (payload.runs || 1) * 4 * speed;
         break;
       case 'BOUNDARY_FOUR':
-        this.mood = Math.min(100, this.mood + 25);
+        this.mood = Math.min(100, this.mood + 25 * speed);
         break;
       case 'BOUNDARY_SIX':
-        this.mood = 100;
+        this.mood = isPeakEvent ? 100 : Math.min(100, this.mood + 35 * speed);
         break;
       case 'WICKET_BOWLED':
+      case 'WICKET_DEFENSE':
       case 'WICKET_CAUGHT':
       case 'WICKET_LBW':
       case 'WICKET_RUN_OUT':
       case 'WICKET_STUMPED':
       case 'WICKET_CAUGHT_BEHIND':
-        this.mood = 85;
+        this.mood = isPeakEvent ? 100 : Math.max(85 * speed, this.mood);
         break;
       case 'MILESTONE_50':
-        this.mood = Math.min(100, this.mood + 30);
+        this.mood = Math.min(100, this.mood + 30 * speed);
         break;
       case 'MILESTONE_100':
       case 'HATTRICK':
@@ -96,6 +100,10 @@ export class CrowdEngine {
         break;
       case 'DEATH_OVERS_START':
         this.mood = Math.max(60, this.mood);
+        break;
+      case 'MATCH_START':
+        // Bigger crowds start louder
+        this.mood = Math.min(100, this.themeConfig.baseNoise * 0.6);
         break;
     }
 
