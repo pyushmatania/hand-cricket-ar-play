@@ -6,6 +6,7 @@
 
 import { useEffect, useRef, memo } from 'react';
 import type { WeatherState } from '@/engines/types';
+import { isLowEndDevice } from '@/lib/performanceUtils';
 
 interface WeatherParticlesProps {
   weather: WeatherState;
@@ -50,8 +51,11 @@ function WeatherParticlesComponent({ weather }: WeatherParticlesProps) {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Particle generation config per weather
-    const config = getWeatherConfig(weather);
+    // Particle generation config per weather (scaled for low-end devices)
+    const rawConfig = getWeatherConfig(weather);
+    const config = rawConfig && isLowEndDevice()
+      ? { ...rawConfig, maxParticles: Math.round(rawConfig.maxParticles * 0.5), spawnRate: Math.max(1, Math.round(rawConfig.spawnRate * 0.5)) }
+      : rawConfig;
     particlesRef.current = [];
 
     if (!config) {

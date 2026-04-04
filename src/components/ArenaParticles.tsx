@@ -1,5 +1,6 @@
 import { memo, useMemo } from "react";
 import { motion } from "framer-motion";
+import { isLowEndDevice } from "@/lib/performanceUtils";
 
 interface ArenaParticlesProps {
   arenaId?: string;
@@ -94,7 +95,8 @@ function ArenaParticles({ arenaId }: ArenaParticlesProps) {
 
   const particles = useMemo(() => {
     if (!config) return [];
-    return Array.from({ length: config.count }, (_, i) => {
+    const count = isLowEndDevice() ? Math.round(config.count * 0.5) : config.count;
+    return Array.from({ length: count }, (_, i) => {
       const size = config.sizes[0] + Math.random() * (config.sizes[1] - config.sizes[0]);
       const color = config.colors[Math.floor(Math.random() * config.colors.length)];
       const shape = config.shapes[Math.floor(Math.random() * config.shapes.length)];
