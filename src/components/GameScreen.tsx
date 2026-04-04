@@ -497,6 +497,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       <CelebrationEffects lastResult={game.lastResult} gameResult={game.result} phase={game.phase} />
       <CanvasFireworks type={fireworkType} duration={fireworkType === "win" ? 5000 : 3000} />
       <WeatherParticles weather={matchWeather} />
+      <BallPitchAnimation lastResult={game.lastResult} triggerKey={game.innings1Balls + game.innings2Balls} />
       <CrowdWave active={crowdWaveActive} intensity={crowdWaveIntensity} />
       <DRSReview
         active={drsActive}
