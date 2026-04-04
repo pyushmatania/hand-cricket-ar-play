@@ -16,74 +16,93 @@ export default function ArenaSelector({ currentTierIndex, selectedArenaId, onSel
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 mb-3">
-        <div className="w-1 h-5 rounded-full bg-gradient-to-b from-score-gold to-secondary" />
-        <span className="font-display text-xs font-black text-foreground tracking-widest uppercase">
+        <div className="w-1.5 h-5 rounded-sm"
+          style={{ background: "linear-gradient(180deg, hsl(43 90% 55%) 0%, hsl(35 60% 35%) 100%)" }}
+        />
+        <span className="font-game-display text-[10px] tracking-[0.2em] text-foreground uppercase">
           Arena
         </span>
       </div>
 
       <ScrollHint>
-      <div className="flex gap-2 pb-2">
-        {arenas.map((arena, i) => {
-          const selected = arena.id === selectedArenaId;
-          const tier = RANK_TIERS[arena.unlockTierIndex];
+        <div className="flex gap-2.5 pb-2">
+          {arenas.map((arena, i) => {
+            const selected = arena.id === selectedArenaId;
+            const tier = RANK_TIERS[arena.unlockTierIndex];
 
-          return (
-            <motion.button
-              key={arena.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: i * 0.08 }}
-              onClick={() => arena.unlocked && onSelect(arena)}
-              disabled={!arena.unlocked}
-              className={`
-                relative shrink-0 w-28 rounded-xl overflow-hidden border-2 transition-all duration-200
-                ${selected ? "border-primary shadow-[0_0_16px_hsl(217_91%_60%/0.3)]" : arena.unlocked ? "border-border/40" : "border-border/20 opacity-60"}
-                ${arena.unlocked ? "cursor-pointer active:scale-95" : "cursor-not-allowed"}
-              `}
-            >
-              {/* Background image */}
-              <div className="relative h-16 overflow-hidden">
-                <img
-                  src={arena.image}
-                  alt={arena.name}
-                  className={`w-full h-full object-cover ${!arena.unlocked ? "blur-sm grayscale" : ""}`}
-                  loading="lazy"
-                />
-                {/* Dark overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-transparent" />
+            return (
+              <motion.button
+                key={arena.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.08 }}
+                onClick={() => arena.unlocked && onSelect(arena)}
+                disabled={!arena.unlocked}
+                className="relative shrink-0 w-28 overflow-hidden"
+                style={{
+                  borderRadius: "14px",
+                  border: selected
+                    ? "2.5px solid hsl(43 90% 55%)"
+                    : arena.unlocked
+                      ? "2px solid hsl(25 20% 25%)"
+                      : "2px solid hsl(25 15% 18%)",
+                  boxShadow: selected
+                    ? "0 0 18px hsl(43 90% 50% / 0.35), 0 4px 0 hsl(25 40% 10%)"
+                    : "0 4px 0 hsl(25 40% 8%)",
+                  opacity: arena.unlocked ? 1 : 0.55,
+                  cursor: arena.unlocked ? "pointer" : "not-allowed",
+                }}
+              >
+                {/* Background image */}
+                <div className="relative h-16 overflow-hidden">
+                  <img
+                    src={arena.image}
+                    alt={arena.name}
+                    className={`w-full h-full object-cover ${!arena.unlocked ? "blur-sm grayscale" : ""}`}
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0"
+                    style={{ background: "linear-gradient(180deg, transparent 30%, hsl(25 30% 8% / 0.9) 100%)" }}
+                  />
 
-                {/* Lock overlay */}
-                {!arena.unlocked && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50">
-                    <Lock className="w-4 h-4 text-muted-foreground mb-0.5" />
-                    <span className="text-[8px] text-muted-foreground font-display">
-                      {tier.emoji} {tier.name}
-                    </span>
-                  </div>
-                )}
+                  {!arena.unlocked && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center"
+                      style={{ background: "hsl(25 20% 10% / 0.6)" }}
+                    >
+                      <Lock className="w-4 h-4 text-muted-foreground mb-0.5" />
+                      <span className="text-[8px] text-muted-foreground font-game-display">
+                        {tier.emoji} {tier.name}
+                      </span>
+                    </div>
+                  )}
 
-                {/* Selected check */}
-                {selected && (
-                  <div className="absolute top-1 right-1 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                    <span className="text-[10px] text-primary-foreground font-bold">✓</span>
-                  </div>
-                )}
-              </div>
+                  {selected && (
+                    <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full flex items-center justify-center"
+                      style={{
+                        background: "linear-gradient(180deg, hsl(43 90% 55%) 0%, hsl(35 70% 40%) 100%)",
+                        boxShadow: "0 2px 0 hsl(35 50% 25%)",
+                      }}
+                    >
+                      <span className="text-[10px] font-bold" style={{ color: "hsl(25 40% 8%)" }}>✓</span>
+                    </div>
+                  )}
+                </div>
 
-              {/* Label */}
-              <div className="px-2 py-1.5 bg-card/80">
-                <span className="text-[10px] font-display font-bold text-foreground block leading-tight truncate">
-                  {arena.emoji} {arena.name}
-                </span>
-                <span className="text-[8px] text-muted-foreground leading-none">
-                  {arena.subtitle}
-                </span>
-              </div>
-            </motion.button>
-          );
-        })}
-      </div>
+                {/* Label - Stadium Concrete */}
+                <div className="px-2 py-1.5"
+                  style={{ background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 12%) 100%)" }}
+                >
+                  <span className="text-[10px] font-game-card font-bold text-foreground block leading-tight truncate">
+                    {arena.emoji} {arena.name}
+                  </span>
+                  <span className="text-[8px] text-muted-foreground leading-none font-game-body">
+                    {arena.subtitle}
+                  </span>
+                </div>
+              </motion.button>
+            );
+          })}
+        </div>
       </ScrollHint>
     </div>
   );
