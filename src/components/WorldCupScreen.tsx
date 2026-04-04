@@ -1,7 +1,9 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SFX, Haptics } from "@/lib/sounds";
 import { useSettings } from "@/contexts/SettingsContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { grantTournamentRewards, type TournamentReward } from "@/lib/tournamentRewards";
 
 interface Props { onHome: () => void; }
 
@@ -52,6 +54,16 @@ export default function WorldCupScreen({ onHome }: Props) {
   const [knockoutIdx, setKnockoutIdx] = useState(0);
   const [allResults, setAllResults] = useState<MatchResult[]>([]);
   const [finalPlacement, setFinalPlacement] = useState("");
+  const [reward, setReward] = useState<TournamentReward | null>(null);
+  const rewardedRef = useRef(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (phase === "results" && finalPlacement && user && !rewardedRef.current) {
+      rewardedRef.current = true;
+      grantTournamentRewards(user.id, finalPlacement, "worldcup").then(r => r && setReward(r));
+    }
+  }, [phase, finalPlacement, user]);
 
   const pickTeam = (team: typeof TEAMS[0]) => {
     if (soundEnabled) SFX.tap();
@@ -425,9 +437,18 @@ export default function WorldCupScreen({ onHome }: Props) {
           <span className="text-5xl">{myTeam.flag}</span>
           <p className="font-game-display text-[10px] tracking-[0.3em] text-muted-foreground mt-4 mb-2">WORLD CUP</p>
           <h2 className="font-game-display text-3xl mb-4" style={{ color: isChampion ? "hsl(43 90% 55%)" : "hsl(0 70% 55%)" }}>{finalPlacement}</h2>
-          <div className="flex items-center justify-center gap-2 mb-6">
+          <div className="flex items-center justify-center gap-2 mb-4">
             {[...groupResults.map(r => r.won), ...allResults.map(r => r.won)].map((w, i) => <span key={i} className="text-lg">{w ? "✅" : "❌"}</span>)}
           </div>
+          {reward && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+              className="flex items-center justify-center gap-4 mb-4 py-2 px-4 rounded-xl"
+              style={{ background: "hsl(25 15% 12%)", border: "1.5px solid hsl(25 18% 22%)" }}>
+              <span className="font-game-display text-[10px]" style={{ color: "hsl(217 80% 65%)" }}>+{reward.xp} XP</span>
+              <span className="font-game-display text-[10px]" style={{ color: "hsl(43 90% 55%)" }}>+{reward.coins} 🪙</span>
+              {reward.chestTier && <span className="font-game-display text-[10px]" style={{ color: "hsl(280 70% 65%)" }}>📦 {reward.chestTier}</span>}
+            </motion.div>
+          )}
           <div className="flex gap-3">
             <motion.button whileTap={{ scale: 0.95 }} onClick={onHome}
               className="px-6 py-3 rounded-xl font-game-display text-[11px] tracking-wider"
