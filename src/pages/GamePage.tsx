@@ -8,6 +8,9 @@ import DailyChallengeScreen from "@/components/DailyChallengeScreen";
 import IPLTournamentScreen from "@/components/ipl/IPLTournamentScreen";
 import CricketRoyaleScreen from "@/components/CricketRoyaleScreen";
 import AuctionLeagueScreen from "@/components/AuctionLeagueScreen";
+import WorldCupScreen from "@/components/WorldCupScreen";
+import AshesScreen from "@/components/AshesScreen";
+import KnockoutCupScreen from "@/components/KnockoutCupScreen";
 
 export default function GamePage() {
   const { mode } = useParams<{ mode: string }>();
@@ -22,6 +25,9 @@ export default function GamePage() {
   if (mode === "daily") return <DailyChallengeScreen onHome={goHome} />;
   if (mode === "royale") return <CricketRoyaleScreen onHome={goHome} />;
   if (mode === "auction") return <AuctionLeagueScreen onHome={goHome} />;
+  if (mode === "worldcup") return <WorldCupScreen onHome={goHome} />;
+  if (mode === "ashes") return <AshesScreen onHome={goHome} />;
+  if (mode === "knockout") return <KnockoutCupScreen onHome={goHome} />;
 
   return <GameScreen onHome={goHome} />;
 }
