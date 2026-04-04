@@ -32,7 +32,7 @@ export default function ClanPage() {
   return (
     <div className="min-h-screen bg-background pb-24">
       <div className="absolute inset-0 stadium-gradient pointer-events-none" />
-      <TopBar title="CLAN" />
+      <TopBar />
 
       <div className="relative z-10 max-w-lg mx-auto px-4 pt-2">
         {/* Tabs */}
