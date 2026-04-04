@@ -18,6 +18,9 @@ const RANK_ICONS: Record<string, string> = {
   Bronze: "🥉", Silver: "🥈", Gold: "🥇", Platinum: "💎", Diamond: "💠", Master: "👑", Legend: "🏅",
 };
 
+const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
+const CHROME_BORDER = "2px solid hsl(25 20% 22%)";
+
 export default function TopStatusBar() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -61,20 +64,21 @@ export default function TopStatusBar() {
           className="relative flex items-center gap-2 flex-shrink-0 active:scale-95 transition-transform"
         >
           <div className="relative">
-            {/* Avatar ring */}
-            <div className="w-11 h-11 rounded-full flex items-center justify-center border-[2.5px]"
+            {/* Avatar ring — concrete with chrome border */}
+            <div className="w-11 h-11 rounded-full flex items-center justify-center"
               style={{
-                background: "linear-gradient(135deg, hsl(222 40% 16%), hsl(222 40% 10%))",
-                borderColor: "hsl(51 100% 50% / 0.5)",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.5), 0 0 12px hsl(51 100% 50% / 0.15), inset 0 1px 2px rgba(255,255,255,0.1)",
+                background: CONCRETE_CARD,
+                border: "2.5px solid hsl(35 40% 45%)",
+                boxShadow: "0 3px 0 hsl(25 20% 6%), 0 2px 8px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.15)",
               }}>
               <span className="text-lg">{user ? "🏏" : "👤"}</span>
             </div>
             {/* Level badge - 3D pill */}
-            <div className="absolute -bottom-1 -right-1.5 px-1.5 py-0.5 rounded-full border-b-[2px]"
+            <div className="absolute -bottom-1 -right-1.5 px-1.5 py-0.5 rounded-full"
               style={{
                 background: "linear-gradient(to bottom, hsl(207,90%,54%), hsl(207,90%,40%))",
-                borderColor: "hsl(207,90%,30%)",
+                border: "2px solid hsl(207,90%,30%)",
+                borderBottom: "3px solid hsl(207,90%,25%)",
                 boxShadow: "0 2px 6px hsl(207 90% 54% / 0.4)",
               }}>
               <span className="font-game-display text-[7px] text-white leading-none">{level}</span>
@@ -86,10 +90,10 @@ export default function TopStatusBar() {
             <span className="font-game-display text-[10px] tracking-wider text-foreground leading-none">
               {stats?.display_name || "PLAYER"}
             </span>
-            <div className="relative w-16 h-[6px] rounded-full overflow-hidden border-b-[1px]"
+            <div className="relative w-16 h-[6px] rounded-full overflow-hidden"
               style={{
-                background: "linear-gradient(to bottom, hsl(222 40% 10%), hsl(222 40% 15%))",
-                borderColor: "hsl(222 40% 8%)",
+                background: "linear-gradient(to bottom, hsl(25 15% 10%), hsl(25 15% 14%))",
+                border: "1px solid hsl(25 20% 18%)",
                 boxShadow: "inset 0 1px 3px rgba(0,0,0,0.5)",
               }}>
               <motion.div
@@ -98,8 +102,8 @@ export default function TopStatusBar() {
                 transition={{ duration: 0.8, ease: "easeOut" }}
                 className="h-full rounded-full"
                 style={{
-                  background: "linear-gradient(to right, hsl(207,90%,54%), hsl(291,47%,51%))",
-                  boxShadow: "0 0 6px hsl(207 90% 54% / 0.5)",
+                  background: "linear-gradient(to right, hsl(134 61% 58%), hsl(51 100% 50%))",
+                  boxShadow: "0 0 6px hsl(134 61% 58% / 0.5)",
                 }}
               />
             </div>
@@ -113,11 +117,12 @@ export default function TopStatusBar() {
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="flex items-center gap-1 px-2 py-1 rounded-xl border-b-2"
+            className="flex items-center gap-1 px-2 py-1 rounded-xl"
             style={{
-              background: "linear-gradient(135deg, hsl(4 90% 58% / 0.2), hsl(4 90% 58% / 0.08))",
-              borderColor: "hsl(4 90% 58% / 0.3)",
-              boxShadow: "0 2px 8px hsl(4 90% 58% / 0.2)",
+              background: CONCRETE_CARD,
+              border: CHROME_BORDER,
+              borderBottom: "3px solid hsl(25 20% 8%)",
+              boxShadow: "0 2px 8px hsl(0 84% 60% / 0.15), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
             }}
           >
             <motion.span
@@ -125,19 +130,20 @@ export default function TopStatusBar() {
               transition={{ repeat: Infinity, duration: 1.5 }}
               className="text-xs"
             >🔥</motion.span>
-            <span className="font-game-display text-[10px] leading-none" style={{ color: "hsl(4,90%,65%)" }}>{stats.current_streak}</span>
+            <span className="font-game-display text-[10px] leading-none" style={{ color: "hsl(0,84%,65%)" }}>{stats.current_streak}</span>
           </motion.div>
         )}
 
-        {/* Coins - 3D pill */}
+        {/* Coins - 3D concrete pill */}
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={() => navigate("/shop")}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-b-2"
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl"
           style={{
-            background: "linear-gradient(135deg, hsl(51 100% 50% / 0.15), hsl(43 96% 56% / 0.05))",
-            borderColor: "hsl(51 100% 50% / 0.3)",
-            boxShadow: "0 2px 8px hsl(51 100% 50% / 0.15), inset 0 1px 0 rgba(255,255,255,0.05)",
+            background: CONCRETE_CARD,
+            border: CHROME_BORDER,
+            borderBottom: "3px solid hsl(25 20% 8%)",
+            boxShadow: "0 3px 0 hsl(25 20% 6%), 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
           }}
         >
           <motion.span
@@ -155,15 +161,16 @@ export default function TopStatusBar() {
         <motion.button
           whileTap={{ scale: 0.85 }}
           onClick={() => navigate("/notifications")}
-          className="relative w-10 h-10 rounded-xl flex items-center justify-center border-b-2"
+          className="relative w-10 h-10 rounded-xl flex items-center justify-center"
           style={{
             background: unreadCount > 0
-              ? "linear-gradient(135deg, hsl(207 90% 54% / 0.15), hsl(207 90% 54% / 0.05))"
-              : "linear-gradient(135deg, hsl(222 40% 14%), hsl(222 40% 10%))",
-            borderColor: unreadCount > 0 ? "hsl(207 90% 54% / 0.3)" : "hsl(222 40% 8%)",
+              ? "linear-gradient(180deg, hsl(0 84% 60% / 0.12), hsl(25 18% 14%))"
+              : CONCRETE_CARD,
+            border: CHROME_BORDER,
+            borderBottom: "3px solid hsl(25 20% 8%)",
             boxShadow: unreadCount > 0
-              ? "0 2px 10px hsl(207 90% 54% / 0.2), inset 0 1px 0 rgba(255,255,255,0.05)"
-              : "0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05)",
+              ? "0 3px 0 hsl(25 20% 6%), 0 2px 10px hsl(0 84% 60% / 0.15), inset 0 1px 0 hsl(35 40% 40% / 0.08)"
+              : "0 3px 0 hsl(25 20% 6%), 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
           }}
         >
           <motion.span
@@ -175,11 +182,12 @@ export default function TopStatusBar() {
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center border-b-[1.5px]"
+              className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center"
               style={{
-                background: "linear-gradient(to bottom, hsl(4,90%,58%), hsl(4,90%,45%))",
-                borderColor: "hsl(4,90%,35%)",
-                boxShadow: "0 2px 6px hsl(4 90% 58% / 0.5)",
+                background: "linear-gradient(to bottom, hsl(0,84%,58%), hsl(0,84%,45%))",
+                border: "2px solid hsl(25 15% 11%)",
+                borderBottom: "2.5px solid hsl(0,84%,35%)",
+                boxShadow: "0 2px 6px hsl(0 84% 58% / 0.5)",
               }}
             >
               <span className="font-game-display text-[7px] text-white leading-none">{unreadCount > 9 ? "9+" : unreadCount}</span>
@@ -191,11 +199,12 @@ export default function TopStatusBar() {
         <motion.button
           whileTap={{ scale: 0.85, rotate: 90 }}
           onClick={() => navigate("/settings")}
-          className="w-10 h-10 rounded-xl flex items-center justify-center border-b-2"
+          className="w-10 h-10 rounded-xl flex items-center justify-center"
           style={{
-            background: "linear-gradient(135deg, hsl(222 40% 14%), hsl(222 40% 10%))",
-            borderColor: "hsl(222 40% 8%)",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05)",
+            background: CONCRETE_CARD,
+            border: CHROME_BORDER,
+            borderBottom: "3px solid hsl(25 20% 8%)",
+            boxShadow: "0 3px 0 hsl(25 20% 6%), 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
           }}
         >
           <span className="text-base opacity-60">⚙️</span>
