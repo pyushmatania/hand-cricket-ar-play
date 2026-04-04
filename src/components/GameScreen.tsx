@@ -92,6 +92,11 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const savedRef = useRef(false);
   const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickConfiguredMatchCommentators(commentaryVoice));
   const prevPhaseRef = useRef(game.phase);
+  const [crowdWaveActive, setCrowdWaveActive] = useState(false);
+  const [crowdWaveIntensity, setCrowdWaveIntensity] = useState<"normal" | "big" | "massive">("normal");
+  const [drsActive, setDrsActive] = useState(false);
+  const [drsDismissal, setDrsDismissal] = useState<'lbw' | 'caught_behind' | 'caught' | null>(null);
+  const [drsOutcome, setDrsOutcome] = useState<'out' | 'not_out'>('out');
 
   // Engine lifecycle managed by useEngines() hook above
   const [matchWeather] = useState(() => {
