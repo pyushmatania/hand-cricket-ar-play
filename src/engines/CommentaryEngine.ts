@@ -5,6 +5,20 @@
 
 import type { EventType, MatchContext, CommentaryLanguage, CommentaryLine } from './types';
 import { getCommentaryPool } from '@/data/commentary';
+import type { CommentaryTone } from '@/lib/matchThemes';
+
+export interface CommentaryToneConfig {
+  tone: CommentaryTone;
+  speechRate: number;       // multiplier on line.rate
+  frequency: number;        // 0-1, probability gate for triggering commentary
+  preferredLanguage?: CommentaryLanguage; // override language if set
+}
+
+const DEFAULT_TONE_CONFIG: CommentaryToneConfig = {
+  tone: 'professional',
+  speechRate: 1.0,
+  frequency: 0.7,
+};
 
 export class CommentaryEngine {
   private language: CommentaryLanguage = 'english';
@@ -14,6 +28,7 @@ export class CommentaryEngine {
   private voiceMain: SpeechSynthesisVoice | null = null;
   private voiceColor: SpeechSynthesisVoice | null = null;
   private lastPlayedIds: string[] = [];
+  private toneConfig: CommentaryToneConfig = DEFAULT_TONE_CONFIG;
 
   constructor() {
     this.initVoices();
