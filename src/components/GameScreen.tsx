@@ -308,40 +308,21 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       }
     }
 
-    // ── Existing SFX/Haptics (legacy — will migrate fully to engines later) ──
-    if (soundEnabled) SFX.batHit();
+    // ── Visual effects (screen shake + fireworks — not sound) ──
     if (r.runs === "OUT") {
-      setTimeout(() => {
-        if (soundEnabled) SFX.out();
-        if (hapticsEnabled) Haptics.out();
-        crowdGaspMute();
-      }, 150);
       shake("heavy");
       setFireworkType("wicket");
-      if (soundEnabled) setTimeout(() => SFX.fireworkPop(), 300);
     } else if (typeof r.runs === "number") {
-      const abs = Math.abs(r.runs);
-      if (abs === 6) {
-        setTimeout(() => { if (soundEnabled) SFX.six(); if (hapticsEnabled) Haptics.heavy(); crowdRoar("six"); }, 100);
+      if (r.runs === 6) {
         shake("medium");
         setFireworkType("six");
-        if (soundEnabled) {
-          setTimeout(() => SFX.fireworkWhoosh(), 400);
-          setTimeout(() => SFX.fireworkPop(), 800);
-        }
-        if (hapticsEnabled) setTimeout(() => Haptics.firework(), 800);
-      } else if (abs === 4) {
-        setTimeout(() => { if (soundEnabled) SFX.four(); if (hapticsEnabled) Haptics.medium(); crowdRoar("four"); }, 100);
+      } else if (r.runs === 4) {
         shake("light");
         setFireworkType("four");
-        if (soundEnabled) setTimeout(() => SFX.fireworkPop(), 400);
-      } else {
-        if (soundEnabled) SFX.runs(abs);
-        if (hapticsEnabled) Haptics.light();
       }
     }
-    if (crowdEnabled) playCrowdForResult(r.runs, game.isBatting, false);
-    if (commentaryEnabled) {
+
+    // ── Commentary (still uses duo system for now) ──
       const duoLines = getDuoCommentary(
         matchCommentators[0].name, matchCommentators[1].name,
         r.runs, game.isBatting, playerName, opponentName,
