@@ -162,6 +162,33 @@ export default function ProfilePage() {
       .then(({ data }) => { if (data) setMatches(data as unknown as MatchRecord[]); });
 
     loadFriends();
+
+    // Load tournament stats
+    getHistory().then(entries => {
+      const completed = entries.filter((e: any) => e.placement);
+      const wins = completed.filter((e: any) => {
+        const p = (e.placement || "").toLowerCase();
+        return p.includes("champion") || p.includes("won");
+      }).length;
+      const formats: Record<string, number> = {};
+      completed.forEach((e: any) => {
+        const f = e.tournaments?.format || "unknown";
+        formats[f] = (formats[f] || 0) + 1;
+      });
+      // Best placement priority
+      const placementRank = (p: string) => {
+        const l = p.toLowerCase();
+        if (l.includes("champion") || l.includes("won")) return 5;
+        if (l.includes("runner")) return 4;
+        if (l.includes("semi")) return 3;
+        if (l.includes("quarter") || l.includes("super")) return 2;
+        return 1;
+      };
+      const best = completed.length > 0
+        ? completed.reduce((b: any, e: any) => placementRank(e.placement) > placementRank(b.placement) ? e : b).placement
+        : null;
+      setTournamentStats({ total: completed.length, wins, bestPlacement: best, formats });
+    });
   }, [user]);
 
   const loadFriends = async () => {
