@@ -2,6 +2,24 @@ import { motion } from "framer-motion";
 import { DBPlayer, statToDiamonds, overallRating, roleLabel } from "@/hooks/usePlayers";
 import { Zap } from "lucide-react";
 
+/* ── Player image map for Mythic/Legendary cards ── */
+const PLAYER_IMAGES: Record<string, string> = {};
+
+// Dynamic imports for player images
+import dhoniImg from "@/assets/players/dhoni.jpg";
+import kohliImg from "@/assets/players/kohli.jpg";
+import rohitImg from "@/assets/players/rohit.jpg";
+import bumrahImg from "@/assets/players/bumrah.jpg";
+import russellImg from "@/assets/players/russell.jpg";
+
+Object.assign(PLAYER_IMAGES, {
+  dhoni: dhoniImg,
+  kohli: kohliImg,
+  rohit: rohitImg,
+  bumrah: bumrahImg,
+  russell: russellImg,
+});
+
 /* ── Rarity frame styles ── */
 const RARITY_FRAME: Record<string, { border: string; glow: string; bg: string; diamond: string }> = {
   common: {
