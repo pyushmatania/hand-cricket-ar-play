@@ -132,6 +132,7 @@ export default function SpinWheelPage() {
         const updatedCoins = newCoins + reward.amount;
         setCoins(updatedCoins);
         await supabase.from("profiles").update({ coins: updatedCoins }).eq("user_id", user.id);
+        engines.sound.playEffect('coin_collect');
         toast.success(`+${reward.amount} coins!`);
       } else if (reward.type === "xp") {
         const { data: prof } = await supabase.from("profiles").select("xp").eq("user_id", user.id).single();
