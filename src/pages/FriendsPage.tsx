@@ -390,6 +390,7 @@ export default function FriendsPage() {
                   </motion.button>
                 </motion.div>
               )}
+              {friends.length === 0 ? (
                 <div className="rounded-2xl p-8 text-center" style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
                   <span className="text-4xl block mb-3">👥</span>
                   <span className="font-game-title text-sm text-foreground">No Friends Yet</span>
