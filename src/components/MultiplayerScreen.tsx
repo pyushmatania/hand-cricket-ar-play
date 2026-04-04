@@ -488,6 +488,12 @@ export default function MultiplayerScreen({ onHome }: Props) {
             setTimeout(() => setReceivedTease(null), 4000);
           }
 
+          // Check for incoming emote
+          if (payload_data?.emote && payload_data?.emote_from !== user?.id) {
+            setReceivedEmote(payload_data.emote as EmoteId);
+            setTimeout(() => setReceivedEmote(null), 4000);
+          }
+
           // Guest-side innings break detection
           if ((updated as any).phase === "innings_break" && user?.id !== updated.host_id && !showInningsBreakRef.current) {
             // updated.host_batting is already the NEW value (post-flip).
