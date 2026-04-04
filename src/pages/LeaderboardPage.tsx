@@ -552,8 +552,8 @@ export default function LeaderboardPage() {
           {mainTab === "records" && (
             <motion.div key="records" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
               <div className="mb-3 flex items-center gap-2">
-                <div className="w-1 h-4 rounded-full bg-score-gold" />
-                <span className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">RECORD BREAKS & REACTIONS</span>
+                <div className="w-1 h-4 rounded-full" style={{ background: "hsl(43 90% 55%)" }} />
+                <span className="font-game-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">RECORD BREAKS & REACTIONS</span>
               </div>
               <AchievementFeed />
             </motion.div>
