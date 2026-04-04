@@ -73,6 +73,7 @@ function AnimatedRoutes() {
         <Route path="/daily-rewards" element={<LazyPage><PageTransition><DailyRewardsPage /></PageTransition></LazyPage>} />
         <Route path="/battle-pass" element={<LazyPage><PageTransition><BattlePassPage /></PageTransition></LazyPage>} />
         <Route path="/collection" element={<LazyPage><PageTransition><CollectionPage /></PageTransition></LazyPage>} />
+        <Route path="/spin" element={<LazyPage><PageTransition><SpinWheelPage /></PageTransition></LazyPage>} />
         <Route path="*" element={<LazyPage><PageTransition><NotFound /></PageTransition></LazyPage>} />
       </Routes>
     </AnimatePresence>
