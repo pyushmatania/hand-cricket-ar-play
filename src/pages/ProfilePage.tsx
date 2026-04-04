@@ -661,6 +661,72 @@ export default function ProfilePage() {
                 </motion.div>
               )}
 
+              {/* Tournament Stats */}
+              {tournamentStats.total > 0 && (
+                <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }}
+                  className="rounded-xl p-3 mb-4"
+                  style={{
+                    background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                    border: "2px solid hsl(43 50% 25% / 0.3)",
+                    borderBottom: "4px solid hsl(43 40% 18% / 0.5)",
+                    boxShadow: "0 3px 12px hsl(43 90% 50% / 0.08)",
+                  }}>
+                  <div className="flex items-center justify-between mb-2.5">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1 h-4 rounded-full" style={{ background: "hsl(43 90% 55%)" }} />
+                      <span className="font-game-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">🏆 TOURNAMENTS</span>
+                    </div>
+                    <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/tournament-history")}
+                      className="px-2 py-1 rounded-lg font-game-display text-[7px] tracking-wider"
+                      style={{
+                        background: "linear-gradient(180deg, hsl(43 70% 45%), hsl(43 60% 35%))",
+                        border: "1px solid hsl(43 50% 30%)",
+                        borderBottom: "2px solid hsl(43 40% 22%)",
+                        color: "hsl(43 90% 95%)",
+                      }}>
+                      VIEW ALL →
+                    </motion.button>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 mb-2">
+                    {[
+                      { icon: "🏟️", value: tournamentStats.total, label: "PLAYED", color: "hsl(220 10% 85%)" },
+                      { icon: "🏆", value: tournamentStats.wins, label: "WON", color: "hsl(43 90% 55%)" },
+                      { icon: "📊", value: tournamentStats.total > 0 ? `${Math.round((tournamentStats.wins / tournamentStats.total) * 100)}%` : "0%", label: "WIN%", color: "hsl(142 71% 55%)" },
+                    ].map((s) => (
+                      <div key={s.label} className="text-center">
+                        <span className="text-sm block">{s.icon}</span>
+                        <span className="font-game-score text-base font-black block leading-none mt-0.5" style={{ color: s.color }}>{s.value}</span>
+                        <span className="text-[5px] font-game-display text-muted-foreground tracking-widest">{s.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {tournamentStats.bestPlacement && (
+                    <div className="rounded-lg p-2 text-center" style={{
+                      background: "hsl(222 15% 10%)",
+                      border: "1px solid hsl(222 12% 15%)",
+                    }}>
+                      <span className="text-[6px] font-game-display text-muted-foreground tracking-widest block">BEST PLACEMENT</span>
+                      <span className="font-game-display text-[11px] font-bold" style={{
+                        color: tournamentStats.bestPlacement.toLowerCase().includes("champion") || tournamentStats.bestPlacement.toLowerCase().includes("won")
+                          ? "hsl(43 90% 55%)" : "hsl(207 80% 65%)",
+                      }}>{tournamentStats.bestPlacement}</span>
+                    </div>
+                  )}
+                  {Object.keys(tournamentStats.formats).length > 0 && (
+                    <div className="flex items-center justify-center gap-3 mt-2">
+                      {Object.entries(tournamentStats.formats).map(([format, count]) => {
+                        const icons: Record<string, string> = { worldcup: "🌍", ashes: "🏺", knockout: "🏆", auction: "💰", royale: "👑", ipl: "🏏" };
+                        return (
+                          <span key={format} className="font-game-body text-[8px] text-muted-foreground">
+                            {icons[format] || "🏟️"} {count}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  )}
+                </motion.div>
+              )}
+
               {/* Batting & Performance stats */}
               {advancedStats && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
