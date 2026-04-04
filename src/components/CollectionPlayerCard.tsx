@@ -148,6 +148,13 @@ export default function CollectionPlayerCard({ player, size = "sm", onTap, delay
               width={512}
               height={704}
             />
+          ) : player.ipl_team && TEAM_STAR_ART[player.ipl_team.toLowerCase()] ? (
+            <img
+              src={TEAM_STAR_ART[player.ipl_team.toLowerCase()]}
+              alt={player.name}
+              className="w-full h-full object-cover object-top opacity-60"
+              loading="lazy"
+            />
           ) : (
             <>
               <div className="absolute inset-0 opacity-5 flex items-center justify-center">
