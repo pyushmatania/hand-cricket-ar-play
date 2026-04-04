@@ -15,11 +15,29 @@ export default function ChestReveal({ itemName, itemEmoji, rarity, onComplete }:
   const chest = getChestTier(rarity);
 
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase("open"), 1200);
-    const t2 = setTimeout(() => setPhase("reveal"), 2000);
+    // Shake phase: chest unlock sound
+    engines.sound.playEffect('chest_unlock');
+    engines.sound.vibrate('medium');
+
+    const t1 = setTimeout(() => {
+      setPhase("open");
+      engines.sound.playEffect('ui_success');
+    }, 1200);
+    const t2 = setTimeout(() => {
+      setPhase("reveal");
+      // Play card/item reveal sound based on rarity
+      if (rarity === 'legendary' || rarity === 'mythic') {
+        engines.sound.playEffect('card_legendary_reveal');
+        engines.sound.vibrate('heavy');
+      } else {
+        engines.sound.playEffect('card_flip');
+        engines.sound.vibrate('medium');
+      }
+      engines.sound.playEffect('coin_collect');
+    }, 2000);
     const t3 = setTimeout(onComplete, 4000);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
-  }, [onComplete]);
+  }, [onComplete, rarity]);
 
   return (
     <motion.div
