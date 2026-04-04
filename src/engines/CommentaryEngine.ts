@@ -100,6 +100,13 @@ export class CommentaryEngine {
       pool2 = available;
     }
 
+    // Theme filter
+    const themeFiltered = pool2.filter(line => {
+      if (!line.theme) return true;
+      return line.theme === this.currentTheme;
+    });
+    const finalPool = themeFiltered.length > 0 ? themeFiltered : pool2;
+
     // Random selection
     const selected = finalPool[Math.floor(Math.random() * finalPool.length)];
 
