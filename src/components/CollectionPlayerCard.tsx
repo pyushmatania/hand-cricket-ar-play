@@ -210,6 +210,26 @@ export default function CollectionPlayerCard({ player, size = "sm", onTap, delay
         )}
       </div>
 
+      {/* Holographic shimmer for Legendary & Mythic */}
+      {(rarity === "legendary" || rarity === "mythic") && (
+        <motion.div
+          className="absolute inset-0 rounded-xl pointer-events-none overflow-hidden"
+          style={{ zIndex: 30 }}
+        >
+          <motion.div
+            animate={{ x: ["-120%", "120%"] }}
+            transition={{ duration: rarity === "mythic" ? 2 : 2.8, repeat: Infinity, repeatDelay: rarity === "mythic" ? 1 : 2, ease: "easeInOut" }}
+            className="absolute inset-0"
+            style={{
+              width: "60%",
+              background: rarity === "mythic"
+                ? "linear-gradient(105deg, transparent 30%, hsl(280 90% 70% / 0.25) 45%, hsl(180 80% 60% / 0.3) 50%, hsl(320 90% 70% / 0.25) 55%, transparent 70%)"
+                : "linear-gradient(105deg, transparent 30%, hsl(35 90% 60% / 0.2) 45%, hsl(50 100% 80% / 0.35) 50%, hsl(35 90% 60% / 0.2) 55%, transparent 70%)",
+            }}
+          />
+        </motion.div>
+      )}
+
       {/* Mythic pulse */}
       {rarity === "mythic" && (
         <motion.div
