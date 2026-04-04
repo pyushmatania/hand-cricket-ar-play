@@ -278,7 +278,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       setGameCdVal(null);
       if (arCeremoniesEnabled && tossInfo) {
         setPendingBatFirst(batFirst);
-        setShowPreMatch(true);
+        setShowEstablishingShot(true);
       } else {
         startGame(batFirst, matchConfig);
       }
