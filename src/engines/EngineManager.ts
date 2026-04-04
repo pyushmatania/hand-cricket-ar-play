@@ -13,7 +13,15 @@ import { WeatherEngine } from './WeatherEngine';
 import { CrowdEngine } from './CrowdEngine';
 import type { EventType } from './types';
 
+/**
+ * Perspective: determines which "side" the player is on for audio/effects.
+ * 'batting' = player is batting (boundary = euphoria)
+ * 'bowling' = player is bowling (wicket = euphoria)
+ */
+type Perspective = 'batting' | 'bowling';
+
 class EngineManager {
+  private _perspective: Perspective = 'batting';
   event: EventEngine;
   sync: SyncEngine;
   gameplay: GameplayEngine;
