@@ -63,6 +63,11 @@ export default function ClanPage() {
               <ClanChat clanId={myClan.id} />
             </motion.div>
           )}
+          {tab === "donate" && myClan && (
+            <motion.div key="donate" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
+              <ClanDonations clanId={myClan.id} />
+            </motion.div>
+          )}
           {tab === "browse" && (
             <motion.div key="browse" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
               {!showCreate ? (
