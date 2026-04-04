@@ -90,6 +90,118 @@ export type Database = {
           },
         ]
       }
+      clan_chat: {
+        Row: {
+          clan_id: string
+          created_at: string
+          id: string
+          message: string
+          message_type: string
+          user_id: string
+        }
+        Insert: {
+          clan_id: string
+          created_at?: string
+          id?: string
+          message: string
+          message_type?: string
+          user_id: string
+        }
+        Update: {
+          clan_id?: string
+          created_at?: string
+          id?: string
+          message?: string
+          message_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clan_chat_clan_id_fkey"
+            columns: ["clan_id"]
+            isOneToOne: false
+            referencedRelation: "clans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clan_members: {
+        Row: {
+          clan_id: string
+          donated_cards: number
+          id: string
+          joined_at: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          clan_id: string
+          donated_cards?: number
+          id?: string
+          joined_at?: string
+          role?: string
+          user_id: string
+        }
+        Update: {
+          clan_id?: string
+          donated_cards?: number
+          id?: string
+          joined_at?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clan_members_clan_id_fkey"
+            columns: ["clan_id"]
+            isOneToOne: false
+            referencedRelation: "clans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clans: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string
+          emoji: string
+          id: string
+          level: number
+          max_members: number
+          name: string
+          tag: string
+          updated_at: string
+          xp: number
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string
+          emoji?: string
+          id?: string
+          level?: number
+          max_members?: number
+          name: string
+          tag: string
+          updated_at?: string
+          xp?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string
+          emoji?: string
+          id?: string
+          level?: number
+          max_members?: number
+          name?: string
+          tag?: string
+          updated_at?: string
+          xp?: number
+        }
+        Relationships: []
+      }
       daily_quests: {
         Row: {
           created_at: string
