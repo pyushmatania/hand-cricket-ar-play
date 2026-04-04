@@ -516,23 +516,22 @@ export default function TapPlayingUI({
       {extraContent}
       <div className="flex-1 min-h-0" />
 
-      {/* ── Color-coded Move Buttons ── */}
+      {/* ── Move Buttons — jersey mesh surface ── */}
       {phase !== "not_started" && phase !== "finished" && !waitingForOpponent && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative pb-1">
-          {/* Equipped bat skin indicator */}
           {equippedBatSkin && equippedBatSkin !== "Classic Willow" && (
             <div className="flex items-center justify-center gap-1.5 mb-1">
               <span className="text-sm">{batSkin.emoji}</span>
-              <span className="text-[7px] text-white/40 font-game-display tracking-wider">{equippedBatSkin.toUpperCase()}</span>
+              <span className="text-[7px] font-display tracking-wider" style={{ color: "hsl(var(--chrome-mid) / 0.5)" }}>{equippedBatSkin.toUpperCase()}</span>
             </div>
           )}
-          <p className="text-center text-[7px] text-white/40 font-game-display mb-1.5 tracking-[0.2em]">
+          <p className="text-center text-[7px] font-display mb-1.5 tracking-[0.2em]"
+            style={{ color: "hsl(var(--chrome-mid) / 0.5)" }}>
             {isBatting ? "⚡ TAP YOUR SHOT" : "🎯 TAP YOUR BOWL"}
           </p>
           <div className={`grid gap-2 ${activeMoves.length === 5 ? "grid-cols-5" : "grid-cols-3"}`}>
             {activeMoves.map((m, i) => {
               const styleId = btnTheme.id;
-              // Per-style entrance variants
               const entranceVariants: Record<string, any> = {
                 classic: {
                   initial: { opacity: 0, y: 20 },
@@ -541,16 +540,7 @@ export default function TapPlayingUI({
                 },
                 neon: {
                   initial: { opacity: 0, scale: 0.5 },
-                  animate: {
-                    opacity: 1,
-                    scale: [0.5, 1.15, 0.95, 1],
-                    boxShadow: [
-                      "0 0 0px transparent",
-                      "0 0 30px hsl(300 100% 50% / 0.6)",
-                      "0 0 15px hsl(300 100% 50% / 0.3)",
-                      "0 0 20px hsl(300 100% 50% / 0.2)",
-                    ],
-                  },
+                  animate: { opacity: 1, scale: [0.5, 1.15, 0.95, 1] },
                   transition: { delay: i * 0.07, duration: 0.6, ease: "easeOut" },
                 },
                 manga: {
@@ -560,9 +550,7 @@ export default function TapPlayingUI({
                 },
                 skeleton: {
                   initial: { opacity: 0 },
-                  animate: {
-                    opacity: [0, 1, 0.2, 0.9, 0.3, 1],
-                  },
+                  animate: { opacity: [0, 1, 0.2, 0.9, 0.3, 1] },
                   transition: { delay: i * 0.08, duration: 0.8, ease: "linear" },
                 },
                 royal: {
@@ -582,32 +570,43 @@ export default function TapPlayingUI({
                   whileTap={{ scale: 0.85, y: 2 }}
                   onClick={() => handleMove(m.move)}
                   disabled={effectiveCooldown}
-                  className={`relative flex flex-col items-center gap-0.5 py-2.5 rounded-2xl font-game-display font-black text-white border-b-4 transition-all active:border-b-2 active:translate-y-[2px] overflow-hidden ${
-                    effectiveCooldown
-                      ? "opacity-30 cursor-not-allowed bg-white/5 border-transparent"
-                      : `bg-gradient-to-b ${m.color} ${m.border} ${m.glow}`
+                  className={`relative flex flex-col items-center gap-0.5 py-2.5 rounded-2xl font-display font-black text-white transition-all active:translate-y-[2px] overflow-hidden ${
+                    effectiveCooldown ? "opacity-30 cursor-not-allowed" : ""
                   }`}
+                  style={effectiveCooldown ? {
+                    background: "hsl(var(--concrete-dark) / 0.5)",
+                    border: "2px solid transparent",
+                  } : {
+                    background: `linear-gradient(180deg, hsl(var(--concrete-mid)), hsl(var(--concrete-dark)))`,
+                    border: "2px solid hsl(var(--chrome-dark) / 0.4)",
+                    borderBottom: "4px solid hsl(var(--chrome-dark) / 0.6)",
+                    boxShadow: "inset 0 1px 0 hsl(var(--chrome-light) / 0.08), 0 3px 8px hsl(0 0% 0% / 0.3)",
+                  }}
                 >
-                  {/* Neon pulse ring */}
+                  {!effectiveCooldown && (
+                    <div className="absolute inset-0 rounded-2xl pointer-events-none opacity-[0.08]"
+                      style={{
+                        backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, hsl(var(--chalk-white)) 2px, hsl(var(--chalk-white)) 3px)",
+                      }}
+                    />
+                  )}
                   {styleId === "neon" && !effectiveCooldown && (
                     <motion.div
                       animate={{ scale: [1, 1.6, 1], opacity: [0.4, 0, 0.4] }}
                       transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
-                      className="absolute inset-0 rounded-2xl border-2 border-current pointer-events-none"
+                      className="absolute inset-0 rounded-2xl border-2 pointer-events-none"
                       style={{ borderColor: "hsl(300 100% 60% / 0.3)" }}
                     />
                   )}
-                  {/* Manga slash line */}
                   {styleId === "manga" && !effectiveCooldown && (
                     <motion.div
                       initial={{ x: "-120%", opacity: 0 }}
                       animate={{ x: ["120%"], opacity: [0, 0.7, 0] }}
                       transition={{ duration: 0.6, delay: 0.3 + i * 0.1 }}
-                      className="absolute inset-y-0 w-[3px] bg-white pointer-events-none"
-                      style={{ transform: "skewX(-20deg)" }}
+                      className="absolute inset-y-0 w-[3px] pointer-events-none"
+                      style={{ background: "hsl(var(--chalk-white))", transform: "skewX(-20deg)" }}
                     />
                   )}
-                  {/* Skeleton scan line */}
                   {styleId === "skeleton" && !effectiveCooldown && (
                     <motion.div
                       animate={{ y: ["-100%", "200%"] }}
@@ -623,7 +622,8 @@ export default function TapPlayingUI({
                       initial={{ scaleX: 1 }}
                       animate={{ scaleX: 0 }}
                       transition={{ duration: 0.8, ease: "linear" }}
-                      className="absolute bottom-1 left-2 right-2 h-0.5 bg-white/50 rounded-full origin-left"
+                      className="absolute bottom-1 left-2 right-2 h-0.5 rounded-full origin-left"
+                      style={{ background: "hsl(var(--chalk-white) / 0.5)" }}
                     />
                   )}
                 </motion.button>
@@ -632,7 +632,8 @@ export default function TapPlayingUI({
           </div>
           {!isPvP && (
             <button onClick={onReset}
-              className="text-[8px] text-white/25 underline mt-1.5 active:scale-95 font-game-body tracking-wider w-full text-center">
+              className="text-[8px] underline mt-1.5 active:scale-95 font-body tracking-wider w-full text-center"
+              style={{ color: "hsl(var(--chrome-mid) / 0.3)" }}>
               Reset Match
             </button>
           )}
@@ -642,33 +643,41 @@ export default function TapPlayingUI({
       {/* Waiting for opponent (PvP) */}
       {isPvP && waitingForOpponent && phase !== "finished" && phase !== "not_started" && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          className="p-3 text-center rounded-2xl bg-[hsl(220_20%_14%/0.8)] border border-white/10">
+          className="p-3 text-center rounded-2xl"
+          style={{
+            background: "linear-gradient(135deg, hsl(var(--concrete-mid) / 0.8), hsl(var(--concrete-dark) / 0.8))",
+            border: "1px solid hsl(var(--chrome-dark) / 0.3)",
+          }}>
           <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 1.5, repeat: Infinity }}>
             <span className="text-2xl block mb-1">⏳</span>
           </motion.div>
-          <p className="font-game-display text-[10px] font-bold text-white/60 tracking-wider">
+          <p className="font-display text-[10px] font-bold tracking-wider" style={{ color: "hsl(var(--chrome-mid) / 0.6)" }}>
             WAITING FOR {opponentName.toUpperCase()}...
           </p>
         </motion.div>
       )}
 
-      {/* Game over */}
+      {/* Game over — scoreboard paint surface */}
       {phase === "finished" && (
         <div className="mt-auto pb-4">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
-            <div className="rounded-2xl px-3 py-3 text-center bg-[hsl(220_20%_14%/0.9)] border border-white/10">
-              <p className="font-game-display text-lg font-bold text-white tracking-wider">
+            <div className="rounded-2xl px-3 py-3 text-center"
+              style={{
+                background: "linear-gradient(180deg, hsl(var(--scoreboard-dark) / 0.95), hsl(var(--scoreboard-mid) / 0.9))",
+                border: "1px solid hsl(var(--chrome-dark) / 0.3)",
+              }}>
+              <p className="font-display text-lg font-bold tracking-wider" style={{ color: "hsl(var(--chalk-white))" }}>
                 {result === "win" ? `🏆 ${playerName.toUpperCase()} WINS!` : result === "loss" ? `😞 ${opponentName} wins!` : "🤝 A TIE!"}
               </p>
               <div className="flex items-center justify-center gap-4 mt-2">
                 <div className="text-center">
-                  <span className="font-game-display text-2xl font-black text-game-green block">{userScore}</span>
-                  <span className="text-[7px] text-white/40 font-game-display tracking-wider">{playerName.toUpperCase().slice(0, 10)}</span>
+                  <span className="font-display text-2xl font-black block" style={{ color: "hsl(var(--grass-light))" }}>{userScore}</span>
+                  <span className="text-[7px] font-display tracking-wider" style={{ color: "hsl(var(--chrome-mid) / 0.5)" }}>{playerName.toUpperCase().slice(0, 10)}</span>
                 </div>
-                <span className="text-white/30 font-game-display text-sm">vs</span>
+                <span className="font-display text-sm" style={{ color: "hsl(var(--chrome-mid) / 0.3)" }}>vs</span>
                 <div className="text-center">
-                  <span className="font-game-display text-2xl font-black text-game-gold block">{aiScore}</span>
-                  <span className="text-[7px] text-white/40 font-game-display tracking-wider">{opponentName.toUpperCase().slice(0, 10)}</span>
+                  <span className="font-display text-2xl font-black block" style={{ color: "hsl(var(--secondary))" }}>{aiScore}</span>
+                  <span className="text-[7px] font-display tracking-wider" style={{ color: "hsl(var(--chrome-mid) / 0.5)" }}>{opponentName.toUpperCase().slice(0, 10)}</span>
                 </div>
               </div>
             </div>
