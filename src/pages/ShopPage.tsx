@@ -93,6 +93,8 @@ export default function ShopPage() {
       ...p,
       equipped: p.item_id === item.id ? true : categoryItems.some(ci => ci.id === p.item_id) ? false : p.equipped,
     })));
+    engines.sound.playEffect('ui_success');
+    engines.sound.vibrate('light');
     toast.success(`Equipped ${item.name}! ✨`);
     setSelectedItem(null);
   };
