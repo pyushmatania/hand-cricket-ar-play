@@ -291,7 +291,7 @@ export default function ModeSelectDrawer({ open, onOpenChange }: ModeSelectDrawe
             <SectionHeader label="Tournaments" accentGradient="linear-gradient(180deg, hsl(43 100% 55%) 0%, hsl(25 70% 40%) 100%)" />
             <div className="space-y-2 mb-4">
               {TOURNAMENTS.map((mode, i) => (
-                <CompetitiveCard key={mode.id} mode={mode} index={i} onNavigate={handleNavigate} />
+                <CompetitiveCard key={mode.id} mode={mode} index={i} onNavigate={handleNavigate} userRank={userRank} />
               ))}
             </div>
 
