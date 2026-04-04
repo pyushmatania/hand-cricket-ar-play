@@ -64,6 +64,7 @@ export default function FriendsPage() {
   const [inviteCode, setInviteCode] = useState("");
   const [searchResults, setSearchResults] = useState<FriendProfile[]>([]);
   const [myCode, setMyCode] = useState("");
+  const [myProfile, setMyProfile] = useState<FriendProfile | null>(null);
   const [feedback, setFeedback] = useState("");
   const [challengeTargetId, setChallengeTargetId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -78,8 +79,13 @@ export default function FriendsPage() {
 
   const loadMyCode = async () => {
     if (!user) return;
-    const { data } = await supabase.from("profiles").select("invite_code").eq("user_id", user.id).single();
-    if (data) setMyCode((data as any).invite_code || "");
+    const { data } = await supabase.from("profiles")
+      .select("user_id, display_name, wins, losses, draws, total_matches, high_score, best_streak, current_streak, abandons, invite_code, avatar_url, avatar_index, xp, coins, rank_tier")
+      .eq("user_id", user.id).single();
+    if (data) {
+      setMyCode((data as any).invite_code || "");
+      setMyProfile(data as unknown as FriendProfile);
+    }
   };
 
   const loadFriends = async () => {
@@ -329,6 +335,61 @@ export default function FriendsPage() {
           {/* ═══ FRIENDS LIST ═══ */}
           {tab === "friends" && (
             <motion.div key="friends" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              {/* ── My Profile Card ── */}
+              {myProfile && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="rounded-2xl p-3.5 mb-4 flex items-center gap-3"
+                  style={{
+                    background: "linear-gradient(180deg, hsl(207 40% 18%) 0%, hsl(207 35% 12%) 100%)",
+                    border: "2px solid hsl(207 90% 54% / 0.4)",
+                    borderBottom: "5px solid hsl(207 90% 30%)",
+                    boxShadow: "0 0 24px hsl(207 90% 54% / 0.12)",
+                  }}
+                >
+                  <div className="relative">
+                    <div className="rounded-full" style={{ border: "3px solid hsl(207 90% 54%)", boxShadow: "0 0 12px hsl(207 90% 54% / 0.3)" }}>
+                      <PlayerAvatar avatarUrl={myProfile.avatar_url} avatarIndex={myProfile.avatar_index ?? 0} size="md" />
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 px-1.5 py-0.5 rounded-full text-[6px] font-game-display tracking-wider"
+                      style={{ background: "hsl(207 90% 54%)", color: "white", border: "2px solid hsl(207 35% 12%)" }}>
+                      YOU
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="font-game-card text-sm font-bold text-foreground block truncate">{myProfile.display_name}</span>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[8px] text-muted-foreground font-game-body">{myProfile.wins}W {myProfile.losses}L</span>
+                      <span className="text-[8px] font-game-display" style={{ color: "hsl(142 71% 45%)" }}>
+                        {myProfile.total_matches > 0 ? Math.round((myProfile.wins / myProfile.total_matches) * 100) : 0}%
+                      </span>
+                      <span className="text-[8px] font-game-display" style={{ color: "hsl(43 90% 55%)" }}>
+                        ⭐ {myProfile.high_score}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[7px] font-game-display" style={{ color: "hsl(207 90% 65%)" }}>✨ {myProfile.xp ?? 0} XP</span>
+                      <span className="text-[7px] font-game-display" style={{ color: "hsl(43 90% 55%)" }}>🪙 {myProfile.coins ?? 0}</span>
+                      <span className="text-[7px] font-game-display" style={{ color: "hsl(4 90% 60%)" }}>🔥 {myProfile.current_streak ?? 0}</span>
+                    </div>
+                  </div>
+                  <motion.button
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => navigate("/profile")}
+                    className="px-3 py-2 rounded-xl font-game-display text-[7px] tracking-wider relative overflow-hidden"
+                    style={{
+                      background: "linear-gradient(180deg, hsl(207 90% 54%) 0%, hsl(207 90% 40%) 100%)",
+                      border: "2px solid hsl(207 80% 60% / 0.5)",
+                      borderBottom: "4px solid hsl(207 90% 30%)",
+                      color: "white",
+                      boxShadow: "0 2px 8px hsl(207 90% 54% / 0.3)",
+                    }}
+                  >
+                    👤 PROFILE
+                  </motion.button>
+                </motion.div>
+              )}
               {friends.length === 0 ? (
                 <div className="rounded-2xl p-8 text-center" style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
                   <span className="text-4xl block mb-3">👥</span>
