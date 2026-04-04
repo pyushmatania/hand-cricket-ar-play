@@ -480,6 +480,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     setTossInfo(null);
     setFireworkType(null);
     setShowEstablishingShot(false);
+    setShowWalkout(false);
     setShowPreMatch(false);
     setShowPostMatch(false);
     savedRef.current = false;
