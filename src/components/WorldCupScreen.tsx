@@ -54,6 +54,16 @@ export default function WorldCupScreen({ onHome }: Props) {
   const [knockoutIdx, setKnockoutIdx] = useState(0);
   const [allResults, setAllResults] = useState<MatchResult[]>([]);
   const [finalPlacement, setFinalPlacement] = useState("");
+  const [reward, setReward] = useState<TournamentReward | null>(null);
+  const rewardedRef = useRef(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (phase === "results" && finalPlacement && user && !rewardedRef.current) {
+      rewardedRef.current = true;
+      grantTournamentRewards(user.id, finalPlacement, "worldcup").then(r => r && setReward(r));
+    }
+  }, [phase, finalPlacement, user]);
 
   const pickTeam = (team: typeof TEAMS[0]) => {
     if (soundEnabled) SFX.tap();

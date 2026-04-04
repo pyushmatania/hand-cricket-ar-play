@@ -49,6 +49,16 @@ export default function KnockoutCupScreen({ onHome }: Props) {
   const [lastBall, setLastBall] = useState("");
   const ballsRef = useRef(0);
   const [finalPlacement, setFinalPlacement] = useState("");
+  const [reward, setReward] = useState<TournamentReward | null>(null);
+  const rewardedRef = useRef(false);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (phase === "results" && finalPlacement && user && !rewardedRef.current) {
+      rewardedRef.current = true;
+      grantTournamentRewards(user.id, finalPlacement, "knockout").then(r => r && setReward(r));
+    }
+  }, [phase, finalPlacement, user]);
 
   const ROUND_NAMES = ["⚔️ QUARTER-FINAL", "🔥 SEMI-FINAL", "🏆 FINAL"];
 
