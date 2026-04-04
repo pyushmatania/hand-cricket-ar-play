@@ -44,7 +44,18 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const [showOverSelector, setShowOverSelector] = useState(true);
   const [playerXP, setPlayerXP] = useState(0);
   const [matchRewards, setMatchRewards] = useState<any>(null);
-  const [matchWeather] = useState<Weather>(() => rollWeather());
+  const [matchWeather] = useState<Weather>(() => {
+    // Use theme's weather pool to pick weather
+    const pool = matchTheme.weatherPool;
+    const weatherId = pool.length ? pool[Math.floor(Math.random() * pool.length)] : 'clear';
+    // Map to Weather object from weather system
+    const weatherMap: Record<string, string> = {
+      clear: 'clear', overcast: 'overcast', drizzle: 'drizzle',
+      heavy_dew: 'dew', dust_storm: 'dust', night_lights: 'floodlights', golden_hour: 'golden',
+    };
+    const { getWeatherById } = require("@/lib/weather");
+    return getWeatherById(weatherMap[weatherId] || 'clear');
+  });
   // Ceremony states
   const [showPreMatch, setShowPreMatch] = useState(false);
   const [showPostMatch, setShowPostMatch] = useState(false);
