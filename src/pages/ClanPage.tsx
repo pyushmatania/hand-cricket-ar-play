@@ -38,7 +38,7 @@ export default function ClanPage() {
       <div className="relative z-10 max-w-lg mx-auto px-4 pt-2">
         {/* Tabs */}
         <div className="flex gap-1 p-1 glass-card rounded-xl mb-4">
-          {(myClan ? (["info", "chat"] as Tab[]) : (["browse"] as Tab[])).map(t => (
+          {(myClan ? (["info", "chat", "donate"] as Tab[]) : (["browse"] as Tab[])).map(t => (
             <button key={t} onClick={() => { setTab(t); if (t === "browse") fetchAllClans(); }}
               className={`flex-1 py-2 rounded-lg font-display text-[10px] tracking-widest font-bold transition-all ${tab === t ? "bg-primary/20 text-primary" : "text-muted-foreground"}`}>
               {t.toUpperCase()}
