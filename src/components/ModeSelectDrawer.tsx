@@ -17,19 +17,19 @@ const QUICK_PLAY = [
 ];
 
 const TOURNAMENTS = [
-  { id: "tournament", label: "TOURNAMENT", desc: "5-Round Bracket", emoji: "🏆", color: "hsl(43 90% 55%)" },
-  { id: "ipl", label: "IPL SEASON", desc: "Full Franchise", emoji: "🏟️", color: "hsl(25 90% 55%)" },
-  { id: "worldcup", label: "WORLD CUP", desc: "10 Nations", emoji: "🌍", color: "hsl(217 80% 55%)" },
-  { id: "ashes", label: "THE ASHES", desc: "Best of 5 Tests", emoji: "🏺", color: "hsl(35 70% 50%)" },
-  { id: "knockout", label: "KNOCKOUT CUP", desc: "8-Team Bracket", emoji: "🥊", color: "hsl(0 70% 55%)" },
-  { id: "auction", label: "AUCTION LEAGUE", desc: "Bid & Battle", emoji: "💰", color: "hsl(43 85% 50%)" },
+  { id: "tournament", label: "TOURNAMENT", desc: "5-Round Bracket", emoji: "🏆", color: "hsl(43 90% 55%)", badge: null, minRank: null },
+  { id: "ipl", label: "IPL SEASON", desc: "Full Franchise", emoji: "🏟️", color: "hsl(25 90% 55%)", badge: null, minRank: null },
+  { id: "worldcup", label: "WORLD CUP", desc: "10 Nations", emoji: "🌍", color: "hsl(217 80% 55%)", badge: "NEW", minRank: null },
+  { id: "ashes", label: "THE ASHES", desc: "Best of 5 Tests", emoji: "🏺", color: "hsl(35 70% 50%)", badge: "NEW", minRank: null },
+  { id: "knockout", label: "KNOCKOUT CUP", desc: "8-Team Bracket", emoji: "🥊", color: "hsl(0 70% 55%)", badge: "NEW", minRank: "silver" },
+  { id: "auction", label: "AUCTION LEAGUE", desc: "Bid & Battle", emoji: "💰", color: "hsl(43 85% 50%)", badge: "NEW", minRank: null },
 ];
 
 const SPECIAL = [
-  { id: "royale", label: "CRICKET ROYALE", desc: "100→1 Survival", emoji: "💀", color: "hsl(280 70% 55%)" },
-  { id: "daily", label: "DAILY CHALLENGE", desc: "1 Shot Per Day", emoji: "📅", color: "hsl(43 93% 50%)" },
-  { id: "cricket-wars", label: "CRICKET WARS", desc: "Clan vs Clan", emoji: "⚔️", color: "hsl(0 84% 55%)" },
-  { id: "multiplayer", label: "MULTIPLAYER", desc: "Real-Time PvP", emoji: "🎮", color: "hsl(280 85% 65%)" },
+  { id: "royale", label: "CRICKET ROYALE", desc: "100→1 Survival", emoji: "💀", color: "hsl(280 70% 55%)", badge: null, minRank: "gold", liveCount: null, statusText: null },
+  { id: "daily", label: "DAILY CHALLENGE", desc: "1 Shot Per Day", emoji: "📅", color: "hsl(43 93% 50%)", badge: null, minRank: null, liveCount: null, statusText: "Resets daily" },
+  { id: "cricket-wars", label: "CRICKET WARS", desc: "Clan vs Clan", emoji: "⚔️", color: "hsl(0 84% 55%)", badge: "SOON", minRank: null, liveCount: null, statusText: null },
+  { id: "multiplayer", label: "MULTIPLAYER", desc: "Real-Time PvP", emoji: "🎮", color: "hsl(280 85% 65%)", badge: null, minRank: null, liveCount: true, statusText: null },
 ];
 
 interface ModeSelectDrawerProps {
