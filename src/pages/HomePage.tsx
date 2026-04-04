@@ -693,6 +693,8 @@ export default function HomePage() {
           ))}
         </motion.div>
       </div>
+
+      <ModeSelectDrawer open={modeDrawerOpen} onOpenChange={setModeDrawerOpen} />
     </div>
   );
 }
