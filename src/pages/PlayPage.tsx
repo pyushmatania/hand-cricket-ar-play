@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import ArenaSelector from "@/components/ArenaSelector";
+import ThemeSelector from "@/components/ThemeSelector";
 import { ARENAS, getBestArena, type Arena } from "@/lib/arenas";
+import { MATCH_THEMES, getThemeById, type MatchTheme } from "@/lib/matchThemes";
 import { RANK_TIERS, getRankTier } from "@/lib/rankTiers";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,6 +17,7 @@ export default function PlayPage() {
   const { user } = useAuth();
   const [tierIndex, setTierIndex] = useState(0);
   const [selectedArena, setSelectedArena] = useState<Arena>(ARENAS[0]);
+  const [selectedTheme, setSelectedTheme] = useState<MatchTheme>(MATCH_THEMES[0]);
 
   useEffect(() => {
     if (!user) return;
@@ -32,6 +35,11 @@ export default function PlayPage() {
           } else {
             setSelectedArena(best);
           }
+          const savedTheme = localStorage.getItem("selectedTheme");
+          if (savedTheme) {
+            const found = getThemeById(savedTheme);
+            setSelectedTheme(found);
+          }
         }
       });
   }, [user]);
@@ -42,8 +50,16 @@ export default function PlayPage() {
     try { SFX.tap(); Haptics.light(); } catch {}
   };
 
+  const handleThemeSelect = (theme: MatchTheme) => {
+    setSelectedTheme(theme);
+    localStorage.setItem("selectedTheme", theme.id);
+    try { SFX.tap(); Haptics.light(); } catch {}
+  };
+
   const handleModeSelect = (modeId: string) => {
-    navigate(`/game/${modeId}`, { state: { arenaImage: selectedArena.image, arenaId: selectedArena.id } });
+    navigate(`/game/${modeId}`, {
+      state: { arenaImage: selectedArena.image, arenaId: selectedArena.id, themeId: selectedTheme.id },
+    });
   };
 
   return (
@@ -82,11 +98,20 @@ export default function PlayPage() {
         </motion.div>
 
         {/* Arena selector */}
-        <div className="mb-5">
+        <div className="mb-4">
           <ArenaSelector
             currentTierIndex={tierIndex}
             selectedArenaId={selectedArena.id}
             onSelect={handleArenaSelect}
+          />
+        </div>
+
+        {/* Theme selector */}
+        <div className="mb-5">
+          <ThemeSelector
+            currentTierIndex={tierIndex}
+            selectedThemeId={selectedTheme.id}
+            onSelect={handleThemeSelect}
           />
         </div>
 
