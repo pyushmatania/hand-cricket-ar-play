@@ -1,5 +1,6 @@
 import { memo, useMemo } from "react";
 import { motion } from "framer-motion";
+import { isLowEndDevice } from "@/lib/performanceUtils";
 
 interface ArenaParticlesProps {
   arenaId?: string;
