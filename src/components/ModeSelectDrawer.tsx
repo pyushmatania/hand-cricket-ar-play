@@ -2,12 +2,19 @@ import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { SFX, Haptics } from "@/lib/sounds";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Drawer,
   DrawerContent,
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
+const RANK_ORDER = ["bronze", "silver", "gold", "platinum", "diamond", "legend"];
+function meetsRank(userRank: string, required: string | null): boolean {
+  if (!required) return true;
+  return RANK_ORDER.indexOf(userRank.toLowerCase()) >= RANK_ORDER.indexOf(required.toLowerCase());
+}
 
 const QUICK_PLAY = [
   { id: "blitz", label: "BLITZ", time: "~3 min", overs: 3, emoji: "⚡", hue: 0 },
