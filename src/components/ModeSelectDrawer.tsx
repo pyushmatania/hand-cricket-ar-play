@@ -54,17 +54,34 @@ function SectionHeader({ label, accentGradient }: { label: string; accentGradien
 }
 
 function ModeBadge({ type }: { type: string }) {
-  const styles: Record<string, { bg: string; text: string; border: string }> = {
-    NEW: { bg: "hsl(142 71% 45%)", text: "hsl(142 80% 98%)", border: "hsl(142 55% 30%)" },
-    SOON: { bg: "hsl(217 80% 55%)", text: "hsl(217 90% 95%)", border: "hsl(217 55% 35%)" },
-    HOT: { bg: "hsl(0 84% 55%)", text: "hsl(0 90% 95%)", border: "hsl(0 55% 35%)" },
+  const styles: Record<string, { bg: string; text: string; border: string; glow: string }> = {
+    NEW: { bg: "hsl(142 71% 45%)", text: "hsl(142 80% 98%)", border: "hsl(142 55% 30%)", glow: "hsl(142 71% 45% / 0.6)" },
+    SOON: { bg: "hsl(217 80% 55%)", text: "hsl(217 90% 95%)", border: "hsl(217 55% 35%)", glow: "hsl(217 80% 55% / 0.5)" },
+    HOT: { bg: "hsl(0 84% 55%)", text: "hsl(0 90% 95%)", border: "hsl(0 55% 35%)", glow: "hsl(0 84% 55% / 0.6)" },
   };
   const s = styles[type] || styles.NEW;
   return (
-    <span className="absolute -top-1.5 -right-1.5 font-game-display text-[7px] tracking-widest px-1.5 py-0.5 z-20"
-      style={{ borderRadius: "6px", background: s.bg, color: s.text, border: `1px solid ${s.border}`, boxShadow: `0 2px 8px ${s.bg}40` }}>
+    <motion.span
+      className="absolute -top-1.5 -right-1.5 font-game-display text-[7px] tracking-widest px-1.5 py-0.5 z-20"
+      style={{ borderRadius: "6px", background: s.bg, color: s.text, border: `1px solid ${s.border}` }}
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{
+        scale: 1,
+        opacity: 1,
+        boxShadow: [
+          `0 0 4px ${s.glow}`,
+          `0 0 12px ${s.glow}`,
+          `0 0 4px ${s.glow}`,
+        ],
+      }}
+      transition={{
+        scale: { type: "spring", stiffness: 400, damping: 12, delay: 0.3 },
+        opacity: { duration: 0.2, delay: 0.3 },
+        boxShadow: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+      }}
+    >
       {type}
-    </span>
+    </motion.span>
   );
 }
 
