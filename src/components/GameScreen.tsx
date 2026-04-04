@@ -714,7 +714,13 @@ export default function GameScreen({ onHome }: GameScreenProps) {
             exit={{ opacity: 0, y: 40 }}
             className="absolute bottom-0 left-0 right-0 z-30 max-w-lg mx-auto w-full px-3 pb-4"
           >
-            <div className="bg-black/80 backdrop-blur-xl rounded-t-3xl border-t border-x border-white/10 px-5 pt-5 pb-6 space-y-4">
+            <div className="rounded-t-3xl px-5 pt-5 pb-6 space-y-4"
+              style={{
+                background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 10%) 100%)",
+                border: "2px solid hsl(25 20% 22%)",
+                borderBottom: "none",
+                boxShadow: "0 -4px 20px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+              }}>
               {/* LIVE badge */}
               <div className="flex items-center justify-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-out-red animate-pulse" />
