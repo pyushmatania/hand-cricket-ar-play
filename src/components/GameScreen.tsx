@@ -30,6 +30,8 @@ import { WeatherParticles } from "./WeatherParticles";
 import BallPitchAnimation from "./BallPitchAnimation";
 import StadiumEstablishingShot from "./StadiumEstablishingShot";
 import TeamLineupWalkout from "./TeamLineupWalkout";
+import { useEquippedCosmetics } from "@/hooks/useEquippedCosmetics";
+import { getAvatarPreset } from "@/lib/avatars";
 
 const MOVE_EMOJI: Record<string, string> = {
   DEF: "✊", "1": "☝️", "2": "✌️", "3": "🤟", "4": "🖖", "6": "👍",
