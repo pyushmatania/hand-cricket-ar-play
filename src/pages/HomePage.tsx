@@ -8,6 +8,7 @@ import ModeSelectDrawer from "@/components/ModeSelectDrawer";
 import floatingIsland from "@/assets/floating-island.png";
 import { getChestTier } from "@/lib/chests";
 import ChestSlotsWidget from "@/components/ChestSlotsWidget";
+import DailyQuestsWidget from "@/components/DailyQuestsWidget";
 
 interface ProfileData {
   total_matches: number;
