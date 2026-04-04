@@ -194,6 +194,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
 
   // Ceremony states
   const [showEstablishingShot, setShowEstablishingShot] = useState(false);
+  const [showWalkout, setShowWalkout] = useState(false);
   const [showPreMatch, setShowPreMatch] = useState(false);
   const [showPostMatch, setShowPostMatch] = useState(false);
   const [tossInfo, setTossInfo] = useState<{ winner: string; battingFirst: string } | null>(null);
