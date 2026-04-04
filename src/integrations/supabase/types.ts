@@ -90,6 +90,42 @@ export type Database = {
           },
         ]
       }
+      daily_quests: {
+        Row: {
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          quest_type: string
+          reward_coins: number
+          reward_xp: number
+          target_value: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          quest_type: string
+          reward_coins?: number
+          reward_xp?: number
+          target_value?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          quest_type?: string
+          reward_coins?: number
+          reward_xp?: number
+          target_value?: number
+          title?: string
+        }
+        Relationships: []
+      }
       friend_requests: {
         Row: {
           created_at: string
@@ -790,6 +826,47 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_daily_quests: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          current_value: number
+          id: string
+          quest_date: string
+          quest_id: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          current_value?: number
+          id?: string
+          quest_date?: string
+          quest_id: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          current_value?: number
+          id?: string
+          quest_date?: string
+          quest_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_daily_quests_quest_id_fkey"
+            columns: ["quest_id"]
+            isOneToOne: false
+            referencedRelation: "daily_quests"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_purchases: {
         Row: {
