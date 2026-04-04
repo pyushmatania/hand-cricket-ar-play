@@ -323,6 +323,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     }
 
     // ── Commentary (still uses duo system for now) ──
+    if (commentaryEnabled) {
       const duoLines = getDuoCommentary(
         matchCommentators[0].name, matchCommentators[1].name,
         r.runs, game.isBatting, playerName, opponentName,
