@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import OnboardingTutorial from "@/components/OnboardingTutorial";
 import { SFX, Haptics } from "@/lib/sounds";
+import floatingIsland from "@/assets/floating-island.png";
 import { useUserChests, useStartUnlock, useCollectChest, chestTimeRemaining, type UserChest } from "@/hooks/useUserChests";
 import { getChestTier } from "@/lib/chests";
 import ChestReveal from "@/components/shop/ChestReveal";
@@ -258,6 +259,50 @@ export default function HomePage() {
           <div className="relative h-[7px] rounded-full overflow-hidden" style={{ background: "hsl(25 15% 10%)", border: "1px solid hsl(25 18% 18%)" }}>
             <div className="h-full rounded-full" style={{ width: `${arenaProgress}%`, background: "linear-gradient(90deg, hsl(43 90% 55%), hsl(35 80% 45%))", boxShadow: "0 0 8px hsl(43 90% 55% / 0.4)" }} />
           </div>
+        </motion.div>
+
+        {/* ═══ FLOATING ISLAND CENTERPIECE ═══ */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12, type: "spring", damping: 18 }}
+          className="relative mb-2 flex items-center justify-center"
+          style={{ height: 220 }}
+        >
+          <motion.div
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+            className="relative"
+            style={{ width: 240, height: 220 }}
+          >
+            <img
+              src={floatingIsland}
+              alt={`${currentArena.name} Island`}
+              className="w-full h-full object-contain"
+              style={{ filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.6))" }}
+              width={768}
+              height={768}
+            />
+            {/* Arena name badge */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full"
+              style={{
+                background: "linear-gradient(180deg, hsl(25 20% 16% / 0.9), hsl(25 15% 10% / 0.95))",
+                border: "1.5px solid hsl(43 50% 40%)",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.5)",
+              }}
+            >
+              <span className="font-game-display text-[8px] tracking-[0.2em]" style={{ color: "hsl(43 90% 55%)" }}>
+                {currentArena.name.toUpperCase()}
+              </span>
+            </div>
+          </motion.div>
+          {/* Shadow blob */}
+          <motion.div
+            animate={{ scale: [0.85, 1, 0.85], opacity: [0.2, 0.35, 0.2] }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute bottom-0 left-1/2 -translate-x-1/2"
+            style={{ width: 160, height: 30, background: "radial-gradient(ellipse, rgba(0,0,0,0.5) 0%, transparent 70%)", borderRadius: "50%" }}
+          />
         </motion.div>
 
         {/* ═══ FEATURED MODES: TAP + PvP ═══ */}
