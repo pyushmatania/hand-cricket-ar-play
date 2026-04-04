@@ -15,10 +15,16 @@ import hardikImg from "@/assets/players/hardik.jpg";
 import skyImg from "@/assets/players/sky.jpg";
 import klrahulImg from "@/assets/players/klrahul.jpg";
 import jadejaImg from "@/assets/players/jadeja.jpg";
+import abdImg from "@/assets/players/abd.jpg";
+import warnerImg from "@/assets/players/warner.jpg";
+import buttlerImg from "@/assets/players/buttler.jpg";
+import chahalImg from "@/assets/players/chahal.jpg";
+import pantImg from "@/assets/players/pant.jpg";
 
 Object.assign(PLAYER_IMAGES, {
   dhoni: dhoniImg, kohli: kohliImg, rohit: rohitImg, bumrah: bumrahImg, russell: russellImg,
   rashid: rashidImg, hardik: hardikImg, sky: skyImg, klrahul: klrahulImg, jadeja: jadejaImg,
+  abd: abdImg, warner: warnerImg, buttler: buttlerImg, chahal: chahalImg, pant: pantImg,
 });
 
 /* ── Rarity frame styles ── */
