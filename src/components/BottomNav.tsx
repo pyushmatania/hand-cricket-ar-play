@@ -7,7 +7,7 @@ const NAV_ITEMS = [
   { path: "/friends", label: "Cards", icon: "🃏" },
   { path: "/shop", label: "Shop", icon: "🛒" },
   { path: "/", label: "Battle", icon: "⚔️", center: true },
-  { path: "/leaderboard", label: "Clan", icon: "🛡️" },
+  { path: "/clan", label: "Clan", icon: "🛡️" },
   { path: "/profile", label: "Trophy", icon: "🏆" },
 ];
 
