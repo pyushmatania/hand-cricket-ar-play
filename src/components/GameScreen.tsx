@@ -111,18 +111,11 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     });
   }, [engines]);
 
-  // Engine lifecycle managed by useEngines() hook above
+  // Pick weather from theme's weather pool
   const [matchWeather] = useState(() => {
-    // Pick random weather for this match
-    const weathers = ['clear', 'overcast', 'drizzle', 'golden_hour', 'night_lights', 'heavy_dew'] as const;
-    const weights = [30, 15, 8, 12, 25, 10];
-    const total = weights.reduce((a, b) => a + b, 0);
-    let roll = Math.random() * total;
-    for (let i = 0; i < weathers.length; i++) {
-      roll -= weights[i];
-      if (roll <= 0) return weathers[i];
-    }
-    return 'clear' as const;
+    const pool = matchTheme.weatherPool;
+    if (!pool.length) return matchTheme.defaultWeather;
+    return pool[Math.floor(Math.random() * pool.length)];
   });
 
   // Apply weather modifiers to gameplay engine
