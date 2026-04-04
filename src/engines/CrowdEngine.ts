@@ -4,12 +4,32 @@
 // ═══════════════════════════════════════════════════
 
 import type { EventType, CrowdIntensity } from './types';
+import type { CrowdType } from '@/lib/matchThemes';
+
+export interface CrowdThemeConfig {
+  type: CrowdType;
+  count: number;
+  baseNoise: number;        // 0-100
+  chantStyle: string;       // 'clapping' | 'drumming' | 'dhol'
+  reactionSpeed: number;    // 0-1 multiplier on mood changes
+  peakEvents: string[];     // events that trigger max noise
+}
+
+const DEFAULT_CROWD_CONFIG: CrowdThemeConfig = {
+  type: 'fans',
+  count: 5000,
+  baseNoise: 50,
+  chantStyle: 'clapping',
+  reactionSpeed: 0.8,
+  peakEvents: ['BOUNDARY_SIX', 'WICKET_BOWLED'],
+};
 
 export class CrowdEngine {
   private mood: number = 30;
   private decayInterval: ReturnType<typeof setInterval> | null = null;
   private lastMexicanWave: number = 0;
   private mexicanWaveThreshold: number = 90;
+  private themeConfig: CrowdThemeConfig = DEFAULT_CROWD_CONFIG;
 
   // Callbacks wired by EngineManager
   private onMoodChange?: (mood: number, intensity: CrowdIntensity) => void;
@@ -23,6 +43,8 @@ export class CrowdEngine {
   };
 
   start(): void {
+    // Set initial mood based on theme's base noise
+    this.mood = this.themeConfig.baseNoise * 0.4;
     // Mood decays naturally — crowd loses interest over time
     this.decayInterval = setInterval(() => {
       this.mood = Math.max(0, this.mood - 0.5);
@@ -41,29 +63,33 @@ export class CrowdEngine {
    * React to a game event — adjusts crowd mood accordingly.
    */
   reactToEvent(eventType: EventType, payload: Record<string, any>): void {
+    const speed = this.themeConfig.reactionSpeed;
+    const isPeakEvent = this.themeConfig.peakEvents.includes(eventType);
+
     switch (eventType) {
       case 'DEFENSE_SCORED':
-        this.mood += 5;
+        this.mood += 5 * speed;
         break;
       case 'RUNS_SCORED':
-        this.mood += (payload.runs || 1) * 4;
+        this.mood += (payload.runs || 1) * 4 * speed;
         break;
       case 'BOUNDARY_FOUR':
-        this.mood = Math.min(100, this.mood + 25);
+        this.mood = Math.min(100, this.mood + 25 * speed);
         break;
       case 'BOUNDARY_SIX':
-        this.mood = 100;
+        this.mood = isPeakEvent ? 100 : Math.min(100, this.mood + 35 * speed);
         break;
       case 'WICKET_BOWLED':
+      case 'WICKET_DEFENSE':
       case 'WICKET_CAUGHT':
       case 'WICKET_LBW':
       case 'WICKET_RUN_OUT':
       case 'WICKET_STUMPED':
       case 'WICKET_CAUGHT_BEHIND':
-        this.mood = 85;
+        this.mood = isPeakEvent ? 100 : Math.max(85 * speed, this.mood);
         break;
       case 'MILESTONE_50':
-        this.mood = Math.min(100, this.mood + 30);
+        this.mood = Math.min(100, this.mood + 30 * speed);
         break;
       case 'MILESTONE_100':
       case 'HATTRICK':
@@ -74,6 +100,10 @@ export class CrowdEngine {
         break;
       case 'DEATH_OVERS_START':
         this.mood = Math.max(60, this.mood);
+        break;
+      case 'MATCH_START':
+        // Bigger crowds start louder
+        this.mood = Math.min(100, this.themeConfig.baseNoise * 0.6);
         break;
     }
 
@@ -90,7 +120,9 @@ export class CrowdEngine {
 
   private updateAudio(): void {
     if (!this.soundEngine) return;
-    const volume = (this.mood / 100) * 0.5;
+    // Volume scales with mood and crowd size (bigger crowd = louder)
+    const crowdScale = Math.min(1, Math.log10(Math.max(10, this.themeConfig.count)) / 5);
+    const volume = (this.mood / 100) * 0.5 * crowdScale;
     this.soundEngine.setAmbientVolume(volume, 300);
 
     if (this.mood < 20) {
@@ -133,6 +165,12 @@ export class CrowdEngine {
   setEventEngine(ee: typeof this.eventEngine): void { this.eventEngine = ee; }
   setOnMoodChange(cb: typeof this.onMoodChange): void { this.onMoodChange = cb; }
   setOnMexicanWave(cb: typeof this.onMexicanWave): void { this.onMexicanWave = cb; }
+  setThemeConfig(config: CrowdThemeConfig): void {
+    this.themeConfig = config;
+    // Adjust Mexican wave threshold — small crowds rarely do waves
+    this.mexicanWaveThreshold = config.count < 100 ? 110 : config.count < 1000 ? 95 : 90;
+  }
+  getThemeConfig(): CrowdThemeConfig { return this.themeConfig; }
 
   destroy(): void {
     this.stop();
