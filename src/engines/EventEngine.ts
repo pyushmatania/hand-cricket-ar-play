@@ -184,6 +184,7 @@ export class EventEngine {
       WICKET_RUN_OUT: 4500,
       WICKET_STUMPED: 3800,
       WICKET_HIT_WICKET: 3500,
+      WICKET_DEFENSE: 4000,
       NEW_BATSMAN: 2000,
       BOWLER_CHANGE: 1500,
       OVER_START: 300,
