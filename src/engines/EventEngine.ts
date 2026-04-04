@@ -173,7 +173,7 @@ export class EventEngine {
       INNINGS_BREAK: 3000,
       BALL_BOWLER_RUNUP: 600,
       BALL_RESULT: 200,
-      DOT_BALL: 900,
+      DEFENSE_SCORED: 900,
       RUNS_SCORED: 1300,
       BOUNDARY_FOUR: 2800,
       BOUNDARY_SIX: 3800,
