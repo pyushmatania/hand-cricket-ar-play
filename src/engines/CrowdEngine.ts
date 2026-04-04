@@ -120,7 +120,9 @@ export class CrowdEngine {
 
   private updateAudio(): void {
     if (!this.soundEngine) return;
-    const volume = (this.mood / 100) * 0.5;
+    // Volume scales with mood and crowd size (bigger crowd = louder)
+    const crowdScale = Math.min(1, Math.log10(Math.max(10, this.themeConfig.count)) / 5);
+    const volume = (this.mood / 100) * 0.5 * crowdScale;
     this.soundEngine.setAmbientVolume(volume, 300);
 
     if (this.mood < 20) {
