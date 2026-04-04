@@ -105,7 +105,38 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     return 'clear' as const;
   });
 
-  // Ambient stadium music for AR mode — arena-specific
+  // Apply weather modifiers to gameplay engine
+  useEffect(() => {
+    engines.weather.setWeather(matchWeather, {
+      lighting: engines.lighting,
+      sound: engines.sound,
+      gameplay: engines.gameplay,
+      innings: game.currentInnings,
+    });
+  }, [matchWeather, game.currentInnings]);
+
+  // Tension vignette — intensifies in tight/critical situations
+  useEffect(() => {
+    if (!game.isBatting && game.phase === 'finished') {
+      engines.lighting.setVignette(0);
+      return;
+    }
+    const totalBalls = game.currentInnings === 1 ? game.innings1Balls : game.innings2Balls;
+    const totalOvers = game.overs || 5;
+    const ballsLeft = totalOvers * 6 - totalBalls;
+    const isLastOver = ballsLeft <= 6;
+    const isCloseTarget = game.target ? (game.target - game.userScore) <= 10 && (game.target - game.userScore) > 0 : false;
+
+    if (isLastOver && isCloseTarget) {
+      engines.lighting.setVignette(0.35);
+    } else if (isLastOver || isCloseTarget) {
+      engines.lighting.setVignette(0.2);
+    } else if (game.userWickets >= 7 || game.aiWickets >= 7) {
+      engines.lighting.setVignette(0.25);
+    } else {
+      engines.lighting.setVignette(0);
+    }
+  }, [game.innings1Balls, game.innings2Balls, game.userScore, game.aiScore, game.userWickets, game.aiWickets, game.target, game.phase]);
   useEffect(() => {
     if (soundEnabled && musicEnabled && !game.result) {
       startAmbientStadium(ambientVolume, arenaId);
