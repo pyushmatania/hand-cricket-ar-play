@@ -270,128 +270,18 @@ export default function HomePage() {
           />
         </motion.div>
 
-        {/* ═══ FEATURED MODES: TAP + PvP ═══ */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="grid grid-cols-2 gap-3 mb-4"
-        >
-          {FEATURED_MODES.map((mode) => (
-            <motion.button
-              key={mode.id}
-              whileTap={{ scale: 0.93, y: 3 }}
-              onClick={() => handleBattle(mode.id)}
-              className="relative overflow-hidden rounded-2xl p-4 flex flex-col items-center gap-1.5"
-              style={{
-                background: mode.gradient,
-                border: `2px solid ${mode.border}`,
-                borderBottom: `6px solid ${mode.bottomBorder}`,
-                boxShadow: `0 6px 20px ${mode.glow}, inset 0 1px 0 hsl(0 0% 100% / 0.15)`,
-              }}
-            >
-              {/* Mesh overlay */}
-              <div className="absolute inset-0 pointer-events-none opacity-[0.08]"
-                style={{ backgroundImage: "radial-gradient(circle, hsl(0 0% 100%) 0.5px, transparent 0.5px)", backgroundSize: "4px 4px" }}
-              />
-              {/* Shine sweep */}
-              <motion.div
-                animate={{ x: ["-150%", "250%"] }}
-                transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
-                className="absolute inset-y-0 w-1/3 pointer-events-none"
-                style={{ background: "linear-gradient(90deg, transparent, hsl(0 0% 100% / 0.12), transparent)" }}
-              />
-              <span className="text-3xl relative z-10 drop-shadow-lg">{mode.icon}</span>
-              <span className="font-game-display text-xs text-white tracking-wider relative z-10"
-                style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}
-              >{mode.title}</span>
-              <span className="font-game-body text-[8px] text-white/70 tracking-wider relative z-10">{mode.subtitle}</span>
-            </motion.button>
-          ))}
-        </motion.div>
-
-        {/* ═══ BIG BATTLE BUTTON ═══ */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.85 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2, type: "spring", stiffness: 200, damping: 14 }}
-          className="mb-4 px-2"
-        >
-          <motion.button
-            whileTap={{ scale: 0.95, y: 4 }}
-            onClick={() => handleBattle("tap")}
-            className="w-full relative overflow-hidden font-game-title text-2xl tracking-wider"
-            style={{
-              padding: "20px 0",
-              borderRadius: "18px",
-              background: "linear-gradient(180deg, hsl(142 71% 52%) 0%, hsl(142 65% 38%) 100%)",
-              border: "3px solid hsl(142 60% 58% / 0.5)",
-              borderBottom: "8px solid hsl(142 55% 22%)",
-              boxShadow: "0 8px 30px hsl(142 71% 45% / 0.35), inset 0 2px 0 hsl(142 80% 68% / 0.4), 0 0 60px hsl(142 71% 50% / 0.15)",
-              color: "hsl(142 80% 98%)",
-              textShadow: "0 3px 0 hsl(142 50% 18%)",
-            }}
-          >
-            {/* Jersey mesh */}
-            <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
-              style={{ backgroundImage: "radial-gradient(circle, hsl(0 0% 100%) 0.5px, transparent 0.5px)", backgroundSize: "4px 4px" }}
-            />
-            {/* Animated glow pulse */}
-            <motion.div
-              animate={{ opacity: [0.1, 0.3, 0.1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="absolute inset-0 pointer-events-none"
-              style={{ background: "radial-gradient(circle at center, hsl(142 80% 65% / 0.2), transparent 70%)" }}
-            />
-            <span className="relative z-10">🏏 BATTLE</span>
-          </motion.button>
-        </motion.div>
-
-        {/* ═══ 3D CHEST SLOTS ═══ */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="mb-4 px-1"
-        >
-          <div className="grid grid-cols-4 gap-2">
-            {chestSlots.map((chest, i) => (
-              <ChestSlot3D key={i} chest={chest} tick={tick} onTap={handleChestTap} />
-            ))}
-          </div>
-        </motion.div>
-
-        {/* ═══ MORE MODES HORIZONTAL SCROLL ═══ */}
+        {/* ═══ MODE ICON GRID ═══ */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.35 }}
-          className="mb-4"
+          transition={{ delay: 0.15 }}
+          className="mb-4 px-1"
         >
-          <div className="flex items-center gap-2 px-1 mb-2">
+          <div className="flex items-center gap-2 px-1 mb-3">
             <div className="w-1 h-4 rounded-sm" style={{ background: "linear-gradient(180deg, hsl(43 90% 55%), hsl(35 60% 35%))" }} />
-            <span className="font-game-display text-[10px] tracking-[0.2em] text-foreground">MORE MODES</span>
+            <span className="font-game-display text-[10px] tracking-[0.2em] text-foreground">GAME MODES</span>
           </div>
-          <div className="flex gap-2 overflow-x-auto pb-2 px-1 scrollbar-none" style={{ WebkitOverflowScrolling: "touch" }}>
-            {OTHER_MODES.map((mode) => (
-              <motion.button
-                key={mode.id}
-                whileTap={{ scale: 0.92 }}
-                onClick={() => handleBattle(mode.id)}
-                className="flex-shrink-0 flex flex-col items-center gap-1 rounded-xl p-3 relative overflow-hidden"
-                style={{
-                  width: 80,
-                  background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)",
-                  border: "2px solid hsl(25 20% 22%)",
-                  borderBottom: "4px solid hsl(25 20% 10%)",
-                }}
-              >
-                <span className="text-2xl">{mode.icon}</span>
-                <span className="font-game-display text-[8px] text-foreground tracking-wider whitespace-nowrap">{mode.title}</span>
-                <span className="font-game-body text-[7px] text-muted-foreground/60 whitespace-nowrap">{mode.sub}</span>
-              </motion.button>
-            ))}
-          </div>
+          <ModeIconGrid onSelect={handleBattle} />
         </motion.div>
 
         {/* ═══ QUICK BANNERS ═══ */}
