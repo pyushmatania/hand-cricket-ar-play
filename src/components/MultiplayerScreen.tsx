@@ -14,6 +14,8 @@ import VSIntroScreen from "./VSIntroScreen";
 import TapPlayingUI from "./TapPlayingUI";
 import EnhancedPreMatch from "./EnhancedPreMatch";
 import EnhancedPostMatch from "./EnhancedPostMatch";
+import JumbotronZoom from "./JumbotronZoom";
+import PostMatchPressConference from "./PostMatchPressConference";
 import LobbyChat from "./LobbyChat";
 import EmotePicker, { type EmoteId } from "./EmotePicker";
 import EmoteBubble from "./EmoteBubble";
