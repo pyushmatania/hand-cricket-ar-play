@@ -87,6 +87,8 @@ export default function SpinWheelPage() {
     if (!user || spinning || spinRef.current) return;
     if (!isFree && (coins ?? 0) < SPIN_COST) {
       toast.error(`Need ${SPIN_COST} coins to spin!`);
+      engines.sound.playEffect('ui_error');
+      engines.sound.vibrate('error');
       return;
     }
 
