@@ -14,10 +14,9 @@ import EnhancedPostMatch from "./EnhancedPostMatch";
 import { useHandCricket } from "@/hooks/useHandCricket";
 import { useHandDetection } from "@/hooks/useHandDetection";
 import { useMatchSaver } from "@/hooks/useMatchSaver";
-import { SFX, Haptics } from "@/lib/sounds";
-import { startAmbientStadium, stopAmbientStadium, setAmbientVolume, crowdRoar, crowdGaspMute } from "@/lib/ambientStadium";
+import { startAmbientStadium, stopAmbientStadium, setAmbientVolume } from "@/lib/ambientStadium";
 import { getInningsChangeCommentary } from "@/lib/commentary";
-import { playCrowdForResult, CrowdSFX, speakDuoCommentary, speakCommentary } from "@/lib/voiceCommentary";
+import { speakDuoCommentary, speakCommentary } from "@/lib/voiceCommentary";
 import { useSettings } from "@/contexts/SettingsContext";
 import { pickConfiguredMatchCommentators, getDuoCommentary, type Commentator, type CommentaryLine } from "@/lib/commentaryDuo";
 import { useAuth } from "@/contexts/AuthContext";
@@ -224,25 +223,11 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         if (rewards) setMatchRewards(rewards);
       });
 
+      // Emit match end through engine (handles all SFX, haptics, crowd)
+      engines.event.emit('MATCH_END', { result: game.result });
+
       if (game.result === "win") {
-        if (soundEnabled) SFX.win();
-        if (hapticsEnabled) Haptics.success();
-        if (crowdEnabled) playCrowdForResult(0, true, true, "win");
         setFireworkType("win");
-        if (soundEnabled) {
-          setTimeout(() => SFX.fireworkWhoosh(), 200);
-          setTimeout(() => SFX.fireworkPop(), 600);
-          setTimeout(() => SFX.fireworkWhoosh(), 1000);
-          setTimeout(() => SFX.fireworkPop(), 1400);
-        }
-        if (hapticsEnabled) {
-          setTimeout(() => Haptics.firework(), 600);
-          setTimeout(() => Haptics.firework(), 1400);
-        }
-      } else if (game.result === "loss") {
-        if (soundEnabled) SFX.loss();
-        if (hapticsEnabled) Haptics.error();
-        if (crowdEnabled) playCrowdForResult(0, true, true, "loss");
       }
 
       if (!postMatchShownRef.current) {
@@ -262,12 +247,15 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     }
   }, [fireworkType]);
 
-  // Innings change sound
+  // Innings change — emit through engine + commentary
   useEffect(() => {
     const prev = prevPhaseRef.current;
     prevPhaseRef.current = game.phase;
     if (prev !== game.phase && game.phase !== "not_started" && game.phase !== "finished") {
-      if (soundEnabled) SFX.gameStart();
+      // Update engine perspective based on batting/bowling
+      engines.setPerspective(game.isBatting ? 'batting' : 'bowling');
+      engines.event.emit('INNINGS_START', {});
+
       if (commentaryEnabled) {
         const text = getInningsChangeCommentary(game);
         const lines: CommentaryLine[] = [
@@ -279,7 +267,6 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         }
         setTimeout(() => setCommentary(null), 3000);
       }
-      if (crowdEnabled) CrowdSFX.ambientMurmur(2);
     }
   }, [game.phase]);
 
@@ -321,39 +308,21 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       }
     }
 
-    // ── Existing SFX/Haptics (legacy — will migrate fully to engines later) ──
-    if (soundEnabled) SFX.batHit();
+    // ── Visual effects (screen shake + fireworks — not sound) ──
     if (r.runs === "OUT") {
-      setTimeout(() => {
-        if (soundEnabled) SFX.out();
-        if (hapticsEnabled) Haptics.out();
-        crowdGaspMute();
-      }, 150);
       shake("heavy");
       setFireworkType("wicket");
-      if (soundEnabled) setTimeout(() => SFX.fireworkPop(), 300);
     } else if (typeof r.runs === "number") {
-      const abs = Math.abs(r.runs);
-      if (abs === 6) {
-        setTimeout(() => { if (soundEnabled) SFX.six(); if (hapticsEnabled) Haptics.heavy(); crowdRoar("six"); }, 100);
+      if (r.runs === 6) {
         shake("medium");
         setFireworkType("six");
-        if (soundEnabled) {
-          setTimeout(() => SFX.fireworkWhoosh(), 400);
-          setTimeout(() => SFX.fireworkPop(), 800);
-        }
-        if (hapticsEnabled) setTimeout(() => Haptics.firework(), 800);
-      } else if (abs === 4) {
-        setTimeout(() => { if (soundEnabled) SFX.four(); if (hapticsEnabled) Haptics.medium(); crowdRoar("four"); }, 100);
+      } else if (r.runs === 4) {
         shake("light");
         setFireworkType("four");
-        if (soundEnabled) setTimeout(() => SFX.fireworkPop(), 400);
-      } else {
-        if (soundEnabled) SFX.runs(abs);
-        if (hapticsEnabled) Haptics.light();
       }
     }
-    if (crowdEnabled) playCrowdForResult(r.runs, game.isBatting, false);
+
+    // ── Commentary (still uses duo system for now) ──
     if (commentaryEnabled) {
       const duoLines = getDuoCommentary(
         matchCommentators[0].name, matchCommentators[1].name,
