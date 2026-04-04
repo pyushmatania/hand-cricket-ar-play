@@ -17,6 +17,7 @@ import TapPlayingUI from "./TapPlayingUI";
 import OverSelector from "./OverSelector";
 import { useEquippedCosmetics } from "@/hooks/useEquippedCosmetics";
 import TournamentFixtureCard from "./TournamentFixtureCard";
+import TournamentChatWidget from "./TournamentChatWidget";
 import { rollWeather, type Weather } from "@/lib/weather";
 
 type Round = {
@@ -403,6 +404,8 @@ export default function TournamentScreen({ onHome }: Props) {
           }}
         />
       )}
+      {/* Tournament Chat */}
+      {phase === "bracket" && <TournamentChatWidget tournamentId={`local-tournament-${currentRound}`} />}
     </div>
   );
 }

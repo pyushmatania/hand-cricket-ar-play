@@ -1049,6 +1049,41 @@ export type Database = {
         }
         Relationships: []
       }
+      tournament_chat: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          message_type: string
+          tournament_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          message_type?: string
+          tournament_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          message_type?: string
+          tournament_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tournament_chat_tournament_id_fkey"
+            columns: ["tournament_id"]
+            isOneToOne: false
+            referencedRelation: "tournaments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tournament_fixtures: {
         Row: {
           created_at: string

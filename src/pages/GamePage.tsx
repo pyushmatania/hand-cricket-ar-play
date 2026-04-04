@@ -11,8 +11,10 @@ import AuctionLeagueScreen from "@/components/AuctionLeagueScreen";
 import WorldCupScreen from "@/components/WorldCupScreen";
 import AshesScreen from "@/components/AshesScreen";
 import KnockoutCupScreen from "@/components/KnockoutCupScreen";
+import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 
 export default function GamePage() {
+  usePerformanceMonitor(true);
   const { mode } = useParams<{ mode: string }>();
   const navigate = useNavigate();
   const goHome = () => navigate("/play");
