@@ -22,18 +22,11 @@ interface ShopItemModalProps {
   onEquip: (item: ShopItem) => void;
 }
 
-const RARITY_COLOR: Record<string, string> = {
-  common: "text-muted-foreground",
-  rare: "text-game-blue",
-  epic: "text-game-purple",
-  legendary: "text-game-gold",
-};
-
-const RARITY_GLOW: Record<string, string> = {
-  common: "",
-  rare: "shadow-[0_0_30px_hsl(207_90%_54%/0.15)]",
-  epic: "shadow-[0_0_30px_hsl(291_47%_51%/0.2)]",
-  legendary: "shadow-[0_0_40px_hsl(51_100%_50%/0.25)]",
+const RARITY_STYLE: Record<string, { color: string; glow: string; border: string }> = {
+  common: { color: "hsl(210 10% 55%)", glow: "none", border: "hsl(210 15% 35%)" },
+  rare: { color: "hsl(207 90% 60%)", glow: "0 0 30px hsl(207 90% 54% / 0.2)", border: "hsl(207 80% 45%)" },
+  epic: { color: "hsl(275 70% 65%)", glow: "0 0 30px hsl(275 70% 55% / 0.25)", border: "hsl(275 60% 45%)" },
+  legendary: { color: "hsl(43 100% 60%)", glow: "0 0 40px hsl(43 100% 50% / 0.3)", border: "hsl(43 80% 45%)" },
 };
 
 const CATEGORY_LABEL: Record<string, string> = {
@@ -48,7 +41,7 @@ export default function ShopItemModal({
 }: ShopItemModalProps) {
   if (!item) return null;
   const canAfford = coins >= item.price;
-  const rarityLabel = item.rarity.toUpperCase();
+  const rs = RARITY_STYLE[item.rarity] || RARITY_STYLE.common;
 
   return (
     <AnimatePresence>
@@ -56,7 +49,8 @@ export default function ShopItemModal({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 bg-[hsl(222_47%_4%/0.85)] backdrop-blur-md flex items-end justify-center p-4"
+        className="fixed inset-0 z-50 flex items-end justify-center p-4"
+        style={{ background: "hsl(25 30% 4% / 0.88)", backdropFilter: "blur(12px)" }}
         onClick={onClose}
       >
         <motion.div
@@ -65,12 +59,22 @@ export default function ShopItemModal({
           exit={{ y: 200, opacity: 0, scale: 0.9 }}
           transition={{ type: "spring", stiffness: 300, damping: 28 }}
           onClick={e => e.stopPropagation()}
-          className={`w-full max-w-sm rounded-3xl border-2 border-[hsl(222_25%_22%)] bg-gradient-to-b from-[hsl(222_40%_13%)] to-[hsl(222_40%_8%)] overflow-hidden ${RARITY_GLOW[item.rarity] || ""}`}
+          className="w-full max-w-sm rounded-3xl overflow-hidden"
+          style={{
+            background: "linear-gradient(180deg, hsl(28 30% 16%) 0%, hsl(25 25% 10%) 100%)",
+            border: `2px solid ${rs.border}`,
+            boxShadow: `${rs.glow}, 0 8px 0 hsl(25 25% 6%), 0 12px 30px rgba(0,0,0,0.6)`,
+          }}
         >
+          {/* Chrome rarity bar */}
+          <div className="h-1.5" style={{
+            background: `linear-gradient(90deg, transparent 5%, ${rs.color} 50%, transparent 95%)`,
+          }} />
+
           {/* Rarity header */}
           <div className="text-center pt-5 pb-2">
-            <span className={`text-[9px] font-game-display tracking-[0.3em] ${RARITY_COLOR[item.rarity] || "text-muted-foreground"}`}>
-              {rarityLabel}
+            <span className="text-[9px] font-game-display tracking-[0.3em]" style={{ color: rs.color }}>
+              {item.rarity.toUpperCase()}
             </span>
           </div>
 
@@ -80,34 +84,50 @@ export default function ShopItemModal({
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
             >
-              <span className="text-8xl block drop-shadow-[0_8px_20px_rgba(0,0,0,0.5)]">{item.preview_emoji}</span>
+              <span className="text-8xl block" style={{
+                filter: `drop-shadow(0 8px 20px rgba(0,0,0,0.5)) drop-shadow(0 0 20px ${rs.color}40)`,
+              }}>
+                {item.preview_emoji}
+              </span>
             </motion.div>
           </div>
 
           {/* Info */}
           <div className="text-center px-5 pb-4">
-            <h3 className="font-game-title text-xl text-foreground">{item.name}</h3>
+            <h3 className="font-game-title text-xl text-foreground" style={{ textShadow: "0 2px 0 hsl(25 30% 8%)" }}>
+              {item.name}
+            </h3>
             <p className="text-xs text-muted-foreground mt-1 font-game-body">{item.description}</p>
             <span className="text-[9px] text-muted-foreground/60 font-game-display tracking-wider mt-1.5 block">
               {CATEGORY_LABEL[item.category] || item.category}
             </span>
           </div>
 
+          {/* Chalk divider */}
+          <div className="h-px mx-6 opacity-15"
+            style={{ background: "repeating-linear-gradient(90deg, hsl(45 30% 70%) 0px, hsl(45 30% 70%) 6px, transparent 6px, transparent 12px)" }}
+          />
+
           {/* Price */}
           {!owned && (
-            <div className="flex items-center justify-center gap-2 pb-3">
+            <div className="flex items-center justify-center gap-2 py-4">
               <span className="text-xl">🪙</span>
-              <span className={`font-game-display text-3xl ${canAfford ? "text-game-gold" : "text-game-red"}`}>
+              <span className="font-game-display text-3xl" style={{
+                color: canAfford ? "hsl(43 100% 60%)" : "hsl(4 80% 58%)",
+                textShadow: canAfford ? "0 2px 0 hsl(35 60% 25%)" : "none",
+              }}>
                 {item.price}
               </span>
               {!canAfford && (
-                <span className="text-[9px] text-game-red font-game-body">({item.price - coins} more)</span>
+                <span className="text-[9px] font-game-body" style={{ color: "hsl(4 80% 58%)" }}>
+                  ({item.price - coins} more)
+                </span>
               )}
             </div>
           )}
 
           {/* Actions */}
-          <div className="flex gap-3 p-5 pt-2">
+          <div className="flex gap-3 p-5 pt-3">
             {!owned ? (
               <GameButton
                 variant={canAfford ? "gold" : "secondary"}
@@ -120,7 +140,14 @@ export default function ShopItemModal({
                 {purchasing ? "..." : canAfford ? "🪙 BUY" : "NOT ENOUGH"}
               </GameButton>
             ) : equipped ? (
-              <div className="flex-1 py-3.5 rounded-2xl border-2 border-game-green/30 bg-game-green/10 text-center font-game-display text-sm text-game-green tracking-wider">
+              <div className="flex-1 py-3.5 rounded-2xl text-center font-game-display text-sm tracking-wider"
+                style={{
+                  color: "hsl(142 70% 55%)",
+                  background: "hsl(142 70% 55% / 0.08)",
+                  border: "2px solid hsl(142 70% 55% / 0.25)",
+                  boxShadow: "inset 0 2px 4px hsl(142 70% 20% / 0.3)",
+                }}
+              >
                 ✅ EQUIPPED
               </div>
             ) : (
@@ -138,6 +165,9 @@ export default function ShopItemModal({
               ✕
             </GameButton>
           </div>
+
+          {/* 3D bottom edge */}
+          <div className="h-1" style={{ background: "hsl(25 20% 5%)" }} />
         </motion.div>
       </motion.div>
     </AnimatePresence>
