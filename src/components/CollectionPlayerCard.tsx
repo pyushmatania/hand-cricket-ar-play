@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { DBPlayer, statToDiamonds, overallRating, roleLabel } from "@/hooks/usePlayers";
 import { Zap } from "lucide-react";
 
+import { TEAM_STAR_ART } from "@/assets/players";
+
 /* ── Player image map for Mythic/Legendary cards ── */
 const PLAYER_IMAGES: Record<string, string> = {};
 
@@ -145,6 +147,13 @@ export default function CollectionPlayerCard({ player, size = "sm", onTap, delay
               loading="lazy"
               width={512}
               height={704}
+            />
+          ) : player.ipl_team && TEAM_STAR_ART[player.ipl_team.toLowerCase()] ? (
+            <img
+              src={TEAM_STAR_ART[player.ipl_team.toLowerCase()]}
+              alt={player.name}
+              className="w-full h-full object-cover object-top opacity-60"
+              loading="lazy"
             />
           ) : (
             <>
