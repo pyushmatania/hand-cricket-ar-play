@@ -446,7 +446,7 @@ export default function TapPlayingUI({
         )}
       </AnimatePresence>
 
-      {/* Last result — moves comparison */}
+      {/* Last result — concrete card with cricket material accents */}
       <AnimatePresence mode="wait">
         {lastResult && phase !== "not_started" && phase !== "finished" && (
           <motion.div
@@ -454,39 +454,59 @@ export default function TapPlayingUI({
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="rounded-xl p-2.5 relative overflow-hidden bg-[hsl(220_20%_14%/0.8)] border border-white/10"
+            className="rounded-xl p-2.5 relative overflow-hidden"
+            style={{
+              background: "linear-gradient(135deg, hsl(var(--concrete-mid) / 0.8), hsl(var(--concrete-dark) / 0.8))",
+              border: "1px solid hsl(var(--chrome-dark) / 0.3)",
+            }}
           >
             <div className="flex items-center justify-center gap-4 relative z-10">
               <div className="text-center">
-                <p className="text-[6px] text-white/50 font-game-display font-bold tracking-[0.2em] mb-0.5">{playerName.toUpperCase().slice(0, 8)}</p>
+                <p className="text-[6px] font-display font-bold tracking-[0.2em] mb-0.5" style={{ color: "hsl(var(--chrome-mid) / 0.6)" }}>{playerName.toUpperCase().slice(0, 8)}</p>
                 <motion.div initial={{ rotateY: 90 }} animate={{ rotateY: 0 }}
-                  className="w-10 h-10 rounded-xl bg-gradient-to-br from-game-green/20 to-game-green/5 border border-game-green/25 flex items-center justify-center mx-auto">
+                  className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto"
+                  style={{
+                    background: "linear-gradient(135deg, hsl(var(--grass-dark) / 0.3), hsl(var(--grass-mid) / 0.1))",
+                    border: "1px solid hsl(var(--grass-mid) / 0.3)",
+                  }}>
                   <span className="text-xl">{btnTheme.moves[lastResult?.userMove === "DEF" ? "DEF" : String(lastResult?.userMove)]?.emoji || "❓"}</span>
                 </motion.div>
-                <p className="text-[8px] font-game-display font-bold text-game-green mt-0.5">{lastResult.userMove === "DEF" ? "DEF" : lastResult.userMove}</p>
+                <p className="text-[8px] font-display font-bold mt-0.5" style={{ color: "hsl(var(--grass-light))" }}>{lastResult.userMove === "DEF" ? "DEF" : lastResult.userMove}</p>
               </div>
 
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", delay: 0.15 }}
-                className={`w-10 h-10 rounded-xl flex items-center justify-center font-game-display font-black text-sm border-b-2 ${
-                  lastResult.runs === "OUT"
-                    ? "bg-gradient-to-b from-game-red/30 to-game-red/10 border-game-red/40 text-game-red"
-                    : "bg-gradient-to-b from-game-green/30 to-game-green/10 border-game-green/40 text-game-green"
-                }`}
-                style={{ textShadow: "0 0 15px currentColor" }}
+                className="w-10 h-10 rounded-xl flex items-center justify-center font-display font-black text-sm"
+                style={{
+                  background: lastResult.runs === "OUT"
+                    ? "linear-gradient(180deg, hsl(var(--leather-mid) / 0.4), hsl(var(--leather-dark) / 0.3))"
+                    : "linear-gradient(180deg, hsl(var(--grass-mid) / 0.3), hsl(var(--grass-dark) / 0.2))",
+                  border: lastResult.runs === "OUT"
+                    ? "2px solid hsl(var(--leather-highlight) / 0.5)"
+                    : "2px solid hsl(var(--grass-light) / 0.4)",
+                  borderBottom: lastResult.runs === "OUT"
+                    ? "3px solid hsl(var(--leather-highlight) / 0.6)"
+                    : "3px solid hsl(var(--grass-light) / 0.5)",
+                  color: lastResult.runs === "OUT" ? "hsl(var(--leather-highlight))" : "hsl(var(--grass-light))",
+                  textShadow: "0 0 15px currentColor",
+                }}
               >
                 {lastResult.runs === "OUT" ? "OUT" : `+${lastResult.runs}`}
               </motion.div>
 
               <div className="text-center">
-                <p className="text-[6px] text-white/50 font-game-display font-bold tracking-[0.2em] mb-0.5">{opponentName.toUpperCase().slice(0, 8)}</p>
+                <p className="text-[6px] font-display font-bold tracking-[0.2em] mb-0.5" style={{ color: "hsl(var(--chrome-mid) / 0.6)" }}>{opponentName.toUpperCase().slice(0, 8)}</p>
                 <motion.div initial={{ rotateY: -90 }} animate={{ rotateY: 0 }} transition={{ delay: 0.1 }}
-                  className="w-10 h-10 rounded-xl bg-gradient-to-br from-game-gold/15 to-game-gold/5 border border-game-gold/20 flex items-center justify-center mx-auto">
+                  className="w-10 h-10 rounded-xl flex items-center justify-center mx-auto"
+                  style={{
+                    background: "linear-gradient(135deg, hsl(var(--secondary) / 0.12), hsl(var(--secondary) / 0.04))",
+                    border: "1px solid hsl(var(--secondary) / 0.2)",
+                  }}>
                   <span className="text-xl">{btnTheme.moves[lastResult?.aiMove === "DEF" ? "DEF" : String(lastResult?.aiMove)]?.emoji || opponentEmoji}</span>
                 </motion.div>
-                <p className="text-[8px] font-game-display font-bold text-game-gold mt-0.5">{lastResult.aiMove === "DEF" ? "DEF" : lastResult.aiMove}</p>
+                <p className="text-[8px] font-display font-bold mt-0.5" style={{ color: "hsl(var(--secondary))" }}>{lastResult.aiMove === "DEF" ? "DEF" : lastResult.aiMove}</p>
               </div>
             </div>
           </motion.div>
