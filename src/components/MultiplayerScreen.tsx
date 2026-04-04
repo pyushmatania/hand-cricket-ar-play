@@ -401,9 +401,10 @@ export default function MultiplayerScreen({ onHome }: Props) {
             loadOpponentName(updated);
           }
 
-          if (prevPhase === "waiting" && nextPhase === "toss" && !showVSIntro) {
+          if (prevPhase === "waiting" && nextPhase === "toss" && !showVSIntro && !showJumbotron) {
             if (multiplayerCeremoniesEnabled) {
-              setShowVSIntro(true);
+              // Doc 5 §4.2: Show jumbotron zoom first, then VS intro
+              setShowJumbotron(true);
               if (!pvpPreMatchShownRef.current) {
                 pvpPreMatchShownRef.current = true;
               }
