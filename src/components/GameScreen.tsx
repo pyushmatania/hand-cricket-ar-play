@@ -122,7 +122,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       return;
     }
     const totalBalls = game.currentInnings === 1 ? game.innings1Balls : game.innings2Balls;
-    const totalOvers = game.overs || 5;
+    const totalOvers = matchConfig?.overs || 5;
     const ballsLeft = totalOvers * 6 - totalBalls;
     const isLastOver = ballsLeft <= 6;
     const isCloseTarget = game.target ? (game.target - game.userScore) <= 10 && (game.target - game.userScore) > 0 : false;
