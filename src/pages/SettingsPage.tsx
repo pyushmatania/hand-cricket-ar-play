@@ -127,6 +127,7 @@ export default function SettingsPage() {
   const [expandedGroup, setExpandedGroup] = useState<string | null>("AUDIO & SOUND");
   const [previewingVoice, setPreviewingVoice] = useState<string | null>(null);
   const [selectedButtonStyle, setSelectedButtonStyle] = useState<string>("classic");
+  const [versionTaps, setVersionTaps] = useState(0);
 
   // Load current button style
   useEffect(() => {
