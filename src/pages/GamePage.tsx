@@ -5,6 +5,7 @@ import PracticeScreen from "@/components/PracticeScreen";
 import MultiplayerScreen from "@/components/MultiplayerScreen";
 import TournamentScreen from "@/components/TournamentScreen";
 import DailyChallengeScreen from "@/components/DailyChallengeScreen";
+import IPLTournamentScreen from "@/components/ipl/IPLTournamentScreen";
 
 export default function GamePage() {
   const { mode } = useParams<{ mode: string }>();
