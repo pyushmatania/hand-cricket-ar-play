@@ -26,8 +26,9 @@ export default function CanvasFireworks({ type, duration = 3000 }: CanvasFirewor
     if (!type) return;
 
     const colors = COLORS[type] || COLORS.win;
-    const waves = type === "win" ? 4 : type === "six" ? 3 : 2;
-    const particleCount = type === "win" ? 80 : type === "six" ? 60 : 35;
+    const scale = isLowEndDevice() ? 0.5 : 1;
+    const waves = type === "win" ? (isLowEndDevice() ? 2 : 4) : type === "six" ? (isLowEndDevice() ? 2 : 3) : (isLowEndDevice() ? 1 : 2);
+    const particleCount = Math.round((type === "win" ? 80 : type === "six" ? 60 : 35) * scale);
 
     for (let w = 0; w < waves; w++) {
       const t = setTimeout(() => {
