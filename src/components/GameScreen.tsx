@@ -22,7 +22,8 @@ import { pickConfiguredMatchCommentators, getDuoCommentary, type Commentator, ty
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import type { BallResult, Move } from "@/hooks/useHandCricket";
-import { engines } from "@/engines/EngineManager";
+import { useEngines } from "@/hooks/useEngines";
+import { WeatherParticles } from "./WeatherParticles";
 
 const MOVE_EMOJI: Record<string, string> = {
   DEF: "✊", "1": "☝️", "2": "✌️", "3": "🤟", "4": "🖖", "6": "👍",
