@@ -964,7 +964,12 @@ function ImmersiveScoreStrip({ game, playerName = "You", aiName = "Rohit AI", we
             {game.aiWickets > 0 && <span className="text-[9px] text-out-red font-bold">/{game.aiWickets}</span>}
           </div>
         </div>
-        <div className="text-right">
+        <div className="text-right space-y-0.5">
+          {weatherIcon && (
+            <span className="text-[8px] font-display font-bold text-muted-foreground block">
+              {weatherIcon} {weatherLabel}
+            </span>
+          )}
           {game.target && game.phase !== "finished" && (
             <span className="text-[8px] font-display font-bold text-secondary block tracking-wider">TGT: {game.target}</span>
           )}
