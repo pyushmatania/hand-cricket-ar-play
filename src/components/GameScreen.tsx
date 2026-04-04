@@ -57,6 +57,8 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const location = useLocation();
   const arenaImage = (location.state as any)?.arenaImage as string | undefined;
   const arenaId = (location.state as any)?.arenaId as string | undefined;
+  const themeId = (location.state as any)?.themeId as string | undefined;
+  const matchTheme = getThemeById(themeId || localStorage.getItem("selectedTheme") || "gully");
   const cameraRef = useRef<CameraFeedHandle>(null);
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
   const { game, startGame, playBall, resetGame } = useHandCricket();
