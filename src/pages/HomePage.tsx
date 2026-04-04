@@ -31,12 +31,6 @@ const ARENA_LEVELS = [
   { name: "World Cup", trophies: 5000 },
 ];
 
-const CHEST_SLOTS = [
-  { state: "ready" as const, type: "gold", label: "OPEN!", timer: "" },
-  { state: "unlocking" as const, type: "silver", label: "", timer: "59m" },
-  { state: "locked" as const, type: "bronze", label: "", timer: "3h" },
-  { state: "empty" as const, type: null, label: "", timer: "" },
-];
 
 export default function HomePage() {
   const navigate = useNavigate();
