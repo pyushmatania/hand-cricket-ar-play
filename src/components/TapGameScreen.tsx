@@ -16,7 +16,7 @@ import EnhancedPostMatch from "./EnhancedPostMatch";
 import TapPlayingUI from "./TapPlayingUI";
 import OverSelector from "./OverSelector";
 import { useEquippedCosmetics } from "@/hooks/useEquippedCosmetics";
-import { rollWeather, type Weather } from "@/lib/weather";
+import { rollWeather, getWeatherById, type Weather } from "@/lib/weather";
 import { getThemeById } from "@/lib/matchThemes";
 
 const AI_NAME = "Rohit AI";
