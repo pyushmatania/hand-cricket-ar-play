@@ -105,7 +105,38 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     return 'clear' as const;
   });
 
-  // Ambient stadium music for AR mode — arena-specific
+  // Apply weather modifiers to gameplay engine
+  useEffect(() => {
+    engines.weather.setWeather(matchWeather, {
+      lighting: engines.lighting,
+      sound: engines.sound,
+      gameplay: engines.gameplay,
+      innings: game.currentInnings,
+    });
+  }, [matchWeather, game.currentInnings]);
+
+  // Tension vignette — intensifies in tight/critical situations
+  useEffect(() => {
+    if (!game.isBatting && game.phase === 'finished') {
+      engines.lighting.setVignette(0);
+      return;
+    }
+    const totalBalls = game.currentInnings === 1 ? game.innings1Balls : game.innings2Balls;
+    const totalOvers = matchConfig?.overs || 5;
+    const ballsLeft = totalOvers * 6 - totalBalls;
+    const isLastOver = ballsLeft <= 6;
+    const isCloseTarget = game.target ? (game.target - game.userScore) <= 10 && (game.target - game.userScore) > 0 : false;
+
+    if (isLastOver && isCloseTarget) {
+      engines.lighting.setVignette(0.35);
+    } else if (isLastOver || isCloseTarget) {
+      engines.lighting.setVignette(0.2);
+    } else if (game.userWickets >= 7 || game.aiWickets >= 7) {
+      engines.lighting.setVignette(0.25);
+    } else {
+      engines.lighting.setVignette(0);
+    }
+  }, [game.innings1Balls, game.innings2Balls, game.userScore, game.aiScore, game.userWickets, game.aiWickets, game.target, game.phase]);
   useEffect(() => {
     if (soundEnabled && musicEnabled && !game.result) {
       startAmbientStadium(ambientVolume, arenaId);
@@ -567,7 +598,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         <div className="absolute inset-0 z-20 flex flex-col justify-between pointer-events-none">
           {/* Score strip at top (below top bar) */}
           <div className="pt-16 px-3 pointer-events-auto">
-            <ImmersiveScoreStrip game={game} playerName={playerName} aiName={opponentName} />
+            <ImmersiveScoreStrip game={game} playerName={playerName} aiName={opponentName} weather={matchWeather} />
           </div>
 
           {/* ── BIG RESULT ANIMATION ── */}
@@ -872,7 +903,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       {game.phase === "finished" && (
         <div className="absolute inset-0 z-30 flex flex-col items-center justify-end pb-10 px-6 bg-black/40">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-xs space-y-3">
-            <ImmersiveScoreStrip game={game} playerName={playerName} aiName={opponentName} />
+            <ImmersiveScoreStrip game={game} playerName={playerName} aiName={opponentName} weather={matchWeather} />
             <div className="flex gap-3">
               <motion.button
                 whileTap={{ scale: 0.95 }}
@@ -896,7 +927,17 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   );
 }
 
-function ImmersiveScoreStrip({ game, playerName = "You", aiName = "Rohit AI" }: { game: import("@/hooks/useHandCricket").GameState; playerName?: string; aiName?: string }) {
+function ImmersiveScoreStrip({ game, playerName = "You", aiName = "Rohit AI", weather }: { game: import("@/hooks/useHandCricket").GameState; playerName?: string; aiName?: string; weather?: string }) {
+  const WEATHER_ICONS: Record<string, string> = {
+    clear: '☀️', overcast: '☁️', drizzle: '🌧️', heavy_dew: '💧',
+    dust_storm: '🌪️', night_lights: '🏟️', golden_hour: '🌅',
+  };
+  const WEATHER_LABELS: Record<string, string> = {
+    clear: 'Clear', overcast: 'Overcast', drizzle: 'Drizzle', heavy_dew: 'Dew',
+    dust_storm: 'Dust', night_lights: 'Night', golden_hour: 'Golden Hr',
+  };
+  const weatherIcon = weather ? WEATHER_ICONS[weather] || '☀️' : null;
+  const weatherLabel = weather ? WEATHER_LABELS[weather] || weather : null;
   const needRuns = game.target && game.isBatting && game.phase !== "finished"
     ? Math.max(0, game.target - game.userScore)
     : null;
@@ -923,7 +964,12 @@ function ImmersiveScoreStrip({ game, playerName = "You", aiName = "Rohit AI" }: 
             {game.aiWickets > 0 && <span className="text-[9px] text-out-red font-bold">/{game.aiWickets}</span>}
           </div>
         </div>
-        <div className="text-right">
+        <div className="text-right space-y-0.5">
+          {weatherIcon && (
+            <span className="text-[8px] font-display font-bold text-muted-foreground block">
+              {weatherIcon} {weatherLabel}
+            </span>
+          )}
           {game.target && game.phase !== "finished" && (
             <span className="text-[8px] font-display font-bold text-secondary block tracking-wider">TGT: {game.target}</span>
           )}
