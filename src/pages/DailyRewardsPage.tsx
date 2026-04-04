@@ -169,6 +169,12 @@ export default function DailyRewardsPage() {
     if (day.day === cycleDay && todayClaimed) {
       SFX.chestOpen();
       Haptics.chestOpen();
+      engines.sound.playEffect('chest_unlock');
+      if (day.type === 'mega_chest') {
+        setTimeout(() => engines.sound.playEffect('card_legendary_reveal'), 400);
+      } else {
+        setTimeout(() => engines.sound.playEffect('coin_collect'), 300);
+      }
       setOpeningReward(day);
     }
   };

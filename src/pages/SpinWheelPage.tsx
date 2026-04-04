@@ -140,6 +140,7 @@ export default function SpinWheelPage() {
           await supabase.from("profiles").update({ xp: prof.xp + reward.amount }).eq("user_id", user.id);
         }
         await supabase.from("xp_history").insert({ user_id: user.id, amount: reward.amount, source: "lucky_spin" } as any);
+        engines.sound.playEffect('gem_collect');
         toast.success(`+${reward.amount} XP!`);
       } else if (reward.type === "chest" && reward.detail) {
         // Find empty chest slot
