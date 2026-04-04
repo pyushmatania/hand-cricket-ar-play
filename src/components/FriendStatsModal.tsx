@@ -377,8 +377,15 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
 
             {onChallenge && (
               <motion.button whileTap={{ scale: 0.95 }}
-                onClick={() => onChallenge(friend.user_id)}
-                className="w-full mt-3 py-2.5 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display text-[10px] font-bold tracking-widest">
+            onClick={() => onChallenge(friend.user_id)}
+                className="w-full mt-3 py-2.5 rounded-xl font-game-display text-[10px] font-bold tracking-widest text-white"
+                style={{
+                  background: "linear-gradient(180deg, #6AFF6A, #4ADE50, #2D8B2D)",
+                  border: "2px solid #1E6B1E",
+                  borderBottom: "4px solid #1A5E1A",
+                  boxShadow: "0 4px 0 rgba(0,0,0,0.15), 0 4px 16px rgba(74,222,80,0.3), inset 0 2px 0 rgba(255,255,255,0.2)",
+                  textShadow: "0 2px 4px rgba(0,0,0,0.5)",
+                }}>
                 ⚔️ CHALLENGE TO BATTLE
               </motion.button>
             )}
