@@ -36,6 +36,7 @@ const SpinWheelPage = lazy(() => import("./pages/SpinWheelPage"));
 const TeamBuilderPage = lazy(() => import("./pages/TeamBuilderPage"));
 const ClanPage = lazy(() => import("./pages/ClanPage"));
 const TournamentHistoryPage = lazy(() => import("./pages/TournamentHistoryPage"));
+const HiddenFeaturesPage = lazy(() => import("./pages/HiddenFeaturesPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
