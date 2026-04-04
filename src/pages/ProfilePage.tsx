@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import ScrollHint from "@/components/shared/ScrollHint";
 import ShareButton from "@/components/share/ShareButton";
 import ProfileShareCard from "@/components/share/ProfileShareCard";
