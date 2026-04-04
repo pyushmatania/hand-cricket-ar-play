@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import PlayerAvatar from "@/components/PlayerAvatar";
 import vsBatsman from "@/assets/vs-batsman.png";
 import GameButton from "@/components/shared/GameButton";
+import DressingRoom from "@/components/DressingRoom";
 
 interface Props {
   roomCode: string;
