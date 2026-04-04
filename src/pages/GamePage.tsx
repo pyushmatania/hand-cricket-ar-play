@@ -16,6 +16,7 @@ export default function GamePage() {
   if (mode === "practice") return <PracticeScreen onHome={goHome} />;
   if (mode === "multiplayer") return <MultiplayerScreen onHome={goHome} />;
   if (mode === "tournament") return <TournamentScreen onHome={goHome} />;
+  if (mode === "ipl") return <IPLTournamentScreen onHome={goHome} />;
   if (mode === "daily") return <DailyChallengeScreen onHome={goHome} />;
 
   return <GameScreen onHome={goHome} />;
