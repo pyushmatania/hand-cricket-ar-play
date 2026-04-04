@@ -17,6 +17,7 @@ export default function PlayPage() {
   const { user } = useAuth();
   const [tierIndex, setTierIndex] = useState(0);
   const [selectedArena, setSelectedArena] = useState<Arena>(ARENAS[0]);
+  const [selectedTheme, setSelectedTheme] = useState<MatchTheme>(MATCH_THEMES[0]);
 
   useEffect(() => {
     if (!user) return;
