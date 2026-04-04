@@ -2,12 +2,19 @@ import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { SFX, Haptics } from "@/lib/sounds";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Drawer,
   DrawerContent,
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
+
+const RANK_ORDER = ["bronze", "silver", "gold", "platinum", "diamond", "legend"];
+function meetsRank(userRank: string, required: string | null): boolean {
+  if (!required) return true;
+  return RANK_ORDER.indexOf(userRank.toLowerCase()) >= RANK_ORDER.indexOf(required.toLowerCase());
+}
 
 const QUICK_PLAY = [
   { id: "blitz", label: "BLITZ", time: "~3 min", overs: 3, emoji: "⚡", hue: 0 },
@@ -47,17 +54,34 @@ function SectionHeader({ label, accentGradient }: { label: string; accentGradien
 }
 
 function ModeBadge({ type }: { type: string }) {
-  const styles: Record<string, { bg: string; text: string; border: string }> = {
-    NEW: { bg: "hsl(142 71% 45%)", text: "hsl(142 80% 98%)", border: "hsl(142 55% 30%)" },
-    SOON: { bg: "hsl(217 80% 55%)", text: "hsl(217 90% 95%)", border: "hsl(217 55% 35%)" },
-    HOT: { bg: "hsl(0 84% 55%)", text: "hsl(0 90% 95%)", border: "hsl(0 55% 35%)" },
+  const styles: Record<string, { bg: string; text: string; border: string; glow: string }> = {
+    NEW: { bg: "hsl(142 71% 45%)", text: "hsl(142 80% 98%)", border: "hsl(142 55% 30%)", glow: "hsl(142 71% 45% / 0.6)" },
+    SOON: { bg: "hsl(217 80% 55%)", text: "hsl(217 90% 95%)", border: "hsl(217 55% 35%)", glow: "hsl(217 80% 55% / 0.5)" },
+    HOT: { bg: "hsl(0 84% 55%)", text: "hsl(0 90% 95%)", border: "hsl(0 55% 35%)", glow: "hsl(0 84% 55% / 0.6)" },
   };
   const s = styles[type] || styles.NEW;
   return (
-    <span className="absolute -top-1.5 -right-1.5 font-game-display text-[7px] tracking-widest px-1.5 py-0.5 z-20"
-      style={{ borderRadius: "6px", background: s.bg, color: s.text, border: `1px solid ${s.border}`, boxShadow: `0 2px 8px ${s.bg}40` }}>
+    <motion.span
+      className="absolute -top-1.5 -right-1.5 font-game-display text-[7px] tracking-widest px-1.5 py-0.5 z-20"
+      style={{ borderRadius: "6px", background: s.bg, color: s.text, border: `1px solid ${s.border}` }}
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{
+        scale: 1,
+        opacity: 1,
+        boxShadow: [
+          `0 0 4px ${s.glow}`,
+          `0 0 12px ${s.glow}`,
+          `0 0 4px ${s.glow}`,
+        ],
+      }}
+      transition={{
+        scale: { type: "spring", stiffness: 400, damping: 12, delay: 0.3 },
+        opacity: { duration: 0.2, delay: 0.3 },
+        boxShadow: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+      }}
+    >
       {type}
-    </span>
+    </motion.span>
   );
 }
 
@@ -112,8 +136,10 @@ function DailyResetTimer() {
   );
 }
 
-function CompetitiveCard({ mode, index, onNavigate }: { mode: typeof TOURNAMENTS[0] & { badge?: string | null; minRank?: string | null; liveCount?: boolean | null; statusText?: string | null }; index: number; onNavigate: (id: string) => void }) {
-  const isLocked = mode.badge === "SOON";
+function CompetitiveCard({ mode, index, onNavigate, userRank }: { mode: typeof TOURNAMENTS[0] & { badge?: string | null; minRank?: string | null; liveCount?: boolean | null; statusText?: string | null }; index: number; onNavigate: (id: string) => void; userRank: string }) {
+  const isComingSoon = mode.badge === "SOON";
+  const isRankLocked = !isComingSoon && !!mode.minRank && !meetsRank(userRank, mode.minRank);
+  const isLocked = isComingSoon || isRankLocked;
   return (
     <motion.button
       key={mode.id}
@@ -133,7 +159,8 @@ function CompetitiveCard({ mode, index, onNavigate }: { mode: typeof TOURNAMENTS
       }}
     >
       {mode.badge && <ModeBadge type={mode.badge} />}
-      {isLocked && <LockOverlay rank="clan" />}
+      {isComingSoon && <LockOverlay rank="coming soon" />}
+      {isRankLocked && <LockOverlay rank={mode.minRank!} />}
       <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl" style={{ background: mode.color, opacity: 0.6 }} />
       <span className="text-lg ml-1">{mode.emoji}</span>
       <div className="flex-1 text-left">
@@ -164,6 +191,16 @@ function CompetitiveCard({ mode, index, onNavigate }: { mode: typeof TOURNAMENTS
 export default function ModeSelectDrawer({ open, onOpenChange }: ModeSelectDrawerProps) {
   const navigate = useNavigate();
   const [selectedFormat, setSelectedFormat] = useState<string | null>(null);
+  const [userRank, setUserRank] = useState("bronze");
+
+  useEffect(() => {
+    if (!open) return;
+    supabase.auth.getUser().then(({ data }) => {
+      if (!data.user) return;
+      supabase.from("profiles").select("rank_tier").eq("user_id", data.user.id).maybeSingle()
+        .then(({ data: p }) => { if (p?.rank_tier) setUserRank(p.rank_tier); });
+    });
+  }, [open]);
 
   const handlePlay = (formatId: string, overs?: number) => {
     try { SFX.tap(); Haptics.heavy(); } catch {}
@@ -254,7 +291,7 @@ export default function ModeSelectDrawer({ open, onOpenChange }: ModeSelectDrawe
             <SectionHeader label="Tournaments" accentGradient="linear-gradient(180deg, hsl(43 100% 55%) 0%, hsl(25 70% 40%) 100%)" />
             <div className="space-y-2 mb-4">
               {TOURNAMENTS.map((mode, i) => (
-                <CompetitiveCard key={mode.id} mode={mode} index={i} onNavigate={handleNavigate} />
+                <CompetitiveCard key={mode.id} mode={mode} index={i} onNavigate={handleNavigate} userRank={userRank} />
               ))}
             </div>
 
@@ -266,7 +303,7 @@ export default function ModeSelectDrawer({ open, onOpenChange }: ModeSelectDrawe
             <SectionHeader label="Special Modes" accentGradient="linear-gradient(180deg, hsl(280 70% 55%) 0%, hsl(340 60% 40%) 100%)" />
             <div className="space-y-2 mb-4">
               {SPECIAL.map((mode, i) => (
-                <CompetitiveCard key={mode.id} mode={mode} index={i} onNavigate={handleNavigate} />
+                <CompetitiveCard key={mode.id} mode={mode} index={i} onNavigate={handleNavigate} userRank={userRank} />
               ))}
             </div>
 
