@@ -598,7 +598,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         <div className="absolute inset-0 z-20 flex flex-col justify-between pointer-events-none">
           {/* Score strip at top (below top bar) */}
           <div className="pt-16 px-3 pointer-events-auto">
-            <ImmersiveScoreStrip game={game} playerName={playerName} aiName={opponentName} />
+            <ImmersiveScoreStrip game={game} playerName={playerName} aiName={opponentName} weather={matchWeather} />
           </div>
 
           {/* ── BIG RESULT ANIMATION ── */}
