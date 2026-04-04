@@ -621,6 +621,61 @@ export default function LeaderboardPage() {
             </motion.div>
           )}
 
+          {/* TOURNAMENT LEADERBOARD */}
+          {mainTab === "tourney" && (
+            <motion.div key="tourney" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-3">
+              <div className="mb-3 flex items-center gap-2">
+                <div className="w-1 h-4 rounded-full" style={{ background: "hsl(43 90% 55%)" }} />
+                <span className="font-game-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">TOURNAMENT CHAMPIONS</span>
+              </div>
+              {tourneyLeaders.length === 0 ? (
+                <div className="rounded-2xl p-8 text-center" style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
+                  <span className="text-4xl block mb-3">🏅</span>
+                  <p className="font-game-display text-sm font-bold text-foreground">No tournament results yet</p>
+                  <p className="text-[10px] text-muted-foreground mt-1">Play World Cup, Ashes, or Knockout to appear here!</p>
+                </div>
+              ) : (
+                tourneyLeaders.map((entry, i) => {
+                  const isMe = user && entry.user_id === user.id;
+                  const formatIcons: Record<string, string> = { world_cup: "🌍", ashes: "🏺", knockout: "⚔️", ipl: "🏏" };
+                  const winRate = entry.tournaments_played > 0 ? Math.round((entry.tournament_wins / entry.tournaments_played) * 100) : 0;
+                  return (
+                    <motion.div key={entry.user_id} initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
+                      className="rounded-xl p-3 flex items-center gap-3"
+                      style={{
+                        background: CONCRETE_CARD,
+                        border: isMe ? "2px solid hsl(207 90% 54% / 0.4)" : i < 3 ? `2px solid hsl(43 80% 50% / ${0.4 - i * 0.1})` : "2px solid hsl(25 20% 22%)",
+                        borderBottom: "5px solid hsl(25 25% 10%)",
+                        boxShadow: i === 0 ? "0 0 20px hsl(43 90% 50% / 0.15)" : isMe ? "0 0 16px hsl(207 90% 54% / 0.1)" : undefined,
+                      }}>
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center font-game-display font-black text-sm"
+                        style={{
+                          background: i === 0 ? "hsl(43 80% 50% / 0.15)" : i === 1 ? "hsl(210 10% 70% / 0.15)" : i === 2 ? "hsl(25 60% 50% / 0.15)" : "hsl(25 15% 13%)",
+                          color: i === 0 ? "hsl(43 90% 55%)" : i === 1 ? "hsl(210 10% 75%)" : i === 2 ? "hsl(25 60% 55%)" : "hsl(25 20% 50%)",
+                        }}>
+                        {i < 3 ? getBadge(i + 1) : `#${i + 1}`}
+                      </div>
+                      <PlayerAvatar avatarIndex={entry.avatar_index} avatarUrl={entry.avatar_url} size="sm" />
+                      <div className="flex-1 min-w-0">
+                        <span className="font-game-display text-[11px] font-bold block" style={{ color: isMe ? "hsl(207 90% 60%)" : "hsl(0 0% 90%)" }}>
+                          {entry.display_name}{isMe && <span className="text-[7px] ml-1" style={{ color: "hsl(207 90% 54% / 0.6)" }}>(YOU)</span>}
+                        </span>
+                        <span className="text-[8px] text-muted-foreground font-game-display">
+                          {entry.tournaments_played} played • {winRate}% WR • {entry.runner_ups > 0 ? `${entry.runner_ups} 🥈` : ""}
+                          {entry.best_format !== "-" && ` ${formatIcons[entry.best_format] || "🏏"} ${entry.best_format.replace("_", " ")}`}
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span className="font-game-display text-lg font-black block leading-none" style={{ color: "hsl(43 90% 55%)" }}>{entry.tournament_wins}</span>
+                        <span className="text-[6px] text-muted-foreground font-game-display tracking-widest">TITLES</span>
+                      </div>
+                    </motion.div>
+                  );
+                })
+              )}
+            </motion.div>
+          )}
+
           {/* SEASONS TAB */}
           {mainTab === "seasons" && (
             <motion.div key="seasons" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-3">
