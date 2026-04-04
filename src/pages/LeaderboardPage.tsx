@@ -488,6 +488,7 @@ export default function LeaderboardPage() {
     { key: "friends", label: "FRIENDS", icon: "👥" },
     { key: "challenges", label: "QUESTS", icon: "🎯" },
     { key: "records", label: "RECORDS", icon: "🏆" },
+    { key: "tourney", label: "TOURNEY", icon: "🏅" },
     { key: "global", label: "GLOBAL", icon: "🌍" },
     { key: "seasons", label: "SEASON", icon: "📅" },
     { key: "rivalry", label: "RIVALRY", icon: "⚔️" },
