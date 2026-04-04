@@ -84,23 +84,20 @@ export default function WaitingRoom({ roomCode, playerName, playerAvatarIndex = 
         </div>
       </motion.div>
 
-      {/* ── Characters ── */}
-      <div className="relative flex items-end justify-between w-full h-full px-4 z-10">
-        {/* Your character — left */}
+      {/* ── Dressing Room Scene (Doc 5 §4.1) ── */}
+      <div className="relative z-10 flex items-center justify-between w-full h-full px-3 gap-2">
+        {/* Your dressing room — left */}
         <motion.div
           initial={{ x: "-80%", opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ type: "spring", damping: 14, stiffness: 80 }}
-          className="flex-1 flex flex-col items-center justify-end pb-44"
+          className="flex-1 h-[55%] max-h-[300px]"
         >
-          <motion.img
-            src={vsBatsman}
-            alt="Your Player"
-            width={512}
-            height={768}
-            className="w-36 h-auto max-h-[45vh] object-contain drop-shadow-[0_0_25px_hsl(217_80%_50%/0.5)]"
-            animate={{ y: [0, -6, 0] }}
-            transition={{ duration: 2.5, repeat: Infinity }}
+          <DressingRoom
+            playerName={playerName}
+            avatarIndex={playerAvatarIndex}
+            teamColor="hsl(217 80% 55%)"
+            waiting={true}
           />
         </motion.div>
 
@@ -132,23 +129,18 @@ export default function WaitingRoom({ roomCode, playerName, playerAvatarIndex = 
         </motion.div>
 
         {/* Opponent silhouette — right */}
-        <motion.div
-          className="flex-1 flex flex-col items-center justify-end pb-44"
-        >
-          {/* Pulsing grey silhouette */}
+        <motion.div className="flex-1 flex flex-col items-center justify-center h-[55%] max-h-[300px]">
           <motion.div
             animate={{ opacity: [0.3, 0.6, 0.3] }}
             transition={{ duration: 2, repeat: Infinity }}
-            className="w-28 h-40 relative"
+            className="w-full h-full rounded-2xl flex items-center justify-center relative"
+            style={{
+              background: "linear-gradient(180deg, hsl(220 10% 15% / 0.5), hsl(220 10% 8% / 0.5))",
+              border: "2px dashed hsl(220 10% 30% / 0.3)",
+            }}
           >
-            <div
-              className="w-full h-full rounded-2xl"
-              style={{
-                background: "linear-gradient(180deg, hsl(220 10% 40% / 0.3), hsl(220 10% 20% / 0.2))",
-                border: "2px dashed hsl(220 10% 50% / 0.3)",
-              }}
-            />
-            <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-4xl opacity-40">❓</span>
+            <span className="text-5xl opacity-40">❓</span>
+            <span className="absolute bottom-3 font-game-display text-[8px] text-muted-foreground/50 tracking-[0.2em]">SEARCHING...</span>
           </motion.div>
         </motion.div>
       </div>
