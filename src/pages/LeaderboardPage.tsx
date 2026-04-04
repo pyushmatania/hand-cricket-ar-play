@@ -68,7 +68,18 @@ interface FriendProfile {
   rank_tier?: string;
 }
 
-type MainTab = "friends" | "global" | "challenges" | "rivalry" | "records" | "seasons" | "rage" | "network";
+type MainTab = "friends" | "global" | "challenges" | "rivalry" | "records" | "seasons" | "rage" | "network" | "tourney";
+
+interface TourneyLeaderEntry {
+  user_id: string;
+  display_name: string;
+  avatar_index: number;
+  avatar_url: string | null;
+  tournament_wins: number;
+  tournaments_played: number;
+  runner_ups: number;
+  best_format: string;
+}
 
 interface SeasonEntry {
   user_id: string;
