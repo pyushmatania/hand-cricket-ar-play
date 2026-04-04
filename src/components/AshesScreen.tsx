@@ -267,9 +267,18 @@ export default function AshesScreen({ onHome }: Props) {
           <p className="font-game-display text-xl text-foreground mb-4">
             🇮🇳 {myWins} - {oppWins} 🇦🇺
           </p>
-          <div className="flex items-center justify-center gap-2 mb-6">
+          <div className="flex items-center justify-center gap-2 mb-4">
             {results.map((r, i) => <span key={i} className="text-xl">{r === "win" ? "✅" : r === "loss" ? "❌" : "➖"}</span>)}
           </div>
+          {reward && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
+              className="flex items-center justify-center gap-4 mb-4 py-2 px-4 rounded-xl"
+              style={{ background: "hsl(25 15% 12%)", border: "1.5px solid hsl(25 18% 22%)" }}>
+              <span className="font-game-display text-[10px]" style={{ color: "hsl(217 80% 65%)" }}>+{reward.xp} XP</span>
+              <span className="font-game-display text-[10px]" style={{ color: "hsl(43 90% 55%)" }}>+{reward.coins} 🪙</span>
+              {reward.chestTier && <span className="font-game-display text-[10px]" style={{ color: "hsl(280 70% 65%)" }}>📦 {reward.chestTier}</span>}
+            </motion.div>
+          )}
           <div className="flex gap-3">
             <motion.button whileTap={{ scale: 0.95 }} onClick={onHome}
               className="px-6 py-3 rounded-xl font-game-display text-[11px] tracking-wider"
