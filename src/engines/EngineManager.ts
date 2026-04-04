@@ -11,7 +11,13 @@ import { CommentaryEngine } from './CommentaryEngine';
 import { LightingEngine } from './LightingEngine';
 import { WeatherEngine } from './WeatherEngine';
 import { CrowdEngine } from './CrowdEngine';
-import type { EventType } from './types';
+import {
+  SOUND_TRIGGER_MAP,
+  AMBIENT_INTENSITY_MAP,
+  WEATHER_AMBIENT_MAP,
+  MATCH_RESULT_SOUNDS,
+} from './SoundTriggerMap';
+import type { EventType, CrowdIntensity, WeatherState } from './types';
 
 /**
  * Perspective: determines which "side" the player is on for audio/effects.
@@ -71,120 +77,73 @@ class EngineManager {
     // Helper: is the player batting right now?
     const isBatting = () => this._perspective === 'batting';
 
-    // ── Sound Engine listeners (perspective-aware) ──
-    E.on('DEFENSE_SCORED', (p) => {
-      this.sound.playEffect('bat_hit_soft');
-      if (p.runs >= 1) this.sound.playEffect('running_footsteps');
-      this.sound.vibrate('light');
-    });
+    // ── Doc 5 §3: Declarative Sound Trigger Map ──
+    // Wire all events from the trigger map automatically
+    const registeredSoundEvents = new Set<string>();
+    for (const [eventType, triggers] of Object.entries(SOUND_TRIGGER_MAP)) {
+      if (triggers.length === 0) continue; // e.g. MATCH_END handled separately
+      registeredSoundEvents.add(eventType);
 
-    E.on('RUNS_SCORED', (p) => {
-      this.sound.playEffect(p.runs <= 1 ? 'bat_hit_soft' : 'bat_hit_medium');
-      if (p.runs >= 1) this.sound.playEffect('running_footsteps');
-      this.sound.vibrate('light');
-    });
+      E.on(eventType as EventType, () => {
+        const perspective = this._perspective;
+        for (const trigger of triggers) {
+          // Skip if perspective doesn't match
+          if (trigger.perspective !== 'any' && trigger.perspective !== perspective) continue;
 
-    E.on('BOUNDARY_FOUR', () => {
-      this.sound.playEffect('bat_hit_hard');
-      if (isBatting()) {
-        setTimeout(() => this.sound.playEffect('crowd_cheer_excited'), 600);
-        this.sound.vibrate('medium');
-      } else {
-        setTimeout(() => this.sound.playEffect('crowd_gasp'), 400);
-      }
-    });
+          const play = () => {
+            this.sound.playEffect(trigger.category, trigger.volume);
+            if (trigger.haptic) this.sound.vibrate(trigger.haptic);
+          };
 
-    E.on('BOUNDARY_SIX', () => {
-      this.sound.playEffect('bat_hit_massive');
-      if (isBatting()) {
-        setTimeout(() => this.sound.playEffect('ball_flight_whoosh'), 200);
-        setTimeout(() => this.sound.playEffect('crowd_eruption'), 800);
-        setTimeout(() => this.sound.playEffect('firework_pop'), 1200);
-        setTimeout(() => this.sound.playEffect('firework_pop'), 1600);
-        this.sound.vibrate('heavy');
-      } else {
-        setTimeout(() => this.sound.playEffect('crowd_gasp'), 300);
-        this.sound.vibrate('medium');
-      }
-    });
+          if (trigger.delayMs && trigger.delayMs > 0) {
+            setTimeout(play, trigger.delayMs);
+          } else {
+            play();
+          }
+        }
+      });
+    }
 
-    E.on('WICKET_BOWLED', () => {
-      this.sound.playEffect('stumps_hit');
-      if (isBatting()) {
-        setTimeout(() => this.sound.playEffect('crowd_gasp'), 200);
-        this.sound.vibrate('heavy');
-      } else {
-        setTimeout(() => this.sound.playEffect('crowd_appeal'), 300);
-        setTimeout(() => this.sound.playEffect('crowd_celebration_sustained'), 1000);
-        this.sound.vibrate('heavy');
-      }
-    });
-
-    E.on('WICKET_DEFENSE', () => {
-      this.sound.playEffect('stumps_hit');
-      if (isBatting()) {
-        setTimeout(() => this.sound.playEffect('crowd_gasp'), 200);
-        this.sound.vibrate('heavy');
-      } else {
-        setTimeout(() => this.sound.playEffect('crowd_appeal'), 300);
-        setTimeout(() => this.sound.playEffect('crowd_celebration_sustained'), 1000);
-        this.sound.vibrate('heavy');
-      }
-    });
-
-    E.on('WICKET_CAUGHT', () => {
-      this.sound.playEffect('ball_edge');
-      if (!isBatting()) {
-        setTimeout(() => this.sound.playEffect('crowd_celebration_sustained'), 800);
-      } else {
-        setTimeout(() => this.sound.playEffect('crowd_gasp'), 200);
-      }
-      this.sound.vibrate('heavy');
-    });
-
-    E.on('WICKET_LBW', () => {
-      this.sound.playEffect('ball_pad_hit');
-      if (!isBatting()) {
-        setTimeout(() => this.sound.playEffect('crowd_appeal'), 200);
-        setTimeout(() => this.sound.playEffect('crowd_celebration_sustained'), 1500);
-      } else {
-        setTimeout(() => this.sound.playEffect('crowd_gasp'), 200);
-      }
-      this.sound.vibrate('heavy');
-    });
-
-    // ── Match lifecycle ──
-    E.on('TOSS_COIN_FLIP', () => this.sound.playEffect('coin_flip'));
-    E.on('TOSS_RESULT', () => this.sound.playEffect('coin_land'));
-    E.on('MATCH_START', () => {
-      this.sound.playEffect('match_start_horn');
-      this.crowd.reactToEvent('MATCH_START', {});
-    });
+    // ── Match End (dynamic based on result) ──
     E.on('MATCH_END', (p) => {
-      if (p.result === 'win') {
-        this.sound.playEffect('firework_pop');
-        setTimeout(() => this.sound.playEffect('crowd_eruption'), 300);
-        setTimeout(() => this.sound.playEffect('firework_pop'), 800);
-        setTimeout(() => this.sound.playEffect('firework_pop'), 1400);
-        this.sound.vibrate('heavy');
-      } else if (p.result === 'loss') {
-        this.sound.playEffect('crowd_gasp');
-        this.sound.vibrate('error');
+      const result = p.result as 'win' | 'loss' | 'draw';
+      const triggers = MATCH_RESULT_SOUNDS[result] || MATCH_RESULT_SOUNDS.draw;
+      for (const t of triggers) {
+        if (t.delayMs > 0) {
+          setTimeout(() => this.sound.playEffect(t.category), t.delayMs);
+        } else {
+          this.sound.playEffect(t.category);
+        }
       }
-    });
-    E.on('INNINGS_START', () => {
-      this.sound.playEffect('match_start_horn');
-    });
-    E.on('INNINGS_END', () => {
-      this.sound.playEffect('crowd_cheer_excited');
-    });
-    E.on('OVER_END', () => {
-      this.sound.playEffect('crowd_cheer_excited');
+      if (result === 'win') this.sound.vibrate('heavy');
+      else if (result === 'loss') this.sound.vibrate('error');
     });
 
-    E.on('UI_SHOW_CARD', () => this.sound.playEffect('ui_card_slide_in'));
-    E.on('UI_HIDE_CARD', () => this.sound.playEffect('ui_card_slide_out'));
-    E.on('UI_UPDATE_SCORE', () => this.sound.playEffect('ui_score_tick'));
+    // ── Ambient crossfade based on crowd intensity ──
+    E.on('CROWD_REACT', (p) => {
+      const intensity = p.intensity as CrowdIntensity;
+      const ambientCategory = AMBIENT_INTENSITY_MAP[intensity];
+      if (ambientCategory) {
+        const manifest = this.sound as any;
+        const cat = manifest.categories?.get(ambientCategory);
+        if (cat?.variants?.[0]) {
+          this.sound.setAmbient(cat.variants[0].src);
+        }
+      }
+    });
+
+    // ── Weather ambient overlays ──
+    E.on('WEATHER_CHANGE', (p) => {
+      const weather = p.weather as string;
+      const ambientKey = WEATHER_AMBIENT_MAP[weather];
+      if (ambientKey) {
+        const manifest = this.sound as any;
+        const cat = manifest.categories?.get(ambientKey);
+        if (cat?.variants?.[0]) {
+          this.sound.setAmbient(cat.variants[0].src, 0.15);
+        }
+      }
+    });
 
     // ── Commentary Engine listeners ──
     E.on('DEFENSE_SCORED', (p) => {
@@ -234,6 +193,9 @@ class EngineManager {
     E.on('WICKET_CAUGHT', () => this.lighting.flashScreen('#FF0000', 200, 0.2));
     E.on('WICKET_LBW', () => this.lighting.flashScreen('#FF0000', 200, 0.2));
     E.on('WICKET_RUN_OUT', () => this.lighting.flashScreen('#FF0000', 200, 0.2));
+    E.on('WICKET_CAUGHT_BEHIND', () => this.lighting.flashScreen('#FF0000', 200, 0.2));
+    E.on('WICKET_STUMPED', () => this.lighting.flashScreen('#FF0000', 200, 0.2));
+    E.on('WICKET_HIT_WICKET', () => this.lighting.flashScreen('#FF0000', 200, 0.2));
     E.on('DEATH_OVERS_START', () => this.lighting.setAmbientBrightness(1.05));
 
     // ── Crowd Engine listeners ──
@@ -241,7 +203,8 @@ class EngineManager {
       'DEFENSE_SCORED', 'RUNS_SCORED', 'BOUNDARY_FOUR', 'BOUNDARY_SIX',
       'WICKET_BOWLED', 'WICKET_DEFENSE', 'WICKET_CAUGHT', 'WICKET_LBW',
       'WICKET_RUN_OUT', 'WICKET_STUMPED', 'WICKET_CAUGHT_BEHIND',
-      'MILESTONE_50', 'MILESTONE_100', 'HATTRICK',
+      'WICKET_HIT_WICKET',
+      'MILESTONE_50', 'MILESTONE_100', 'MILESTONE_5_WICKETS', 'HATTRICK',
       'OVER_END', 'DEATH_OVERS_START',
     ];
     crowdEvents.forEach(evt => {
