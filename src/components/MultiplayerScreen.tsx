@@ -1888,6 +1888,22 @@ export default function MultiplayerScreen({ onHome }: Props) {
                     ✅ Sent: "{sentTease}"
                   </motion.div>
                 )}
+
+                {/* Emote system */}
+                <EmoteBubble emoteId={receivedEmote} from="opponent" senderName={opponentName} />
+                <EmoteBubble emoteId={sentEmote} from="self" />
+                <EmotePicker
+                  disabled={phase !== "playing"}
+                  onSend={(emoteId) => {
+                    if (!currentGame) return;
+                    setSentEmote(emoteId);
+                    setTimeout(() => setSentEmote(null), 4000);
+                    const existingPayload = (currentGame as any).round_result_payload || {};
+                    supabase.from("multiplayer_games").update({
+                      round_result_payload: { ...existingPayload, emote: emoteId, emote_from: user?.id, emote_turn: currentGame.current_turn },
+                    }).eq("id", currentGame.id);
+                  }}
+                />
               </>
             }
           />
