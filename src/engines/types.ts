@@ -37,7 +37,7 @@ export type EventType =
   | 'BALL_ANIMATION_DONE'
 
   // Scoring events
-  | 'DOT_BALL'
+  | 'DEFENSE_SCORED'
   | 'RUNS_SCORED'
   | 'BOUNDARY_FOUR'
   | 'BOUNDARY_SIX'
@@ -52,6 +52,7 @@ export type EventType =
   | 'WICKET_RUN_OUT'
   | 'WICKET_STUMPED'
   | 'WICKET_HIT_WICKET'
+  | 'WICKET_DEFENSE'
 
   // Player events
   | 'NEW_BATSMAN'
@@ -138,7 +139,7 @@ export interface MatchContext {
 
 export type DismissalType =
   | 'bowled' | 'caught' | 'caught_behind' | 'lbw'
-  | 'run_out' | 'stumped' | 'hit_wicket';
+  | 'run_out' | 'stumped' | 'hit_wicket' | 'defense_standoff';
 
 export interface BallResult {
   runs: number;
@@ -148,6 +149,7 @@ export interface BallResult {
   isBoundarySix: boolean;
   isWide: boolean;
   isNoBall: boolean;
+  isDefenseScored?: boolean;
   dismissalType: DismissalType | null;
   battingPick: number;
   bowlingPick: number;
