@@ -143,6 +143,8 @@ export default function ProfilePage() {
   const [selectedFriend, setSelectedFriend] = useState<any>(null);
   const { pvpRecord } = usePvpStats(user?.id);
   const [achieveFilter, setAchieveFilter] = useState<string>("All");
+  const { getHistory } = useTournamentPersistence();
+  const [tournamentStats, setTournamentStats] = useState<{ total: number; wins: number; bestPlacement: string | null; formats: Record<string, number> }>({ total: 0, wins: 0, bestPlacement: null, formats: {} });
 
   useEffect(() => {
     if (!user) return;
