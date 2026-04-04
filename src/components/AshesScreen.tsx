@@ -28,9 +28,20 @@ export default function AshesScreen({ onHome }: Props) {
   const ballsRef = useRef(0);
 
   const TEST_VENUES = ["🏟️ Brisbane", "🏟️ Adelaide", "🏟️ Melbourne", "🏟️ Sydney", "🏟️ Perth"];
+  const [reward, setReward] = useState<TournamentReward | null>(null);
+  const rewardedRef = useRef(false);
+  const { user } = useAuth();
 
   const myWins = results.filter(r => r === "win").length;
   const oppWins = results.filter(r => r === "loss").length;
+
+  useEffect(() => {
+    if (phase === "results" && user && !rewardedRef.current) {
+      rewardedRef.current = true;
+      const placement = myWins > oppWins ? "🏆 SERIES WON!" : myWins === oppWins ? "SERIES DRAWN" : "SERIES LOST";
+      grantTournamentRewards(user.id, placement, "ashes").then(r => r && setReward(r));
+    }
+  }, [phase, user]);
 
   const startTest = () => {
     setScore(0); setOppScore(0); setBalls(0); setInnings(1);
