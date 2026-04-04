@@ -8,6 +8,7 @@ import CurrencyPill from "@/components/shared/CurrencyPill";
 import ShopItemCard from "@/components/shop/ShopItemCard";
 import ShopItemModal from "@/components/shop/ShopItemModal";
 import ChestReveal from "@/components/shop/ChestReveal";
+import engines from "@/engines/EngineManager";
 import { toast } from "sonner";
 
 interface ShopItem {
