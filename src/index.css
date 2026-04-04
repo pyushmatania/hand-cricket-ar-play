@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Exo+2:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Rubik:wght@400;500;600;700;800;900&family=Nunito:wght@400;500;600;700;800;900&family=Fredoka:wght@400;500;600;700&family=Bungee&family=Bungee+Shade&family=Rajdhani:wght@300;400;500;600;700&family=Exo+2:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -9,7 +9,7 @@
 
 @layer base {
   :root {
-    /* Deep Blue Glassmorphism — Premium Sports Gaming */
+    /* V7 Cricket-Native Material System */
     --background: 222 47% 6%;
     --foreground: 210 40% 96%;
 
@@ -40,19 +40,43 @@
 
     --radius: 0.75rem;
 
-    /* Wood & Metal texture tokens */
-    --wood-light: 28 56% 32%;
-    --wood-dark: 25 55% 18%;
-    --wood-plank: 28 45% 24%;
-    --wood-grain: 30 40% 28%;
-    --metal-bronze: 30 40% 45%;
-    --metal-iron: 220 10% 40%;
-    --metal-rivet: 35 30% 55%;
-    --leather-bg: 30 35% 20%;
-    --scallop-base: 222 40% 8%;
-    --scallop-tile: 222 35% 12%;
+    /* ── Cricket Material Tokens ── */
+    /* Material 1: Leather (cricket ball) */
+    --leather-dark: 12 80% 14%;
+    --leather-mid: 12 75% 22%;
+    --leather-light: 12 70% 30%;
+    --leather-seam: 12 85% 10%;
+    --leather-highlight: 20 60% 55%;
 
-    /* Premium glass tokens */
+    /* Material 2: Pitch Grass */
+    --grass-dark: 130 50% 18%;
+    --grass-mid: 130 45% 30%;
+    --grass-light: 130 40% 38%;
+
+    /* Material 3: Jersey Mesh */
+    --jersey-mesh-opacity: 0.15;
+
+    /* Material 4: Chalk / Whitewash */
+    --chalk-white: 48 60% 97%;
+    --chalk-glow: 0 0% 100%;
+
+    /* Material 5: Stadium Concrete */
+    --concrete-dark: 230 15% 16%;
+    --concrete-mid: 230 12% 22%;
+    --concrete-light: 230 10% 28%;
+
+    /* Material 6: Floodlight Chrome */
+    --chrome-dark: 230 8% 42%;
+    --chrome-mid: 230 6% 62%;
+    --chrome-light: 230 5% 82%;
+    --chrome-highlight: 0 0% 93%;
+
+    /* Material 7: Scoreboard Paint */
+    --scoreboard-dark: 140 30% 8%;
+    --scoreboard-mid: 140 25% 12%;
+    --scoreboard-text: 48 80% 85%;
+
+    /* Legacy glass tokens (mapped to new materials) */
     --glass-bg: 222 40% 12% / 0.65;
     --glass-border: 222 25% 28% / 0.5;
     --glass-highlight: 217 91% 70% / 0.08;
@@ -94,8 +118,6 @@
     --gradient-card: linear-gradient(145deg, hsl(222 40% 13% / 0.9), hsl(222 40% 8% / 0.95));
     --gradient-premium: linear-gradient(135deg, hsl(222 45% 14% / 0.95), hsl(222 50% 8% / 0.98));
     --gradient-hero: linear-gradient(180deg, hsl(217 60% 15% / 0.4) 0%, hsl(222 47% 6%) 70%);
-    --gradient-wood: linear-gradient(180deg, hsl(28 56% 32%) 0%, hsl(25 55% 18%) 100%);
-    --gradient-wood-dark: linear-gradient(180deg, hsl(28 45% 24%) 0%, hsl(25 40% 14%) 100%);
 
     --sidebar-background: 222 40% 10%;
     --sidebar-foreground: 210 40% 96%;
@@ -121,17 +143,233 @@
 }
 
 @layer utilities {
-  /* ── Scalloped / Fish-Scale Background Pattern ── */
-  .scallop-bg {
-    background-color: hsl(var(--scallop-base));
-    background-image:
-      radial-gradient(circle at 50% 0%, hsl(var(--scallop-tile)) 50%, transparent 50.5%),
-      radial-gradient(circle at 0% 0%, hsl(var(--scallop-tile)) 50%, transparent 50.5%),
-      radial-gradient(circle at 100% 0%, hsl(var(--scallop-tile)) 50%, transparent 50.5%);
-    background-size: 40px 20px;
-    background-position: 0 0, 0 0, 0 0;
+  /* ═══════════════════════════════════════════════════
+     V7 CRICKET MATERIAL SYSTEM — 7 Materials
+     ═══════════════════════════════════════════════════ */
+
+  /* ── Material 1: LEATHER (Primary Surface — Cricket Ball) ── */
+  .surface-leather {
+    background:
+      repeating-linear-gradient(
+        135deg,
+        transparent 0px,
+        hsl(12 60% 20% / 0.08) 2px,
+        transparent 4px,
+        hsl(12 50% 25% / 0.05) 6px,
+        transparent 10px
+      ),
+      linear-gradient(135deg, hsl(var(--leather-light)) 0%, hsl(var(--leather-mid)) 40%, hsl(var(--leather-dark)) 100%);
+    border: 3px solid hsl(var(--leather-seam));
+    border-radius: 14px;
+    box-shadow:
+      0 6px 14px rgba(0,0,0,0.5),
+      inset 0 2px 0 hsl(var(--leather-highlight) / 0.15),
+      inset 0 -2px 0 rgba(0,0,0,0.3);
   }
 
+  .surface-leather-light {
+    background:
+      repeating-linear-gradient(
+        135deg,
+        transparent 0px,
+        hsl(12 50% 25% / 0.06) 2px,
+        transparent 5px
+      ),
+      linear-gradient(135deg, hsl(12 70% 35%) 0%, hsl(12 75% 25%) 100%);
+    border: 2px solid hsl(var(--leather-seam));
+    border-radius: 12px;
+    box-shadow:
+      0 4px 10px rgba(0,0,0,0.4),
+      inset 0 1px 0 hsl(var(--leather-highlight) / 0.12);
+  }
+
+  /* ── Material 2: PITCH GRASS (Accent Surface) ── */
+  .surface-grass {
+    background:
+      repeating-linear-gradient(
+        90deg,
+        hsl(130 40% 32% / 0.4) 0px,
+        hsl(130 40% 32% / 0.4) 10px,
+        transparent 10px,
+        transparent 20px
+      ),
+      linear-gradient(90deg, hsl(var(--grass-dark)) 0%, hsl(var(--grass-mid)) 50%, hsl(var(--grass-dark)) 100%);
+    border: 2px solid hsl(130 50% 14%);
+  }
+
+  .grass-fill {
+    background: linear-gradient(90deg, hsl(var(--grass-dark)), hsl(var(--grass-light)), hsl(var(--grass-mid)));
+    border-radius: 999px;
+  }
+
+  /* ── Material 3: JERSEY MESH (Button Surface) ── */
+  .surface-jersey {
+    background:
+      repeating-conic-gradient(
+        var(--jersey-color, hsl(var(--primary))) 0% 25%, transparent 0% 50%
+      ) 0 0 / 4px 4px,
+      linear-gradient(180deg, var(--jersey-color, hsl(var(--primary))), var(--jersey-dark, hsl(217 91% 45%)));
+    border: 3px solid var(--jersey-border, hsl(217 91% 35%));
+    border-bottom-width: 7px;
+    border-radius: 14px;
+    color: white;
+    font-family: 'Lilita One', sans-serif;
+    text-shadow: 0 3px 6px rgba(0,0,0,0.6);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    box-shadow:
+      0 7px 0 var(--jersey-border, hsl(217 91% 30%)),
+      0 10px 15px rgba(0,0,0,0.4),
+      inset 0 2px 0 hsl(0 0% 100% / 0.2);
+    transition: all 0.1s ease;
+  }
+  .surface-jersey:active {
+    border-bottom-width: 3px;
+    transform: translateY(4px);
+    box-shadow:
+      0 3px 0 var(--jersey-border, hsl(217 91% 30%)),
+      0 5px 8px rgba(0,0,0,0.3);
+  }
+
+  /* Jersey color variants */
+  .jersey-green {
+    --jersey-color: hsl(var(--game-green));
+    --jersey-dark: hsl(122 39% 38%);
+    --jersey-border: hsl(122 39% 25%);
+  }
+  .jersey-red {
+    --jersey-color: hsl(var(--game-red));
+    --jersey-dark: hsl(4 90% 42%);
+    --jersey-border: hsl(4 90% 30%);
+  }
+  .jersey-gold {
+    --jersey-color: hsl(var(--game-gold));
+    --jersey-dark: hsl(51 100% 38%);
+    --jersey-border: hsl(51 100% 28%);
+  }
+
+  /* ── Material 4: CHALK / WHITEWASH (Text & Lines) ── */
+  .line-chalk {
+    border-bottom: 3px solid hsl(var(--chalk-white) / 0.85);
+    filter: contrast(1.05);
+  }
+  .text-chalk {
+    color: hsl(var(--chalk-white));
+    text-shadow: 0 0 8px hsl(var(--chalk-glow) / 0.3);
+    font-family: 'Lilita One', sans-serif;
+  }
+  .chalk-divider {
+    height: 2px;
+    background: hsl(var(--chalk-white) / 0.2);
+    border-radius: 1px;
+  }
+
+  /* ── Material 5: STADIUM CONCRETE (Structural) ── */
+  .surface-concrete {
+    background: linear-gradient(180deg, hsl(var(--concrete-mid)) 0%, hsl(var(--concrete-dark)) 100%);
+    border: 1px solid hsl(0 0% 100% / 0.08);
+  }
+  .surface-concrete-dark {
+    background: linear-gradient(180deg, hsl(var(--concrete-dark)) 0%, hsl(230 15% 12%) 100%);
+    border: 1px solid hsl(0 0% 100% / 0.05);
+  }
+
+  /* ── Material 6: FLOODLIGHT CHROME (Premium Accents) ── */
+  .surface-chrome {
+    background: linear-gradient(180deg,
+      hsl(var(--chrome-light)) 0%,
+      hsl(var(--chrome-mid)) 30%,
+      hsl(var(--chrome-dark)) 60%,
+      hsl(var(--chrome-mid)) 90%,
+      hsl(var(--chrome-light)) 100%
+    );
+    border: 1px solid hsl(230 8% 35%);
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3), inset 0 1px 0 hsl(0 0% 100% / 0.5);
+  }
+
+  /* Chrome corner bracket frame */
+  .cricket-frame {
+    position: relative;
+    border: 3px solid hsl(230 10% 35%);
+    border-radius: 14px;
+  }
+  .cricket-frame::before,
+  .cricket-frame::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+    background: linear-gradient(135deg, hsl(var(--chrome-light)), hsl(var(--chrome-mid)), hsl(var(--chrome-dark)));
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 hsl(0 0% 100% / 0.4);
+    z-index: 2;
+  }
+  .cricket-frame::before {
+    top: -3px;
+    left: -3px;
+    border-bottom-right-radius: 6px;
+  }
+  .cricket-frame::after {
+    top: -3px;
+    right: -3px;
+    border-bottom-left-radius: 6px;
+  }
+
+  /* Chrome pill (for currency displays) */
+  .chrome-pill {
+    background: linear-gradient(180deg, hsl(var(--chrome-light)) 0%, hsl(var(--chrome-mid)) 100%);
+    border: 1px solid hsl(var(--chrome-dark));
+    border-radius: 999px;
+    padding: 2px 10px;
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.3);
+  }
+
+  /* ── Material 7: SCOREBOARD PAINT (Info Display) ── */
+  .surface-scoreboard {
+    background: linear-gradient(180deg, hsl(var(--scoreboard-mid)) 0%, hsl(var(--scoreboard-dark)) 100%);
+    border: 3px solid hsl(140 20% 15%);
+    border-radius: 8px;
+    color: hsl(var(--scoreboard-text));
+    font-family: 'Rubik', monospace;
+    font-weight: 700;
+    letter-spacing: 2px;
+  }
+
+  /* ═══════════════════════════════════════════════════
+     BACKGROUND SYSTEM — Cricket Pitch Patterns
+     ═══════════════════════════════════════════════════ */
+
+  /* Primary: Pitch roller stripe pattern */
+  .pitch-stripe-bg {
+    background-color: hsl(var(--background));
+    background-image:
+      repeating-linear-gradient(
+        90deg,
+        hsl(0 0% 100% / 0.03) 0px,
+        hsl(0 0% 100% / 0.03) 30px,
+        transparent 30px,
+        transparent 60px
+      ),
+      radial-gradient(ellipse at 50% 30%, hsl(var(--primary) / 0.08) 0%, hsl(var(--background)) 70%);
+  }
+
+  /* Secondary: Floodlight glow pattern (match screens) */
+  .bg-floodlit {
+    background:
+      radial-gradient(ellipse at 25% -10%, hsl(60 80% 95% / 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 75% -10%, hsl(60 80% 95% / 0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% -5%, hsl(60 80% 95% / 0.12) 0%, transparent 40%);
+  }
+
+  /* ═══════════════════════════════════════════════════
+     LEGACY ALIASES — Map old classes to new materials
+     ═══════════════════════════════════════════════════ */
+
+  /* Scallop bg → Pitch stripe */
+  .scallop-bg {
+    @apply pitch-stripe-bg;
+  }
   .scallop-bg::before {
     content: '';
     position: absolute;
@@ -141,162 +379,69 @@
     z-index: 0;
   }
 
-  /* ── Wood Panel Styles ────────────────────── */
+  /* Wood panels → Concrete + Leather */
   .wood-panel {
-    background:
-      repeating-linear-gradient(
-        90deg,
-        transparent 0px,
-        hsl(28 30% 22% / 0.06) 2px,
-        transparent 4px,
-        hsl(28 20% 30% / 0.04) 8px,
-        transparent 12px
-      ),
-      linear-gradient(180deg, hsl(28 45% 26%) 0%, hsl(25 50% 16%) 100%);
-    border: 3px solid hsl(25 40% 12%);
-    border-radius: 12px;
-    box-shadow:
-      0 6px 12px rgba(0,0,0,0.5),
-      inset 0 2px 0 hsl(35 40% 40% / 0.2),
-      inset 0 -2px 0 rgba(0,0,0,0.3);
+    @apply surface-leather;
   }
-
   .wood-panel-dark {
-    background:
-      repeating-linear-gradient(
-        90deg,
-        transparent 0px,
-        hsl(222 20% 15% / 0.1) 2px,
-        transparent 4px,
-        hsl(222 15% 20% / 0.06) 8px,
-        transparent 12px
-      ),
-      linear-gradient(180deg, hsl(222 40% 14%) 0%, hsl(222 45% 9%) 100%);
-    border: 3px solid hsl(222 30% 8%);
+    @apply surface-concrete;
     border-radius: 12px;
     box-shadow:
       0 6px 12px rgba(0,0,0,0.5),
-      inset 0 2px 0 hsl(222 30% 25% / 0.15),
+      inset 0 2px 0 hsl(0 0% 100% / 0.05),
       inset 0 -2px 0 rgba(0,0,0,0.3);
   }
 
-  /* ── Metal Corner Brackets (via pseudo-elements on children) ── */
+  /* Metal corners → Chrome brackets */
   .metal-corners {
-    position: relative;
-  }
-  .metal-corners::before,
-  .metal-corners::after {
-    content: '';
-    position: absolute;
-    width: 14px;
-    height: 14px;
-    border-radius: 2px;
-    background: radial-gradient(circle at 40% 40%, hsl(35 30% 60%), hsl(30 25% 35%));
-    box-shadow: 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 hsl(40 40% 70% / 0.4);
-    z-index: 2;
-  }
-  .metal-corners::before {
-    top: -3px;
-    left: -3px;
-    border-bottom-right-radius: 6px;
-  }
-  .metal-corners::after {
-    top: -3px;
-    right: -3px;
-    border-bottom-left-radius: 6px;
+    @apply cricket-frame;
   }
 
-  /* ── Metal Rivet Dot ───────────────────────── */
+  /* Rope separator → Chalk divider */
+  .rope-separator {
+    @apply chalk-divider;
+  }
+
+  /* Metal rivet → Chrome dot */
   .metal-rivet {
     display: inline-block;
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: radial-gradient(circle at 35% 35%, hsl(35 30% 65%), hsl(30 25% 35%));
-    box-shadow: 0 1px 3px rgba(0,0,0,0.5), inset 0 1px 0 hsl(40 40% 75% / 0.5);
+    background: linear-gradient(135deg, hsl(var(--chrome-light)), hsl(var(--chrome-dark)));
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5), inset 0 1px 0 hsl(0 0% 100% / 0.4);
   }
 
-  /* ── Rope Separator ────────────────────────── */
-  .rope-separator {
-    height: 6px;
-    background:
-      repeating-linear-gradient(
-        90deg,
-        hsl(30 40% 35%) 0px,
-        hsl(35 45% 45%) 4px,
-        hsl(28 35% 30%) 8px,
-        hsl(32 40% 40%) 12px
-      );
-    border-radius: 3px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.4), inset 0 1px 0 hsl(40 40% 55% / 0.3);
-  }
-
-  /* ── Wooden Button Style ───────────────────── */
+  /* Button → Jersey mesh */
   .btn-wood {
-    background:
-      repeating-linear-gradient(
-        90deg,
-        transparent 0px,
-        hsl(28 25% 30% / 0.08) 3px,
-        transparent 6px
-      ),
-      linear-gradient(180deg, var(--btn-start, hsl(122 50% 52%)), var(--btn-mid, hsl(122 45% 42%)), var(--btn-end, hsl(122 39% 35%)));
-    border: 3px solid var(--btn-dark, hsl(122 39% 25%));
-    border-bottom-width: 7px;
-    border-radius: 14px;
-    color: white;
-    font-family: 'Lilita One', sans-serif;
-    text-shadow: 0 3px 6px rgba(0,0,0,0.6);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    box-shadow:
-      0 7px 0 var(--btn-dark, hsl(122 39% 22%)),
-      0 10px 15px rgba(0,0,0,0.4),
-      inset 0 2px 0 hsl(0 0% 100% / 0.2);
-    transition: all 0.1s ease;
-  }
-  .btn-wood:active {
-    border-bottom-width: 3px;
-    transform: translateY(4px);
-    box-shadow:
-      0 3px 0 var(--btn-dark, hsl(122 39% 22%)),
-      0 5px 8px rgba(0,0,0,0.3);
+    @apply surface-jersey jersey-green;
   }
 
-  /* ── Wooden Shelf (Bottom Nav) ────────────── */
+  /* Wood shelf → Concrete shelf */
   .wood-shelf {
-    background:
-      repeating-linear-gradient(
-        90deg,
-        transparent 0px,
-        hsl(25 30% 15% / 0.08) 3px,
-        transparent 6px
-      ),
-      linear-gradient(to top, hsl(25 40% 12%), hsl(28 35% 18%));
-    border-top: 3px solid hsl(25 30% 10%);
+    background: linear-gradient(to top, hsl(var(--concrete-dark)), hsl(var(--concrete-mid)));
+    border-top: 2px solid hsl(var(--chalk-white) / 0.15);
     box-shadow:
       0 -4px 16px rgba(0,0,0,0.6),
-      inset 0 2px 0 hsl(35 30% 30% / 0.2),
+      inset 0 2px 0 hsl(0 0% 100% / 0.05),
       inset 0 -1px 0 rgba(0,0,0,0.3);
   }
 
-  /* ── Glass Effects (kept for transition) ─── */
+  /* Glass → Material mappings */
   .glass {
-    @apply wood-panel-dark;
+    @apply surface-concrete;
+    border-radius: 12px;
   }
-
   .glass-card {
-    @apply wood-panel-dark;
+    @apply surface-concrete;
+    border-radius: 12px;
   }
-
   .glass-premium {
-    @apply wood-panel;
+    @apply surface-leather;
   }
-
   .glass-score {
-    @apply wood-panel-dark;
+    @apply surface-scoreboard;
   }
-
   .glass-nav {
     @apply wood-shelf;
   }
