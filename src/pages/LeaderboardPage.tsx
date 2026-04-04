@@ -162,6 +162,7 @@ export default function LeaderboardPage() {
   const [sparklines, setSparklines] = useState<Record<string, ("W" | "L" | "D")[]>>({});
   const [playerOfWeek, setPlayerOfWeek] = useState<any>(null);
   const [potwLoading, setPotwLoading] = useState(false);
+  const [tourneyLeaders, setTourneyLeaders] = useState<TourneyLeaderEntry[]>([]);
 
   const { challenges, friendRankings, loading: challengesLoading } = useWeeklyChallenges();
 
