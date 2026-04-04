@@ -5,6 +5,20 @@
 
 import type { EventType, MatchContext, CommentaryLanguage, CommentaryLine } from './types';
 import { getCommentaryPool } from '@/data/commentary';
+import type { CommentaryTone } from '@/lib/matchThemes';
+
+export interface CommentaryToneConfig {
+  tone: CommentaryTone;
+  speechRate: number;       // multiplier on line.rate
+  frequency: number;        // 0-1, probability gate for triggering commentary
+  preferredLanguage?: CommentaryLanguage; // override language if set
+}
+
+const DEFAULT_TONE_CONFIG: CommentaryToneConfig = {
+  tone: 'professional',
+  speechRate: 1.0,
+  frequency: 0.7,
+};
 
 export class CommentaryEngine {
   private language: CommentaryLanguage = 'english';
@@ -14,6 +28,7 @@ export class CommentaryEngine {
   private voiceMain: SpeechSynthesisVoice | null = null;
   private voiceColor: SpeechSynthesisVoice | null = null;
   private lastPlayedIds: string[] = [];
+  private toneConfig: CommentaryToneConfig = DEFAULT_TONE_CONFIG;
 
   constructor() {
     this.initVoices();
@@ -52,7 +67,13 @@ export class CommentaryEngine {
   ): Promise<void> {
     if (this.isMuted || this.isSpeaking) return;
 
-    const pool = this.getPool(eventType, perspective);
+    // Frequency gate — theme controls how chatty commentary is
+    if (Math.random() > this.toneConfig.frequency) return;
+
+    // Use preferred language from tone config if set, otherwise user setting
+    const lang = this.toneConfig.preferredLanguage || this.language;
+
+    const pool = this.getPoolWithLang(eventType, perspective, lang);
     if (!pool || pool.length === 0) return;
 
     // Anti-repetition filter
@@ -119,7 +140,8 @@ export class CommentaryEngine {
 
       const utterance = new SpeechSynthesisUtterance(line.text);
       utterance.voice = line.voice === 'main' ? this.voiceMain : this.voiceColor;
-      utterance.rate = line.rate;
+      // Apply tone config speech rate multiplier
+      utterance.rate = line.rate * this.toneConfig.speechRate;
       utterance.pitch = line.pitch;
       utterance.volume = 1.0;
 
@@ -148,6 +170,8 @@ export class CommentaryEngine {
   // ── Configuration ──
   setLanguage(lang: CommentaryLanguage): void { this.language = lang; }
   setTheme(theme: string): void { this.currentTheme = theme; }
+  setToneConfig(config: CommentaryToneConfig): void { this.toneConfig = config; }
+  getToneConfig(): CommentaryToneConfig { return this.toneConfig; }
   setMuted(muted: boolean): void {
     this.isMuted = muted;
     if (muted && typeof speechSynthesis !== 'undefined') {
@@ -165,6 +189,10 @@ export class CommentaryEngine {
    */
   private getPool(eventType: EventType, _perspective: string): CommentaryLine[] {
     return getCommentaryPool(eventType, this.language);
+  }
+
+  private getPoolWithLang(eventType: EventType, _perspective: string, lang: CommentaryLanguage): CommentaryLine[] {
+    return getCommentaryPool(eventType, lang);
   }
 
   destroy(): void {
