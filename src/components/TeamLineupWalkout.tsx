@@ -193,9 +193,11 @@ function parseTwGradient(tw: string): string {
 
 function WalkoutAvatar({ side, phase, name, emoji, avatarUrl, avatarPresetGradient, frame, teamColor }: WalkoutAvatarProps) {
   const isLeft = side === "left";
+  const avatarBg = avatarPresetGradient ? parseTwGradient(avatarPresetGradient) : "";
   const defaultGradient = isLeft
     ? "linear-gradient(135deg, hsl(217 91% 55%), hsl(217 80% 35%))"
     : "linear-gradient(135deg, hsl(0 75% 55%), hsl(0 65% 35%))";
+  const resolvedBg = avatarBg || defaultGradient;
 
   const ringColor = frame?.ring || (isLeft ? "hsl(217 80% 70% / 0.5)" : "hsl(0 65% 70% / 0.5)");
   const ringGlow = frame?.glow || `${teamColor.replace(")", " / 0.4)")}`;
