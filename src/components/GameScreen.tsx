@@ -22,7 +22,8 @@ import { pickConfiguredMatchCommentators, getDuoCommentary, type Commentator, ty
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import type { BallResult, Move } from "@/hooks/useHandCricket";
-import { engines } from "@/engines/EngineManager";
+import { useEngines } from "@/hooks/useEngines";
+import { WeatherParticles } from "./WeatherParticles";
 
 const MOVE_EMOJI: Record<string, string> = {
   DEF: "✊", "1": "☝️", "2": "✌️", "3": "🤟", "4": "🖖", "6": "👍",
@@ -59,6 +60,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
   const { soundEnabled, hapticsEnabled, commentaryEnabled, voiceEnabled, crowdEnabled, voiceEngine, commentaryVoice, commentaryLanguage, musicEnabled, ambientVolume, arCeremoniesEnabled } = useSettings();
+  const engines = useEngines();
   const shake = useScreenShake();
   const detection = useHandDetection(videoElementRef);
   const [matchConfig, setMatchConfig] = useState<import("@/hooks/useHandCricket").MatchConfig | null>(null);
@@ -89,13 +91,19 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickConfiguredMatchCommentators(commentaryVoice));
   const prevPhaseRef = useRef(game.phase);
 
-  // ── Initialize Engine System ──
-  useEffect(() => {
-    engines.initialize();
-    return () => {
-      engines.destroy();
-    };
-  }, []);
+  // Engine lifecycle managed by useEngines() hook above
+  const [matchWeather] = useState(() => {
+    // Pick random weather for this match
+    const weathers = ['clear', 'overcast', 'drizzle', 'golden_hour', 'night_lights', 'heavy_dew'] as const;
+    const weights = [30, 15, 8, 12, 25, 10];
+    const total = weights.reduce((a, b) => a + b, 0);
+    let roll = Math.random() * total;
+    for (let i = 0; i < weathers.length; i++) {
+      roll -= weights[i];
+      if (roll <= 0) return weathers[i];
+    }
+    return 'clear' as const;
+  });
 
   // Ambient stadium music for AR mode — arena-specific
   useEffect(() => {
@@ -411,6 +419,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     <div className="fixed inset-0 bg-black overflow-hidden">
       <CelebrationEffects lastResult={game.lastResult} gameResult={game.result} phase={game.phase} />
       <CanvasFireworks type={fireworkType} duration={fireworkType === "win" ? 5000 : 3000} />
+      <WeatherParticles weather={matchWeather} />
 
       {/* Camera fills the full screen */}
       <div className="absolute inset-0">
