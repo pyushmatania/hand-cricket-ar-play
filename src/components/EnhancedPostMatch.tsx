@@ -9,6 +9,7 @@ import {
   getPostMatchResultLines, getPostMatchStatsLines, getPostMatchVerdictLines, getPostMatchRivalryLines,
 } from "@/lib/commentaryDuo";
 import WagonWheel from "./WagonWheel";
+import TrophyCeremony from "./TrophyCeremony";
 import type { BallResult } from "@/hooks/useHandCricket";
 import victoryTrophy from "@/assets/victory-trophy.png";
 import GameButton from "./shared/GameButton";
