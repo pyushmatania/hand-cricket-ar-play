@@ -1,7 +1,9 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { SFX, Haptics } from "@/lib/sounds";
 import { useSettings } from "@/contexts/SettingsContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { grantTournamentRewards, type TournamentReward } from "@/lib/tournamentRewards";
 
 interface Props { onHome: () => void; }
 
