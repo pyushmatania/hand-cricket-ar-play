@@ -47,43 +47,7 @@ function formatTime(seconds: number): string {
   return `${s}s`;
 }
 
-// Featured modes shown as big buttons
-const FEATURED_MODES = [
-  {
-    id: "tap",
-    icon: "⚡",
-    title: "TAP MODE",
-    subtitle: "ARCADE SPEED",
-    gradient: "linear-gradient(135deg, hsl(280 85% 55%), hsl(320 70% 55%))",
-    border: "hsl(280 60% 50%)",
-    glow: "hsl(280 85% 60% / 0.4)",
-    bottomBorder: "hsl(280 50% 30%)",
-  },
-  {
-    id: "multiplayer",
-    icon: "⚔️",
-    title: "PvP",
-    subtitle: "REAL-TIME",
-    gradient: "linear-gradient(135deg, hsl(350 75% 55%), hsl(0 84% 50%))",
-    border: "hsl(0 60% 50%)",
-    glow: "hsl(0 84% 60% / 0.4)",
-    bottomBorder: "hsl(0 50% 30%)",
-  },
-];
-
-// Mode list for the scrollable section
-const OTHER_MODES = [
-  { id: "ar", icon: "📸", title: "AR MODE", sub: "Camera + Gestures", accent: "hsl(217 91% 60%)" },
-  { id: "daily", icon: "📅", title: "DAILY", sub: "New Target", accent: "hsl(43 93% 50%)" },
-  { id: "tournament", icon: "🏆", title: "TOURNAMENT", sub: "5 Rounds", accent: "hsl(43 100% 55%)" },
-  { id: "ipl", icon: "🏟️", title: "IPL SEASON", sub: "Full Season", accent: "hsl(25 90% 55%)" },
-  { id: "royale", icon: "💀", title: "ROYALE", sub: "Battle Royale", accent: "hsl(280 70% 55%)" },
-  { id: "auction", icon: "💰", title: "AUCTION", sub: "Bid & Battle", accent: "hsl(43 85% 50%)" },
-  { id: "worldcup", icon: "🌍", title: "WORLD CUP", sub: "10 Nations", accent: "hsl(217 80% 55%)" },
-  { id: "ashes", icon: "🏺", title: "ASHES", sub: "Best of 5", accent: "hsl(35 70% 50%)" },
-  { id: "knockout", icon: "🥊", title: "KNOCKOUT", sub: "8-Team", accent: "hsl(0 70% 55%)" },
-  { id: "practice", icon: "🎯", title: "PRACTICE", sub: "Learn", accent: "hsl(142 71% 45%)" },
-];
+// (modes moved to ModeIconGrid component)
 
 export default function HomePage() {
   const navigate = useNavigate();
