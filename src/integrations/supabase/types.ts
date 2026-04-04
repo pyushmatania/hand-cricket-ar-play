@@ -396,6 +396,78 @@ export type Database = {
         }
         Relationships: []
       }
+      players: {
+        Row: {
+          accuracy: number | null
+          agility: number | null
+          avatar_url: string | null
+          batting_style: string | null
+          bowling_style: string | null
+          clutch: number | null
+          country: string | null
+          created_at: string
+          id: string
+          ipl_team: string | null
+          name: string
+          pace_spin: number | null
+          power: number | null
+          rarity: string | null
+          role: string | null
+          short_name: string | null
+          special_ability_desc: string | null
+          special_ability_id: string | null
+          special_ability_name: string | null
+          technique: number | null
+          thumbnail_url: string | null
+        }
+        Insert: {
+          accuracy?: number | null
+          agility?: number | null
+          avatar_url?: string | null
+          batting_style?: string | null
+          bowling_style?: string | null
+          clutch?: number | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          ipl_team?: string | null
+          name: string
+          pace_spin?: number | null
+          power?: number | null
+          rarity?: string | null
+          role?: string | null
+          short_name?: string | null
+          special_ability_desc?: string | null
+          special_ability_id?: string | null
+          special_ability_name?: string | null
+          technique?: number | null
+          thumbnail_url?: string | null
+        }
+        Update: {
+          accuracy?: number | null
+          agility?: number | null
+          avatar_url?: string | null
+          batting_style?: string | null
+          bowling_style?: string | null
+          clutch?: number | null
+          country?: string | null
+          created_at?: string
+          id?: string
+          ipl_team?: string | null
+          name?: string
+          pace_spin?: number | null
+          power?: number | null
+          rarity?: string | null
+          role?: string | null
+          short_name?: string | null
+          special_ability_desc?: string | null
+          special_ability_id?: string | null
+          special_ability_name?: string | null
+          technique?: number | null
+          thumbnail_url?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           abandons: number
