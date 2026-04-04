@@ -13,6 +13,7 @@ import StumpHitAnimation from "@/components/StumpHitAnimation";
 import DailyQuestsWidget from "@/components/DailyQuestsWidget";
 import { Lock, Timer } from "lucide-react";
 import { toast } from "sonner";
+import ModeIconGrid from "@/components/ModeIconGrid";
 
 interface ProfileData {
   total_matches: number;
