@@ -27,13 +27,44 @@ export class GameplayEngine {
       return this.createNoBallResult(battingPick, batsman);
     }
 
-    // ── STEP 2: Numbers Match → Potential Wicket ──
+    // ── STEP 2: Defense mechanic ──
+    const DEFENSE = 0; // defense pick value
+    if (battingPick === DEFENSE && bowlingPick === DEFENSE) {
+      // Both defended = OUT
+      return {
+        runs: 0, isWicket: true, isDot: false,
+        isBoundaryFour: false, isBoundarySix: false,
+        isWide: false, isNoBall: false, isDefenseScored: false,
+        dismissalType: 'defense_standoff',
+        battingPick, bowlingPick, commentary: '', soundEffects: [],
+      };
+    }
+    if (battingPick === DEFENSE) {
+      // Batsman defended, scores bowler's number
+      return this.createDefenseScored(bowlingPick, battingPick, bowlingPick);
+    }
+    if (bowlingPick === DEFENSE) {
+      // Bowler defended, batsman scores their number
+      return this.createDefenseScored(battingPick, battingPick, bowlingPick);
+    }
+
+    // ── STEP 3: Numbers Match → Potential Wicket ──
     if (battingPick === bowlingPick) {
       return this.resolveMatchedNumbers(batsman, bowler, context, battingPick, bowlingPick);
     }
 
-    // ── STEP 3: Numbers Don't Match → Runs ──
+    // ── STEP 4: Numbers Don't Match → Runs ──
     return this.resolveRuns(battingPick, bowlingPick, batsman, bowler, context);
+  }
+
+  private createDefenseScored(runs: number, battingPick: number, bowlingPick: number): BallResult {
+    return {
+      runs, isWicket: false, isDot: false,
+      isBoundaryFour: runs === 4, isBoundarySix: runs === 6,
+      isWide: false, isNoBall: false, isDefenseScored: true,
+      dismissalType: null, battingPick, bowlingPick,
+      commentary: '', soundEffects: [],
+    };
   }
 
   // ── MATCHED NUMBERS (potential wicket) ──
