@@ -440,17 +440,29 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       )}
 
       {/* ── TOP BAR ── always visible as overlay */}
-      <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-3 pt-3 pb-2 bg-gradient-to-b from-black/60 to-transparent pointer-events-auto">
+      <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-3 pt-3 pb-2 pointer-events-auto"
+        style={{ background: "linear-gradient(to bottom, hsl(25 15% 8% / 0.85) 0%, transparent 100%)" }}>
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={onHome}
-          className="w-9 h-9 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-sm text-white"
+          className="w-9 h-9 rounded-xl flex items-center justify-center text-sm text-white"
+          style={{
+            background: "linear-gradient(180deg, hsl(25 18% 16%), hsl(25 15% 11%))",
+            border: "2px solid hsl(25 20% 22%)",
+            borderBottom: "3px solid hsl(25 20% 8%)",
+            boxShadow: "0 2px 0 hsl(25 20% 6%), 0 2px 8px rgba(0,0,0,0.5)",
+          }}
         >
           ←
         </motion.button>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full"
+          style={{
+            background: "linear-gradient(180deg, hsl(25 18% 16%), hsl(25 15% 11%))",
+            border: "2px solid hsl(25 20% 22%)",
+            boxShadow: "0 2px 0 hsl(25 20% 6%), 0 2px 8px rgba(0,0,0,0.4)",
+          }}>
           <div className="w-1.5 h-1.5 rounded-full bg-out-red animate-pulse" />
-          <span className="font-display text-[9px] tracking-[0.2em] text-white font-bold">AR CRICKET</span>
+          <span className="font-game-display text-[9px] tracking-[0.2em] text-foreground font-bold">AR CRICKET</span>
         </div>
         <div className="flex items-center gap-1.5">
           <button
