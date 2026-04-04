@@ -30,6 +30,8 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const location = useLocation();
   const arenaImage = (location.state as any)?.arenaImage as string | undefined;
   const arenaId = (location.state as any)?.arenaId as string | undefined;
+  const themeId = (location.state as any)?.themeId as string | undefined;
+  const matchTheme = getThemeById(themeId || localStorage.getItem("selectedTheme") || "gully");
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
   const cosmetics = useEquippedCosmetics();
