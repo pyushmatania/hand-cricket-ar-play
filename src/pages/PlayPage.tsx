@@ -35,6 +35,11 @@ export default function PlayPage() {
           } else {
             setSelectedArena(best);
           }
+          const savedTheme = localStorage.getItem("selectedTheme");
+          if (savedTheme) {
+            const found = getThemeById(savedTheme);
+            setSelectedTheme(found);
+          }
         }
       });
   }, [user]);
