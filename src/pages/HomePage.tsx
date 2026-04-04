@@ -17,6 +17,7 @@ import avatarFrame from "@/assets/avatar-frame.png";
 import { getChestTier } from "@/lib/chests";
 import { getCurrentSeasonalTheme } from "@/lib/seasonalThemes";
 import SeasonalIslandOverlay from "@/components/SeasonalIslandOverlay";
+import ModeSelectDrawer from "@/components/ModeSelectDrawer";
 
 interface ProfileData {
   total_matches: number;
@@ -58,6 +59,7 @@ export default function HomePage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [modeDrawerOpen, setModeDrawerOpen] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [recentMatch, setRecentMatch] = useState<RecentMatch | null>(null);
   const { rivals, loading: rivalsLoading } = useRivals();
@@ -401,7 +403,7 @@ export default function HomePage() {
             whileTap={{ scale: 0.95 }}
             animate={{ scale: [1, 1.01, 1] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            onClick={() => navigate("/play")}
+            onClick={() => setModeDrawerOpen(true)}
             className="w-full surface-jersey jersey-green rounded-[20px] min-h-[60px] flex items-center justify-center gap-3 text-xl"
           >
             <span className="text-2xl">⚔️</span>
@@ -691,6 +693,8 @@ export default function HomePage() {
           ))}
         </motion.div>
       </div>
+
+      <ModeSelectDrawer open={modeDrawerOpen} onOpenChange={setModeDrawerOpen} />
     </div>
   );
 }
