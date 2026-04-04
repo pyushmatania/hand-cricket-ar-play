@@ -7,6 +7,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import TopStatusBar from "@/components/TopStatusBar";
 
+/* ── Doc 1 Material Constants ── */
+const LEATHER_BG = "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)";
+const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
+const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
+const CHALK_DIVIDER = "repeating-linear-gradient(90deg, hsl(45 30% 80%) 0px, hsl(45 30% 80%) 8px, transparent 8px, transparent 14px)";
+
 interface BallRecord {
   userMove: string | number;
   aiMove: string | number;
@@ -56,9 +62,6 @@ const RESULT_THEME = {
   loss: { label: "DEFEAT", badge: "L", bg: "hsl(4,90%,58%)", glow: "hsl(4,90%,58%,0.3)", border: "hsl(4,90%,58%,0.4)", text: "hsl(4,90%,65%)" },
   draw: { label: "DRAW", badge: "D", bg: "hsl(51,100%,50%)", glow: "hsl(51,100%,50%,0.25)", border: "hsl(51,100%,50%,0.35)", text: "hsl(51,100%,60%)" },
 };
-
-const cardBg = "linear-gradient(135deg, hsl(222 40% 13% / 0.9), hsl(222 40% 8% / 0.95))";
-const cardShadow = "0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)";
 
 export default function MatchHistoryPage() {
   const { user } = useAuth();
@@ -138,13 +141,19 @@ export default function MatchHistoryPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-game-dark flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: LEATHER_BG }}>
         <div className="text-center">
           <span className="text-5xl block mb-3">🔒</span>
           <p className="font-game-display text-sm text-muted-foreground tracking-wider">Sign in to view match history</p>
-          <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/auth")}
-            className="mt-4 px-6 py-3 rounded-2xl font-game-display text-xs tracking-wider border-b-[3px] active:border-b-[1px] active:translate-y-[2px]"
-            style={{ background: "linear-gradient(to bottom, hsl(122,39%,49%), hsl(122,39%,38%))", borderColor: "hsl(122,39%,30%)", color: "white" }}>
+          <motion.button whileTap={{ scale: 0.95, y: 2 }} onClick={() => navigate("/auth")}
+            className="mt-4 px-6 py-3 rounded-2xl font-game-display text-xs tracking-wider relative overflow-hidden"
+            style={{
+              background: "linear-gradient(180deg, hsl(142 71% 50%), hsl(142 65% 38%))",
+              border: "2px solid hsl(142 60% 35% / 0.5)",
+              borderBottom: "5px solid hsl(142 55% 25%)",
+              color: "white",
+              boxShadow: "0 4px 16px hsl(142 71% 45% / 0.3)",
+            }}>
             SIGN IN
           </motion.button>
         </div>
@@ -153,44 +162,60 @@ export default function MatchHistoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-game-dark relative overflow-hidden pb-24">
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 0%, hsl(222 40% 18%) 0%, hsl(222 40% 6%) 70%)" }} />
-      <div className="absolute inset-0 vignette pointer-events-none" />
+    <div className="min-h-screen relative overflow-hidden pb-24" style={{ background: LEATHER_BG }}>
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: LEATHER_GRAIN, backgroundRepeat: "repeat" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }} />
       <TopStatusBar />
 
-      <div className="relative z-10 max-w-lg mx-auto px-4 pt-4">
+      <div className="relative z-10 max-w-lg mx-auto px-4 pt-3">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 mb-4">
           <motion.button whileTap={{ scale: 0.9 }} onClick={() => navigate(-1)}
-            className="w-10 h-10 rounded-xl flex items-center justify-center text-sm border-b-2"
-            style={{ background: cardBg, boxShadow: cardShadow, borderColor: "hsl(var(--border) / 0.2)" }}>
+            className="w-10 h-10 rounded-xl flex items-center justify-center font-game-body text-sm text-foreground"
+            style={{
+              background: "linear-gradient(180deg, hsl(28 20% 22%) 0%, hsl(25 18% 15%) 100%)",
+              border: "2px solid hsl(43 50% 35%)",
+              boxShadow: "0 3px 0 hsl(25 30% 10%), inset 0 1px 0 hsl(43 40% 45% / 0.3)",
+            }}>
             ←
           </motion.button>
           <div className="flex-1">
-            <h1 className="font-game-display text-lg tracking-wider text-game-gold">MATCH HISTORY</h1>
-            <p className="text-[9px] text-muted-foreground font-game-body tracking-wide">{matches.length} matches played</p>
+            <h1 className="font-game-title text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(25 40% 8%)" }}>
+              Match History
+            </h1>
+            <span className="text-[9px] text-muted-foreground font-game-display tracking-[0.2em]">{matches.length} MATCHES PLAYED</span>
           </div>
-          <div className="text-right rounded-xl px-3 py-1.5 border-b-2" style={{ background: cardBg, boxShadow: cardShadow, borderColor: "hsl(51 100% 50% / 0.3)" }}>
-            <span className="font-game-display text-lg text-game-gold leading-none">{summary.highScore}</span>
-            <span className="text-[6px] text-muted-foreground font-game-display tracking-widest block">BEST SCORE</span>
+          {/* Best score badge */}
+          <div className="text-right rounded-xl px-3 py-1.5"
+            style={{
+              background: "linear-gradient(180deg, hsl(43 60% 22%), hsl(43 50% 15%))",
+              border: "2px solid hsl(43 50% 35%)",
+              borderBottom: "4px solid hsl(43 40% 18%)",
+              boxShadow: "0 3px 8px hsl(43 90% 55% / 0.15)",
+            }}>
+            <span className="font-game-score text-lg font-black leading-none" style={{ color: "hsl(43 90% 55%)" }}>{summary.highScore}</span>
+            <span className="text-[6px] font-game-display tracking-widest block" style={{ color: "hsl(43 70% 50% / 0.7)" }}>BEST SCORE</span>
           </div>
         </motion.div>
 
-        {/* Summary Banner */}
+        {/* Summary Banner — Stadium Concrete */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
-          className="rounded-2xl p-4 mb-4 border-b-[3px] relative overflow-hidden"
-          style={{ background: cardBg, boxShadow: cardShadow, borderColor: "hsl(var(--game-gold) / 0.2)" }}>
-          
-          {/* Win rate ring */}
+          className="rounded-2xl p-4 mb-4 relative overflow-hidden"
+          style={{
+            background: CONCRETE_CARD,
+            border: "2px solid hsl(43 50% 35% / 0.3)",
+            borderBottom: "5px solid hsl(25 20% 10%)",
+            boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
+          }}>
           <div className="flex items-center gap-4 mb-3">
             <div className="relative w-16 h-16 flex-shrink-0">
               <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-                <circle cx="18" cy="18" r="15.5" fill="none" stroke="hsl(var(--muted) / 0.15)" strokeWidth="3" />
+                <circle cx="18" cy="18" r="15.5" fill="none" stroke="hsl(25 15% 20%)" strokeWidth="3" />
                 <circle cx="18" cy="18" r="15.5" fill="none" stroke="hsl(122,39%,49%)" strokeWidth="3"
                   strokeDasharray={`${summary.winRate * 0.975} 97.5`} strokeLinecap="round" />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="font-game-display text-sm text-game-green leading-none">{summary.winRate}%</span>
+                <span className="font-game-score text-sm font-black leading-none" style={{ color: "hsl(142 71% 55%)" }}>{summary.winRate}%</span>
                 <span className="text-[5px] text-muted-foreground font-game-display tracking-widest">WIN</span>
               </div>
             </div>
@@ -200,15 +225,20 @@ export default function MatchHistoryPage() {
                 { val: summary.losses, label: "LOST", color: "hsl(4,90%,65%)" },
                 { val: summary.draws, label: "DRAW", color: "hsl(51,100%,60%)" },
               ].map(s => (
-                <div key={s.label} className="text-center rounded-lg p-1.5" style={{ background: `${s.color}10` }}>
-                  <span className="font-game-display text-lg block leading-none" style={{ color: s.color }}>{s.val}</span>
+                <div key={s.label} className="text-center rounded-lg p-1.5"
+                  style={{
+                    background: `${s.color}08`,
+                    border: `1px solid ${s.color}15`,
+                    borderBottom: `3px solid ${s.color}10`,
+                  }}>
+                  <span className="font-game-score text-lg font-black block leading-none" style={{ color: s.color }}>{s.val}</span>
                   <span className="text-[6px] text-muted-foreground font-game-display tracking-widest">{s.label}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="h-px bg-gradient-to-r from-transparent via-muted/20 to-transparent mb-3" />
+          <div className="h-px mb-3 opacity-20" style={{ background: CHALK_DIVIDER }} />
 
           <div className="grid grid-cols-3 gap-2">
             {[
@@ -216,9 +246,14 @@ export default function MatchHistoryPage() {
               { val: `${summary.strikeRate}`, label: "STRIKE RATE", icon: "⚡" },
               { val: summary.totalRuns, label: "TOTAL RUNS", icon: "🏏" },
             ].map(s => (
-              <div key={s.label} className="text-center rounded-xl p-2 border-b-2 border-transparent" style={{ background: "hsl(222 40% 12% / 0.8)" }}>
+              <div key={s.label} className="text-center rounded-xl p-2"
+                style={{
+                  background: "linear-gradient(180deg, hsl(25 18% 14%), hsl(25 15% 10%))",
+                  border: "1.5px solid hsl(25 18% 20%)",
+                  borderBottom: "3px solid hsl(25 15% 8%)",
+                }}>
                 <span className="text-xs block mb-0.5">{s.icon}</span>
-                <span className="font-game-display text-sm text-foreground block leading-none">{s.val}</span>
+                <span className="font-game-score text-sm font-black text-foreground block leading-none">{s.val}</span>
                 <span className="text-[5px] text-muted-foreground font-game-display tracking-widest">{s.label}</span>
               </div>
             ))}
@@ -227,41 +262,56 @@ export default function MatchHistoryPage() {
 
         {/* Filters */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.12 }} className="mb-4 space-y-2">
-          <div className="flex gap-1.5">
+          <div className="flex gap-1 rounded-2xl p-1"
+            style={{
+              background: "linear-gradient(180deg, hsl(25 15% 16%) 0%, hsl(25 12% 12%) 100%)",
+              border: "1px solid hsl(25 20% 22% / 0.6)",
+            }}>
             {(["all", "win", "loss", "draw"] as FilterType[]).map(f => {
               const isActive = resultFilter === f;
               const theme = f === "all" ? null : RESULT_THEME[f];
               return (
                 <motion.button key={f} whileTap={{ scale: 0.95 }} onClick={() => setResultFilter(f)}
-                  className="flex-1 py-2 rounded-xl font-game-display text-[8px] tracking-widest transition-all border-b-2"
-                  style={{
-                    background: isActive && theme ? `${theme.bg}15` : isActive ? "hsl(207 90% 54% / 0.15)" : "hsl(222 40% 12% / 0.8)",
-                    borderColor: isActive && theme ? theme.border : isActive ? "hsl(207 90% 54% / 0.4)" : "transparent",
-                    color: isActive && theme ? theme.text : isActive ? "hsl(207,90%,60%)" : "hsl(var(--muted-foreground) / 0.5)",
+                  className="flex-1 py-2 rounded-xl font-game-display text-[8px] tracking-widest relative overflow-hidden"
+                  style={isActive ? {
+                    background: theme ? `linear-gradient(180deg, ${theme.bg}, ${theme.bg}cc)` : "linear-gradient(180deg, hsl(207 90% 50%), hsl(207 85% 38%))",
+                    color: "white",
+                    borderBottom: "3px solid " + (theme ? `${theme.bg}80` : "hsl(207 70% 28%)"),
+                    boxShadow: `0 2px 8px ${theme ? theme.glow : "hsl(207 90% 50% / 0.3)"}`,
+                  } : {
+                    color: "hsl(25 15% 45%)",
+                    borderBottom: "3px solid transparent",
                   }}>
-                  {f === "all" ? "ALL" : f.toUpperCase()}
+                  {isActive && (
+                    <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
+                      style={{ backgroundImage: "radial-gradient(circle, hsl(0 0% 100%) 0.5px, transparent 0.5px)", backgroundSize: "4px 4px" }} />
+                  )}
+                  <span className="relative z-10">{f === "all" ? "ALL" : f.toUpperCase()}</span>
                 </motion.button>
               );
             })}
           </div>
           <ScrollHint>
             <div className="flex gap-1.5">
-            {(["all", "tap", "ar", "tournament", "multiplayer"] as ModeFilter[]).map(f => {
-              const meta = f === "all" ? { icon: "🎮", label: "ALL", accent: "hsl(207,90%,54%)" } : MODE_META[f];
-              const isActive = modeFilter === f;
-              return (
-                <motion.button key={f} whileTap={{ scale: 0.95 }} onClick={() => setModeFilter(f)}
-                  className="px-3 py-1.5 rounded-xl font-game-display text-[7px] tracking-widest whitespace-nowrap flex items-center gap-1 border-b-2"
-                  style={{
-                    background: isActive ? `${meta.accent}15` : "hsl(222 40% 12% / 0.8)",
-                    borderColor: isActive ? `${meta.accent}60` : "transparent",
-                    color: isActive ? meta.accent : "hsl(var(--muted-foreground) / 0.5)",
-                  }}>
-                  <span className="text-xs">{meta.icon}</span> {meta.label}
-                </motion.button>
-              );
-            })}
-          </div>
+              {(["all", "tap", "ar", "tournament", "multiplayer"] as ModeFilter[]).map(f => {
+                const meta = f === "all" ? { icon: "🎮", label: "ALL", accent: "hsl(207,90%,54%)" } : MODE_META[f];
+                const isActive = modeFilter === f;
+                return (
+                  <motion.button key={f} whileTap={{ scale: 0.95 }} onClick={() => setModeFilter(f)}
+                    className="px-3 py-1.5 rounded-xl font-game-display text-[7px] tracking-widest whitespace-nowrap flex items-center gap-1"
+                    style={{
+                      background: isActive
+                        ? `linear-gradient(180deg, ${meta.accent}25, ${meta.accent}10)`
+                        : "linear-gradient(180deg, hsl(25 18% 14%), hsl(25 15% 10%))",
+                      border: isActive ? `2px solid ${meta.accent}50` : "2px solid hsl(25 18% 20%)",
+                      borderBottom: isActive ? `3px solid ${meta.accent}30` : "3px solid hsl(25 15% 8%)",
+                      color: isActive ? meta.accent : "hsl(25 15% 45%)",
+                    }}>
+                    <span className="text-xs">{meta.icon}</span> {meta.label}
+                  </motion.button>
+                );
+              })}
+            </div>
           </ScrollHint>
         </motion.div>
 
@@ -269,20 +319,30 @@ export default function MatchHistoryPage() {
         {loading ? (
           <div className="space-y-3">
             {[1,2,3].map(i => (
-              <div key={i} className="rounded-2xl h-20 animate-pulse" style={{ background: cardBg }} />
+              <div key={i} className="rounded-2xl h-20 animate-pulse" style={{ background: CONCRETE_CARD }} />
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="rounded-2xl p-10 text-center border-b-[3px]" style={{ background: cardBg, boxShadow: cardShadow, borderColor: "hsl(var(--muted) / 0.2)" }}>
+          <div className="rounded-2xl p-10 text-center"
+            style={{
+              background: CONCRETE_CARD,
+              border: "2px solid hsl(25 18% 22%)",
+              borderBottom: "5px solid hsl(25 20% 10%)",
+            }}>
             <span className="text-4xl block mb-3">📭</span>
             <span className="font-game-display text-xs text-muted-foreground tracking-wider">NO MATCHES FOUND</span>
             <p className="text-[9px] text-muted-foreground/60 mt-1 font-game-body">
               {matches.length === 0 ? "Play your first match!" : "Try different filters"}
             </p>
             {matches.length === 0 && (
-              <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/play")}
-                className="mt-4 px-5 py-2.5 rounded-xl font-game-display text-[9px] tracking-wider border-b-[3px] active:border-b-[1px] active:translate-y-[2px]"
-                style={{ background: "linear-gradient(to bottom, hsl(122,39%,49%), hsl(122,39%,38%))", borderColor: "hsl(122,39%,30%)", color: "white" }}>
+              <motion.button whileTap={{ scale: 0.95, y: 2 }} onClick={() => navigate("/play")}
+                className="mt-4 px-5 py-2.5 rounded-xl font-game-display text-[9px] tracking-wider relative overflow-hidden"
+                style={{
+                  background: "linear-gradient(180deg, hsl(142 71% 50%), hsl(142 65% 38%))",
+                  borderBottom: "4px solid hsl(142 55% 25%)",
+                  color: "white",
+                  boxShadow: "0 4px 16px hsl(142 71% 45% / 0.3)",
+                }}>
                 🏏 PLAY NOW
               </motion.button>
             )}
@@ -309,8 +369,13 @@ export default function MatchHistoryPage() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: Math.min(i * 0.03, 0.3) }}
-                      className="rounded-2xl relative overflow-hidden border-b-[3px]"
-                      style={{ background: cardBg, boxShadow: cardShadow, borderColor: `${theme.bg}30` }}
+                      className="rounded-2xl relative overflow-hidden"
+                      style={{
+                        background: CONCRETE_CARD,
+                        border: `2px solid ${theme.bg}25`,
+                        borderBottom: `5px solid ${theme.bg}15`,
+                        boxShadow: `0 3px 8px hsl(0 0% 0% / 0.3)`,
+                      }}
                     >
                       {/* Result accent strip */}
                       <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: `linear-gradient(to right, ${theme.bg}, transparent)` }} />
@@ -318,16 +383,17 @@ export default function MatchHistoryPage() {
                       {/* Main row */}
                       <button className="w-full p-3 flex items-center gap-3 relative z-10 text-left"
                         onClick={() => { setExpandedMatch(isExpanded ? null : m.id); if (isReplaying) setReplayingMatch(null); }}>
-                        
-                        {/* Result badge */}
+
+                        {/* Result badge — 3D concrete */}
                         <div className="relative">
-                          <div className="w-12 h-12 rounded-xl flex flex-col items-center justify-center border-b-2"
+                          <div className="w-12 h-12 rounded-xl flex flex-col items-center justify-center"
                             style={{
                               background: `linear-gradient(135deg, ${theme.bg}20, ${theme.bg}08)`,
-                              borderColor: `${theme.bg}40`,
+                              border: `1.5px solid ${theme.bg}40`,
+                              borderBottom: `3px solid ${theme.bg}25`,
                               boxShadow: `0 2px 8px ${theme.glow}`,
                             }}>
-                            <span className="font-game-display text-base leading-none" style={{ color: theme.text }}>{theme.badge}</span>
+                            <span className="font-game-score text-base font-black leading-none" style={{ color: theme.text }}>{theme.badge}</span>
                             <span className="text-[5px] font-game-display tracking-widest text-muted-foreground mt-0.5">{theme.label}</span>
                           </div>
                           <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[10px]"
@@ -358,12 +424,12 @@ export default function MatchHistoryPage() {
                         {/* Score */}
                         <div className="text-right flex items-baseline gap-2">
                           <div className="text-center">
-                            <span className="font-game-display text-lg leading-none" style={{ color: m.result === "win" ? theme.text : "hsl(var(--foreground))" }}>{m.user_score}</span>
+                            <span className="font-game-score text-lg font-black leading-none" style={{ color: m.result === "win" ? theme.text : "hsl(var(--foreground))" }}>{m.user_score}</span>
                             <span className="text-[5px] text-muted-foreground font-game-display tracking-widest block">YOU</span>
                           </div>
-                          <span className="text-[8px] text-muted-foreground/40 font-game-display">vs</span>
+                          <span className="text-[8px] font-game-display" style={{ color: "hsl(25 15% 35%)" }}>vs</span>
                           <div className="text-center">
-                            <span className="font-game-display text-lg leading-none" style={{ color: m.result === "loss" ? theme.text : "hsl(var(--foreground) / 0.6)" }}>{m.ai_score}</span>
+                            <span className="font-game-score text-lg font-black leading-none" style={{ color: m.result === "loss" ? theme.text : "hsl(var(--foreground) / 0.6)" }}>{m.ai_score}</span>
                             <span className="text-[5px] text-muted-foreground font-game-display tracking-widest block">AI</span>
                           </div>
                         </div>
@@ -374,25 +440,33 @@ export default function MatchHistoryPage() {
                         {isExpanded && (
                           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
-                            <div className="px-3 pb-3 pt-1 space-y-2.5" style={{ borderTop: "1px solid hsl(var(--border) / 0.1)" }}>
+                            <div className="px-3 pb-3 pt-1 space-y-2.5" style={{ borderTop: "1px solid hsl(25 18% 18%)" }}>
 
-                              {/* Score comparison */}
                               <div className="grid grid-cols-2 gap-2">
                                 {[
                                   { name: playerName.toUpperCase(), score: m.user_score, rr: runRate, color: "hsl(122,39%,49%)" },
                                   { name: "ROHIT AI 🏏", score: m.ai_score, rr: aiRunRate, color: "hsl(4,90%,58%)" },
                                 ].map(p => (
-                                  <div key={p.name} className="rounded-xl p-3 text-center border-b-2" style={{ background: `${p.color}08`, borderColor: `${p.color}25` }}>
+                                  <div key={p.name} className="rounded-xl p-3 text-center"
+                                    style={{
+                                      background: `${p.color}08`,
+                                      border: `1.5px solid ${p.color}25`,
+                                      borderBottom: `3px solid ${p.color}12`,
+                                    }}>
                                     <span className="text-[7px] text-muted-foreground font-game-display tracking-widest block mb-1">{p.name}</span>
-                                    <span className="font-game-display text-2xl block leading-none" style={{ color: p.color }}>{p.score}</span>
+                                    <span className="font-game-score text-2xl font-black block leading-none" style={{ color: p.color }}>{p.score}</span>
                                     <span className="text-[8px] text-muted-foreground mt-1 block font-game-body">RR {p.rr}</span>
                                   </div>
                                 ))}
                               </div>
 
-                              {/* Shot breakdown */}
                               {ballStats && (
-                                <div className="rounded-xl p-3 border-b-2 border-transparent" style={{ background: "hsl(222 40% 12% / 0.8)" }}>
+                                <div className="rounded-xl p-3"
+                                  style={{
+                                    background: "linear-gradient(180deg, hsl(25 18% 14%), hsl(25 15% 10%))",
+                                    border: "1.5px solid hsl(25 18% 20%)",
+                                    borderBottom: "3px solid hsl(25 15% 8%)",
+                                  }}>
                                   <span className="text-[7px] text-muted-foreground font-game-display tracking-widest block mb-2">SHOT BREAKDOWN</span>
                                   <div className="grid grid-cols-4 gap-1.5">
                                     {[
@@ -406,7 +480,7 @@ export default function MatchHistoryPage() {
                                       { label: "Balls", val: ballStats.totalBalls, color: "hsl(var(--foreground))" },
                                     ].map(s => (
                                       <div key={s.label} className="text-center py-1.5 rounded-lg" style={{ background: `${s.color}10` }}>
-                                        <span className="font-game-display text-sm block leading-none" style={{ color: s.color }}>{s.val}</span>
+                                        <span className="font-game-score text-sm font-black block leading-none" style={{ color: s.color }}>{s.val}</span>
                                         <span className="text-[6px] text-muted-foreground font-game-display tracking-widest">{s.label}</span>
                                       </div>
                                     ))}
@@ -414,18 +488,23 @@ export default function MatchHistoryPage() {
                                 </div>
                               )}
 
-                              {/* Ball-by-ball replay */}
                               {balls.length > 0 && (
-                                <div className="rounded-xl p-3 border-b-2 border-transparent" style={{ background: "hsl(222 40% 12% / 0.8)" }}>
+                                <div className="rounded-xl p-3"
+                                  style={{
+                                    background: "linear-gradient(180deg, hsl(25 18% 14%), hsl(25 15% 10%))",
+                                    border: "1.5px solid hsl(25 18% 20%)",
+                                    borderBottom: "3px solid hsl(25 15% 8%)",
+                                  }}>
                                   <div className="flex items-center justify-between mb-2">
                                     <span className="text-[7px] text-muted-foreground font-game-display tracking-widest">BALL-BY-BALL</span>
-                                    <motion.button whileTap={{ scale: 0.9 }}
+                                    <motion.button whileTap={{ scale: 0.9, y: 1 }}
                                       onClick={(e) => { e.stopPropagation(); isReplaying ? setReplayingMatch(null) : startReplay(m.id); }}
-                                      className="px-2.5 py-1 rounded-lg font-game-display text-[7px] tracking-wider flex items-center gap-1 border-b-2 active:border-b-0 active:translate-y-[2px]"
+                                      className="px-2.5 py-1 rounded-lg font-game-display text-[7px] tracking-wider flex items-center gap-1"
                                       style={{
-                                        background: isReplaying ? "hsl(4 90% 58% / 0.15)" : "hsl(122 39% 49% / 0.15)",
-                                        borderColor: isReplaying ? "hsl(4 90% 58% / 0.3)" : "hsl(122 39% 49% / 0.3)",
-                                        color: isReplaying ? "hsl(4,90%,65%)" : "hsl(122,70%,55%)",
+                                        background: isReplaying ? "hsl(4 50% 20% / 0.3)" : "hsl(142 30% 18% / 0.3)",
+                                        border: isReplaying ? "1.5px solid hsl(4 60% 40% / 0.3)" : "1.5px solid hsl(142 50% 35% / 0.3)",
+                                        borderBottom: isReplaying ? "3px solid hsl(4 40% 22%)" : "3px solid hsl(142 40% 18%)",
+                                        color: isReplaying ? "hsl(4,90%,65%)" : "hsl(142,70%,55%)",
                                       }}>
                                       {isReplaying ? "⏸ STOP" : "▶ REPLAY"}
                                     </motion.button>
@@ -438,23 +517,23 @@ export default function MatchHistoryPage() {
                                       const isVisible = !isReplaying || bi <= replayBall;
                                       const isCurrentReplay = isReplaying && bi === replayBall;
                                       let color = "hsl(var(--muted-foreground))";
-                                      let bg = "hsl(var(--muted) / 0.2)";
+                                      let bg = "hsl(25 15% 14%)";
                                       if (isOut) { color = "hsl(4,90%,65%)"; bg = "hsl(4,90%,58%,0.2)"; }
                                       else if (r === 6) { color = "hsl(207,90%,60%)"; bg = "hsl(207,90%,54%,0.2)"; }
                                       else if (r === 4) { color = "hsl(122,70%,55%)"; bg = "hsl(122,39%,49%,0.2)"; }
                                       else if (r >= 2) { color = "hsl(51,100%,60%)"; bg = "hsl(51,100%,50%,0.2)"; }
-                                      else if (r === 1) { color = "hsl(var(--foreground) / 0.7)"; bg = "hsl(var(--muted) / 0.15)"; }
+                                      else if (r === 1) { color = "hsl(var(--foreground) / 0.7)"; bg = "hsl(25 15% 18%)"; }
 
                                       return (
                                         <motion.div key={bi}
                                           initial={isReplaying ? { scale: 0 } : false}
                                           animate={isVisible ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-                                          className="w-7 h-7 rounded-lg flex items-center justify-center text-[8px] font-game-display"
+                                          className="w-7 h-7 rounded-lg flex items-center justify-center text-[8px] font-game-score font-black"
                                           style={{
                                             background: bg,
                                             color,
+                                            border: `1px solid ${isCurrentReplay ? color : "hsl(25 18% 20%)"}`,
                                             boxShadow: isCurrentReplay ? `0 0 10px ${color}` : "none",
-                                            border: isCurrentReplay ? `1px solid ${color}` : "none",
                                           }}>
                                           {isOut ? "W" : r}
                                         </motion.div>
@@ -464,7 +543,8 @@ export default function MatchHistoryPage() {
 
                                   {isReplaying && balls[replayBall] && (
                                     <motion.div key={replayBall} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}
-                                      className="mt-2 rounded-lg p-2 text-center" style={{ background: "hsl(222 40% 15% / 0.8)" }}>
+                                      className="mt-2 rounded-lg p-2 text-center"
+                                      style={{ background: "hsl(25 18% 14%)", border: "1px solid hsl(25 18% 20%)" }}>
                                       <span className="text-[9px] text-foreground font-game-display">
                                         Ball {replayBall + 1}: {balls[replayBall].description || (balls[replayBall].runs === "OUT" ? "OUT! 🔴" : `${Math.abs(typeof balls[replayBall].runs === "number" ? balls[replayBall].runs as number : 0)} runs`)}
                                       </span>
@@ -473,17 +553,21 @@ export default function MatchHistoryPage() {
                                 </div>
                               )}
 
-                              {/* Match details */}
-                              <div className="rounded-xl p-3 space-y-2 border-b-2 border-transparent" style={{ background: "hsl(222 40% 12% / 0.8)" }}>
+                              <div className="rounded-xl p-3 space-y-2"
+                                style={{
+                                  background: "linear-gradient(180deg, hsl(25 18% 14%), hsl(25 15% 10%))",
+                                  border: "1.5px solid hsl(25 18% 20%)",
+                                  borderBottom: "3px solid hsl(25 15% 8%)",
+                                }}>
                                 {[
                                   { label: "Result", value: m.result === "draw" ? "Match Tied" : `${m.result === "win" ? "Won" : "Lost"} by ${margin} runs`, color: theme.text },
                                   { label: "Balls Played", value: m.balls_played, color: "hsl(var(--foreground))" },
                                   { label: "Game Mode", value: modeMeta.label, color: modeMeta.accent },
                                   { label: "Played On", value: new Date(m.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }), color: "hsl(var(--foreground))" },
                                 ].map(d => (
-                                  <div key={d.label} className="flex justify-between items-center">
-                                    <span className="text-[8px] text-muted-foreground font-game-display tracking-wider">{d.label}</span>
-                                    <span className="text-[9px] font-game-display" style={{ color: d.color }}>{d.value}</span>
+                                  <div key={d.label} className="flex justify-between items-center py-1" style={{ borderBottom: "1px solid hsl(25 18% 18%)" }}>
+                                    <span className="text-[8px] font-game-display tracking-wider" style={{ color: "hsl(25 15% 40%)" }}>{d.label}</span>
+                                    <span className="text-[9px] font-game-score font-bold" style={{ color: d.color }}>{d.value}</span>
                                   </div>
                                 ))}
                               </div>
@@ -499,7 +583,6 @@ export default function MatchHistoryPage() {
           </div>
         )}
       </div>
-
     </div>
   );
 }

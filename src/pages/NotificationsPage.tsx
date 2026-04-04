@@ -5,6 +5,12 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import TopStatusBar from "@/components/TopStatusBar";
 
+/* ── Doc 1 Material Constants ── */
+const LEATHER_BG = "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)";
+const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
+const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
+const CHALK_DIVIDER = "repeating-linear-gradient(90deg, hsl(45 30% 80%) 0px, hsl(45 30% 80%) 8px, transparent 8px, transparent 14px)";
+
 interface Notification {
   id: string;
   type: string;
@@ -38,9 +44,6 @@ const TABS: { id: TabFilter; label: string; icon: string }[] = [
   { id: "social", label: "SOCIAL", icon: "👥" },
   { id: "rewards", label: "REWARDS", icon: "🎁" },
 ];
-
-const cardBg = "linear-gradient(135deg, hsl(222 40% 13% / 0.9), hsl(222 40% 8% / 0.95))";
-const cardShadow = "0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)";
 
 export default function NotificationsPage() {
   const { user } = useAuth();
@@ -93,7 +96,6 @@ export default function NotificationsPage() {
     return true;
   });
 
-  // Group by date
   const grouped = filtered.reduce<Record<string, Notification[]>>((acc, n) => {
     const d = new Date(n.created_at);
     const now = new Date();
@@ -109,58 +111,81 @@ export default function NotificationsPage() {
   const groupOrder = ["Today", "Yesterday", "This Week", "Earlier"];
 
   return (
-    <div className="min-h-screen bg-game-dark relative overflow-hidden pb-24">
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 0%, hsl(222 40% 18%) 0%, hsl(222 40% 6%) 70%)" }} />
-      <div className="absolute inset-0 vignette pointer-events-none" />
+    <div className="min-h-screen relative overflow-hidden pb-24" style={{ background: LEATHER_BG }}>
+      {/* Leather grain */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: LEATHER_GRAIN, backgroundRepeat: "repeat" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }} />
       <TopStatusBar />
 
-      <div className="relative z-10 max-w-lg mx-auto px-4 pt-4">
-        {/* Header */}
+      <div className="relative z-10 max-w-lg mx-auto px-4 pt-3">
+        {/* Header — Floodlight Chrome */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <motion.button whileTap={{ scale: 0.9 }} onClick={() => navigate(-1)}
-              className="w-10 h-10 rounded-xl flex items-center justify-center text-sm border-b-2"
-              style={{ background: cardBg, boxShadow: cardShadow, borderColor: "hsl(var(--border) / 0.2)" }}>
+              className="w-10 h-10 rounded-xl flex items-center justify-center font-game-body text-sm text-foreground"
+              style={{
+                background: "linear-gradient(180deg, hsl(28 20% 22%) 0%, hsl(25 18% 15%) 100%)",
+                border: "2px solid hsl(43 50% 35%)",
+                boxShadow: "0 3px 0 hsl(25 30% 10%), inset 0 1px 0 hsl(43 40% 45% / 0.3)",
+              }}>
               ←
             </motion.button>
             <div>
-              <h1 className="font-game-display text-lg tracking-wider text-game-gold">NOTIFICATIONS</h1>
+              <h1 className="font-game-title text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(25 40% 8%)" }}>
+                Notifications
+              </h1>
               {unreadCount > 0 && (
-                <span className="text-[9px] font-game-body tracking-wide" style={{ color: "hsl(207,90%,60%)" }}>{unreadCount} new alerts</span>
+                <span className="text-[9px] font-game-display tracking-[0.2em]" style={{ color: "hsl(207,90%,55%)" }}>{unreadCount} NEW ALERTS</span>
               )}
             </div>
           </div>
           {unreadCount > 0 && (
-            <motion.button whileTap={{ scale: 0.9 }} onClick={markAllRead}
-              className="px-3 py-2 rounded-xl font-game-display text-[8px] tracking-wider border-b-2 active:border-b-0 active:translate-y-[2px]"
+            <motion.button whileTap={{ scale: 0.9, y: 1 }} onClick={markAllRead}
+              className="px-3 py-2 rounded-xl font-game-display text-[8px] tracking-wider relative overflow-hidden"
               style={{
-                background: "linear-gradient(to bottom, hsl(122,39%,49%), hsl(122,39%,38%))",
-                borderColor: "hsl(122,39%,30%)",
+                background: "linear-gradient(180deg, hsl(142 71% 50%), hsl(142 65% 38%))",
+                border: "2px solid hsl(142 60% 35% / 0.5)",
+                borderBottom: "4px solid hsl(142 55% 25%)",
                 color: "white",
+                boxShadow: "0 3px 8px hsl(142 71% 45% / 0.3)",
               }}>
-              ✓ READ ALL
+              <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
+                style={{ backgroundImage: "radial-gradient(circle, hsl(0 0% 100%) 0.5px, transparent 0.5px)", backgroundSize: "4px 4px" }} />
+              <span className="relative z-10">✓ READ ALL</span>
             </motion.button>
           )}
         </motion.div>
 
-        {/* Tabs */}
+        {/* Tabs — Stadium Concrete */}
         <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-          className="flex gap-1.5 mb-4">
+          className="flex gap-1 mb-4 rounded-2xl p-1"
+          style={{
+            background: "linear-gradient(180deg, hsl(25 15% 16%) 0%, hsl(25 12% 12%) 100%)",
+            border: "1px solid hsl(25 20% 22% / 0.6)",
+          }}>
           {TABS.map(tab => {
             const isActive = filter === tab.id;
             const count = tab.id === "unread" ? unreadCount : undefined;
             return (
               <motion.button key={tab.id} whileTap={{ scale: 0.95 }} onClick={() => setFilter(tab.id)}
-                className="flex-1 py-2 rounded-xl font-game-display text-[8px] tracking-widest flex items-center justify-center gap-1 border-b-2 transition-all"
-                style={{
-                  background: isActive ? "hsl(207 90% 54% / 0.15)" : "hsl(222 40% 12% / 0.8)",
-                  borderColor: isActive ? "hsl(207 90% 54% / 0.4)" : "transparent",
-                  color: isActive ? "hsl(207,90%,60%)" : "hsl(var(--muted-foreground) / 0.5)",
+                className="flex-1 py-2 rounded-xl font-game-display text-[8px] tracking-widest flex items-center justify-center gap-1 relative overflow-hidden"
+                style={isActive ? {
+                  background: "linear-gradient(180deg, hsl(207 90% 50%) 0%, hsl(207 85% 38%) 100%)",
+                  color: "white",
+                  borderBottom: "3px solid hsl(207 70% 28%)",
+                  boxShadow: "0 2px 8px hsl(207 90% 50% / 0.3), inset 0 1px 0 hsl(207 80% 65% / 0.4)",
+                } : {
+                  color: "hsl(25 15% 45%)",
+                  borderBottom: "3px solid transparent",
                 }}>
-                <span className="text-[10px]">{tab.icon}</span>
-                {tab.label}
+                {isActive && (
+                  <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
+                    style={{ backgroundImage: "radial-gradient(circle, hsl(0 0% 100%) 0.5px, transparent 0.5px)", backgroundSize: "4px 4px" }} />
+                )}
+                <span className="text-[10px] relative z-10">{tab.icon}</span>
+                <span className="relative z-10">{tab.label}</span>
                 {count !== undefined && count > 0 && (
-                  <span className="ml-0.5 w-4 h-4 rounded-full text-[7px] flex items-center justify-center"
+                  <span className="ml-0.5 w-4 h-4 rounded-full text-[7px] flex items-center justify-center relative z-10"
                     style={{ background: "hsl(4,90%,58%)", color: "white" }}>{count > 9 ? "9+" : count}</span>
                 )}
               </motion.button>
@@ -168,11 +193,19 @@ export default function NotificationsPage() {
           })}
         </motion.div>
 
+        {/* Chalk divider */}
+        <div className="h-px mb-3 mx-2 opacity-20" style={{ background: CHALK_DIVIDER }} />
+
         {/* List */}
         {filtered.length === 0 ? (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-            className="rounded-2xl p-10 text-center border-b-[3px]"
-            style={{ background: cardBg, boxShadow: cardShadow, borderColor: "hsl(var(--muted) / 0.15)" }}>
+            className="rounded-2xl p-10 text-center"
+            style={{
+              background: CONCRETE_CARD,
+              border: "2px solid hsl(25 18% 22%)",
+              borderBottom: "5px solid hsl(25 20% 10%)",
+              boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
+            }}>
             <span className="text-4xl block mb-3">{filter === "unread" ? "✅" : "🔔"}</span>
             <span className="font-game-display text-xs text-muted-foreground tracking-wider">
               {filter === "unread" ? "ALL CAUGHT UP!" : "NO NOTIFICATIONS YET"}
@@ -186,9 +219,9 @@ export default function NotificationsPage() {
             {groupOrder.filter(g => grouped[g]?.length).map(group => (
               <div key={group}>
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="h-px flex-1" style={{ background: "linear-gradient(to right, hsl(var(--game-gold) / 0.2), transparent)" }} />
-                  <span className="font-game-display text-[8px] tracking-[0.3em] text-muted-foreground/50">{group.toUpperCase()}</span>
-                  <div className="h-px flex-1" style={{ background: "linear-gradient(to left, hsl(var(--game-gold) / 0.2), transparent)" }} />
+                  <div className="h-px flex-1 opacity-20" style={{ background: CHALK_DIVIDER }} />
+                  <span className="font-game-display text-[8px] tracking-[0.3em]" style={{ color: "hsl(43 70% 50% / 0.5)" }}>{group.toUpperCase()}</span>
+                  <div className="h-px flex-1 opacity-20" style={{ background: CHALK_DIVIDER }} />
                 </div>
                 <div className="space-y-1.5">
                   <AnimatePresence>
@@ -201,24 +234,26 @@ export default function NotificationsPage() {
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: i * 0.03, type: "spring", stiffness: 300, damping: 25 }}
                           onClick={() => !n.read && markRead(n.id)}
-                          className="rounded-xl p-3 flex items-start gap-3 cursor-pointer transition-all relative overflow-hidden border-b-2"
+                          className="rounded-xl p-3 flex items-start gap-3 cursor-pointer relative overflow-hidden"
                           style={{
-                            background: cardBg,
-                            boxShadow: !n.read ? `0 4px 16px rgba(0,0,0,0.4), 0 0 12px ${meta.accent}15` : cardShadow,
-                            borderColor: !n.read ? `${meta.accent}35` : "transparent",
+                            background: CONCRETE_CARD,
+                            border: !n.read ? `2px solid ${meta.accent}35` : "2px solid hsl(25 18% 22%)",
+                            borderBottom: !n.read ? `4px solid ${meta.accent}20` : "4px solid hsl(25 20% 10%)",
+                            boxShadow: !n.read ? `0 3px 12px ${meta.accent}15` : "0 2px 4px hsl(0 0% 0% / 0.2)",
                             opacity: n.read ? 0.6 : 1,
                           }}
                         >
-                          {/* Unread glow strip */}
+                          {/* Unread accent strip */}
                           {!n.read && (
                             <div className="absolute top-0 left-0 bottom-0 w-[3px] rounded-l-xl" style={{ background: meta.accent }} />
                           )}
 
-                          {/* Icon */}
-                          <div className="w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0 border-b-2"
+                          {/* Icon — Stadium Concrete mini card */}
+                          <div className="w-11 h-11 rounded-xl flex items-center justify-center text-lg shrink-0"
                             style={{
                               background: `linear-gradient(135deg, ${meta.accent}20, ${meta.accent}08)`,
-                              borderColor: `${meta.accent}30`,
+                              border: `1.5px solid ${meta.accent}30`,
+                              borderBottom: `3px solid ${meta.accent}15`,
                             }}>
                             {meta.icon}
                           </div>
@@ -238,7 +273,7 @@ export default function NotificationsPage() {
                               )}
                             </div>
                             <p className="text-[9px] text-muted-foreground mt-0.5 line-clamp-2 font-game-body">{n.message}</p>
-                            <span className="text-[7px] text-muted-foreground/40 font-game-display tracking-wider mt-1 block">{getTimeAgo(n.created_at)}</span>
+                            <span className="text-[7px] font-game-display tracking-wider mt-1 block" style={{ color: "hsl(25 15% 35%)" }}>{getTimeAgo(n.created_at)}</span>
                           </div>
                         </motion.div>
                       );
@@ -250,7 +285,6 @@ export default function NotificationsPage() {
           </div>
         )}
       </div>
-
     </div>
   );
 }
