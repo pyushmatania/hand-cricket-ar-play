@@ -176,12 +176,22 @@ interface WalkoutAvatarProps {
   name: string;
   emoji: string;
   avatarUrl?: string | null;
-  avatarGradient?: string;
+  avatarPresetGradient?: string;
   frame?: { ring: string; glow: string } | null;
   teamColor: string;
 }
 
-function WalkoutAvatar({ side, phase, name, emoji, avatarUrl, avatarGradient, frame, teamColor }: WalkoutAvatarProps) {
+/** Parse Tailwind gradient class like "from-[hsl(...)] to-[hsl(...)]" into CSS */
+function parseTwGradient(tw: string): string {
+  const fromMatch = tw.match(/from-\[([^\]]+)\]/);
+  const toMatch = tw.match(/to-\[([^\]]+)\]/);
+  if (fromMatch && toMatch) {
+    return `linear-gradient(135deg, ${fromMatch[1]}, ${toMatch[1]})`;
+  }
+  return "";
+}
+
+function WalkoutAvatar({ side, phase, name, emoji, avatarUrl, avatarPresetGradient, frame, teamColor }: WalkoutAvatarProps) {
   const isLeft = side === "left";
   const defaultGradient = isLeft
     ? "linear-gradient(135deg, hsl(217 91% 55%), hsl(217 80% 35%))"
