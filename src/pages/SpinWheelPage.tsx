@@ -82,9 +82,9 @@ export default function SpinWheelPage() {
     return () => clearInterval(id);
   }, [hasFreeSpinToday]);
 
-  const handleSpin = useCallback(async () => {
+  const handleSpin = useCallback(async (isFree = false) => {
     if (!user || spinning || spinRef.current) return;
-    if ((coins ?? 0) < SPIN_COST) {
+    if (!isFree && (coins ?? 0) < SPIN_COST) {
       toast.error(`Need ${SPIN_COST} coins to spin!`);
       return;
     }
@@ -93,10 +93,16 @@ export default function SpinWheelPage() {
     setSpinning(true);
     setShowResult(false);
 
-    // Deduct coins
-    const newCoins = (coins ?? 0) - SPIN_COST;
-    setCoins(newCoins);
-    await supabase.from("profiles").update({ coins: newCoins }).eq("user_id", user.id);
+    let newCoins = coins ?? 0;
+    if (isFree) {
+      const today = new Date().toISOString().slice(0, 10);
+      await supabase.from("profiles").update({ last_free_spin_date: today } as any).eq("user_id", user.id);
+      setHasFreeSpinToday(false);
+    } else {
+      newCoins = (coins ?? 0) - SPIN_COST;
+      setCoins(newCoins);
+      await supabase.from("profiles").update({ coins: newCoins }).eq("user_id", user.id);
+    }
 
     // Pick result
     const winIndex = pickWeightedIndex(SLICES);
