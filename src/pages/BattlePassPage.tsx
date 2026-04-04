@@ -192,7 +192,7 @@ function TierCard({
       }}
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: reward.tier * 0.04 }}
+      transition={{ delay: Math.min(reward.tier * 0.015, 0.5) }}
     >
       {/* Tier badge — Scoreboard Paint */}
       <div className="flex flex-col items-center justify-center w-14 shrink-0"
