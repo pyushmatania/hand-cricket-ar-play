@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -47,18 +47,44 @@ export default function SpinWheelPage() {
   const [rotation, setRotation] = useState(0);
   const [result, setResult] = useState<WheelSlice | null>(null);
   const [showResult, setShowResult] = useState(false);
+  const [hasFreeSpinToday, setHasFreeSpinToday] = useState(false);
+  const [nextFreeIn, setNextFreeIn] = useState("");
   const spinRef = useRef(false);
 
-  // Load coins
-  useState(() => {
+  // Load coins & free spin status
+  useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("coins").eq("user_id", user.id).single()
-      .then(({ data }) => { if (data) setCoins(data.coins); });
-  });
+    supabase.from("profiles").select("coins, last_free_spin_date").eq("user_id", user.id).single()
+      .then(({ data }) => {
+        if (data) {
+          setCoins((data as any).coins);
+          const today = new Date().toISOString().slice(0, 10);
+          setHasFreeSpinToday((data as any).last_free_spin_date !== today);
+        }
+      });
+  }, [user]);
 
-  const handleSpin = useCallback(async () => {
+  // Countdown timer for next free spin
+  useEffect(() => {
+    if (hasFreeSpinToday) { setNextFreeIn(""); return; }
+    const tick = () => {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setHours(24, 0, 0, 0);
+      const diff = tomorrow.getTime() - now.getTime();
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      setNextFreeIn(`${h}h ${m}m ${s}s`);
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [hasFreeSpinToday]);
+
+  const handleSpin = useCallback(async (isFree = false) => {
     if (!user || spinning || spinRef.current) return;
-    if ((coins ?? 0) < SPIN_COST) {
+    if (!isFree && (coins ?? 0) < SPIN_COST) {
       toast.error(`Need ${SPIN_COST} coins to spin!`);
       return;
     }
@@ -67,10 +93,16 @@ export default function SpinWheelPage() {
     setSpinning(true);
     setShowResult(false);
 
-    // Deduct coins
-    const newCoins = (coins ?? 0) - SPIN_COST;
-    setCoins(newCoins);
-    await supabase.from("profiles").update({ coins: newCoins }).eq("user_id", user.id);
+    let newCoins = coins ?? 0;
+    if (isFree) {
+      const today = new Date().toISOString().slice(0, 10);
+      await supabase.from("profiles").update({ last_free_spin_date: today } as any).eq("user_id", user.id);
+      setHasFreeSpinToday(false);
+    } else {
+      newCoins = (coins ?? 0) - SPIN_COST;
+      setCoins(newCoins);
+      await supabase.from("profiles").update({ coins: newCoins }).eq("user_id", user.id);
+    }
 
     // Pick result
     const winIndex = pickWeightedIndex(SLICES);
@@ -166,9 +198,18 @@ export default function SpinWheelPage() {
         </div>
       </div>
 
-      {/* Spin cost info */}
-      <div className="text-center mb-4">
-        <span className="text-[10px] font-game-body text-muted-foreground">Cost per spin: {SPIN_COST} 🪙</span>
+      {/* Spin info */}
+      <div className="text-center mb-4 space-y-1">
+        {hasFreeSpinToday ? (
+          <span className="text-[10px] font-game-display text-game-gold tracking-wider animate-pulse">🎁 FREE SPIN AVAILABLE!</span>
+        ) : (
+          <>
+            <span className="text-[10px] font-game-body text-muted-foreground">Cost per spin: {SPIN_COST} 🪙</span>
+            {nextFreeIn && (
+              <p className="text-[9px] font-game-body text-muted-foreground/60">Next free spin in: {nextFreeIn}</p>
+            )}
+          </>
+        )}
       </div>
 
       {/* Wheel */}
@@ -254,24 +295,45 @@ export default function SpinWheelPage() {
         </motion.div>
       </div>
 
-      {/* Spin button */}
-      <motion.button
-        whileTap={!spinning ? { scale: 0.92 } : undefined}
-        onClick={handleSpin}
-        disabled={spinning}
-        className="relative px-10 py-3 rounded-2xl font-game-display text-sm tracking-wider overflow-hidden"
-        style={{
-          background: spinning
-            ? "linear-gradient(180deg, hsl(220 15% 20%), hsl(220 15% 15%))"
-            : "linear-gradient(180deg, hsl(35 70% 45%), hsl(35 60% 35%))",
-          border: spinning ? "3px solid hsl(220 15% 25%)" : "3px solid hsl(35 50% 55%)",
-          borderBottom: spinning ? "5px solid hsl(220 15% 12%)" : "5px solid hsl(35 40% 25%)",
-          color: spinning ? "hsl(220 10% 40%)" : "white",
-          boxShadow: spinning ? "none" : "0 0 20px hsl(35 60% 40% / 0.3)",
-        }}
-      >
-        {spinning ? "SPINNING..." : `SPIN (${SPIN_COST} 🪙)`}
-      </motion.button>
+      {/* Spin buttons */}
+      <div className="flex flex-col items-center gap-2">
+        {hasFreeSpinToday && (
+          <motion.button
+            whileTap={!spinning ? { scale: 0.92 } : undefined}
+            onClick={() => handleSpin(true)}
+            disabled={spinning}
+            className="relative px-10 py-3 rounded-2xl font-game-display text-sm tracking-wider overflow-hidden"
+            style={{
+              background: spinning
+                ? "linear-gradient(180deg, hsl(220 15% 20%), hsl(220 15% 15%))"
+                : "linear-gradient(180deg, hsl(142 60% 35%), hsl(142 50% 25%))",
+              border: spinning ? "3px solid hsl(220 15% 25%)" : "3px solid hsl(142 50% 45%)",
+              borderBottom: spinning ? "5px solid hsl(220 15% 12%)" : "5px solid hsl(142 40% 18%)",
+              color: spinning ? "hsl(220 10% 40%)" : "white",
+              boxShadow: spinning ? "none" : "0 0 20px hsl(142 60% 40% / 0.3)",
+            }}
+          >
+            {spinning ? "SPINNING..." : "🎁 FREE SPIN"}
+          </motion.button>
+        )}
+        <motion.button
+          whileTap={!spinning ? { scale: 0.92 } : undefined}
+          onClick={() => handleSpin(false)}
+          disabled={spinning}
+          className="relative px-10 py-3 rounded-2xl font-game-display text-sm tracking-wider overflow-hidden"
+          style={{
+            background: spinning
+              ? "linear-gradient(180deg, hsl(220 15% 20%), hsl(220 15% 15%))"
+              : "linear-gradient(180deg, hsl(35 70% 45%), hsl(35 60% 35%))",
+            border: spinning ? "3px solid hsl(220 15% 25%)" : "3px solid hsl(35 50% 55%)",
+            borderBottom: spinning ? "5px solid hsl(220 15% 12%)" : "5px solid hsl(35 40% 25%)",
+            color: spinning ? "hsl(220 10% 40%)" : "white",
+            boxShadow: spinning ? "none" : "0 0 20px hsl(35 60% 40% / 0.3)",
+          }}
+        >
+          {spinning ? "SPINNING..." : `SPIN (${SPIN_COST} 🪙)`}
+        </motion.button>
+      </div>
 
       {/* Result popup */}
       <AnimatePresence>

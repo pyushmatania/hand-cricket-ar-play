@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN last_free_spin_date date DEFAULT NULL;
