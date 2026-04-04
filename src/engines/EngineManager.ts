@@ -4,15 +4,13 @@
 // ═══════════════════════════════════════════════════
 
 import { EventEngine } from './EventEngine';
-import {
-  SyncEngine,
-  GameplayEngine,
-  SoundEngine,
-  CommentaryEngine,
-  LightingEngine,
-  WeatherEngine,
-  CrowdEngine,
-} from './engineStubs';
+import { SyncEngine } from './SyncEngine';
+import { GameplayEngine } from './GameplayEngine';
+import { SoundEngine } from './SoundEngine';
+import { CommentaryEngine } from './CommentaryEngine';
+import { LightingEngine } from './LightingEngine';
+import { WeatherEngine } from './WeatherEngine';
+import { CrowdEngine } from './CrowdEngine';
 import type { EventType } from './types';
 
 class EngineManager {
@@ -54,6 +52,10 @@ class EngineManager {
 
   private wireEngines(): void {
     const E = this.event;
+
+    // Wire CrowdEngine dependencies
+    this.crowd.setSoundEngine(this.sound);
+    this.crowd.setEventEngine(this.event);
 
     // ── Sound Engine listeners ──
     E.on('DOT_BALL', () => this.sound.playEffect('ball_into_gloves'));
