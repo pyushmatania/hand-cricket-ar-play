@@ -175,6 +175,7 @@ export default function LeaderboardPage() {
     if (mainTab === "friends") loadFriends();
     if (mainTab === "rivalry") loadRivalFriends();
     if (mainTab === "seasons") { loadSeasonData(); loadArchivedSeasons(); triggerAutoSnapshot(); }
+    if (mainTab === "tourney") loadTourneyLeaderboard();
   }, [mainTab, sortBy, seasonWeeksAgo]);
 
   // Load sparklines when active list changes
