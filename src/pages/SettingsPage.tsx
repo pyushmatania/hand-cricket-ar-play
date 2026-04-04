@@ -233,15 +233,18 @@ export default function SettingsPage() {
       <div className="relative z-10 max-w-lg mx-auto px-4 pt-4 space-y-4">
         {/* Title */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 mb-2">
-          <div className="w-12 h-12 rounded-2xl flex items-center justify-center border-b-[3px]" style={{
-            background: "linear-gradient(135deg, hsl(var(--game-gold) / 0.3), hsl(var(--game-gold) / 0.1))",
-            borderColor: "hsl(var(--game-gold) / 0.4)",
-          }}>
-            <span className="text-2xl">⚙️</span>
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
+            style={{
+              background: "linear-gradient(180deg, hsl(43 80% 50%) 0%, hsl(35 60% 35%) 100%)",
+              border: "2px solid hsl(43 60% 55% / 0.5)",
+              borderBottom: "4px solid hsl(35 50% 25%)",
+              boxShadow: "0 4px 16px hsl(43 90% 50% / 0.3)",
+            }}>
+            ⚙️
           </div>
           <div>
-            <h1 className="font-game-display text-xl tracking-wider text-game-gold">SETTINGS</h1>
-            <p className="text-[10px] text-muted-foreground font-game-body tracking-wide">Customize your experience</p>
+            <h1 className="font-game-title text-lg text-foreground" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>Settings</h1>
+            <p className="text-[9px] text-muted-foreground font-game-display tracking-[0.2em]">CUSTOMIZE YOUR EXPERIENCE</p>
           </div>
         </motion.div>
 
