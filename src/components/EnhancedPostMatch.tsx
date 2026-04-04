@@ -55,6 +55,58 @@ function computeStats(ballHistory: BallResult[]) {
   return { sixes, fours, threes, twos, singles, dots, biggestShot, totalBalls, strikeRate, boundaryPct, battingBalls, bestPartnership, totalRuns };
 }
 
+/* ── Star Rating ── */
+function getStarRating(result: string, playerScore: number, opponentScore: number, strikeRate: number): number {
+  if (result === "loss") return strikeRate > 100 ? 1 : 0;
+  if (result === "draw") return 2;
+  const margin = playerScore - opponentScore;
+  if (margin >= 30 && strikeRate >= 150) return 3;
+  if (margin >= 15 || strikeRate >= 120) return 2;
+  return 1;
+}
+
+/* ── Confetti Particle ── */
+const CONFETTI_COLORS = [
+  "hsl(43 96% 56%)", "hsl(142 71% 45%)", "hsl(4 90% 58%)",
+  "hsl(280 70% 55%)", "hsl(200 80% 55%)", "hsl(320 70% 60%)",
+];
+
+function ConfettiParticles() {
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {[...Array(30)].map((_, i) => {
+        const size = 4 + Math.random() * 6;
+        const isCircle = Math.random() > 0.5;
+        return (
+          <motion.div
+            key={i}
+            initial={{ y: -20, x: `${Math.random() * 100}%`, opacity: 1, rotate: 0, scale: 1 }}
+            animate={{
+              y: "110vh",
+              rotate: 360 * (Math.random() > 0.5 ? 2 : -2),
+              scale: [1, 0.8, 1],
+            }}
+            transition={{
+              duration: 2.5 + Math.random() * 3,
+              delay: Math.random() * 2,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+            className="absolute"
+            style={{
+              left: `${Math.random() * 100}%`,
+              width: size,
+              height: isCircle ? size : size * 1.5,
+              borderRadius: isCircle ? "50%" : "2px",
+              background: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
 export default function EnhancedPostMatch({
   playerName, opponentName, result, playerScore, opponentScore,
   playerWickets = 0, opponentWickets = 0,
@@ -62,6 +114,7 @@ export default function EnhancedPostMatch({
 }: EnhancedPostMatchProps) {
   const [visible, setVisible] = useState(true);
   const [showLevelUp, setShowLevelUp] = useState(false);
+  const [showRewards, setShowRewards] = useState(false);
   const { voiceEnabled, soundEnabled, crowdEnabled, commentaryEnabled } = useSettings();
   const stableOnComplete = useCallback(onComplete, []);
 
@@ -70,6 +123,7 @@ export default function EnhancedPostMatch({
 
   const isWin = result === "win";
   const isLoss = result === "loss";
+  const stars = useMemo(() => getStarRating(result, playerScore, opponentScore, stats.strikeRate), [result, playerScore, opponentScore, stats.strikeRate]);
 
   useEffect(() => {
     if (isWin) {
@@ -82,7 +136,9 @@ export default function EnhancedPostMatch({
     } else {
       if (soundEnabled) SFX.gameStart();
     }
-    return () => { stopMusic(); };
+    // Cascade rewards after delay
+    const t = setTimeout(() => setShowRewards(true), 1200);
+    return () => { stopMusic(); clearTimeout(t); };
   }, []);
 
   useEffect(() => {
@@ -111,6 +167,12 @@ export default function EnhancedPostMatch({
   const overs = stats.totalBalls > 0 ? `${Math.floor(stats.totalBalls / 6)}.${stats.totalBalls % 6}` : "0.0";
   const runRate = stats.totalBalls > 0 ? ((stats.totalRuns / stats.totalBalls) * 6).toFixed(1) : "0.0";
 
+  const resultBg = isWin
+    ? "linear-gradient(180deg, hsl(43 40% 8%) 0%, hsl(220 30% 6%) 100%)"
+    : isLoss
+    ? "linear-gradient(180deg, hsl(4 30% 8%) 0%, hsl(220 30% 6%) 100%)"
+    : "linear-gradient(180deg, hsl(220 20% 12%) 0%, hsl(220 30% 6%) 100%)";
+
   return (
     <AnimatePresence>
       {visible && (
@@ -119,40 +181,32 @@ export default function EnhancedPostMatch({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[70] flex flex-col overflow-y-auto"
-          style={{ background: isWin
-            ? "linear-gradient(to bottom, hsl(43 50% 10%), hsl(220 25% 8%))"
-            : isLoss
-            ? "linear-gradient(to bottom, hsl(4 30% 10%), hsl(220 25% 8%))"
-            : "linear-gradient(to bottom, hsl(220 20% 14%), hsl(220 25% 8%))"
-          }}
+          style={{ background: resultBg }}
         >
-          {/* Confetti particles for wins */}
-          {isWin && (
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-              {[...Array(20)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ y: -20, x: `${Math.random() * 100}%`, opacity: 1, rotate: 0 }}
-                  animate={{ y: "110vh", rotate: 360 * (Math.random() > 0.5 ? 1 : -1) }}
-                  transition={{ duration: 3 + Math.random() * 3, delay: Math.random() * 2, repeat: Infinity }}
-                  className="absolute w-2 h-3 rounded-sm"
-                  style={{
-                    left: `${Math.random() * 100}%`,
-                    background: ["hsl(43 96% 56%)", "hsl(122 39% 49%)", "hsl(4 90% 58%)", "hsl(280 70% 55%)", "hsl(200 70% 50%)"][i % 5],
-                  }}
-                />
-              ))}
-            </div>
-          )}
+          {/* Confetti for wins */}
+          {isWin && <ConfettiParticles />}
+
+          {/* Radial glow behind result text */}
+          <div
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[300px] pointer-events-none"
+            style={{
+              background: isWin
+                ? "radial-gradient(ellipse, hsl(43 96% 56% / 0.12) 0%, transparent 70%)"
+                : isLoss
+                ? "radial-gradient(ellipse, hsl(4 90% 58% / 0.08) 0%, transparent 70%)"
+                : "radial-gradient(ellipse, hsl(200 60% 50% / 0.08) 0%, transparent 70%)",
+            }}
+          />
 
           <div className="relative z-10 flex-1 flex flex-col px-4 py-6">
-            {/* Result Header */}
+            {/* ── RESULT HEADER ── */}
             <motion.div
-              initial={{ y: -30, opacity: 0 }}
+              initial={{ y: -40, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              className="text-center mb-4 pt-8"
+              transition={{ type: "spring", damping: 12 }}
+              className="text-center pt-10 mb-2"
             >
-              {/* Trophy/emoji */}
+              {/* Trophy / Emoji */}
               {isWin ? (
                 <motion.img
                   src={victoryTrophy}
@@ -160,128 +214,169 @@ export default function EnhancedPostMatch({
                   initial={{ scale: 0, rotate: -20 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: "spring", damping: 8, delay: 0.3 }}
-                  className="w-24 h-24 mx-auto mb-2 drop-shadow-[0_0_30px_hsl(43_96%_56%/0.5)]"
+                  className="w-28 h-28 mx-auto mb-3 drop-shadow-[0_0_40px_hsl(43_96%_56%/0.6)]"
                 />
               ) : (
                 <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", damping: 8, delay: 0.3 }}
-                  className="text-6xl block mb-3"
+                  className="text-7xl block mb-4"
                 >
-                  {isLoss ? "😔" : "🤝"}
+                  {isLoss ? "💔" : "🤝"}
                 </motion.span>
               )}
 
+              {/* VICTORY / DEFEAT text — Doc 1: Bungee Shade 48px */}
               <motion.h1
-                initial={{ scale: 0.5, opacity: 0 }}
+                initial={{ scale: 0.3, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 0.5, type: "spring" }}
-                className={`font-game-display text-4xl font-black tracking-wider ${
-                  isWin ? "text-game-gold" : isLoss ? "text-game-red" : "text-white"
-                }`}
-                style={{ textShadow: isWin
-                  ? "0 0 40px hsl(43 96% 56% / 0.5), 0 4px 8px rgba(0,0,0,0.5)"
-                  : "0 4px 8px rgba(0,0,0,0.5)"
+                transition={{ delay: 0.5, type: "spring", damping: 10 }}
+                className="font-display text-[48px] font-black tracking-wider leading-none"
+                style={{
+                  color: isWin ? "hsl(43 96% 56%)" : isLoss ? "hsl(4 90% 58%)" : "hsl(0 0% 100%)",
+                  textShadow: isWin
+                    ? "0 4px 0 hsl(43 70% 30%), 0 0 60px hsl(43 96% 56% / 0.4), 0 8px 20px rgba(0,0,0,0.5)"
+                    : "0 4px 0 hsl(4 50% 25%), 0 8px 20px rgba(0,0,0,0.5)",
+                  WebkitTextStroke: "1px rgba(0,0,0,0.2)",
                 }}
               >
                 {isWin ? "VICTORY!" : isLoss ? "DEFEAT" : "TIED!"}
               </motion.h1>
+
+              {/* Margin text */}
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.7 }}
-                className="font-game-body text-xs text-white/50 mt-1 tracking-wider"
+                className="font-body text-xs text-foreground/40 mt-2 tracking-wider"
               >
                 {isWin
-                  ? `${playerName} won by ${playerScore - opponentScore} runs`
+                  ? `Won by ${playerScore - opponentScore} runs`
                   : isLoss
-                  ? `${opponentName} won by ${opponentScore - playerScore} runs`
+                  ? `Lost by ${opponentScore - playerScore} runs`
                   : "Match Tied!"}
               </motion.p>
             </motion.div>
 
-            {/* Scorecard */}
+            {/* ── STAR RATING ── */}
+            <motion.div
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.8, type: "spring", damping: 12 }}
+              className="flex items-center justify-center gap-1.5 mb-5"
+            >
+              {[1, 2, 3].map((s) => (
+                <motion.span
+                  key={s}
+                  initial={{ rotateY: 90 }}
+                  animate={{ rotateY: 0 }}
+                  transition={{ delay: 0.9 + s * 0.15, type: "spring" }}
+                  className="text-3xl"
+                  style={{
+                    filter: s <= stars ? "drop-shadow(0 0 8px hsl(43 96% 56% / 0.6))" : "grayscale(1) opacity(0.25)",
+                  }}
+                >
+                  ⭐
+                </motion.span>
+              ))}
+            </motion.div>
+
+            {/* ── SCORECARD ── */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.2 }}
-              className="rounded-2xl border-2 border-game-gold/20 bg-[hsl(220_20%_14%/0.9)] p-4 mb-4 shadow-game-card"
+              transition={{ delay: 0.4 }}
+              className="rounded-2xl p-4 mb-4"
+              style={{
+                background: "linear-gradient(180deg, hsl(220 25% 14%), hsl(220 30% 10%))",
+                border: "2px solid hsl(43 50% 30% / 0.3)",
+                boxShadow: "inset 0 1px 0 hsl(220 20% 22%), 0 4px 12px rgba(0,0,0,0.4)",
+              }}
             >
               <div className="flex items-center justify-center gap-1 mb-3">
                 <span className="text-xs">🏏</span>
-                <span className="font-game-display text-[9px] font-bold text-game-gold/60 tracking-[0.3em]">SCORECARD</span>
+                <span className="font-display text-[9px] font-bold text-foreground/40 tracking-[0.3em]">SCORECARD</span>
               </div>
 
               {/* Player row */}
-              <div className="flex items-center justify-between py-2.5 border-b border-white/5">
+              <div className="flex items-center justify-between py-3 border-b border-border/20">
                 <div className="flex items-center gap-2">
-                  {isWin && <span className="text-xs">🏆</span>}
-                  <span className="font-game-display text-sm font-black text-white">{playerName}</span>
+                  {isWin && <span className="text-sm">🏆</span>}
+                  <span className="font-display text-sm font-black text-foreground">{playerName}</span>
                 </div>
-                <div className="text-right">
-                  <span className="font-game-display text-2xl font-black text-game-gold">{playerScore}</span>
-                  <span className="text-sm text-game-red/60 font-game-display">/{playerWickets}</span>
-                  <span className="text-[10px] text-white/30 font-game-body ml-2">({overs} ov)</span>
+                <div className="text-right flex items-baseline gap-1">
+                  <span className="font-score text-3xl font-black" style={{ color: "hsl(43 96% 56%)" }}>{playerScore}</span>
+                  <span className="font-score text-sm" style={{ color: "hsl(4 90% 58% / 0.6)" }}>/{playerWickets}</span>
+                  <span className="text-[10px] text-foreground/25 font-body ml-1">({overs})</span>
                 </div>
               </div>
 
               {/* Opponent row */}
-              <div className="flex items-center justify-between py-2.5">
+              <div className="flex items-center justify-between py-3">
                 <div className="flex items-center gap-2">
-                  {isLoss && <span className="text-xs">🏆</span>}
-                  <span className="font-game-display text-sm font-black text-white">{opponentName}</span>
+                  {isLoss && <span className="text-sm">🏆</span>}
+                  <span className="font-display text-sm font-black text-foreground/70">{opponentName}</span>
                 </div>
-                <div className="text-right">
-                  <span className="font-game-display text-2xl font-black text-white/80">{opponentScore}</span>
-                  <span className="text-sm text-game-red/60 font-game-display">/{opponentWickets}</span>
+                <div className="text-right flex items-baseline gap-1">
+                  <span className="font-score text-3xl font-black text-foreground/60">{opponentScore}</span>
+                  <span className="font-score text-sm" style={{ color: "hsl(4 90% 58% / 0.4)" }}>/{opponentWickets}</span>
                 </div>
               </div>
             </motion.div>
 
-            {/* Stats Grid */}
+            {/* ── STATS GRID ── */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.3 }}
+              transition={{ delay: 0.5 }}
               className="grid grid-cols-4 gap-2 mb-4"
             >
               {[
-                { icon: "⚾", label: "BALLS", value: stats.totalBalls, color: "text-white" },
-                { icon: "⚡", label: "SR", value: stats.strikeRate, color: "text-game-gold" },
-                { icon: "📊", label: "RR", value: runRate, color: "text-game-green" },
-                { icon: "🤝", label: "BEST P", value: stats.bestPartnership, color: "text-purple-300" },
+                { icon: "⚾", label: "BALLS", value: stats.totalBalls, color: "hsl(0 0% 100%)" },
+                { icon: "⚡", label: "SR", value: stats.strikeRate, color: "hsl(43 96% 56%)" },
+                { icon: "📊", label: "RR", value: runRate, color: "hsl(142 71% 45%)" },
+                { icon: "🤝", label: "BEST P", value: stats.bestPartnership, color: "hsl(280 70% 65%)" },
               ].map((s, i) => (
                 <motion.div
                   key={s.label}
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  transition={{ delay: 0.35 + i * 0.05 }}
-                  className="rounded-xl bg-white/[0.04] border border-white/10 p-2.5 text-center"
+                  transition={{ delay: 0.55 + i * 0.06 }}
+                  className="rounded-xl p-2.5 text-center"
+                  style={{
+                    background: "hsl(220 25% 12%)",
+                    border: "1.5px solid hsl(220 20% 20%)",
+                    boxShadow: "inset 0 1px 0 hsl(220 20% 18%)",
+                  }}
                 >
                   <span className="text-sm block">{s.icon}</span>
-                  <span className={`font-game-display text-lg font-black ${s.color} block leading-none`}>{s.value}</span>
-                  <span className="text-[6px] text-white/30 font-game-display tracking-widest mt-0.5 block">{s.label}</span>
+                  <span className="font-score text-lg font-black block leading-none" style={{ color: s.color }}>{s.value}</span>
+                  <span className="text-[6px] text-foreground/25 font-display tracking-widest mt-0.5 block">{s.label}</span>
                 </motion.div>
               ))}
             </motion.div>
 
-            {/* Shot Distribution */}
+            {/* ── SHOT DISTRIBUTION ── */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="rounded-2xl bg-white/[0.03] border border-white/10 p-3 mb-4"
+              transition={{ delay: 0.6 }}
+              className="rounded-2xl p-3 mb-4"
+              style={{
+                background: "hsl(220 25% 10%)",
+                border: "1.5px solid hsl(220 20% 18%)",
+              }}
             >
-              <span className="font-game-display text-[8px] font-bold text-white/30 tracking-[0.2em] block mb-2 text-center">SHOT DISTRIBUTION</span>
+              <span className="font-display text-[8px] font-bold text-foreground/25 tracking-[0.2em] block mb-2 text-center">SHOT DISTRIBUTION</span>
               <div className="flex items-end justify-center gap-3">
                 {[
-                  { label: "6s", val: stats.sixes, color: "bg-purple-500", textColor: "text-purple-300" },
-                  { label: "4s", val: stats.fours, color: "bg-game-gold", textColor: "text-game-gold" },
-                  { label: "3s", val: stats.threes, color: "bg-game-green", textColor: "text-game-green" },
-                  { label: "2s", val: stats.twos, color: "bg-blue-400", textColor: "text-blue-300" },
-                  { label: "1s", val: stats.singles, color: "bg-white/30", textColor: "text-white" },
-                  { label: "•", val: stats.dots, color: "bg-white/10", textColor: "text-white/50" },
+                  { label: "6s", val: stats.sixes, color: "hsl(280 70% 55%)" },
+                  { label: "4s", val: stats.fours, color: "hsl(43 96% 56%)" },
+                  { label: "3s", val: stats.threes, color: "hsl(142 71% 45%)" },
+                  { label: "2s", val: stats.twos, color: "hsl(200 80% 55%)" },
+                  { label: "1s", val: stats.singles, color: "hsl(0 0% 60%)" },
+                  { label: "•", val: stats.dots, color: "hsl(0 0% 30%)" },
                 ].map((s, i) => {
                   const maxVal = Math.max(stats.sixes, stats.fours, stats.threes, stats.twos, stats.singles, stats.dots, 1);
                   const height = Math.max(8, (s.val / maxVal) * 48);
@@ -290,73 +385,132 @@ export default function EnhancedPostMatch({
                       key={s.label}
                       initial={{ scaleY: 0 }}
                       animate={{ scaleY: 1 }}
-                      transition={{ delay: 0.45 + i * 0.06, type: "spring" }}
+                      transition={{ delay: 0.65 + i * 0.06, type: "spring" }}
                       className="flex flex-col items-center origin-bottom"
                     >
-                      <span className={`font-game-display text-xs font-black ${s.textColor} mb-1`}>{s.val}</span>
-                      <div className={`w-6 ${s.color} rounded-t-md opacity-60`} style={{ height }} />
-                      <span className="text-[7px] text-white/30 font-game-display mt-1">{s.label}</span>
+                      <span className="font-score text-xs font-black mb-1" style={{ color: s.color }}>{s.val}</span>
+                      <div className="w-6 rounded-t-md" style={{ height, background: s.color, opacity: 0.7 }} />
+                      <span className="text-[7px] text-foreground/25 font-display mt-1">{s.label}</span>
                     </motion.div>
                   );
                 })}
               </div>
             </motion.div>
 
-            {/* Wagon Wheel */}
+            {/* ── WAGON WHEEL ── */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="rounded-2xl bg-white/[0.03] border border-white/10 p-3 mb-4"
+              transition={{ delay: 0.7 }}
+              className="rounded-2xl p-3 mb-4"
+              style={{
+                background: "hsl(220 25% 10%)",
+                border: "1.5px solid hsl(220 20% 18%)",
+              }}
             >
               <WagonWheel ballHistory={ballHistory} isBatting={true} compact />
             </motion.div>
 
-            {/* Man of the Match */}
+            {/* ── MAN OF THE MATCH ── */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.55 }}
-              className="rounded-2xl bg-gradient-to-b from-game-gold/10 to-transparent border border-game-gold/20 p-4 mb-6 text-center"
+              transition={{ delay: 0.75 }}
+              className="rounded-2xl p-5 mb-4 text-center"
+              style={{
+                background: "linear-gradient(180deg, hsl(43 40% 12%), hsl(220 25% 8%))",
+                border: "2px solid hsl(43 60% 30% / 0.4)",
+                boxShadow: "0 0 30px hsl(43 96% 56% / 0.08), inset 0 1px 0 hsl(43 50% 25%)",
+              }}
             >
-              <span className="text-3xl block mb-1">🏅</span>
-              <span className="font-game-display text-[8px] font-bold text-game-gold/60 tracking-[0.2em] block mb-1">MAN OF THE MATCH</span>
-              <p className="font-game-display text-xl font-black text-game-gold"
-                style={{ textShadow: "0 0 20px hsl(43 96% 56% / 0.3)" }}>
+              <span className="text-4xl block mb-2">🏅</span>
+              <span className="font-display text-[8px] font-bold tracking-[0.3em] block mb-1" style={{ color: "hsl(43 60% 50%)" }}>PLAYER OF THE MATCH</span>
+              <p className="font-display text-2xl font-black" style={{
+                color: "hsl(43 96% 56%)",
+                textShadow: "0 0 20px hsl(43 96% 56% / 0.3), 0 2px 0 hsl(43 70% 30%)",
+              }}>
                 {isWin ? playerName : isLoss ? opponentName : "Shared!"}
               </p>
             </motion.div>
+
+            {/* ── REWARDS CASCADE ── */}
+            <AnimatePresence>
+              {showRewards && matchRewards && (
+                <motion.div
+                  initial={{ y: 30, opacity: 0, scale: 0.9 }}
+                  animate={{ y: 0, opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ type: "spring", damping: 12 }}
+                  className="rounded-2xl p-4 mb-6"
+                  style={{
+                    background: "linear-gradient(180deg, hsl(220 25% 14%), hsl(220 30% 10%))",
+                    border: "2px solid hsl(43 50% 30% / 0.25)",
+                    boxShadow: "0 0 20px hsl(43 96% 56% / 0.06)",
+                  }}
+                >
+                  <span className="font-display text-[8px] font-bold tracking-[0.3em] text-foreground/30 block text-center mb-3">MATCH REWARDS</span>
+                  <div className="flex items-center justify-center gap-6">
+                    {/* XP */}
+                    <motion.div
+                      initial={{ x: -20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: 0.1 }}
+                      className="flex items-center gap-2"
+                    >
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg"
+                        style={{ background: "linear-gradient(180deg, hsl(217 91% 50%), hsl(217 91% 35%))", boxShadow: "0 3px 0 hsl(217 91% 25%)" }}>
+                        ⚡
+                      </div>
+                      <div>
+                        <span className="font-score text-xl font-black" style={{ color: "hsl(217 91% 60%)" }}>+{matchRewards.xpEarned}</span>
+                        <span className="text-[7px] text-foreground/30 font-display block">XP</span>
+                      </div>
+                    </motion.div>
+
+                    {/* Coins */}
+                    <motion.div
+                      initial={{ x: 20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                      className="flex items-center gap-2"
+                    >
+                      <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg"
+                        style={{ background: "linear-gradient(180deg, hsl(43 96% 56%), hsl(43 80% 40%))", boxShadow: "0 3px 0 hsl(43 70% 28%)" }}>
+                        🪙
+                      </div>
+                      <div>
+                        <span className="font-score text-xl font-black" style={{ color: "hsl(43 96% 56%)" }}>+{matchRewards.coinsEarned}</span>
+                        <span className="text-[7px] text-foreground/30 font-display block">COINS</span>
+                      </div>
+                    </motion.div>
+                  </div>
+
+                  {/* Streak bonus badge */}
+                  {matchRewards.streakBonus && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: 0.4, type: "spring" }}
+                      className="mt-3 flex items-center justify-center"
+                    >
+                      <div className="flex items-center gap-1.5 px-4 py-1.5 rounded-full"
+                        style={{
+                          background: "linear-gradient(90deg, hsl(25 95% 53% / 0.15), hsl(43 96% 56% / 0.15))",
+                          border: "1.5px solid hsl(25 95% 53% / 0.3)",
+                        }}>
+                        <span className="text-sm">🔥</span>
+                        <span className="font-display text-[9px] font-bold tracking-wider" style={{ color: "hsl(25 95% 53%)" }}>WIN STREAK BONUS</span>
+                      </div>
+                    </motion.div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
-          {/* XP/Coins reward strip above button */}
-          {matchRewards && (
-            <motion.div
-              initial={{ y: 10, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="mx-4 mb-2 rounded-xl p-2.5 flex items-center justify-center gap-5 bg-white/[0.04] border border-white/10"
-            >
-              <div className="flex items-center gap-1.5">
-                <span className="text-sm">⚡</span>
-                <span className="font-game-display text-sm font-black text-game-blue">+{matchRewards.xpEarned}</span>
-                <span className="text-[7px] text-muted-foreground font-game-display">XP</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-sm">🪙</span>
-                <span className="font-game-display text-sm font-black text-game-gold">+{matchRewards.coinsEarned}</span>
-                <span className="text-[7px] text-muted-foreground font-game-display">COINS</span>
-              </div>
-              {matchRewards.streakBonus && (
-                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-game-orange/15 border border-game-orange/25">
-                  <span className="text-[10px]">🔥</span>
-                  <span className="font-game-display text-[7px] text-game-orange">STREAK</span>
-                </div>
-              )}
-            </motion.div>
-          )}
-
-          {/* Fixed bottom buttons */}
-          <div className="sticky bottom-0 p-4 pb-8 bg-gradient-to-t from-[hsl(220_25%_8%)] via-[hsl(220_25%_8%/0.95)] to-transparent flex flex-col gap-2">
+          {/* ── BOTTOM ACTION BUTTONS ── Doc 1: PLAY AGAIN / SCORECARD / HOME */}
+          <div className="sticky bottom-0 p-4 pb-8 flex flex-col gap-2"
+            style={{ background: "linear-gradient(to top, hsl(220 30% 6%), hsl(220 30% 6% / 0.95), transparent)" }}>
             <div className="flex gap-2">
               <ShareButton
                 title={`${isWin ? "🏆 Victory" : isLoss ? "Defeat" : "🤝 Tie"} — ${playerScore} vs ${opponentScore}`}
@@ -379,7 +533,7 @@ export default function EnhancedPostMatch({
                 )}
               />
               <GameButton variant="gold" size="lg" bounce onClick={handleClose} className="flex-[2]">
-                ⚡ CONTINUE
+                ▶ PLAY AGAIN
               </GameButton>
             </div>
           </div>
