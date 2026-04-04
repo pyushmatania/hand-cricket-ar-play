@@ -3,10 +3,11 @@
 // Maps EventType + Language → CommentaryLine[]
 // ═══════════════════════════════════════════════════
 
-import type { CommentaryLine, CommentaryLanguage, EventType } from '@/engines/types';
+import type { CommentaryLine, CommentaryLanguage } from '@/engines/types';
 
 import {
-  EN_DOT_BALL, EN_SINGLE, EN_DOUBLE, EN_TRIPLE,
+  EN_DEFENSE_SCORED, EN_WICKET_DEFENSE,
+  EN_SINGLE, EN_DOUBLE, EN_TRIPLE,
   EN_BOUNDARY_FOUR, EN_BOUNDARY_SIX,
   EN_WICKET_BOWLED, EN_WICKET_CAUGHT, EN_WICKET_LBW,
   EN_WICKET_RUN_OUT, EN_WICKET_STUMPED,
@@ -15,7 +16,8 @@ import {
 } from './english';
 
 import {
-  HI_DOT_BALL, HI_RUNS,
+  HI_DEFENSE_SCORED, HI_WICKET_DEFENSE,
+  HI_RUNS, HI_TRIPLE,
   HI_BOUNDARY_FOUR, HI_BOUNDARY_SIX,
   HI_WICKET_BOWLED, HI_WICKET_CAUGHT, HI_WICKET_LBW,
   HI_OVER_END, HI_MILESTONE_50, HI_MILESTONE_100,
@@ -23,7 +25,8 @@ import {
 } from './hindi';
 
 import {
-  HL_DOT_BALL, HL_RUNS,
+  HL_DEFENSE_SCORED, HL_WICKET_DEFENSE,
+  HL_RUNS, HL_TRIPLE,
   HL_BOUNDARY_FOUR, HL_BOUNDARY_SIX,
   HL_WICKET_BOWLED, HL_WICKET_CAUGHT, HL_WICKET_LBW,
   HL_OVER_END, HL_MILESTONE_50, HL_MILESTONE_100,
@@ -33,7 +36,8 @@ import {
 type CommentaryPool = Record<string, CommentaryLine[]>;
 
 const englishPool: CommentaryPool = {
-  DOT_BALL: EN_DOT_BALL,
+  DEFENSE_SCORED: EN_DEFENSE_SCORED,
+  WICKET_DEFENSE: EN_WICKET_DEFENSE,
   RUNS_SCORED: [...EN_SINGLE, ...EN_DOUBLE, ...EN_TRIPLE],
   BOUNDARY_FOUR: EN_BOUNDARY_FOUR,
   BOUNDARY_SIX: EN_BOUNDARY_SIX,
@@ -51,8 +55,9 @@ const englishPool: CommentaryPool = {
 };
 
 const hindiPool: CommentaryPool = {
-  DOT_BALL: HI_DOT_BALL,
-  RUNS_SCORED: HI_RUNS,
+  DEFENSE_SCORED: HI_DEFENSE_SCORED,
+  WICKET_DEFENSE: HI_WICKET_DEFENSE,
+  RUNS_SCORED: [...HI_RUNS, ...HI_TRIPLE],
   BOUNDARY_FOUR: HI_BOUNDARY_FOUR,
   BOUNDARY_SIX: HI_BOUNDARY_SIX,
   WICKET_BOWLED: HI_WICKET_BOWLED,
@@ -69,8 +74,9 @@ const hindiPool: CommentaryPool = {
 };
 
 const hinglishPool: CommentaryPool = {
-  DOT_BALL: HL_DOT_BALL,
-  RUNS_SCORED: HL_RUNS,
+  DEFENSE_SCORED: HL_DEFENSE_SCORED,
+  WICKET_DEFENSE: HL_WICKET_DEFENSE,
+  RUNS_SCORED: [...HL_RUNS, ...HL_TRIPLE],
   BOUNDARY_FOUR: HL_BOUNDARY_FOUR,
   BOUNDARY_SIX: HL_BOUNDARY_SIX,
   WICKET_BOWLED: HL_WICKET_BOWLED,
@@ -102,8 +108,6 @@ export function getCommentaryPool(
   language: CommentaryLanguage
 ): CommentaryLine[] {
   if (language === 'hinglish') {
-    // Mixed mode: 50% chance of using the dedicated hinglish pool,
-    // 25% english, 25% hindi for maximum variety
     const roll = Math.random();
     if (roll < 0.5) {
       return hinglishPool[eventType] || [];

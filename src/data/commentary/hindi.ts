@@ -4,22 +4,37 @@
 
 import type { CommentaryLine } from '@/engines/types';
 
-export const HI_DOT_BALL: CommentaryLine[] = [
-  { id: 'hd1', text: 'Koi run nahi. Dot ball.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
-  { id: 'hd2', text: 'Acchi bowling. Batsman rok ke rakh diya.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
-  { id: 'hd3', text: 'Defence! Solid defence. Zero.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
-  { id: 'hd4', text: 'Kuch nahi mila. Dot.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
-  { id: 'hd5', text: 'Tight bowling jaari hai. Ek aur dot.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
-  { id: 'hd6', text: 'Chhod diya bahar. Samajhdari.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
-  { id: 'hd7', text: 'Beat ho gaya batsman! Close one!', voice: 'main', emotion: 'neutral', rate: 1.05, pitch: 1.0, delay: 150 },
-  { id: 'hd8', text: 'Seedhe fielder ke haath mein. No run.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
-  { id: 'hd9', text: 'Pressure build ho raha hai. Dot.', voice: 'main', emotion: 'neutral', rate: 0.95, pitch: 1.0, delay: 200 },
-  { id: 'hd10', text: 'Yorker! Dig out kiya. Dot ball.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
-  { id: 'hd11', text: 'Bouncer! Neeche jhuk gaya. Safe.', voice: 'main', emotion: 'neutral', rate: 1.05, pitch: 1.0, delay: 150 },
-  { id: 'hd12', text: 'Rok ke rakh diya. No run.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
-  { id: 'hd13', text: 'Solid block. Koi run nahi.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
-  { id: 'hd14', text: 'Accha ball tha. Batsman ne respect kiya.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
-  { id: 'hd15', text: 'Miss! Swing and a miss! Dot.', voice: 'main', emotion: 'neutral', rate: 1.1, pitch: 1.0, delay: 100 },
+// ── DEFENSE SCORED ──
+export const HI_DEFENSE_SCORED: CommentaryLine[] = [
+  { id: 'hdf1', text: 'Defense se runs le liye! Smart khel!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
+  { id: 'hdf2', text: 'Sambhal ke khela aur run bhi le liye!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
+  { id: 'hdf3', text: 'Defense maara aur runs aa gaye. Ye hai cricket!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
+  { id: 'hdf4', text: 'Safe khela, par scoreboard chal raha hai!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
+  { id: 'hdf5', text: 'Bachao aur bhago! Runs mil gaye!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
+  { id: 'hdf6', text: 'Defensive shot, lekin runs toh aa hi gaye!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
+  { id: 'hdf7', text: 'Dhyan se khela. Runs le liye. Shaandaar!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
+  { id: 'hdf8', text: 'Suraksha pehle, runs baad mein. Sahi approach!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
+  { id: 'hdf9', text: 'Block kiya aur run bhi liya. Kya baat hai!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
+  { id: 'hdf10', text: 'Defense se kaam chal raha hai. Runs aa rahe hai!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
+  { id: 'hdf11', text: 'Patience dikha raha hai batsman. Runs aa jayenge.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
+  { id: 'hdf12', text: 'Safe pick tha. Par runs toh mil gaye!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
+  { id: 'hdf13', text: 'Bowler kuch nahi kar paya. Defense se bhi runs!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
+  { id: 'hdf14', text: 'Sambhal ke khelo, runs khud aa jayenge!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
+  { id: 'hdf15', text: 'Steady cricket. Defense plus runs!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 200 },
+];
+
+// ── DEFENSE vs DEFENSE = OUT ──
+export const HI_WICKET_DEFENSE: CommentaryLine[] = [
+  { id: 'hwd1', text: 'Dono ne defense maara! OUT! Kya ho gaya ye!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 500 },
+  { id: 'hwd2', text: 'Defense pe defense! Wicket gir gayi! Batsman gaya!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 500 },
+  { id: 'hwd3', text: 'Dono bach rahe the, lekin batsman ko jaana padega! OUT!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 500 },
+  { id: 'hwd4', text: 'Ye kya hua! Dono ne defend kiya! Batsman OUT!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 500 },
+  { id: 'hwd5', text: 'Double defense! Aur wicket! Kya mind game hai!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 500 },
+  { id: 'hwd6', text: 'Dono safe khele aur batsman ko OUT hona pada!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 500 },
+  { id: 'hwd7', text: 'Koi attack nahi kiya! Result? WICKET!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 500 },
+  { id: 'hwd8', text: 'Defense vs Defense! Batsman haar gaya! OUT!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 500 },
+  { id: 'hwd9', text: 'Standoff! Par batsman ko jaana hoga! WICKET!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 500 },
+  { id: 'hwd10', text: 'Dono ne bachne ki koshish ki! Batsman OUT!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 500 },
 ];
 
 export const HI_RUNS: CommentaryLine[] = [
@@ -31,6 +46,18 @@ export const HI_RUNS: CommentaryLine[] = [
   { id: 'hr6', text: 'Scoreboard chal raha hai. Ek aur run.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 100 },
   { id: 'hr7', text: 'Nudge kiya leg side mein. Single.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 100 },
   { id: 'hr8', text: 'Deep mein maara. Do run le liye.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 100 },
+];
+
+// ── Additional THREE ──
+export const HI_TRIPLE: CommentaryLine[] = [
+  { id: 'ht1', text: 'TEEN runs! Bhaag rahe hai dono! Athletic!', voice: 'main', emotion: 'excited', rate: 1.1, pitch: 1.05, delay: 100 },
+  { id: 'ht2', text: 'Teen run le liye! Misfield ka faayda uthaya!', voice: 'main', emotion: 'neutral', rate: 1.05, pitch: 1.0, delay: 100 },
+  { id: 'ht3', text: 'THREE! Achhi running! Fitness kaam aa rahi hai!', voice: 'main', emotion: 'neutral', rate: 1.1, pitch: 1.0, delay: 100 },
+  { id: 'ht4', text: 'Teen! Overthrow! Fielding side ne gift diya!', voice: 'main', emotion: 'neutral', rate: 1.1, pitch: 1.0, delay: 100 },
+  { id: 'ht5', text: 'TEEN runs! Calling bahut achhi thi! Smart cricket!', voice: 'main', emotion: 'neutral', rate: 1.1, pitch: 1.0, delay: 100 },
+  { id: 'ht6', text: 'Three le liye! Fielder slow tha! Punish kiya!', voice: 'main', emotion: 'neutral', rate: 1.1, pitch: 1.0, delay: 100 },
+  { id: 'ht7', text: 'Teen run! Deep mein maari aur bhaag liye!', voice: 'main', emotion: 'neutral', rate: 1.1, pitch: 1.0, delay: 100 },
+  { id: 'ht8', text: 'THREE! Sprint kiya teesre ke liye! Safe!', voice: 'main', emotion: 'neutral', rate: 1.1, pitch: 1.0, delay: 100 },
 ];
 
 export const HI_BOUNDARY_FOUR: CommentaryLine[] = [
@@ -48,6 +75,17 @@ export const HI_BOUNDARY_FOUR: CommentaryLine[] = [
   { id: 'hf8', text: 'FOUR! Shandar shot! Kya placement hai!', voice: 'main', emotion: 'excited', rate: 1.2, pitch: 1.05, delay: 800 },
   { id: 'hf9', text: 'Rope tak pahunch gayi! Chaukaa!', voice: 'main', emotion: 'excited', rate: 1.2, pitch: 1.0, delay: 800 },
   { id: 'hf10', text: 'Boundary! Batsman aag mein hai aaj!', voice: 'main', emotion: 'excited', rate: 1.25, pitch: 1.05, delay: 800 },
+  // Additional FOUR
+  { id: 'hf11', text: 'CHAUKAA! Point se nikal gayi! Kya shot!', voice: 'main', emotion: 'excited', rate: 1.2, pitch: 1.0, delay: 800 },
+  { id: 'hf12', text: 'Boundary! Pads pe flick kiya! Shandar!', voice: 'main', emotion: 'excited', rate: 1.2, pitch: 1.0, delay: 800 },
+  { id: 'hf13', text: 'FOUR! Off side mein maara! Bowler dekh raha hai!', voice: 'main', emotion: 'excited', rate: 1.2, pitch: 1.0, delay: 800 },
+  { id: 'hf14', text: 'Chaukaa! Cover drive! Copy paste cricket textbook!', voice: 'main', emotion: 'excited', rate: 1.2, pitch: 1.0, delay: 800 },
+  { id: 'hf15', text: 'FOUR! Pull shot! Short ball ka mazaa le liya!', voice: 'main', emotion: 'excited', rate: 1.2, pitch: 1.0, delay: 800 },
+  { id: 'hf16', text: 'Fence tak gayi! FOUR! Fielder haara!', voice: 'main', emotion: 'excited', rate: 1.2, pitch: 1.0, delay: 800 },
+  { id: 'hf17', text: 'Boundary! Reverse sweep! Himmat hai bhai mein!', voice: 'main', emotion: 'excited', rate: 1.2, pitch: 1.0, delay: 800 },
+  { id: 'hf18', text: 'CHAUKAA! Straight drive! Bowler ki taraf wapas!', voice: 'main', emotion: 'excited', rate: 1.2, pitch: 1.0, delay: 800 },
+  { id: 'hf19', text: 'FOUR! Edge se gayi! Lucky hai par chalega!', voice: 'main', emotion: 'excited', rate: 1.15, pitch: 1.05, delay: 800 },
+  { id: 'hf20', text: 'Cut shot! CHAUKAA! Square pe maari!', voice: 'main', emotion: 'excited', rate: 1.2, pitch: 1.0, delay: 800 },
 ];
 
 export const HI_BOUNDARY_SIX: CommentaryLine[] = [
@@ -65,6 +103,17 @@ export const HI_BOUNDARY_SIX: CommentaryLine[] = [
   { id: 'hs8', text: 'Uff! Jor se maara hai! SIX! Bahar!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.05, delay: 1000 },
   { id: 'hs9', text: 'CHHAKKAA! Crowd paagal ho gaya!', voice: 'main', emotion: 'excited', rate: 1.35, pitch: 1.1, delay: 1000 },
   { id: 'hs10', text: 'Ye ball wapas nahi aayegi! SIX!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.05, delay: 1000 },
+  // Additional SIX
+  { id: 'hs11', text: 'CHHAKKAA! Long-on ke upar! Rocket jaisi!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.05, delay: 1000 },
+  { id: 'hs12', text: 'MAXIMUM! Stands mein ja ke baithi! Kya hit hai!', voice: 'main', emotion: 'excited', rate: 1.35, pitch: 1.1, delay: 1000 },
+  { id: 'hs13', text: 'SIX! Scoop shot! Fine leg ke upar! Kamaal!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.05, delay: 1000 },
+  { id: 'hs14', text: 'CHHAKKAA! Flat bat se maari! Brutally hit!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.05, delay: 1000 },
+  { id: 'hs15', text: 'SIX! Switch hit! Left se right! Aur DHAN!', voice: 'main', emotion: 'excited', rate: 1.35, pitch: 1.1, delay: 1000 },
+  { id: 'hs16', text: 'Helicopter shot! CHHAKKAA! Sirf ek aadmi ye maarta hai!', voice: 'main', emotion: 'excited', rate: 1.35, pitch: 1.1, delay: 1000 },
+  { id: 'hs17', text: 'MAXIMUM! Ball ab tak dhundh rahe honge!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.05, delay: 1000 },
+  { id: 'hs18', text: 'SIX! Spinner ko uthake maara! Sightscreen ke upar!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.05, delay: 1000 },
+  { id: 'hs19', text: 'CHHAKKAA! Pull shot! Pace ke khilaaf! Timing!', voice: 'main', emotion: 'excited', rate: 1.35, pitch: 1.1, delay: 1000 },
+  { id: 'hs20', text: 'SIX! DJ baaja raha hai! Crowd paagal ho gaya!', voice: 'main', emotion: 'excited', rate: 1.35, pitch: 1.1, delay: 1000 },
 ];
 
 export const HI_WICKET_BOWLED: CommentaryLine[] = [
