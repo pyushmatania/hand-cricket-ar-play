@@ -2,6 +2,8 @@ import { motion } from "framer-motion";
 import { DBPlayer, statToDiamonds, overallRating, roleLabel } from "@/hooks/usePlayers";
 import { Zap } from "lucide-react";
 
+import { TEAM_STAR_ART } from "@/assets/players";
+
 /* ── Player image map for Mythic/Legendary cards ── */
 const PLAYER_IMAGES: Record<string, string> = {};
 
