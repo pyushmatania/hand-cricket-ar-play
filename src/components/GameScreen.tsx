@@ -358,7 +358,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       } else if (r.runs === 4) {
         engines.event.emit('BOUNDARY_FOUR', { ...r, runs: 4, context });
       } else if (r.runs === 0) {
-        engines.event.emit('DOT_BALL', { ...r, context });
+        engines.event.emit('RUNS_SCORED', { ...r, runs: 0, context });
       } else {
         engines.event.emit('RUNS_SCORED', { ...r, runs: r.runs, context });
       }

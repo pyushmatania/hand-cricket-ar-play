@@ -72,15 +72,10 @@ class EngineManager {
     const isBatting = () => this._perspective === 'batting';
 
     // ── Sound Engine listeners (perspective-aware) ──
-    E.on('DOT_BALL', () => {
-      this.sound.playEffect('ball_into_gloves');
-      if (isBatting()) {
-        // Defensive dot — subtle crowd murmur
-        this.sound.vibrate('light');
-      } else {
-        // Good ball as bowler — satisfied crowd
-        this.sound.playEffect('crowd_cheer_excited');
-      }
+    E.on('DEFENSE_SCORED', (p) => {
+      this.sound.playEffect('bat_hit_soft');
+      if (p.runs >= 1) this.sound.playEffect('running_footsteps');
+      this.sound.vibrate('light');
     });
 
     E.on('RUNS_SCORED', (p) => {
@@ -92,11 +87,9 @@ class EngineManager {
     E.on('BOUNDARY_FOUR', () => {
       this.sound.playEffect('bat_hit_hard');
       if (isBatting()) {
-        // Euphoria: player hit a four
         setTimeout(() => this.sound.playEffect('crowd_cheer_excited'), 600);
         this.sound.vibrate('medium');
       } else {
-        // Disappointment: opponent scored a four off us
         setTimeout(() => this.sound.playEffect('crowd_gasp'), 400);
       }
     });
@@ -104,14 +97,12 @@ class EngineManager {
     E.on('BOUNDARY_SIX', () => {
       this.sound.playEffect('bat_hit_massive');
       if (isBatting()) {
-        // Euphoria: player smashed a six
         setTimeout(() => this.sound.playEffect('ball_flight_whoosh'), 200);
         setTimeout(() => this.sound.playEffect('crowd_eruption'), 800);
         setTimeout(() => this.sound.playEffect('firework_pop'), 1200);
         setTimeout(() => this.sound.playEffect('firework_pop'), 1600);
         this.sound.vibrate('heavy');
       } else {
-        // Disappointment: we got hit for six
         setTimeout(() => this.sound.playEffect('crowd_gasp'), 300);
         this.sound.vibrate('medium');
       }
@@ -120,11 +111,21 @@ class EngineManager {
     E.on('WICKET_BOWLED', () => {
       this.sound.playEffect('stumps_hit');
       if (isBatting()) {
-        // Disappointment: we got bowled
         setTimeout(() => this.sound.playEffect('crowd_gasp'), 200);
         this.sound.vibrate('heavy');
       } else {
-        // Euphoria: we took a wicket!
+        setTimeout(() => this.sound.playEffect('crowd_appeal'), 300);
+        setTimeout(() => this.sound.playEffect('crowd_celebration_sustained'), 1000);
+        this.sound.vibrate('heavy');
+      }
+    });
+
+    E.on('WICKET_DEFENSE', () => {
+      this.sound.playEffect('stumps_hit');
+      if (isBatting()) {
+        setTimeout(() => this.sound.playEffect('crowd_gasp'), 200);
+        this.sound.vibrate('heavy');
+      } else {
         setTimeout(() => this.sound.playEffect('crowd_appeal'), 300);
         setTimeout(() => this.sound.playEffect('crowd_celebration_sustained'), 1000);
         this.sound.vibrate('heavy');
@@ -186,9 +187,9 @@ class EngineManager {
     E.on('UI_UPDATE_SCORE', () => this.sound.playEffect('ui_score_tick'));
 
     // ── Commentary Engine listeners ──
-    E.on('DOT_BALL', (p) => {
+    E.on('DEFENSE_SCORED', (p) => {
       if (Math.random() < 0.5) {
-        this.commentary.speakForEvent('DOT_BALL', p.context, 'neutral');
+        this.commentary.speakForEvent('DEFENSE_SCORED', p.context, 'neutral');
       }
     });
     E.on('RUNS_SCORED', (p) => {
@@ -204,6 +205,9 @@ class EngineManager {
     });
     E.on('WICKET_BOWLED', (p) => {
       setTimeout(() => this.commentary.speakForEvent('WICKET_BOWLED', p.context, 'dramatic'), 500);
+    });
+    E.on('WICKET_DEFENSE', (p) => {
+      setTimeout(() => this.commentary.speakForEvent('WICKET_DEFENSE', p.context, 'dramatic'), 500);
     });
     E.on('WICKET_CAUGHT', (p) => {
       setTimeout(() => this.commentary.speakForEvent('WICKET_CAUGHT', p.context, 'dramatic'), 800);
@@ -226,6 +230,7 @@ class EngineManager {
       setTimeout(() => this.lighting.floodlightWave(), 200);
     });
     E.on('WICKET_BOWLED', () => this.lighting.flashScreen('#FF0000', 200, 0.2));
+    E.on('WICKET_DEFENSE', () => this.lighting.flashScreen('#FF0000', 200, 0.2));
     E.on('WICKET_CAUGHT', () => this.lighting.flashScreen('#FF0000', 200, 0.2));
     E.on('WICKET_LBW', () => this.lighting.flashScreen('#FF0000', 200, 0.2));
     E.on('WICKET_RUN_OUT', () => this.lighting.flashScreen('#FF0000', 200, 0.2));
@@ -233,8 +238,8 @@ class EngineManager {
 
     // ── Crowd Engine listeners ──
     const crowdEvents: EventType[] = [
-      'DOT_BALL', 'RUNS_SCORED', 'BOUNDARY_FOUR', 'BOUNDARY_SIX',
-      'WICKET_BOWLED', 'WICKET_CAUGHT', 'WICKET_LBW',
+      'DEFENSE_SCORED', 'RUNS_SCORED', 'BOUNDARY_FOUR', 'BOUNDARY_SIX',
+      'WICKET_BOWLED', 'WICKET_DEFENSE', 'WICKET_CAUGHT', 'WICKET_LBW',
       'WICKET_RUN_OUT', 'WICKET_STUMPED', 'WICKET_CAUGHT_BEHIND',
       'MILESTONE_50', 'MILESTONE_100', 'HATTRICK',
       'OVER_END', 'DEATH_OVERS_START',

@@ -42,8 +42,8 @@ export class CrowdEngine {
    */
   reactToEvent(eventType: EventType, payload: Record<string, any>): void {
     switch (eventType) {
-      case 'DOT_BALL':
-        this.mood = Math.max(0, this.mood - 3);
+      case 'DEFENSE_SCORED':
+        this.mood += 5;
         break;
       case 'RUNS_SCORED':
         this.mood += (payload.runs || 1) * 4;
