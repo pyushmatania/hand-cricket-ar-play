@@ -589,20 +589,19 @@ export default function SettingsPage() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="rounded-2xl p-5 text-center border-b-[3px] mb-4"
+          className="rounded-2xl p-5 text-center mb-4"
           style={{
             ...cardStyle,
-            borderColor: "hsl(var(--game-gold) / 0.2)",
+            borderBottom: "5px solid hsl(25 25% 10%)",
           }}
         >
           <span className="text-3xl block mb-2">🏏</span>
-          <p className="font-game-display text-sm tracking-wider text-game-gold">HAND CRICKET AR</p>
+          <p className="font-game-title text-sm text-foreground" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>HAND CRICKET</p>
           <p className="text-[9px] text-muted-foreground/50 font-game-display mt-1 tracking-widest">v3.0 • PREMIUM EDITION</p>
-          <div className="flex items-center justify-center gap-3 mt-3">
-            <div className="w-10 h-[2px]" style={{ background: "linear-gradient(to right, transparent, hsl(var(--game-gold) / 0.3))" }} />
-            <span className="text-[7px] text-muted-foreground/40 font-game-display tracking-[0.3em]">POWERED BY AI</span>
-            <div className="w-10 h-[2px]" style={{ background: "linear-gradient(to left, transparent, hsl(var(--game-gold) / 0.3))" }} />
-          </div>
+          {/* Chalk divider */}
+          <div className="h-px my-3 mx-8 opacity-20"
+            style={{ background: "repeating-linear-gradient(90deg, hsl(45 30% 80%) 0px, hsl(45 30% 80%) 8px, transparent 8px, transparent 14px)" }} />
+          <span className="text-[7px] text-muted-foreground/40 font-game-display tracking-[0.3em]">POWERED BY AI</span>
         </motion.div>
       </div>
 
