@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { SFX, Haptics } from "@/lib/sounds";
 
 const NAV_ITEMS = [
-  { path: "/friends", label: "Cards", icon: "🃏" },
+  { path: "/collection", label: "Cards", icon: "🃏" },
   { path: "/shop", label: "Shop", icon: "🛒" },
   { path: "/", label: "Battle", icon: "⚔️", center: true },
   { path: "/clan", label: "Clan", icon: "🛡️" },
