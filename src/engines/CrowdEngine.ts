@@ -4,12 +4,32 @@
 // ═══════════════════════════════════════════════════
 
 import type { EventType, CrowdIntensity } from './types';
+import type { CrowdType } from '@/lib/matchThemes';
+
+export interface CrowdThemeConfig {
+  type: CrowdType;
+  count: number;
+  baseNoise: number;        // 0-100
+  chantStyle: string;       // 'clapping' | 'drumming' | 'dhol'
+  reactionSpeed: number;    // 0-1 multiplier on mood changes
+  peakEvents: string[];     // events that trigger max noise
+}
+
+const DEFAULT_CROWD_CONFIG: CrowdThemeConfig = {
+  type: 'fans',
+  count: 5000,
+  baseNoise: 50,
+  chantStyle: 'clapping',
+  reactionSpeed: 0.8,
+  peakEvents: ['BOUNDARY_SIX', 'WICKET_BOWLED'],
+};
 
 export class CrowdEngine {
   private mood: number = 30;
   private decayInterval: ReturnType<typeof setInterval> | null = null;
   private lastMexicanWave: number = 0;
   private mexicanWaveThreshold: number = 90;
+  private themeConfig: CrowdThemeConfig = DEFAULT_CROWD_CONFIG;
 
   // Callbacks wired by EngineManager
   private onMoodChange?: (mood: number, intensity: CrowdIntensity) => void;
