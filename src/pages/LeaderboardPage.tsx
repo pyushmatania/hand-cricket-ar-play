@@ -693,9 +693,9 @@ export default function LeaderboardPage() {
           {mainTab === "rivalry" && (
             <motion.div key="rivalry" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-2">
               {rivalFriends.length === 0 ? (
-                <div className="glass-premium rounded-2xl p-8 text-center">
+                <div className="rounded-2xl p-8 text-center" style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
                   <span className="text-4xl block mb-3">⚔️</span>
-                  <p className="font-display text-sm font-bold text-foreground">Add friends to see rivalries!</p>
+                  <p className="font-game-display text-sm font-bold text-foreground">Add friends to see rivalries!</p>
                   <p className="text-[10px] text-muted-foreground mt-1">Play multiplayer against friends to build H2H stats</p>
                 </div>
               ) : (
@@ -719,37 +719,40 @@ export default function LeaderboardPage() {
                 const third = sorted[2];
                 return (
                   <motion.div key={rt.title} initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}
-                    className="glass-premium rounded-xl p-4 relative overflow-hidden">
-                    <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl ${rt.color} rounded-bl-full`} />
+                    className="rounded-xl p-4 relative overflow-hidden"
+                    style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
+                    <div className="absolute top-0 right-0 w-24 h-24 rounded-bl-full pointer-events-none"
+                      style={{ background: "radial-gradient(circle at top right, hsl(43 90% 55% / 0.06), transparent 70%)" }} />
                     <div className="flex items-center gap-3 mb-2">
                       <span className="text-2xl">{rt.title.split(" ")[0]}</span>
                       <div>
-                        <span className="font-display text-[11px] font-black text-foreground block">{rt.title.split(" ").slice(1).join(" ")}</span>
+                        <span className="font-game-display text-[11px] font-black text-foreground block">{rt.title.split(" ").slice(1).join(" ")}</span>
                         <span className="text-[8px] text-muted-foreground">{rt.desc}</span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3 glass-card rounded-xl p-2.5 mb-1.5">
+                    <div className="flex items-center gap-3 rounded-xl p-2.5 mb-1.5"
+                      style={{ background: "hsl(25 15% 10%)", border: "1px solid hsl(25 18% 20%)" }}>
                       <span className="text-lg">🥇</span>
                       <div className="flex-1">
-                        <span className="font-display text-[10px] font-bold text-foreground">
-                          {winner.display_name}{user && winner.user_id === user.id && <span className="text-primary/60 ml-1">(YOU)</span>}
+                        <span className="font-game-display text-[10px] font-bold text-foreground">
+                          {winner.display_name}{user && winner.user_id === user.id && <span style={{ color: "hsl(207 90% 54% / 0.6)" }} className="ml-1">(YOU)</span>}
                         </span>
                       </div>
-                      <span className="font-display text-lg font-black text-secondary">{rt.stat(winner)}</span>
-                      <span className="text-[7px] text-muted-foreground font-display">{rt.label}</span>
+                      <span className="font-game-display text-lg font-black" style={{ color: "hsl(43 90% 55%)" }}>{rt.stat(winner)}</span>
+                      <span className="text-[7px] text-muted-foreground font-game-display">{rt.label}</span>
                     </div>
                     {runnerUp && rt.stat(runnerUp) > 0 && (
                       <div className="flex items-center gap-3 px-2.5 py-1.5 opacity-60">
                         <span className="text-sm">🥈</span>
-                        <span className="font-display text-[9px] text-muted-foreground flex-1">{runnerUp.display_name}{user && runnerUp.user_id === user.id && <span className="text-primary/60 ml-1">(YOU)</span>}</span>
-                        <span className="font-display text-sm font-bold text-muted-foreground">{rt.stat(runnerUp)}</span>
+                        <span className="font-game-display text-[9px] text-muted-foreground flex-1">{runnerUp.display_name}{user && runnerUp.user_id === user.id && <span style={{ color: "hsl(207 90% 54% / 0.6)" }} className="ml-1">(YOU)</span>}</span>
+                        <span className="font-game-display text-sm font-bold text-muted-foreground">{rt.stat(runnerUp)}</span>
                       </div>
                     )}
                     {third && rt.stat(third) > 0 && (
                       <div className="flex items-center gap-3 px-2.5 py-1 opacity-40">
                         <span className="text-xs">🥉</span>
-                        <span className="font-display text-[8px] text-muted-foreground flex-1">{third.display_name}{user && third.user_id === user.id && <span className="text-primary/60 ml-1">(YOU)</span>}</span>
-                        <span className="font-display text-xs font-bold text-muted-foreground">{rt.stat(third)}</span>
+                        <span className="font-game-display text-[8px] text-muted-foreground flex-1">{third.display_name}{user && third.user_id === user.id && <span style={{ color: "hsl(207 90% 54% / 0.6)" }} className="ml-1">(YOU)</span>}</span>
+                        <span className="font-game-display text-xs font-bold text-muted-foreground">{rt.stat(third)}</span>
                       </div>
                     )}
                   </motion.div>
@@ -772,33 +775,26 @@ export default function LeaderboardPage() {
           {(mainTab === "global" || mainTab === "friends") && (
             <motion.div key={`${mainTab}-${sortBy}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
               {activeList.length === 0 ? (
-                <div className="glass-premium rounded-2xl p-8 text-center">
+                <div className="rounded-2xl p-8 text-center" style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
                   <span className="text-4xl block mb-3">{mainTab === "friends" ? "👥" : "🏟️"}</span>
-                  <p className="font-display text-sm font-bold text-foreground">{mainTab === "friends" ? "Add friends to see rankings!" : "No players yet"}</p>
+                  <p className="font-game-display text-sm font-bold text-foreground">{mainTab === "friends" ? "Add friends to see rankings!" : "No players yet"}</p>
                   <p className="text-[10px] text-muted-foreground mt-1">{mainTab === "friends" ? "Go to the Friends tab to add players" : "Be the first to play!"}</p>
                 </div>
               ) : (
                 <>
-                  {/* Player of the Week with confetti */}
                   <PotwWithoutConfetti player={playerOfWeek} loading={potwLoading} />
 
-                  {/* Top 3 podium — Supercell style */}
+                  {/* Top 3 podium — Stadium Concrete 3D */}
                   {top3.length >= 3 && (
                     <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="flex items-end justify-center gap-2 mb-6 pt-4">
                       {[top3[1], top3[0], top3[2]].map((p, i) => {
-                        const heights = ["h-24", "h-32", "h-20"];
-                        const rank = i === 0 ? 2 : i === 1 ? 1 : 3;
+                        const heights = [96, 128, 80];
                         const isMe = user && p.user_id === user.id;
                         const tier = getRankTier(p);
-                        const podiumBorders = [
-                          "border-[hsl(210_10%_70%)] from-[hsl(210_10%_70%/0.2)] to-[hsl(210_10%_50%/0.05)]",
-                          "border-game-gold from-[hsl(51_100%_50%/0.25)] to-[hsl(43_96%_42%/0.08)]",
-                          "border-[hsl(25_60%_50%)] from-[hsl(25_60%_50%/0.15)] to-[hsl(25_60%_40%/0.05)]",
-                        ];
-                        const podiumGlows = [
-                          "shadow-[0_0_16px_hsl(210_10%_70%/0.2)]",
-                          "shadow-[0_0_30px_hsl(51_100%_50%/0.3)]",
-                          "shadow-[0_0_12px_hsl(25_60%_50%/0.15)]",
+                        const podiumColors = [
+                          { border: "hsl(210 10% 70%)", glow: "0 0 16px hsl(210 10% 70% / 0.2)", bg: "linear-gradient(180deg, hsl(210 10% 20%) 0%, hsl(210 10% 14%) 100%)" },
+                          { border: "hsl(43 80% 50%)", glow: "0 0 30px hsl(43 90% 50% / 0.3)", bg: "linear-gradient(180deg, hsl(43 30% 18%) 0%, hsl(43 25% 12%) 100%)" },
+                          { border: "hsl(25 60% 50%)", glow: "0 0 12px hsl(25 60% 50% / 0.15)", bg: "linear-gradient(180deg, hsl(25 30% 18%) 0%, hsl(25 25% 12%) 100%)" },
                         ];
                         const crownSize = ["text-xl", "text-3xl", "text-lg"];
                         const crowns = ["🥈", "👑", "🥉"];
@@ -809,36 +805,48 @@ export default function LeaderboardPage() {
                             transition={{ delay: 0.2 + i * 0.12, type: "spring", stiffness: 200, damping: 20 }}
                             className={`flex flex-col items-center ${mainTab === "friends" && !isMe ? "cursor-pointer active:scale-[0.97] transition-transform" : ""}`}
                             onClick={() => { if (mainTab === "friends" && !isMe) setPreviewFriendId(p.user_id); }}>
-                            {/* Crown/medal floating above */}
                             <motion.span
                               animate={{ y: [0, -4, 0] }}
                               transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.4, ease: "easeInOut" }}
                               className={`${crownSize[i]} mb-1 drop-shadow-lg`}>{crowns[i]}</motion.span>
-                            {/* Avatar */}
                             <div className="mb-1.5 relative">
-                              <div className={`rounded-full border-2 ${i === 1 ? "border-game-gold shadow-[0_0_12px_hsl(51_100%_50%/0.4)]" : i === 0 ? "border-[hsl(210_10%_70%)]" : "border-[hsl(25_60%_50%)]"}`}>
+                              <div className="rounded-full" style={{ border: `3px solid ${podiumColors[i].border}`, boxShadow: podiumColors[i].glow }}>
                                 <PlayerAvatar avatarUrl={p.avatar_url} avatarIndex={p.avatar_index ?? 0} size="sm" />
                               </div>
                               {(p.current_streak ?? 0) >= 3 && (
-                                <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-game-red border-2 border-game-dark flex items-center justify-center">
-                                  <span className="text-[7px] text-white font-game-display">🔥</span>
+                                <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center"
+                                  style={{ background: "hsl(4 90% 55%)", border: "2px solid hsl(25 15% 10%)" }}>
+                                  <span className="text-[7px]">🔥</span>
                                 </div>
                               )}
                             </div>
-                            {/* Podium pillar */}
-                            <div className={`w-[5.5rem] ${heights[i]} rounded-t-2xl border-2 border-b-4 bg-gradient-to-t ${podiumBorders[i]} ${podiumGlows[i]} flex flex-col items-center justify-center px-2 relative overflow-hidden`}>
-                              <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
-                              <span className={`font-game-display text-2xl ${i === 1 ? "text-game-gold" : "text-foreground"}`} style={{ textShadow: i === 1 ? "0 0 15px hsl(51 100% 50% / 0.4)" : "none" }}>
+                            {/* Podium pillar — Stadium Concrete */}
+                            <div className="w-[5.5rem] rounded-t-2xl flex flex-col items-center justify-center px-2 relative overflow-hidden"
+                              style={{
+                                height: heights[i],
+                                background: podiumColors[i].bg,
+                                border: `2px solid ${podiumColors[i].border}`,
+                                borderBottom: `5px solid hsl(25 20% 8%)`,
+                                boxShadow: podiumColors[i].glow,
+                              }}>
+                              <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+                              <span className="font-game-display text-2xl" style={{ color: i === 1 ? "hsl(43 90% 55%)" : "hsl(0 0% 90%)", textShadow: i === 1 ? "0 0 15px hsl(43 90% 55% / 0.4)" : "none" }}>
                                 {getScore(p)}
                               </span>
                               <span className="text-[6px] text-muted-foreground font-game-display tracking-widest">{SORT_OPTIONS[sortBy].label}</span>
                               {(p.xp ?? 0) > 0 && (
-                                <span className="text-[6px] text-game-blue font-game-display mt-0.5">✨{p.xp}</span>
+                                <span className="text-[6px] font-game-display mt-0.5" style={{ color: "hsl(207 90% 60%)" }}>✨{p.xp}</span>
                               )}
                             </div>
                             {/* Name plate */}
-                            <div className={`w-[5.5rem] rounded-b-xl py-1.5 text-center border-x-2 border-b-2 ${i === 1 ? "border-game-gold/40 bg-game-gold/5" : i === 0 ? "border-[hsl(210_10%_70%/0.3)] bg-[hsl(210_10%_70%/0.03)]" : "border-[hsl(25_60%_50%/0.3)] bg-[hsl(25_60%_50%/0.03)]"}`}>
-                              <span className={`text-[8px] font-game-card font-bold block truncate px-1 ${isMe ? "text-game-blue" : "text-foreground"}`}>{p.display_name}{isMe && " ★"}</span>
+                            <div className="w-[5.5rem] rounded-b-xl py-1.5 text-center"
+                              style={{
+                                borderLeft: `2px solid ${podiumColors[i].border}40`,
+                                borderRight: `2px solid ${podiumColors[i].border}40`,
+                                borderBottom: `2px solid ${podiumColors[i].border}40`,
+                                background: `${podiumColors[i].border}08`,
+                              }}>
+                              <span className="text-[8px] font-game-card font-bold block truncate px-1" style={{ color: isMe ? "hsl(207 90% 60%)" : "hsl(0 0% 90%)" }}>{p.display_name}{isMe && " ★"}</span>
                               <span className={`text-[6px] ${tier.color} font-game-display`}>{tier.emoji} {tier.name}</span>
                             </div>
                           </motion.div>
@@ -846,7 +854,11 @@ export default function LeaderboardPage() {
                       })}
                     </motion.div>
                   )}
-                  {/* Ranked list */}
+
+                  {/* Chalk divider */}
+                  <div className="mb-3" style={{ borderBottom: CHALK_BORDER }} />
+
+                  {/* Ranked list — Stadium Concrete cards */}
                   <div className="space-y-2">
                     {rest.map((player, i) => {
                       const isMe = user && player.user_id === user.id;
@@ -855,31 +867,46 @@ export default function LeaderboardPage() {
                       return (
                         <motion.div key={player.user_id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 + i * 0.04, type: "spring", stiffness: 300, damping: 25 }}
                           onClick={() => { if (mainTab === "friends" && !isMe) setPreviewFriendId(player.user_id); }}
-                          className={`rounded-2xl border-2 p-3 flex items-center gap-3 bg-gradient-to-b from-[hsl(222_40%_13%/0.9)] to-[hsl(222_40%_8%/0.95)] ${isMe ? "border-game-blue/40 shadow-[0_0_16px_hsl(207_90%_54%/0.15)]" : "border-[hsl(222_25%_22%/0.5)]"} ${mainTab === "friends" && !isMe ? "cursor-pointer active:scale-[0.98] transition-transform" : ""}`}>
+                          className={`rounded-2xl p-3 flex items-center gap-3 ${mainTab === "friends" && !isMe ? "cursor-pointer active:scale-[0.98] transition-transform" : ""}`}
+                          style={{
+                            background: CONCRETE_CARD,
+                            border: isMe ? "2px solid hsl(207 90% 54% / 0.4)" : "2px solid hsl(25 20% 22%)",
+                            borderBottom: "5px solid hsl(25 25% 10%)",
+                            boxShadow: isMe ? "0 0 16px hsl(207 90% 54% / 0.15)" : "0 4px 16px rgba(0,0,0,0.3)",
+                          }}>
                           {/* Rank number */}
-                          <div className={`w-9 h-9 rounded-xl flex items-center justify-center font-game-display text-xs border-b-2 ${
-                            isMe ? "bg-gradient-to-b from-game-blue to-[hsl(207_90%_44%)] text-white border-[hsl(207_90%_35%)]" : "bg-game-dark text-muted-foreground border-[hsl(222_25%_18%)]"
-                          }`}>
+                          <div className="w-9 h-9 rounded-xl flex items-center justify-center font-game-display text-xs"
+                            style={isMe ? {
+                              background: "linear-gradient(180deg, hsl(207 90% 54%) 0%, hsl(207 90% 40%) 100%)",
+                              borderBottom: "3px solid hsl(207 90% 30%)",
+                              color: "white",
+                            } : {
+                              background: "hsl(25 15% 10%)",
+                              borderBottom: "3px solid hsl(25 20% 8%)",
+                              color: "hsl(25 20% 50%)",
+                            }}>
                             #{i + 4}
                           </div>
-                          <PlayerAvatar avatarUrl={player.avatar_url} avatarIndex={player.avatar_index ?? 0} size="sm" />
+                          <div className="rounded-full" style={{ border: "2px solid hsl(43 60% 45% / 0.3)" }}>
+                            <PlayerAvatar avatarUrl={player.avatar_url} avatarIndex={player.avatar_index ?? 0} size="sm" />
+                          </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5">
-                              <span className={`font-game-card text-xs font-bold ${isMe ? "text-game-blue" : "text-foreground"}`}>
-                                {player.display_name}{isMe && <span className="text-[7px] text-game-blue/60 ml-1">(YOU)</span>}
+                              <span className="font-game-card text-xs font-bold" style={{ color: isMe ? "hsl(207 90% 60%)" : "hsl(0 0% 90%)" }}>
+                                {player.display_name}{isMe && <span className="text-[7px] ml-1" style={{ color: "hsl(207 90% 54% / 0.6)" }}>(YOU)</span>}
                               </span>
                               <span className={`text-[7px] ${tier.color} font-game-display`}>{tier.emoji}</span>
                             </div>
                             <div className="flex items-center gap-1.5">
                               <span className="text-[8px] text-muted-foreground font-game-body">{player.total_matches} matches • {winRate}% WR</span>
-                              {(player.xp ?? 0) > 0 && <span className="text-[6px] text-game-blue/60 font-game-display">✨{player.xp}</span>}
+                              {(player.xp ?? 0) > 0 && <span className="text-[6px] font-game-display" style={{ color: "hsl(207 90% 54% / 0.6)" }}>✨{player.xp}</span>}
                             </div>
                           </div>
                           {sparklines[player.user_id]?.length > 0 && (
                             <FormSparkline results={sparklines[player.user_id]} />
                           )}
                           <div className="text-right">
-                            <span className="font-game-display text-lg text-game-gold block leading-none">{getScore(player)}</span>
+                            <span className="font-game-display text-lg block leading-none" style={{ color: "hsl(43 90% 55%)" }}>{getScore(player)}</span>
                             <span className="text-[6px] text-muted-foreground font-game-display tracking-widest">{SORT_OPTIONS[sortBy].label}</span>
                           </div>
                         </motion.div>
@@ -892,12 +919,23 @@ export default function LeaderboardPage() {
           )}
         </AnimatePresence>
 
-        {/* Your position — game-styled card */}
+        {/* Your position — Stadium Concrete card */}
         {mainTab === "global" && (
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
-            className="mt-5 rounded-2xl border-2 border-game-blue/30 bg-gradient-to-b from-[hsl(222_40%_13%/0.9)] to-[hsl(222_40%_8%/0.95)] p-4 flex items-center gap-3 shadow-[0_0_16px_hsl(207_90%_54%/0.12)]">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-b from-game-blue to-[hsl(207_90%_44%)] border-b-3 border-[hsl(207_90%_35%)] flex items-center justify-center shadow-[0_4px_12px_hsl(207_90%_54%/0.3)]">
-              <span className="text-lg">{user ? "🏏" : "👤"}</span>
+            className="mt-5 rounded-2xl p-4 flex items-center gap-3"
+            style={{
+              background: CONCRETE_CARD,
+              border: "2px solid hsl(207 90% 54% / 0.3)",
+              borderBottom: "5px solid hsl(25 25% 10%)",
+              boxShadow: "0 0 16px hsl(207 90% 54% / 0.12)",
+            }}>
+            <div className="w-12 h-12 rounded-xl flex items-center justify-center text-lg"
+              style={{
+                background: "linear-gradient(180deg, hsl(207 90% 54%) 0%, hsl(207 90% 40%) 100%)",
+                borderBottom: "4px solid hsl(207 90% 30%)",
+                boxShadow: "0 4px 12px hsl(207 90% 54% / 0.3)",
+              }}>
+              {user ? "🏏" : "👤"}
             </div>
             <div className="flex-1">
               <p className="text-[8px] text-muted-foreground font-game-display tracking-[0.2em]">YOUR RANK</p>
@@ -935,26 +973,58 @@ export default function LeaderboardPage() {
         )}
       </div>
 
+      {/* Challenge mode picker */}
       {challengeTargetId && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end justify-center p-4">
-          <div className="w-full max-w-sm glass-premium rounded-3xl p-4 space-y-3 border border-primary/30 shadow-[0_0_40px_hsl(217_91%_60%/0.2)]">
-            <p className="font-display text-xs text-foreground font-black tracking-wider">Which game should we play?</p>
-            <p className="text-[9px] text-muted-foreground">Challenge your rival with the mode you want.</p>
+        <div className="fixed inset-0 z-50 flex items-end justify-center p-4"
+          style={{ background: "hsl(25 30% 4% / 0.85)", backdropFilter: "blur(12px)" }}>
+          <motion.div
+            initial={{ y: 200, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            className="w-full max-w-sm rounded-3xl p-5 space-y-3"
+            style={{
+              background: CONCRETE_CARD,
+              border: "2px solid hsl(4 80% 50% / 0.3)",
+              borderBottom: "6px solid hsl(25 25% 8%)",
+              boxShadow: "0 0 40px hsl(4 90% 50% / 0.15)",
+            }}
+          >
+            <p className="font-game-title text-base text-foreground" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>Choose Battle Mode</p>
+            <p className="text-[9px] text-muted-foreground font-game-body">Challenge your rival with the mode you want.</p>
+            <div style={{ borderBottom: CHALK_BORDER }} className="my-2" />
             {([
-              { key: "ar", icon: "📸", subtitle: "Futuristic AR showdown" },
-              { key: "tap", icon: "⚡", subtitle: "Arcade speed challenge" },
-              { key: "tournament", icon: "🏆", subtitle: "Championship clash" },
-            ] as { key: GameType; icon: string; subtitle: string }[]).map((mode) => (
-              <button key={mode.key} onClick={() => { void challengeFriend(challengeTargetId, mode.key); setChallengeTargetId(null); }}
-                className="w-full p-3 rounded-2xl text-left bg-gradient-to-r from-primary/20 to-accent/10 border border-primary/30 font-display tracking-wider transition-transform active:scale-[0.98]">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-background/40 border border-primary/30 flex items-center justify-center text-xl">{mode.icon}</div>
-                  <div><p className="text-xs font-bold uppercase">{mode.key}</p><p className="text-[10px] text-muted-foreground">{mode.subtitle}</p></div>
+              { key: "ar" as GameType, icon: "📸", label: "AR Mode", subtitle: "Futuristic AR showdown", hue: "291" },
+              { key: "tap" as GameType, icon: "⚡", label: "Tap Mode", subtitle: "Arcade speed challenge", hue: "207" },
+              { key: "tournament" as GameType, icon: "🏆", label: "Tournament", subtitle: "Championship clash", hue: "43" },
+            ]).map((mode) => (
+              <motion.button
+                key={mode.key}
+                whileTap={{ scale: 0.97, y: 2 }}
+                onClick={() => { void challengeFriend(challengeTargetId, mode.key); setChallengeTargetId(null); }}
+                className="w-full p-3.5 rounded-2xl text-left relative overflow-hidden"
+                style={{
+                  background: CONCRETE_CARD,
+                  border: `2px solid hsl(${mode.hue} 60% 45% / 0.4)`,
+                  borderBottom: `5px solid hsl(${mode.hue} 40% 20%)`,
+                  boxShadow: `0 0 16px hsl(${mode.hue} 60% 50% / 0.1)`,
+                }}
+              >
+                <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
+                  style={{ backgroundImage: "radial-gradient(circle, #fff 0.5px, transparent 0.5px)", backgroundSize: "4px 4px" }} />
+                <div className="flex items-center gap-3 relative z-10">
+                  <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl"
+                    style={{ background: `hsl(${mode.hue} 40% 15%)`, border: `1px solid hsl(${mode.hue} 50% 35% / 0.3)` }}>
+                    {mode.icon}
+                  </div>
+                  <div>
+                    <p className="text-sm font-game-display text-foreground tracking-wider">{mode.label}</p>
+                    <p className="text-[9px] text-muted-foreground font-game-body">{mode.subtitle}</p>
+                  </div>
                 </div>
-              </button>
+              </motion.button>
             ))}
-            <button onClick={() => setChallengeTargetId(null)} className="w-full py-2 text-xs text-muted-foreground">Cancel</button>
-          </div>
+            <button onClick={() => setChallengeTargetId(null)}
+              className="w-full py-2.5 text-xs text-muted-foreground font-game-body hover:text-foreground transition-colors">Cancel</button>
+          </motion.div>
         </div>
       )}
       {previewFriendId && (() => {
