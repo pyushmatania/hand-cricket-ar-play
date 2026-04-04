@@ -140,7 +140,8 @@ export class CommentaryEngine {
 
       const utterance = new SpeechSynthesisUtterance(line.text);
       utterance.voice = line.voice === 'main' ? this.voiceMain : this.voiceColor;
-      utterance.rate = line.rate;
+      // Apply tone config speech rate multiplier
+      utterance.rate = line.rate * this.toneConfig.speechRate;
       utterance.pitch = line.pitch;
       utterance.volume = 1.0;
 
