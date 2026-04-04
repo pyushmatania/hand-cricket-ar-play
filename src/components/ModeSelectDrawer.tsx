@@ -138,12 +138,10 @@ function CompetitiveCard({ mode, index, onNavigate }: { mode: typeof TOURNAMENTS
       <span className="text-lg ml-1">{mode.emoji}</span>
       <div className="flex-1 text-left">
         <span className="font-game-display text-[10px] text-foreground tracking-wider">{mode.label}</span>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="font-game-body text-[9px] text-muted-foreground">{mode.desc}</span>
           {(mode as any).liveCount && <LiveIndicator />}
-          {(mode as any).statusText && (
-            <span className="font-game-body text-[8px] text-muted-foreground/70">{(mode as any).statusText}</span>
-          )}
+          {mode.id === "daily" && <DailyResetTimer />}
         </div>
       </div>
       {!isLocked && (
