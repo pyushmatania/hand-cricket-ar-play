@@ -28,6 +28,7 @@ import type { BallResult, Move } from "@/hooks/useHandCricket";
 import { useEngines } from "@/hooks/useEngines";
 import { WeatherParticles } from "./WeatherParticles";
 import BallPitchAnimation from "./BallPitchAnimation";
+import StadiumEstablishingShot from "./StadiumEstablishingShot";
 
 const MOVE_EMOJI: Record<string, string> = {
   DEF: "✊", "1": "☝️", "2": "✌️", "3": "🤟", "4": "🖖", "6": "👍",
@@ -191,6 +192,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const [fireworkType, setFireworkType] = useState<FireworkType | null>(null);
 
   // Ceremony states
+  const [showEstablishingShot, setShowEstablishingShot] = useState(false);
   const [showPreMatch, setShowPreMatch] = useState(false);
   const [showPostMatch, setShowPostMatch] = useState(false);
   const [tossInfo, setTossInfo] = useState<{ winner: string; battingFirst: string } | null>(null);
@@ -276,13 +278,18 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       setGameCdVal(null);
       if (arCeremoniesEnabled && tossInfo) {
         setPendingBatFirst(batFirst);
-        setShowPreMatch(true);
+        setShowEstablishingShot(true);
       } else {
         startGame(batFirst, matchConfig);
       }
     }, 3000);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [matchConfig, arCeremoniesEnabled, tossInfo]);
+
+  const handleEstablishingShotComplete = () => {
+    setShowEstablishingShot(false);
+    setShowPreMatch(true);
+  };
 
   const handlePreMatchComplete = () => {
     setShowPreMatch(false);
@@ -465,6 +472,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     setPendingBatFirst(null);
     setTossInfo(null);
     setFireworkType(null);
+    setShowEstablishingShot(false);
     setShowPreMatch(false);
     setShowPostMatch(false);
     savedRef.current = false;
@@ -489,7 +497,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     ? (cameraRef.current.videoRef.current.className || "").includes("scale-x-[-1]")
     : false;
 
-  const isPreGame = game.phase === "not_started" && !showPreMatch && gameCdVal === null;
+  const isPreGame = game.phase === "not_started" && !showPreMatch && !showEstablishingShot && gameCdVal === null;
   const isInGame = game.phase !== "not_started" && game.phase !== "finished";
 
   return (
@@ -518,6 +526,16 @@ export default function GameScreen({ onHome }: GameScreenProps) {
           mirrored={isFrontCamera}
         />
       </div>
+
+      {/* Stadium establishing shot — plays before pre-match */}
+      {showEstablishingShot && (
+        <StadiumEstablishingShot
+          playerName={playerName}
+          opponentName={opponentName}
+          arenaName={matchTheme?.name || "Stadium"}
+          onComplete={handleEstablishingShotComplete}
+        />
+      )}
 
       {/* Pre-match ceremony */}
       {showPreMatch && tossInfo && (
