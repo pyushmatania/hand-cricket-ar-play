@@ -717,6 +717,80 @@ export type Database = {
         }
         Relationships: []
       }
+      user_cards: {
+        Row: {
+          card_count: number
+          card_level: number
+          created_at: string
+          id: string
+          player_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          card_count?: number
+          card_level?: number
+          created_at?: string
+          id?: string
+          player_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          card_count?: number
+          card_level?: number
+          created_at?: string
+          id?: string
+          player_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_cards_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_chests: {
+        Row: {
+          chest_tier: string
+          created_at: string
+          id: string
+          slot_index: number
+          status: string
+          unlock_duration_seconds: number
+          unlock_started_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          chest_tier?: string
+          created_at?: string
+          id?: string
+          slot_index?: number
+          status?: string
+          unlock_duration_seconds?: number
+          unlock_started_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          chest_tier?: string
+          created_at?: string
+          id?: string
+          slot_index?: number
+          status?: string
+          unlock_duration_seconds?: number
+          unlock_started_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_purchases: {
         Row: {
           equipped: boolean
