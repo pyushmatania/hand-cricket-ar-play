@@ -43,6 +43,8 @@ export class CrowdEngine {
   };
 
   start(): void {
+    // Set initial mood based on theme's base noise
+    this.mood = this.themeConfig.baseNoise * 0.4;
     // Mood decays naturally — crowd loses interest over time
     this.decayInterval = setInterval(() => {
       this.mood = Math.max(0, this.mood - 0.5);
