@@ -64,6 +64,7 @@ export default function FriendsPage() {
   const [inviteCode, setInviteCode] = useState("");
   const [searchResults, setSearchResults] = useState<FriendProfile[]>([]);
   const [myCode, setMyCode] = useState("");
+  const [myProfile, setMyProfile] = useState<FriendProfile | null>(null);
   const [feedback, setFeedback] = useState("");
   const [challengeTargetId, setChallengeTargetId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
