@@ -1,5 +1,6 @@
 import { useRef, useCallback, useState, useEffect } from "react";
 import { useScreenShake } from "@/hooks/useScreenShake";
+import { getThemeById } from "@/lib/matchThemes";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import CameraFeed, { type CameraFeedHandle, type CameraFilter } from "./CameraFeed";
