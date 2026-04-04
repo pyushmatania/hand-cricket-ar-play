@@ -404,6 +404,8 @@ export default function TournamentScreen({ onHome }: Props) {
           }}
         />
       )}
+      {/* Tournament Chat */}
+      {phase === "bracket" && <TournamentChatWidget tournamentId={`local-tournament-${currentRound}`} />}
     </div>
   );
 }
