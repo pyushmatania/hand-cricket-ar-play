@@ -45,8 +45,16 @@ export default function PlayPage() {
     try { SFX.tap(); Haptics.light(); } catch {}
   };
 
+  const handleThemeSelect = (theme: MatchTheme) => {
+    setSelectedTheme(theme);
+    localStorage.setItem("selectedTheme", theme.id);
+    try { SFX.tap(); Haptics.light(); } catch {}
+  };
+
   const handleModeSelect = (modeId: string) => {
-    navigate(`/game/${modeId}`, { state: { arenaImage: selectedArena.image, arenaId: selectedArena.id } });
+    navigate(`/game/${modeId}`, {
+      state: { arenaImage: selectedArena.image, arenaId: selectedArena.id, themeId: selectedTheme.id },
+    });
   };
 
   return (
