@@ -12,15 +12,16 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["Orbitron", "sans-serif"],
-        body: ["Rajdhani", "sans-serif"],
-        heading: ["Exo 2", "sans-serif"],
+        display: ["Lilita One", "sans-serif"],
+        body: ["Nunito", "sans-serif"],
+        heading: ["Fredoka", "sans-serif"],
+        score: ["Rubik", "monospace"],
         "game-display": ["Bungee", "sans-serif"],
         "game-display-3d": ["Bungee Shade", "sans-serif"],
         "game-title": ["Lilita One", "sans-serif"],
         "game-body": ["Nunito", "sans-serif"],
         "game-card": ["Fredoka", "sans-serif"],
-        "game-mono": ["Rubik", "sans-serif"],
+        "game-mono": ["Rubik", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",
