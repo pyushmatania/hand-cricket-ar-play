@@ -1,0 +1,192 @@
+import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useUserChests, useStartUnlock, useCollectChest, chestTimeRemaining, type UserChest } from "@/hooks/useUserChests";
+import { getChestTier, CHEST_TIERS } from "@/lib/chests";
+import { Lock, Timer, Gift, Plus } from "lucide-react";
+import ChestReveal from "@/components/shop/ChestReveal";
+import { toast } from "sonner";
+
+function formatTime(seconds: number): string {
+  if (seconds <= 0) return "READY";
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = Math.floor(seconds % 60);
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
+}
+
+const SLOT_COUNT = 4;
+
+export default function ChestSlotsWidget() {
+  const { data: chests, isLoading } = useUserChests();
+  const startUnlock = useStartUnlock();
+  const collectChest = useCollectChest();
+  const [tick, setTick] = useState(0);
+  const [revealData, setRevealData] = useState<{ name: string; emoji: string; rarity: string } | null>(null);
+
+  // Tick every second for countdown
+  useEffect(() => {
+    const interval = setInterval(() => setTick(t => t + 1), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const slots = Array.from({ length: SLOT_COUNT }, (_, i) => {
+    return chests?.find(c => c.slot_index === i) || null;
+  });
+
+  const hasUnlocking = chests?.some(c => c.status === "unlocking") ?? false;
+
+  const handleSlotTap = useCallback(async (chest: UserChest | null, slotIndex: number) => {
+    if (!chest) return; // empty slot
+
+    if (chest.status === "locked") {
+      if (hasUnlocking) {
+        toast.error("Another chest is already unlocking!");
+        return;
+      }
+      startUnlock.mutate(chest.id);
+      toast.success("Chest unlocking started!");
+      return;
+    }
+
+    if (chest.status === "unlocking") {
+      const remaining = chestTimeRemaining(chest);
+      if (remaining > 0) {
+        toast.info(`${formatTime(remaining)} remaining`);
+        return;
+      }
+      // Ready to collect — auto-transition
+    }
+
+    if (chest.status === "ready" || (chest.status === "unlocking" && chestTimeRemaining(chest) <= 0)) {
+      const tier = getChestTier(chest.chest_tier);
+      setRevealData({ name: `${tier.name} Rewards`, emoji: "🎁", rarity: chest.chest_tier });
+      
+      try {
+        const result = await collectChest.mutateAsync(chest);
+        toast.success(`Got ${result.cardCount} cards + ${result.coinReward} coins!`);
+      } catch (e: any) {
+        toast.error(e.message);
+      }
+    }
+  }, [hasUnlocking, startUnlock, collectChest]);
+
+  if (isLoading) return null;
+
+  return (
+    <>
+      <div className="px-4 mb-4">
+        <div className="flex items-center gap-2 mb-2">
+          <Gift className="w-4 h-4 text-game-gold" />
+          <span className="font-game-display text-xs tracking-wider text-foreground">CHEST SLOTS</span>
+        </div>
+        
+        <div className="grid grid-cols-4 gap-2">
+          {slots.map((chest, i) => (
+            <ChestSlot
+              key={i}
+              chest={chest}
+              slotIndex={i}
+              tick={tick}
+              onTap={handleSlotTap}
+            />
+          ))}
+        </div>
+      </div>
+
+      <AnimatePresence>
+        {revealData && (
+          <ChestReveal
+            itemName={revealData.name}
+            itemEmoji={revealData.emoji}
+            rarity={revealData.rarity}
+            onComplete={() => setRevealData(null)}
+          />
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
+function ChestSlot({
+  chest,
+  slotIndex,
+  tick,
+  onTap,
+}: {
+  chest: UserChest | null;
+  slotIndex: number;
+  tick: number;
+  onTap: (chest: UserChest | null, index: number) => void;
+}) {
+  if (!chest) {
+    return (
+      <div className="aspect-square rounded-xl border-2 border-dashed border-border/30 flex items-center justify-center opacity-40">
+        <Plus className="w-4 h-4 text-muted-foreground" />
+      </div>
+    );
+  }
+
+  const tier = getChestTier(chest.chest_tier);
+  const isUnlocking = chest.status === "unlocking";
+  const remaining = isUnlocking ? chestTimeRemaining(chest) : 0;
+  const isReady = chest.status === "ready" || (isUnlocking && remaining <= 0);
+  const isLocked = chest.status === "locked";
+
+  return (
+    <motion.button
+      whileTap={{ scale: 0.92 }}
+      onClick={() => onTap(chest, slotIndex)}
+      className="relative aspect-square rounded-xl overflow-hidden"
+      style={{
+        background: `linear-gradient(180deg, hsl(25 20% 12%), hsl(222 30% 8%))`,
+        border: `2px solid ${isReady ? tier.color : tier.borderColor}`,
+        boxShadow: isReady ? `0 0 12px ${tier.glowColor}` : "none",
+      }}
+    >
+      {/* Chest image */}
+      <img
+        src={tier.image}
+        alt={tier.name}
+        className="w-full h-full object-contain p-1.5"
+        style={{
+          filter: isLocked
+            ? `grayscale(0.3) drop-shadow(0 2px 4px rgba(0,0,0,0.5))`
+            : `drop-shadow(0 2px 8px ${tier.glowColor})`,
+        }}
+      />
+
+      {/* Ready pulse */}
+      {isReady && (
+        <motion.div
+          animate={{ opacity: [0.3, 0.8, 0.3] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+          className="absolute inset-0 rounded-xl"
+          style={{ border: `2px solid ${tier.color}`, boxShadow: `inset 0 0 12px ${tier.glowColor}` }}
+        />
+      )}
+
+      {/* Status overlay */}
+      <div className="absolute bottom-0 inset-x-0 py-0.5 text-center" style={{ background: "rgba(0,0,0,0.7)" }}>
+        {isLocked && (
+          <div className="flex items-center justify-center gap-0.5">
+            <Lock className="w-2.5 h-2.5 text-muted-foreground" />
+            <span className="text-[7px] font-game-display text-muted-foreground">TAP</span>
+          </div>
+        )}
+        {isUnlocking && !isReady && (
+          <div className="flex items-center justify-center gap-0.5">
+            <Timer className="w-2.5 h-2.5" style={{ color: tier.color }} />
+            <span className="text-[7px] font-game-display" style={{ color: tier.color }}>
+              {formatTime(remaining)}
+            </span>
+          </div>
+        )}
+        {isReady && (
+          <span className="text-[7px] font-game-display text-game-gold animate-pulse">OPEN!</span>
+        )}
+      </div>
+    </motion.button>
+  );
+}
