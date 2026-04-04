@@ -5,19 +5,20 @@ import { Zap } from "lucide-react";
 /* ── Player image map for Mythic/Legendary cards ── */
 const PLAYER_IMAGES: Record<string, string> = {};
 
-// Dynamic imports for player images
 import dhoniImg from "@/assets/players/dhoni.jpg";
 import kohliImg from "@/assets/players/kohli.jpg";
 import rohitImg from "@/assets/players/rohit.jpg";
 import bumrahImg from "@/assets/players/bumrah.jpg";
 import russellImg from "@/assets/players/russell.jpg";
+import rashidImg from "@/assets/players/rashid.jpg";
+import hardikImg from "@/assets/players/hardik.jpg";
+import skyImg from "@/assets/players/sky.jpg";
+import klrahulImg from "@/assets/players/klrahul.jpg";
+import jadejaImg from "@/assets/players/jadeja.jpg";
 
 Object.assign(PLAYER_IMAGES, {
-  dhoni: dhoniImg,
-  kohli: kohliImg,
-  rohit: rohitImg,
-  bumrah: bumrahImg,
-  russell: russellImg,
+  dhoni: dhoniImg, kohli: kohliImg, rohit: rohitImg, bumrah: bumrahImg, russell: russellImg,
+  rashid: rashidImg, hardik: hardikImg, sky: skyImg, klrahul: klrahulImg, jadeja: jadejaImg,
 });
 
 /* ── Rarity frame styles ── */
