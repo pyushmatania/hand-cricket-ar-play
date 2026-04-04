@@ -191,6 +191,16 @@ function CompetitiveCard({ mode, index, onNavigate, userRank }: { mode: typeof T
 export default function ModeSelectDrawer({ open, onOpenChange }: ModeSelectDrawerProps) {
   const navigate = useNavigate();
   const [selectedFormat, setSelectedFormat] = useState<string | null>(null);
+  const [userRank, setUserRank] = useState("bronze");
+
+  useEffect(() => {
+    if (!open) return;
+    supabase.auth.getUser().then(({ data }) => {
+      if (!data.user) return;
+      supabase.from("profiles").select("rank_tier").eq("user_id", data.user.id).maybeSingle()
+        .then(({ data: p }) => { if (p?.rank_tier) setUserRank(p.rank_tier); });
+    });
+  }, [open]);
 
   const handlePlay = (formatId: string, overs?: number) => {
     try { SFX.tap(); Haptics.heavy(); } catch {}
