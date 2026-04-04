@@ -168,6 +168,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [sentTease, setSentTease] = useState<string | null>(null);
   const [receivedTease, setReceivedTease] = useState<string | null>(null);
   const [showTeasePanel, setShowTeasePanel] = useState(false);
+  const [sentEmote, setSentEmote] = useState<EmoteId | null>(null);
+  const [receivedEmote, setReceivedEmote] = useState<EmoteId | null>(null);
   const [showPvPPostMatch, setShowPvPPostMatch] = useState(false);
   const [showPvPPreMatch, setShowPvPPreMatch] = useState(false);
   const [pvpBallHistory, setPvpBallHistory] = useState<BallResult[]>([]);
