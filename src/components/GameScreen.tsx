@@ -11,6 +11,8 @@ import CelebrationEffects from "./CelebrationEffects";
 import CanvasFireworks, { type FireworkType } from "./CanvasFireworks";
 import EnhancedPreMatch from "./EnhancedPreMatch";
 import EnhancedPostMatch from "./EnhancedPostMatch";
+import CrowdWave from "./CrowdWave";
+import DRSReview from "./DRSReview";
 import { useHandCricket } from "@/hooks/useHandCricket";
 import { useHandDetection } from "@/hooks/useHandDetection";
 import { useMatchSaver } from "@/hooks/useMatchSaver";
@@ -90,6 +92,21 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const savedRef = useRef(false);
   const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickConfiguredMatchCommentators(commentaryVoice));
   const prevPhaseRef = useRef(game.phase);
+  const [crowdWaveActive, setCrowdWaveActive] = useState(false);
+  const [crowdWaveIntensity, setCrowdWaveIntensity] = useState<"normal" | "big" | "massive">("normal");
+  const [drsActive, setDrsActive] = useState(false);
+  const [drsDismissal, setDrsDismissal] = useState<'lbw' | 'caught_behind' | 'caught' | null>(null);
+  const [drsOutcome, setDrsOutcome] = useState<'out' | 'not_out'>('out');
+
+  // Wire Mexican Wave from CrowdEngine
+  useEffect(() => {
+    engines.crowd.setOnMexicanWave(() => {
+      const mood = engines.crowd.getMood();
+      setCrowdWaveIntensity(mood >= 95 ? 'massive' : mood >= 80 ? 'big' : 'normal');
+      setCrowdWaveActive(true);
+      setTimeout(() => setCrowdWaveActive(false), 3000);
+    });
+  }, [engines]);
 
   // Engine lifecycle managed by useEngines() hook above
   const [matchWeather] = useState(() => {
@@ -347,10 +364,19 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       }
     }
 
-    // ── Visual effects (screen shake + fireworks — not sound) ──
+    // ── Visual effects (screen shake + fireworks + DRS) ──
     if (r.runs === "OUT") {
       shake("heavy");
       setFireworkType("wicket");
+
+      // 25% chance to trigger DRS review on LBW/caught dismissals for dramatic effect
+      if (Math.random() < 0.25) {
+        const dismissalTypes: Array<'lbw' | 'caught_behind' | 'caught'> = ['lbw', 'caught_behind', 'caught'];
+        const randomDismissal = dismissalTypes[Math.floor(Math.random() * dismissalTypes.length)];
+        setDrsDismissal(randomDismissal);
+        setDrsOutcome('out'); // Always confirms out (it's dramatic effect)
+        setDrsActive(true);
+      }
     } else if (typeof r.runs === "number") {
       if (r.runs === 6) {
         shake("medium");
@@ -451,6 +477,13 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       <CelebrationEffects lastResult={game.lastResult} gameResult={game.result} phase={game.phase} />
       <CanvasFireworks type={fireworkType} duration={fireworkType === "win" ? 5000 : 3000} />
       <WeatherParticles weather={matchWeather} />
+      <CrowdWave active={crowdWaveActive} intensity={crowdWaveIntensity} />
+      <DRSReview
+        active={drsActive}
+        dismissalType={drsDismissal}
+        outcome={drsOutcome}
+        onComplete={() => setDrsActive(false)}
+      />
 
       {/* Camera fills the full screen */}
       <div className="absolute inset-0">
