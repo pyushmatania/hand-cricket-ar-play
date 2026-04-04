@@ -168,4 +168,35 @@ export const HI_MATCH_WIN: CommentaryLine[] = [
 export const HI_MATCH_LOSS: CommentaryLine[] = [
   { id: 'hml1', text: 'Haar gaye. Dil toota. Agle baar sahi.', voice: 'main', emotion: 'disappointed', rate: 0.95, pitch: 0.95, delay: 0 },
   { id: 'hml2', text: 'Aaj nahi hua. Mehnat thi, par result nahi aaya.', voice: 'main', emotion: 'disappointed', rate: 0.95, pitch: 0.95, delay: 0 },
+  { id: 'hml3', text: 'Haarna bhi toh khelka hissa hai. Sar utha ke jaao.', voice: 'main', emotion: 'disappointed', rate: 0.95, pitch: 0.95, delay: 0 },
+];
+
+// ── RUN OUT ──
+export const HI_WICKET_RUN_OUT: CommentaryLine[] = [
+  { id: 'hwr1', text: 'RUN OUT! Direct hit! Kya fielding hai!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 800 },
+  { id: 'hwr2', text: 'Bhaagne mein galti! RUN OUT! Crease se bahar!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 800 },
+  { id: 'hwr3', text: 'Mix-up! Dono ek taraf! RUN OUT! Badi galti!', voice: 'main', emotion: 'dramatic', rate: 1.15, pitch: 1.05, delay: 800 },
+  { id: 'hwr4', text: 'Seedha stumps pe! RUN OUT! Brilliant fielding!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 800 },
+  { id: 'hwr5', text: 'Short tha crease se! OUT! Run out ho gaya!', voice: 'main', emotion: 'dramatic', rate: 1.15, pitch: 1.05, delay: 800 },
+];
+
+// ── STUMPED ──
+export const HI_WICKET_STUMPED: CommentaryLine[] = [
+  { id: 'hws1', text: 'STUMPED! Keeper ne bails udaa diye!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 800 },
+  { id: 'hws2', text: 'Aage aaya aur miss! STUMPED! Gaya batsman!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 800 },
+  { id: 'hws3', text: 'Crease chhoda aur wicket keeper ne kaam kar diya! STUMPED!', voice: 'main', emotion: 'dramatic', rate: 1.15, pitch: 1.05, delay: 800 },
+  { id: 'hws4', text: 'STUMPED! Lightning fast glovework! Batsman phansa!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 800 },
+];
+
+// ── INNINGS START ──
+export const HI_INNINGS_START: CommentaryLine[] = [
+  { id: 'his1', text: 'Innings shuru! Dekhte hain kya hota hai!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
+  { id: 'his2', text: 'Naya innings! Batsman tayaar hai!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
+  { id: 'his3', text: 'Chaliye shuru karte hain! Maidan sajj gaya hai!', voice: 'main', emotion: 'neutral', rate: 1.05, pitch: 1.0, delay: 0 },
+];
+
+// ── TOSS ──
+export const HI_TOSS_RESULT: CommentaryLine[] = [
+  { id: 'htr1', text: 'Toss hua! Dekhte hain kaun jeetega!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
+  { id: 'htr2', text: 'Sikka hawa mein! Toss ka faisla ho gaya!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
 ];
