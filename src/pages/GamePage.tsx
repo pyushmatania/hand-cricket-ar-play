@@ -16,7 +16,6 @@ import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 export default function GamePage() {
   usePerformanceMonitor(true);
   const { mode } = useParams<{ mode: string }>();
-  const { mode } = useParams<{ mode: string }>();
   const navigate = useNavigate();
   const goHome = () => navigate("/play");
 
