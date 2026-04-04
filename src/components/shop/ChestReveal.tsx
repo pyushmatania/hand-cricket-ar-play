@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { getChestTier } from "@/lib/chests";
+import engines from "@/engines/EngineManager";
 
 interface ChestRevealProps {
   itemName: string;
