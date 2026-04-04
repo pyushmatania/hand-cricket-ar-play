@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { IPL_TEAMS } from "./IPLData";
-import { TEAM_STAR_ART } from "@/assets/players";
+import { TEAM_STAR_ART, TEAM_BOWLER_ART } from "@/assets/players";
 
 interface Props { onPick: (teamId: string) => void; }
 
@@ -15,6 +15,7 @@ export default function IPLTeamPicker({ onPick }: Props) {
       <div className="grid grid-cols-2 gap-2">
         {IPL_TEAMS.map((team, i) => {
           const starArt = TEAM_STAR_ART[team.id];
+          const bowlerArt = TEAM_BOWLER_ART[team.id];
           return (
             <motion.button
               key={team.id}
@@ -23,13 +24,19 @@ export default function IPLTeamPicker({ onPick }: Props) {
               transition={{ delay: i * 0.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => onPick(team.id)}
-              className="glass-premium rounded-xl p-2 flex items-center gap-2 border border-transparent hover:border-secondary/30 transition-all overflow-hidden"
+              className="glass-premium rounded-xl p-2 flex items-center gap-2 border border-transparent hover:border-secondary/30 transition-all overflow-hidden relative"
             >
-              {starArt ? (
-                <img src={starArt} alt={team.shortName} className="w-10 h-10 rounded-lg object-cover object-top flex-shrink-0" loading="lazy" />
-              ) : (
-                <span className="text-2xl flex-shrink-0">{team.emoji}</span>
-              )}
+              {/* Stacked player art: star + bowler */}
+              <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 relative">
+                {starArt ? (
+                  <img src={starArt} alt={team.shortName} className="absolute inset-0 w-full h-full object-cover object-top" loading="lazy" />
+                ) : (
+                  <span className="absolute inset-0 flex items-center justify-center text-2xl">{team.emoji}</span>
+                )}
+                {bowlerArt && (
+                  <img src={bowlerArt} alt={`${team.shortName} bowler`} className="absolute inset-0 w-full h-full object-cover object-top opacity-40 mix-blend-screen" loading="lazy" />
+                )}
+              </div>
               <div className="text-left flex-1 min-w-0">
                 <span className="font-display text-[10px] font-bold text-foreground tracking-wider block truncate">{team.shortName}</span>
                 <span className="text-[8px] text-muted-foreground block truncate">{team.name}</span>
