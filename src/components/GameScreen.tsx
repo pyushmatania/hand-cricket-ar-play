@@ -93,8 +93,16 @@ export default function GameScreen({ onHome }: GameScreenProps) {
 
   // Engine lifecycle managed by useEngines() hook above
   const [matchWeather] = useState(() => {
-    const { WeatherEngine } = require('@/engines/WeatherEngine');
-    return WeatherEngine.getRandomWeather('stadium');
+    // Pick random weather for this match
+    const weathers = ['clear', 'overcast', 'drizzle', 'golden_hour', 'night_lights', 'heavy_dew'] as const;
+    const weights = [30, 15, 8, 12, 25, 10];
+    const total = weights.reduce((a, b) => a + b, 0);
+    let roll = Math.random() * total;
+    for (let i = 0; i < weathers.length; i++) {
+      roll -= weights[i];
+      if (roll <= 0) return weathers[i];
+    }
+    return 'clear' as const;
   });
 
   // Ambient stadium music for AR mode — arena-specific
