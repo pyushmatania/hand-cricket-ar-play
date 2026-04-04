@@ -160,6 +160,69 @@ export type Database = {
           },
         ]
       }
+      clan_wars: {
+        Row: {
+          battle_end_at: string | null
+          clan_a_id: string
+          clan_a_score: number
+          clan_a_stars: number
+          clan_b_id: string
+          clan_b_score: number
+          clan_b_stars: number
+          created_at: string
+          id: string
+          preparation_end_at: string | null
+          status: string
+          updated_at: string
+          winner_clan_id: string | null
+        }
+        Insert: {
+          battle_end_at?: string | null
+          clan_a_id: string
+          clan_a_score?: number
+          clan_a_stars?: number
+          clan_b_id: string
+          clan_b_score?: number
+          clan_b_stars?: number
+          created_at?: string
+          id?: string
+          preparation_end_at?: string | null
+          status?: string
+          updated_at?: string
+          winner_clan_id?: string | null
+        }
+        Update: {
+          battle_end_at?: string | null
+          clan_a_id?: string
+          clan_a_score?: number
+          clan_a_stars?: number
+          clan_b_id?: string
+          clan_b_score?: number
+          clan_b_stars?: number
+          created_at?: string
+          id?: string
+          preparation_end_at?: string | null
+          status?: string
+          updated_at?: string
+          winner_clan_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clan_wars_clan_a_id_fkey"
+            columns: ["clan_a_id"]
+            isOneToOne: false
+            referencedRelation: "clans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clan_wars_clan_b_id_fkey"
+            columns: ["clan_b_id"]
+            isOneToOne: false
+            referencedRelation: "clans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clans: {
         Row: {
           created_at: string
@@ -1047,6 +1110,111 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      war_attacks: {
+        Row: {
+          attacker_id: string
+          clan_id: string
+          created_at: string
+          defender_id: string
+          field_placement: string
+          id: string
+          pitch_type: string
+          score: number
+          stars_earned: number
+          target_score: number
+          war_id: string
+        }
+        Insert: {
+          attacker_id: string
+          clan_id: string
+          created_at?: string
+          defender_id: string
+          field_placement?: string
+          id?: string
+          pitch_type?: string
+          score?: number
+          stars_earned?: number
+          target_score?: number
+          war_id: string
+        }
+        Update: {
+          attacker_id?: string
+          clan_id?: string
+          created_at?: string
+          defender_id?: string
+          field_placement?: string
+          id?: string
+          pitch_type?: string
+          score?: number
+          stars_earned?: number
+          target_score?: number
+          war_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "war_attacks_clan_id_fkey"
+            columns: ["clan_id"]
+            isOneToOne: false
+            referencedRelation: "clans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "war_attacks_war_id_fkey"
+            columns: ["war_id"]
+            isOneToOne: false
+            referencedRelation: "clan_wars"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      war_participants: {
+        Row: {
+          attacks_used: number
+          clan_id: string
+          created_at: string
+          id: string
+          max_attacks: number
+          total_stars: number
+          user_id: string
+          war_id: string
+        }
+        Insert: {
+          attacks_used?: number
+          clan_id: string
+          created_at?: string
+          id?: string
+          max_attacks?: number
+          total_stars?: number
+          user_id: string
+          war_id: string
+        }
+        Update: {
+          attacks_used?: number
+          clan_id?: string
+          created_at?: string
+          id?: string
+          max_attacks?: number
+          total_stars?: number
+          user_id?: string
+          war_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "war_participants_clan_id_fkey"
+            columns: ["clan_id"]
+            isOneToOne: false
+            referencedRelation: "clans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "war_participants_war_id_fkey"
+            columns: ["war_id"]
+            isOneToOne: false
+            referencedRelation: "clan_wars"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       weekly_challenges: {
         Row: {
