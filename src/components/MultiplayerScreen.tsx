@@ -15,6 +15,8 @@ import TapPlayingUI from "./TapPlayingUI";
 import EnhancedPreMatch from "./EnhancedPreMatch";
 import EnhancedPostMatch from "./EnhancedPostMatch";
 import LobbyChat from "./LobbyChat";
+import EmotePicker, { type EmoteId } from "./EmotePicker";
+import EmoteBubble from "./EmoteBubble";
 import { pickConfiguredMatchCommentators, type Commentator } from "@/lib/commentaryDuo";
 import { useSettings } from "@/contexts/SettingsContext";
 import { SFX, Haptics } from "@/lib/sounds";
