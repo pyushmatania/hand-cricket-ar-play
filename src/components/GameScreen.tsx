@@ -30,6 +30,8 @@ import { WeatherParticles } from "./WeatherParticles";
 import BallPitchAnimation from "./BallPitchAnimation";
 import StadiumEstablishingShot from "./StadiumEstablishingShot";
 import TeamLineupWalkout from "./TeamLineupWalkout";
+import { useEquippedCosmetics } from "@/hooks/useEquippedCosmetics";
+import { getAvatarPreset } from "@/lib/avatars";
 
 const MOVE_EMOJI: Record<string, string> = {
   DEF: "✊", "1": "☝️", "2": "✌️", "3": "🤟", "4": "🖖", "6": "👍",
@@ -203,19 +205,24 @@ export default function GameScreen({ onHome }: GameScreenProps) {
 
   const { user } = useAuth();
   const [playerName, setPlayerName] = useState("You");
+  const [playerAvatarIndex, setPlayerAvatarIndex] = useState(0);
+  const [playerAvatarUrl, setPlayerAvatarUrl] = useState<string | null>(null);
+  const cosmetics = useEquippedCosmetics();
   const opponentName = "Rohit AI";
 
-  // Fetch display name from profile
+  // Fetch display name + avatar from profile
   useEffect(() => {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("display_name, xp")
+      .select("display_name, xp, avatar_index, avatar_url")
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data }) => {
         if (data?.display_name) setPlayerName(data.display_name);
         if ((data as any)?.xp) setPlayerXP((data as any).xp);
+        if (data?.avatar_index != null) setPlayerAvatarIndex(data.avatar_index);
+        if ((data as any)?.avatar_url) setPlayerAvatarUrl((data as any).avatar_url);
       });
   }, [user]);
 
@@ -550,6 +557,9 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         <TeamLineupWalkout
           playerName={playerName}
           opponentName={opponentName}
+          playerAvatarIndex={playerAvatarIndex}
+          playerAvatarUrl={playerAvatarUrl}
+          playerFrame={cosmetics.avatarFrame}
           onComplete={handleWalkoutComplete}
         />
       )}
