@@ -17,19 +17,19 @@ const QUICK_PLAY = [
 ];
 
 const TOURNAMENTS = [
-  { id: "tournament", label: "TOURNAMENT", desc: "5-Round Bracket", emoji: "🏆", color: "hsl(43 90% 55%)" },
-  { id: "ipl", label: "IPL SEASON", desc: "Full Franchise", emoji: "🏟️", color: "hsl(25 90% 55%)" },
-  { id: "worldcup", label: "WORLD CUP", desc: "10 Nations", emoji: "🌍", color: "hsl(217 80% 55%)" },
-  { id: "ashes", label: "THE ASHES", desc: "Best of 5 Tests", emoji: "🏺", color: "hsl(35 70% 50%)" },
-  { id: "knockout", label: "KNOCKOUT CUP", desc: "8-Team Bracket", emoji: "🥊", color: "hsl(0 70% 55%)" },
-  { id: "auction", label: "AUCTION LEAGUE", desc: "Bid & Battle", emoji: "💰", color: "hsl(43 85% 50%)" },
+  { id: "tournament", label: "TOURNAMENT", desc: "5-Round Bracket", emoji: "🏆", color: "hsl(43 90% 55%)", badge: null, minRank: null },
+  { id: "ipl", label: "IPL SEASON", desc: "Full Franchise", emoji: "🏟️", color: "hsl(25 90% 55%)", badge: null, minRank: null },
+  { id: "worldcup", label: "WORLD CUP", desc: "10 Nations", emoji: "🌍", color: "hsl(217 80% 55%)", badge: "NEW", minRank: null },
+  { id: "ashes", label: "THE ASHES", desc: "Best of 5 Tests", emoji: "🏺", color: "hsl(35 70% 50%)", badge: "NEW", minRank: null },
+  { id: "knockout", label: "KNOCKOUT CUP", desc: "8-Team Bracket", emoji: "🥊", color: "hsl(0 70% 55%)", badge: "NEW", minRank: "silver" },
+  { id: "auction", label: "AUCTION LEAGUE", desc: "Bid & Battle", emoji: "💰", color: "hsl(43 85% 50%)", badge: "NEW", minRank: null },
 ];
 
 const SPECIAL = [
-  { id: "royale", label: "CRICKET ROYALE", desc: "100→1 Survival", emoji: "💀", color: "hsl(280 70% 55%)" },
-  { id: "daily", label: "DAILY CHALLENGE", desc: "1 Shot Per Day", emoji: "📅", color: "hsl(43 93% 50%)" },
-  { id: "cricket-wars", label: "CRICKET WARS", desc: "Clan vs Clan", emoji: "⚔️", color: "hsl(0 84% 55%)" },
-  { id: "multiplayer", label: "MULTIPLAYER", desc: "Real-Time PvP", emoji: "🎮", color: "hsl(280 85% 65%)" },
+  { id: "royale", label: "CRICKET ROYALE", desc: "100→1 Survival", emoji: "💀", color: "hsl(280 70% 55%)", badge: null, minRank: "gold", liveCount: null, statusText: null },
+  { id: "daily", label: "DAILY CHALLENGE", desc: "1 Shot Per Day", emoji: "📅", color: "hsl(43 93% 50%)", badge: null, minRank: null, liveCount: null, statusText: "Resets daily" },
+  { id: "cricket-wars", label: "CRICKET WARS", desc: "Clan vs Clan", emoji: "⚔️", color: "hsl(0 84% 55%)", badge: "SOON", minRank: null, liveCount: null, statusText: null },
+  { id: "multiplayer", label: "MULTIPLAYER", desc: "Real-Time PvP", emoji: "🎮", color: "hsl(280 85% 65%)", badge: null, minRank: null, liveCount: true, statusText: null },
 ];
 
 interface ModeSelectDrawerProps {
@@ -46,15 +46,55 @@ function SectionHeader({ label, accentGradient }: { label: string; accentGradien
   );
 }
 
-function CompetitiveCard({ mode, index, onNavigate }: { mode: typeof TOURNAMENTS[0]; index: number; onNavigate: (id: string) => void }) {
+function ModeBadge({ type }: { type: string }) {
+  const styles: Record<string, { bg: string; text: string; border: string }> = {
+    NEW: { bg: "hsl(142 71% 45%)", text: "hsl(142 80% 98%)", border: "hsl(142 55% 30%)" },
+    SOON: { bg: "hsl(217 80% 55%)", text: "hsl(217 90% 95%)", border: "hsl(217 55% 35%)" },
+    HOT: { bg: "hsl(0 84% 55%)", text: "hsl(0 90% 95%)", border: "hsl(0 55% 35%)" },
+  };
+  const s = styles[type] || styles.NEW;
+  return (
+    <span className="absolute -top-1.5 -right-1.5 font-game-display text-[7px] tracking-widest px-1.5 py-0.5 z-20"
+      style={{ borderRadius: "6px", background: s.bg, color: s.text, border: `1px solid ${s.border}`, boxShadow: `0 2px 8px ${s.bg}40` }}>
+      {type}
+    </span>
+  );
+}
+
+function LockOverlay({ rank }: { rank: string }) {
+  return (
+    <div className="absolute inset-0 z-30 flex items-center justify-center rounded-[14px]"
+      style={{ background: "hsl(0 0% 0% / 0.55)", backdropFilter: "blur(2px)" }}>
+      <div className="flex flex-col items-center gap-0.5">
+        <span className="text-base">🔒</span>
+        <span className="font-game-display text-[8px] tracking-wider text-muted-foreground uppercase">
+          {rank} rank
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function LiveIndicator() {
+  const count = Math.floor(Math.random() * 20) + 3;
+  return (
+    <span className="flex items-center gap-1 font-game-body text-[8px] text-muted-foreground">
+      <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "hsl(142 71% 50%)" }} />
+      {count} online
+    </span>
+  );
+}
+
+function CompetitiveCard({ mode, index, onNavigate }: { mode: typeof TOURNAMENTS[0] & { badge?: string | null; minRank?: string | null; liveCount?: boolean | null; statusText?: string | null }; index: number; onNavigate: (id: string) => void }) {
+  const isLocked = mode.badge === "SOON";
   return (
     <motion.button
       key={mode.id}
       initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 0.1 + index * 0.04 }}
-      whileTap={{ scale: 0.97 }}
-      onClick={() => onNavigate(mode.id)}
+      whileTap={isLocked ? undefined : { scale: 0.97 }}
+      onClick={() => !isLocked && onNavigate(mode.id)}
       className="w-full flex items-center gap-3 relative overflow-hidden"
       style={{
         borderRadius: "14px",
@@ -62,26 +102,36 @@ function CompetitiveCard({ mode, index, onNavigate }: { mode: typeof TOURNAMENTS
         background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)",
         border: "2px solid hsl(25 18% 22%)",
         borderBottom: "4px solid hsl(25 20% 10%)",
+        opacity: isLocked ? 0.6 : 1,
       }}
     >
-      {/* Subtle accent glow */}
+      {mode.badge && <ModeBadge type={mode.badge} />}
+      {isLocked && <LockOverlay rank="clan" />}
       <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl" style={{ background: mode.color, opacity: 0.6 }} />
       <span className="text-lg ml-1">{mode.emoji}</span>
       <div className="flex-1 text-left">
         <span className="font-game-display text-[10px] text-foreground tracking-wider">{mode.label}</span>
-        <span className="block font-game-body text-[9px] text-muted-foreground">{mode.desc}</span>
+        <div className="flex items-center gap-2">
+          <span className="font-game-body text-[9px] text-muted-foreground">{mode.desc}</span>
+          {(mode as any).liveCount && <LiveIndicator />}
+          {(mode as any).statusText && (
+            <span className="font-game-body text-[8px] text-muted-foreground/70">{(mode as any).statusText}</span>
+          )}
+        </div>
       </div>
-      <span className="font-game-display text-[9px] tracking-wider px-2.5 py-1"
-        style={{
-          borderRadius: "8px",
-          background: "linear-gradient(180deg, hsl(217 80% 55%) 0%, hsl(217 70% 42%) 100%)",
-          border: "1.5px solid hsl(217 60% 60% / 0.4)",
-          borderBottom: "3px solid hsl(217 55% 28%)",
-          color: "hsl(217 90% 95%)",
-          textShadow: "0 1px 0 hsl(217 50% 20%)",
-        }}>
-        ENTER
-      </span>
+      {!isLocked && (
+        <span className="font-game-display text-[9px] tracking-wider px-2.5 py-1"
+          style={{
+            borderRadius: "8px",
+            background: "linear-gradient(180deg, hsl(217 80% 55%) 0%, hsl(217 70% 42%) 100%)",
+            border: "1.5px solid hsl(217 60% 60% / 0.4)",
+            borderBottom: "3px solid hsl(217 55% 28%)",
+            color: "hsl(217 90% 95%)",
+            textShadow: "0 1px 0 hsl(217 50% 20%)",
+          }}>
+          ENTER
+        </span>
+      )}
     </motion.button>
   );
 }
