@@ -8,6 +8,7 @@ import ModeSelectDrawer from "@/components/ModeSelectDrawer";
 import floatingIsland from "@/assets/floating-island.png";
 import { getChestTier } from "@/lib/chests";
 import ChestSlotsWidget from "@/components/ChestSlotsWidget";
+import DailyQuestsWidget from "@/components/DailyQuestsWidget";
 
 interface ProfileData {
   total_matches: number;
@@ -371,6 +372,9 @@ export default function HomePage() {
 
         {/* ═══ F) CHEST SLOT ROW ═══ */}
         <ChestSlotsWidget />
+
+        {/* ═══ G) DAILY QUESTS ═══ */}
+        <DailyQuestsWidget />
       </div>
 
       <ModeSelectDrawer open={modeDrawerOpen} onOpenChange={setModeDrawerOpen} />

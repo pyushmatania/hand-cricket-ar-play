@@ -22,6 +22,7 @@ export interface MatchRewardsResult {
   oldRankName: string | null;
   newRankName: string | null;
   streakBonus: boolean;
+  chestAwarded?: string; // chest tier if one was awarded
 }
 
 export function useMatchSaver() {
@@ -465,6 +466,46 @@ export function useMatchSaver() {
               }
             }
           } catch (e) { console.error("[Rivalry] notification failed", e); }
+        }
+
+        // ── CHEST REWARD ON WIN ──
+        if (game.result === "win") {
+          try {
+            const { data: existingChests } = await supabase
+              .from("user_chests")
+              .select("slot_index")
+              .eq("user_id", user.id);
+
+            const occupiedSlots = new Set((existingChests || []).map((c: any) => c.slot_index));
+            let emptySlot = -1;
+            for (let s = 0; s < 4; s++) {
+              if (!occupiedSlots.has(s)) { emptySlot = s; break; }
+            }
+
+            if (emptySlot >= 0) {
+              // Pick chest tier based on weighted random
+              const tierRoll = Math.random() * 100;
+              let chestTier = "bronze";
+              if (tierRoll > 98) chestTier = "champion";
+              else if (tierRoll > 93) chestTier = "diamond";
+              else if (tierRoll > 85) chestTier = "platinum";
+              else if (tierRoll > 70) chestTier = "gold";
+              else if (tierRoll > 45) chestTier = "silver";
+
+              const DURATIONS: Record<string, number> = {
+                bronze: 30, silver: 60, gold: 180, platinum: 480,
+                diamond: 720, champion: 1440, war: 2880,
+              };
+
+              await supabase.from("user_chests").insert({
+                user_id: user.id,
+                slot_index: emptySlot,
+                chest_tier: chestTier,
+                status: "locked",
+                unlock_duration_seconds: DURATIONS[chestTier] || 300,
+              } as any);
+            }
+          } catch (e) { console.error("[Chest] award failed", e); }
         }
 
         // Batch-insert XP history
