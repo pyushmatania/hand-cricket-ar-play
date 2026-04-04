@@ -13,6 +13,7 @@ import { pickConfiguredMatchCommentators } from "@/lib/commentaryDuo";
 import ScoreBoard from "./ScoreBoard";
 import CelebrationEffects from "./CelebrationEffects";
 import ShotResultOverlay from "./ShotResultOverlay";
+import BallPitchAnimation from "./BallPitchAnimation";
 import ArenaParticles from "./ArenaParticles";
 import OverBreakScreen from "./OverBreakScreen";
 import WicketBreakdownCard, { type WicketBreakdownData } from "./WicketBreakdownCard";
