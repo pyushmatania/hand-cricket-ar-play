@@ -1,33 +1,34 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import splashBg from "@/assets/splash-stadium.jpg";
 
 interface SplashScreenProps {
   onComplete: () => void;
 }
 
 export default function SplashScreen({ onComplete }: SplashScreenProps) {
-  const [phase, setPhase] = useState(0);
+  const [phase, setPhase] = useState(0); // 0=dark, 1=logo, 2=loading, 3=fadeout
   const [loadPct, setLoadPct] = useState(0);
 
   useEffect(() => {
+    // Min 2s display, phases timed for drama
     const timers = [
-      setTimeout(() => setPhase(1), 500),
-      setTimeout(() => setPhase(2), 1600),
-      setTimeout(() => setPhase(3), 3800),
-      setTimeout(() => onComplete(), 4400),
+      setTimeout(() => setPhase(1), 300),    // Logo appears
+      setTimeout(() => setPhase(2), 1000),   // Loading bar starts
+      setTimeout(() => setPhase(3), 3200),   // Fade out begins
+      setTimeout(() => onComplete(), 3700),  // Complete (500ms fade)
     ];
     return () => timers.forEach(clearTimeout);
   }, [onComplete]);
 
+  // Loading bar progress
   useEffect(() => {
     if (phase < 2) return;
     const interval = setInterval(() => {
       setLoadPct((p) => {
         if (p >= 100) { clearInterval(interval); return 100; }
-        return Math.min(p + 2, 100);
+        return Math.min(p + 3, 100);
       });
-    }, 35);
+    }, 40);
     return () => clearInterval(interval);
   }, [phase]);
 
@@ -35,77 +36,41 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
     <AnimatePresence>
       {phase < 4 && (
         <motion.div
-          exit={{ opacity: 0, scale: 1.05 }}
-          transition={{ duration: 0.6 }}
-          className="fixed inset-0 z-[100] overflow-hidden bg-[hsl(222_47%_4%)]"
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className="fixed inset-0 z-[100] overflow-hidden"
+          style={{ background: "linear-gradient(180deg, #0F172A 0%, #020617 100%)" }}
         >
-          {/* Stadium Dusk Background */}
-          <motion.div
-            initial={{ scale: 1.15, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 2.5, ease: "easeOut" }}
-            className="absolute inset-0"
-          >
-            <img
-              src={splashBg}
-              alt=""
-              className="w-full h-full object-cover"
-              style={{ filter: "brightness(0.7) saturate(1.2)" }}
-              width={1080}
-              height={1920}
-            />
-            {/* Dusk sky overlay — warm amber top, dark bottom */}
-            <div
-              className="absolute inset-0"
-              style={{
-                background: `
-                  linear-gradient(180deg,
-                    hsl(25 60% 20% / 0.5) 0%,
-                    hsl(222 47% 6% / 0.3) 30%,
-                    hsl(222 47% 6% / 0.6) 60%,
-                    hsl(222 47% 6% / 0.95) 100%
-                  )
-                `,
-              }}
-            />
-          </motion.div>
+          {/* Soft team-colored radial glow */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: "radial-gradient(ellipse at 50% 40%, rgba(255,244,79,0.06) 0%, transparent 60%)",
+            }}
+          />
 
-          {/* Floodlight glow cones from top */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div
-              className="absolute inset-0"
-              style={{
-                background: `
-                  radial-gradient(ellipse at 25% -5%, hsl(45 80% 90% / 0.1) 0%, transparent 40%),
-                  radial-gradient(ellipse at 75% -5%, hsl(45 80% 90% / 0.1) 0%, transparent 40%),
-                  radial-gradient(ellipse at 50% 0%, hsl(45 80% 90% / 0.06) 0%, transparent 35%)
-                `,
-              }}
-            />
-          </div>
-
-          {/* Floating chalk dust particles */}
+          {/* Floating particles */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            {Array.from({ length: 15 }).map((_, i) => (
+            {Array.from({ length: 12 }).map((_, i) => (
               <motion.div
                 key={i}
                 className="absolute rounded-full"
                 style={{
-                  width: 2 + Math.random() * 3,
-                  height: 2 + Math.random() * 3,
-                  background: `hsl(48 60% 95% / ${0.2 + Math.random() * 0.3})`,
+                  width: 2 + Math.random() * 2,
+                  height: 2 + Math.random() * 2,
+                  background: `rgba(255,255,255,${0.15 + Math.random() * 0.2})`,
                 }}
                 initial={{
                   x: Math.random() * 400,
-                  y: Math.random() * 600 + 200,
+                  y: 400 + Math.random() * 300,
                   opacity: 0,
                 }}
                 animate={{
-                  y: [null, Math.random() * -300],
-                  opacity: [0, 0.7, 0],
+                  y: [null, Math.random() * -400],
+                  opacity: [0, 0.6, 0],
                 }}
                 transition={{
-                  duration: 4 + Math.random() * 4,
+                  duration: 5 + Math.random() * 5,
                   delay: Math.random() * 2,
                   repeat: Infinity,
                   ease: "easeOut",
@@ -114,64 +79,78 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
             ))}
           </div>
 
-          {/* Chrome Logo Text */}
+          {/* Logo — CRICKET CLASH in Bungee Shade */}
           <AnimatePresence>
             {phase >= 1 && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.5, y: 30 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.6 }}
+                animate={{ opacity: 1, scale: 1 }}
                 transition={{
-                  duration: 0.6,
+                  duration: 0.7,
                   type: "spring",
-                  damping: 14,
-                  stiffness: 100,
+                  damping: 12,
+                  stiffness: 80,
                 }}
                 className="absolute inset-0 flex flex-col items-center justify-center"
-                style={{ marginTop: "-8%" }}
+                style={{ marginTop: "-12%" }}
               >
-                {/* Cricket ball icon */}
+                {/* Cricket ball as the "O" accent */}
                 <motion.div
-                  initial={{ rotate: -180, scale: 0 }}
+                  initial={{ rotate: -360, scale: 0 }}
                   animate={{ rotate: 0, scale: 1 }}
-                  transition={{ delay: 0.2, duration: 0.5, type: "spring" }}
-                  className="mb-4"
+                  transition={{ delay: 0.2, duration: 0.6, type: "spring" }}
+                  className="mb-5"
                 >
                   <div
-                    className="w-20 h-20 rounded-full relative"
+                    className="w-16 h-16 rounded-full relative"
                     style={{
-                      background: "radial-gradient(circle at 35% 35%, hsl(12 70% 40%), hsl(12 80% 25%), hsl(12 85% 15%))",
-                      boxShadow: "0 8px 30px rgba(139,37,0,0.5), inset 0 -3px 6px rgba(0,0,0,0.4), inset 0 3px 6px hsl(12 60% 50% / 0.3)",
+                      background: "radial-gradient(circle at 35% 35%, #C62828, #8B1A1A, #5D1010)",
+                      boxShadow: "0 6px 24px rgba(139,26,26,0.6), inset 0 -2px 6px rgba(0,0,0,0.4), inset 0 2px 4px rgba(255,100,100,0.2)",
                     }}
                   >
-                    {/* Seam line */}
                     <div
-                      className="absolute inset-2 rounded-full border-2 border-dashed"
-                      style={{ borderColor: "hsl(48 80% 85% / 0.4)" }}
+                      className="absolute inset-2 rounded-full border-[1.5px] border-dashed"
+                      style={{ borderColor: "rgba(255,220,180,0.35)" }}
                     />
                   </div>
                 </motion.div>
 
-                {/* CRICKET CLASH in chrome */}
-                <h1
-                  className="font-display text-4xl font-black tracking-wider leading-tight text-center"
+                {/* "C R I C K E T" */}
+                <motion.h1
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.3, duration: 0.5 }}
+                  className="font-game-display-3d text-5xl font-black leading-none text-center"
                   style={{
-                    background: "linear-gradient(180deg, hsl(0 0% 95%) 0%, hsl(230 6% 70%) 40%, hsl(230 8% 50%) 70%, hsl(230 6% 70%) 100%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    filter: "drop-shadow(0 4px 8px rgba(0,0,0,0.6))",
+                    letterSpacing: "8px",
+                    color: "white",
+                    textShadow: "4px 0 4px 8px rgba(0,0,0,0.8), 0 0 40px rgba(255,244,79,0.15)",
                   }}
                 >
                   CRICKET
-                  <br />
-                  CLASH
-                </h1>
+                </motion.h1>
 
-                {/* Tagline in chalk */}
+                {/* "C L A S H" */}
+                <motion.h1
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.5, duration: 0.5 }}
+                  className="font-game-display-3d text-[64px] font-black leading-none text-center mt-1"
+                  style={{
+                    letterSpacing: "10px",
+                    color: "white",
+                    textShadow: "4px 0 8px rgba(0,0,0,0.8), 0 0 60px rgba(255,244,79,0.2)",
+                  }}
+                >
+                  CLASH
+                </motion.h1>
+
+                {/* Tagline */}
                 <motion.p
                   initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                  className="text-chalk text-[10px] tracking-[0.4em] mt-2 font-bold"
+                  animate={{ opacity: 0.6 }}
+                  transition={{ delay: 0.8, duration: 0.5 }}
+                  className="font-body text-[10px] tracking-[0.4em] mt-4 text-white/60 uppercase font-semibold"
                 >
                   HAND CRICKET EVOLVED
                 </motion.p>
@@ -179,74 +158,56 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
             )}
           </AnimatePresence>
 
-          {/* Chalk-Style Loading Bar */}
+          {/* Loading Bar — team accent colored */}
           <AnimatePresence>
             {phase >= 2 && (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                className="absolute bottom-28 left-1/2 -translate-x-1/2 w-56"
+                className="absolute bottom-32 left-1/2 -translate-x-1/2 w-52"
               >
-                {/* Pitch strip track */}
+                {/* Bar track */}
                 <div
-                  className="relative h-3 rounded-sm overflow-hidden"
+                  className="relative h-2.5 rounded-full overflow-hidden"
                   style={{
-                    background: "linear-gradient(90deg, hsl(130 30% 18%), hsl(130 25% 22%), hsl(130 30% 18%))",
-                    border: "1px solid hsl(130 20% 14%)",
+                    background: "rgba(0,0,0,0.5)",
+                    border: "1px solid rgba(255,255,255,0.08)",
                   }}
                 >
-                  {/* Crease marks */}
-                  <div className="absolute left-[20%] top-0 bottom-0 w-px bg-white/15" />
-                  <div className="absolute right-[20%] top-0 bottom-0 w-px bg-white/15" />
-                  <div className="absolute left-1/2 top-0 bottom-0 w-px bg-white/10" />
-
-                  {/* Chalk fill */}
+                  {/* Fill — team accent gradient */}
                   <motion.div
                     initial={{ width: "0%" }}
                     animate={{ width: `${loadPct}%` }}
-                    className="h-full relative rounded-sm"
+                    className="h-full rounded-full"
                     style={{
-                      background: "linear-gradient(90deg, hsl(48 60% 90% / 0.9), hsl(0 0% 100% / 0.95))",
-                      boxShadow: "0 0 8px hsl(0 0% 100% / 0.3)",
+                      background: "linear-gradient(90deg, #FFD700, #FFF44F, #FFD700)",
+                      boxShadow: "0 0 12px rgba(255,215,0,0.5)",
                     }}
-                  >
-                    {/* Chalk dust at leading edge */}
-                    <div
-                      className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full"
-                      style={{
-                        background: "radial-gradient(circle, hsl(0 0% 100% / 0.5), transparent)",
-                      }}
-                    />
-                  </motion.div>
+                  />
                 </div>
 
-                {/* Percentage */}
-                <motion.div
-                  className="text-center mt-2"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <span
-                    className="font-score text-xs tracking-[0.2em] font-bold"
-                    style={{ color: "hsl(48 60% 85% / 0.7)" }}
-                  >
+                {/* Loading text + percentage */}
+                <div className="flex items-center justify-center mt-3 gap-2">
+                  <span className="font-body text-[11px] tracking-[0.15em] text-white/40">
+                    Loading...
+                  </span>
+                  <span className="font-score text-[13px] font-bold text-white/60">
                     {loadPct}%
                   </span>
-                </motion.div>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
 
-          {/* Bottom tagline */}
+          {/* Bottom — subtle branding */}
           <motion.div
             initial={{ opacity: 0 }}
-            animate={{ opacity: phase >= 1 ? 0.4 : 0 }}
-            transition={{ delay: 1, duration: 1 }}
-            className="absolute bottom-12 left-0 right-0 text-center"
+            animate={{ opacity: phase >= 1 ? 0.3 : 0 }}
+            transition={{ delay: 1.5, duration: 1 }}
+            className="absolute bottom-10 left-0 right-0 text-center"
           >
-            <span className="text-chalk text-[9px] tracking-[0.3em] uppercase opacity-50">
+            <span className="font-body text-[9px] tracking-[0.3em] uppercase text-white/30">
               The Stadium Awaits
             </span>
           </motion.div>
