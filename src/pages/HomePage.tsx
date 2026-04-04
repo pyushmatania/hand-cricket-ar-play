@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -76,77 +76,84 @@ export default function HomePage() {
   const arenaProgress = ((currentTrophies - currentArena.trophies) / Math.max(nextArena.trophies - currentArena.trophies, 1)) * 100;
 
   return (
-    <div className="min-h-screen relative overflow-hidden app-bg" style={{ paddingBottom: "calc(68px + env(safe-area-inset-bottom, 16px) + 16px)" }}>
-      {/* Subtle vignette */}
-      <div className="absolute inset-0 pointer-events-none z-[1]" style={{ background: "radial-gradient(ellipse at center, transparent 30%, rgba(2,6,23,0.7) 100%)" }} />
+    <div className="min-h-screen relative overflow-hidden"
+      style={{
+        background: "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)",
+        paddingBottom: "calc(68px + env(safe-area-inset-bottom, 16px) + 16px)",
+      }}
+    >
+      {/* Leather grain overlay */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")", backgroundRepeat: "repeat" }}
+      />
+      {/* Vignette */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }}
+      />
 
-      <div className="relative z-10 max-w-[430px] mx-auto" style={{ padding: "var(--screen-padding-top) var(--screen-padding-x) 0" }}>
+      <div className="relative z-10 max-w-[430px] mx-auto px-4 pt-4">
 
-        {/* ═══════════════════════════════════════════
-            A) PLAYER BAR — 72px, blurred bg
-            ═══════════════════════════════════════════ */}
+        {/* ═══ A) PLAYER BAR — Stadium Concrete + Chrome ═══ */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-4 flex items-center gap-3"
           style={{
             height: 72,
-            background: "rgba(15,23,42,0.9)",
-            backdropFilter: "blur(8px)",
-            borderBottom: "1px solid rgba(var(--team-primary-rgb), 0.3)",
-            padding: "8px 16px",
-            borderRadius: "var(--radius-lg)",
+            padding: "8px 14px",
+            borderRadius: "16px",
+            background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)",
+            border: "2px solid hsl(25 20% 22%)",
+            borderBottom: "5px solid hsl(25 25% 10%)",
+            boxShadow: "0 4px 16px rgba(0,0,0,0.4)",
           }}
         >
-          {/* Avatar 56×56 */}
+          {/* Avatar */}
           <button
             onClick={() => navigate("/profile")}
             className="relative flex-shrink-0 active:scale-95 transition-transform"
-            style={{ width: 56, height: 56 }}
+            style={{ width: 52, height: 52 }}
           >
-            <div
-              className="w-full h-full rounded-full flex items-center justify-center overflow-hidden"
+            <div className="w-full h-full rounded-full flex items-center justify-center overflow-hidden"
               style={{
-                border: "3px solid hsl(var(--team-primary))",
-                background: "linear-gradient(135deg, #1E293B, #0F172A)",
+                border: "3px solid hsl(43 80% 50%)",
+                background: "linear-gradient(135deg, hsl(25 20% 18%), hsl(25 15% 12%))",
+                boxShadow: "0 0 10px hsl(43 80% 50% / 0.2)",
               }}
             >
               <span className="text-2xl">🏏</span>
             </div>
             {/* Level badge */}
-            <div
-              className="absolute -bottom-1 left-1/2 -translate-x-1/2 z-20 px-2 py-0.5 rounded-full font-score text-[9px] text-white font-bold"
+            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 z-20 px-2 py-0.5 rounded-full font-game-score text-[9px] font-bold"
               style={{
-                background: "linear-gradient(180deg, hsl(var(--team-primary)), hsl(var(--team-dark)))",
-                border: "2px solid hsl(var(--team-dark))",
+                background: "linear-gradient(180deg, hsl(43 80% 50%) 0%, hsl(35 60% 35%) 100%)",
+                border: "2px solid hsl(35 50% 25%)",
                 boxShadow: "0 2px 4px rgba(0,0,0,0.5)",
-                color: "hsl(var(--team-text))",
+                color: "hsl(25 40% 8%)",
               }}
             >
               Lv.{playerLevel}
             </div>
-            {/* XP bar 48px */}
+            {/* XP bar */}
             <div className="absolute -bottom-3 left-[8%] right-[8%] h-[4px] rounded-full z-20 overflow-hidden"
-              style={{ background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.05)" }}>
-              <div
-                className="h-full rounded-full"
+              style={{ background: "hsl(25 15% 10%)", border: "1px solid hsl(25 20% 18%)" }}
+            >
+              <div className="h-full rounded-full"
                 style={{
                   width: `${(xpInLevel / 500) * 100}%`,
-                  background: "hsl(var(--team-accent))",
-                  boxShadow: "0 0 4px hsl(var(--team-accent) / 0.5)",
+                  background: "linear-gradient(90deg, hsl(43 90% 55%), hsl(35 80% 45%))",
+                  boxShadow: "0 0 6px hsl(43 90% 55% / 0.5)",
                 }}
               />
             </div>
           </button>
 
-          {/* Name & clan */}
-          <div className="flex-1 min-w-0 pl-1">
-            <div className="font-body text-sm font-bold text-white truncate">{playerName}</div>
-            <div className="font-body text-[10px] text-muted-foreground mt-0.5">
-              {currentArena.name}
-            </div>
+          {/* Name & Arena */}
+          <div className="flex-1 min-w-0 pl-2">
+            <div className="font-game-card text-sm font-bold text-foreground truncate">{playerName}</div>
+            <div className="font-game-body text-[10px] text-muted-foreground mt-0.5">{currentArena.name}</div>
             <div className="flex items-center gap-1 mt-0.5">
-              <span className="font-score text-[11px] font-bold" style={{ color: "hsl(var(--team-accent))" }}>
+              <span className="font-game-score text-[11px] font-bold" style={{ color: "hsl(43 90% 55%)" }}>
                 🏆 {currentTrophies}
               </span>
             </div>
@@ -154,75 +161,108 @@ export default function HomePage() {
 
           {/* Currency pills */}
           <div className="flex flex-col gap-1.5 flex-shrink-0">
-            {/* Coins */}
-            <div className="currency-pill">
-              <span className="icon flex items-center justify-center text-sm">🪙</span>
-              <span className="amount">{profile?.coins ?? 0}</span>
-              <button className="btn-circle-sm ml-1 text-white text-[10px] font-bold">+</button>
+            <div className="flex items-center gap-1 rounded-full px-2 py-1"
+              style={{
+                background: "linear-gradient(180deg, hsl(25 18% 18%) 0%, hsl(25 15% 13%) 100%)",
+                border: "1.5px solid hsl(43 40% 35%)",
+                boxShadow: "0 2px 0 hsl(25 20% 8%)",
+              }}
+            >
+              <span className="text-sm">🪙</span>
+              <span className="font-game-score text-[11px] font-bold text-foreground">{profile?.coins ?? 0}</span>
+              <span className="text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center"
+                style={{ background: "hsl(142 71% 45%)", color: "hsl(25 40% 8%)" }}
+              >+</span>
             </div>
-            {/* Gems */}
-            <div className="currency-pill">
-              <span className="icon flex items-center justify-center text-sm">💎</span>
-              <span className="amount">45</span>
-              <button className="btn-circle-sm ml-1 text-white text-[10px] font-bold">+</button>
+            <div className="flex items-center gap-1 rounded-full px-2 py-1"
+              style={{
+                background: "linear-gradient(180deg, hsl(25 18% 18%) 0%, hsl(25 15% 13%) 100%)",
+                border: "1.5px solid hsl(280 40% 40%)",
+                boxShadow: "0 2px 0 hsl(25 20% 8%)",
+              }}
+            >
+              <span className="text-sm">💎</span>
+              <span className="font-game-score text-[11px] font-bold text-foreground">45</span>
+              <span className="text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center"
+                style={{ background: "hsl(142 71% 45%)", color: "hsl(25 40% 8%)" }}
+              >+</span>
             </div>
           </div>
         </motion.div>
 
-        {/* ═══════════════════════════════════════════
-            B) CHEST BANNERS — Free Chest + Wicket Chest
-            ═══════════════════════════════════════════ */}
+        {/* ═══ B) CHEST BANNERS ═══ */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="grid grid-cols-2 gap-2 mb-4"
+          className="grid grid-cols-2 gap-2.5 mb-4"
         >
-          {/* Free Chest */}
           <motion.button
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate("/shop")}
-            className="game-card chrome-brackets rounded-2xl p-3 flex flex-col items-center gap-1 animate-chest-glow"
+            className="rounded-2xl p-3 flex flex-col items-center gap-1 relative overflow-hidden"
+            style={{
+              background: "linear-gradient(180deg, hsl(28 22% 16%) 0%, hsl(25 18% 11%) 100%)",
+              border: "2px solid hsl(43 60% 40%)",
+              borderBottom: "5px solid hsl(43 40% 25%)",
+              boxShadow: "0 0 20px hsl(43 90% 50% / 0.15)",
+            }}
           >
-            <span className="text-3xl">🎁</span>
-            <span className="font-display text-[10px] text-white tracking-wider" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>
+            <motion.div className="absolute inset-0 pointer-events-none"
+              animate={{ opacity: [0.05, 0.15, 0.05] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              style={{ background: "radial-gradient(circle at center, hsl(43 90% 55% / 0.2), transparent 70%)" }}
+            />
+            <span className="text-3xl relative z-10">🎁</span>
+            <span className="font-game-display text-[10px] text-foreground tracking-wider relative z-10"
+              style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}
+            >
               Free Chest
             </span>
-            <span className="font-game-display text-[12px] tracking-wider" style={{ color: "hsl(var(--team-accent))" }}>
+            <span className="font-game-display text-[12px] tracking-wider relative z-10"
+              style={{ color: "hsl(43 90% 55%)" }}
+            >
               OPEN!
             </span>
           </motion.button>
 
-          {/* Wicket Chest */}
-          <button className="game-card chrome-brackets rounded-2xl p-3 flex flex-col items-center gap-1">
+          <button className="rounded-2xl p-3 flex flex-col items-center gap-1"
+            style={{
+              background: "linear-gradient(180deg, hsl(28 22% 16%) 0%, hsl(25 18% 11%) 100%)",
+              border: "2px solid hsl(25 20% 25%)",
+              borderBottom: "5px solid hsl(25 20% 12%)",
+            }}
+          >
             <span className="text-3xl">📦</span>
-            <span className="font-display text-[10px] text-white tracking-wider" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>
+            <span className="font-game-display text-[10px] text-foreground tracking-wider"
+              style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}
+            >
               Wicket Chest
             </span>
-            <div className="w-20 mt-1">
-              <div className="progress-bar" style={{ height: 6 }}>
-                <div className="progress-bar-fill" style={{ width: "72%" }} />
-              </div>
+            <div className="w-20 mt-1 h-[6px] rounded-full overflow-hidden"
+              style={{ background: "hsl(25 15% 10%)", border: "1px solid hsl(25 18% 20%)" }}
+            >
+              <div className="h-full rounded-full"
+                style={{ width: "72%", background: "linear-gradient(90deg, hsl(142 71% 45%), hsl(142 60% 35%))" }}
+              />
             </div>
-            <span className="font-score text-[10px] text-white/60">18/25</span>
+            <span className="font-game-score text-[10px] text-muted-foreground">18/25</span>
           </button>
         </motion.div>
 
-        {/* ═══════════════════════════════════════════
-            C) 3D FLOATING ISLAND
-            ═══════════════════════════════════════════ */}
+        {/* ═══ C) FLOATING ISLAND ═══ */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15, type: "spring", damping: 18 }}
           className="relative mb-2 flex items-center justify-center"
-          style={{ height: 380 }}
+          style={{ height: 340 }}
         >
           <motion.div
             animate={{ y: [0, -8, 0] }}
             transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
             className="relative"
-            style={{ width: 320, height: 380 }}
+            style={{ width: 300, height: 340 }}
           >
             <img
               src={floatingIsland}
@@ -233,40 +273,36 @@ export default function HomePage() {
               height={768}
             />
           </motion.div>
-
-          {/* Ground shadow ellipse */}
           <motion.div
             animate={{ scale: [0.85, 1, 0.85], opacity: [0.2, 0.35, 0.2] }}
             transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
             className="absolute bottom-0 left-1/2 -translate-x-1/2"
-            style={{
-              width: 200,
-              height: 40,
-              background: "radial-gradient(ellipse, rgba(0,0,0,0.5) 0%, transparent 70%)",
-              borderRadius: "50%",
-            }}
+            style={{ width: 200, height: 40, background: "radial-gradient(ellipse, rgba(0,0,0,0.5) 0%, transparent 70%)", borderRadius: "50%" }}
           />
         </motion.div>
 
-        {/* ═══════════════════════════════════════════
-            D) ARENA PROGRESS BAR
-            ═══════════════════════════════════════════ */}
+        {/* ═══ D) ARENA PROGRESS ═══ */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="mb-2"
-          style={{ padding: "0 32px" }}
+          className="mb-3 px-6"
         >
-          <div className="flex justify-between items-center mb-1">
-            <span className="font-body text-[11px] font-semibold text-muted-foreground">{currentArena.name}</span>
-            <span className="font-body text-[11px] font-semibold text-muted-foreground">{nextArena.name}</span>
+          <div className="flex justify-between items-center mb-1.5">
+            <span className="font-game-body text-[10px] font-semibold text-muted-foreground">{currentArena.name}</span>
+            <span className="font-game-body text-[10px] font-semibold text-muted-foreground">{nextArena.name}</span>
           </div>
-          <div className="progress-bar" style={{ height: 8 }}>
-            <div className="progress-bar-fill" style={{ width: `${arenaProgress}%` }} />
-            {/* Trophy marker */}
-            <div
-              className="absolute top-1/2 -translate-y-1/2 text-[14px]"
+          <div className="relative h-[8px] rounded-full overflow-hidden"
+            style={{ background: "hsl(25 15% 10%)", border: "1px solid hsl(25 18% 18%)" }}
+          >
+            <div className="h-full rounded-full"
+              style={{
+                width: `${arenaProgress}%`,
+                background: "linear-gradient(90deg, hsl(43 90% 55%), hsl(35 80% 45%))",
+                boxShadow: "0 0 8px hsl(43 90% 55% / 0.4)",
+              }}
+            />
+            <div className="absolute top-1/2 -translate-y-1/2 text-[14px]"
               style={{
                 left: `${Math.min(arenaProgress, 95)}%`,
                 filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.8))",
@@ -275,45 +311,53 @@ export default function HomePage() {
             >
               🏆
             </div>
-            {/* Milestone dots */}
             {[25, 50, 75].map(pct => (
-              <div
-                key={pct}
-                className="absolute top-1/2 -translate-y-1/2 w-1 h-1 rounded-full"
-                style={{
-                  left: `${pct}%`,
-                  background: "hsl(var(--team-primary))",
-                }}
+              <div key={pct} className="absolute top-1/2 -translate-y-1/2 w-1 h-1 rounded-full"
+                style={{ left: `${pct}%`, background: "hsl(43 60% 40%)" }}
               />
             ))}
           </div>
         </motion.div>
 
-        {/* ═══════════════════════════════════════════
-            E) BATTLE BUTTON — Always green, breathe anim
-            ═══════════════════════════════════════════ */}
+        {/* ═══ E) BATTLE BUTTON — 3D Jersey Mesh ═══ */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.25, type: "spring", stiffness: 200, damping: 15 }}
-          className="mb-4"
+          className="mb-4 px-6"
         >
-          <button
+          <motion.button
+            whileTap={{ scale: 0.96, y: 3 }}
             onClick={() => setModeDrawerOpen(true)}
-            className="btn-battle chrome-brackets"
+            className="w-full relative overflow-hidden font-game-title text-lg tracking-wider"
+            style={{
+              padding: "16px 0",
+              borderRadius: "16px",
+              background: "linear-gradient(180deg, hsl(142 71% 50%) 0%, hsl(142 65% 38%) 100%)",
+              border: "2px solid hsl(142 60% 55% / 0.5)",
+              borderBottom: "6px solid hsl(142 55% 25%)",
+              boxShadow: "0 6px 24px hsl(142 71% 45% / 0.3), inset 0 1px 0 hsl(142 80% 65% / 0.4)",
+              color: "hsl(142 80% 98%)",
+              textShadow: "0 2px 0 hsl(142 50% 20%)",
+            }}
           >
-            ▶ BATTLE
-          </button>
+            {/* Jersey mesh texture */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
+              style={{
+                backgroundImage: "radial-gradient(circle, hsl(0 0% 100%) 0.5px, transparent 0.5px)",
+                backgroundSize: "4px 4px",
+              }}
+            />
+            <span className="relative z-10">▶ BATTLE</span>
+          </motion.button>
         </motion.div>
 
-        {/* ═══════════════════════════════════════════
-            F) CHEST SLOT ROW — 4 slots
-            ═══════════════════════════════════════════ */}
+        {/* ═══ F) CHEST SLOT ROW ═══ */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.35 }}
-          className="flex gap-2 mb-4 px-0"
+          className="flex gap-2 mb-4"
         >
           {CHEST_SLOTS.map((slot, i) => {
             const chestTier = slot.type ? getChestTier(slot.type) : null;
@@ -325,26 +369,29 @@ export default function HomePage() {
                 key={i}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => isReady ? navigate("/shop") : undefined}
-                className="flex-1 relative rounded-xl flex flex-col items-center justify-center chrome-brackets overflow-hidden"
+                className="flex-1 relative rounded-xl flex flex-col items-center justify-center overflow-hidden"
                 style={{
-                  height: 100,
-                  background: "hsl(var(--card))",
+                  height: 96,
+                  borderRadius: "14px",
+                  background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)",
                   border: isReady
-                    ? "2px solid hsl(var(--team-accent))"
+                    ? "2px solid hsl(43 80% 50%)"
                     : isEmpty
-                    ? "2px solid #334155"
-                    : slot.state === "unlocking"
-                    ? "2px solid #22C55E"
-                    : "2px solid #3B82F6",
-                  borderRadius: "var(--radius-md)",
+                      ? "2px solid hsl(25 15% 20%)"
+                      : slot.state === "unlocking"
+                        ? "2px solid hsl(142 60% 40%)"
+                        : "2px solid hsl(217 60% 45%)",
+                  borderBottom: isReady
+                    ? "5px solid hsl(43 60% 30%)"
+                    : "4px solid hsl(25 20% 10%)",
+                  boxShadow: isReady ? "0 0 16px hsl(43 90% 50% / 0.2)" : undefined,
                 }}
               >
                 {isReady && (
-                  <motion.div
-                    className="absolute inset-0"
-                    animate={{ opacity: [0.3, 0.7, 0.3] }}
+                  <motion.div className="absolute inset-0 pointer-events-none"
+                    animate={{ opacity: [0.05, 0.2, 0.05] }}
                     transition={{ duration: 1.5, repeat: Infinity }}
-                    style={{ boxShadow: `inset 0 0 16px hsl(var(--team-accent) / 0.3)` }}
+                    style={{ background: "radial-gradient(circle, hsl(43 90% 55% / 0.15), transparent 70%)" }}
                   />
                 )}
 
@@ -353,37 +400,34 @@ export default function HomePage() {
                     <img
                       src={chestTier.image}
                       alt={chestTier.name}
-                      className="w-12 h-12 object-contain relative z-10"
-                      style={{
-                        filter: slot.state === "locked" ? "brightness(0.5)" : undefined,
-                      }}
-                      width={512}
-                      height={512}
-                      loading="lazy"
+                      className="w-11 h-11 object-contain relative z-10"
+                      style={{ filter: slot.state === "locked" ? "brightness(0.5)" : undefined }}
+                      width={512} height={512} loading="lazy"
                     />
                     {isReady && (
-                      <span className="font-game-display text-[12px] relative z-10 mt-0.5" style={{ color: "hsl(var(--team-accent))" }}>
-                        OPEN
-                      </span>
+                      <span className="font-game-display text-[11px] relative z-10 mt-0.5 tracking-wider"
+                        style={{ color: "hsl(43 90% 55%)" }}
+                      >OPEN</span>
                     )}
                     {slot.state === "unlocking" && (
                       <div className="absolute bottom-0 left-0 right-0 h-6 flex items-center justify-center z-10"
-                        style={{ background: "rgba(0,0,0,0.6)" }}>
+                        style={{ background: "hsl(25 20% 6% / 0.8)" }}
+                      >
                         <span className="text-[10px] mr-1">🕐</span>
-                        <span className="font-score text-[11px] text-white">{slot.timer}</span>
+                        <span className="font-game-score text-[11px] text-foreground">{slot.timer}</span>
                       </div>
                     )}
                     {slot.state === "locked" && (
                       <div className="flex flex-col items-center gap-0.5 relative z-10">
                         <span className="text-sm">🔒</span>
-                        <span className="font-score text-[9px] text-muted-foreground">{slot.timer}</span>
+                        <span className="font-game-score text-[9px] text-muted-foreground">{slot.timer}</span>
                       </div>
                     )}
                   </>
                 ) : (
                   <div className="flex flex-col items-center gap-1 opacity-30">
                     <span className="text-muted-foreground text-lg">+</span>
-                    <span className="font-body text-[8px] text-muted-foreground uppercase">Chest Slot</span>
+                    <span className="font-game-body text-[8px] text-muted-foreground uppercase">Chest Slot</span>
                   </div>
                 )}
               </motion.button>
