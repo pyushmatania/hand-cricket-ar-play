@@ -60,7 +60,6 @@ function parseMatchBalls(balls: BallRecord[] | null, _isBattingFirst: boolean) {
   return { sixes, fours, threes, twos, singles, dots, wickets, aiSixes, aiFours, aiDots, totalBalls: balls.length };
 }
 
-/* ─── Achievements (from shared lib) ─── */
 import { ACHIEVEMENTS, TIER_STYLES, type Achievement, type AchievementTier } from "@/lib/achievements";
 
 interface ProfileData {
@@ -89,7 +88,6 @@ interface ProfileData {
 
 type TabType = "stats" | "matches" | "friends" | "trophy";
 
-/* ─── Utility ─── */
 const getTimeAgo = (dateStr: string) => {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
@@ -102,8 +100,32 @@ const getTimeAgo = (dateStr: string) => {
 const formatDate = (dateStr: string) =>
   new Date(dateStr).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
 
+/* ── 3D Stat Diamond ── */
+function StatDiamond({ icon, value, label, color }: { icon: string; value: string | number; label: string; color: string }) {
+  return (
+    <div className="text-center">
+      <span className="text-base block mb-0.5">{icon}</span>
+      <span className={`font-game-score text-xl font-black block leading-none ${color}`}>{value}</span>
+      <span className="text-[6px] text-muted-foreground font-game-display tracking-[0.15em] mt-0.5 block">{label}</span>
+    </div>
+  );
+}
+
+/* ── Stat Row with chalk divider ── */
+function StatRow({ icon, label, value, color }: { icon: string; label: string; value: string | number; color?: string }) {
+  return (
+    <div className="flex items-center justify-between py-2 border-b border-[hsl(35_30%_25%/0.2)] last:border-0">
+      <div className="flex items-center gap-2">
+        <span className="text-sm">{icon}</span>
+        <span className="text-[9px] text-muted-foreground font-game-display tracking-wider">{label}</span>
+      </div>
+      <span className={`font-game-score text-sm font-black ${color || "text-foreground"}`}>{value}</span>
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════
-   PROFILE PAGE
+   PROFILE PAGE — Doc 1 Material System
    ═══════════════════════════════════════════════════════════ */
 export default function ProfilePage() {
   const { user, signOut } = useAuth();
@@ -226,193 +248,257 @@ export default function ProfilePage() {
     setUploading(false);
   };
 
-  const StatRow = ({ icon, label, value, color }: { icon: string; label: string; value: string | number; color?: string }) => (
-    <div className="flex items-center justify-between py-1.5 border-b border-muted/10 last:border-0">
-      <div className="flex items-center gap-2">
-        <span className="text-sm">{icon}</span>
-        <span className="text-[9px] text-muted-foreground font-display tracking-wider">{label}</span>
-      </div>
-      <span className={`font-display text-sm font-black ${color || "text-foreground"}`}>{value}</span>
-    </div>
-  );
-
-  /* ── Equipped cosmetics list (kept for reference in other places) ── */
+  /* ── Rank tier color for chrome frame ── */
+  const tierChrome = {
+    Bronze: { border: "hsl(25 60% 35%)", glow: "hsl(25 60% 40% / 0.3)", accent: "hsl(25 70% 55%)" },
+    Silver: { border: "hsl(210 10% 55%)", glow: "hsl(210 10% 60% / 0.3)", accent: "hsl(210 15% 70%)" },
+    Gold: { border: "hsl(43 80% 45%)", glow: "hsl(43 90% 50% / 0.4)", accent: "hsl(43 100% 60%)" },
+    Diamond: { border: "hsl(192 80% 50%)", glow: "hsl(192 90% 55% / 0.4)", accent: "hsl(192 90% 65%)" },
+    Master: { border: "hsl(280 60% 55%)", glow: "hsl(280 70% 60% / 0.4)", accent: "hsl(280 80% 70%)" },
+    Legend: { border: "hsl(4 70% 50%)", glow: "hsl(4 80% 55% / 0.4)", accent: "hsl(4 90% 65%)" },
+  }[tier.name] || { border: "hsl(25 60% 35%)", glow: "hsl(25 60% 40% / 0.3)", accent: "hsl(25 70% 55%)" };
 
   return (
     <div className="min-h-screen bg-background relative overflow-hidden pb-24">
-      <div className="absolute inset-0 stadium-gradient pointer-events-none" />
-      <div className="absolute inset-0 vignette pointer-events-none" />
+      {/* Stadium concrete background */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: "linear-gradient(180deg, hsl(222 30% 8%) 0%, hsl(222 25% 6%) 100%)",
+      }} />
+      {/* Subtle pitch grass texture at top */}
+      <div className="absolute top-0 left-0 right-0 h-48 pointer-events-none opacity-[0.03]" style={{
+        backgroundImage: "repeating-linear-gradient(90deg, transparent, transparent 2px, hsl(120 40% 30%) 2px, hsl(120 40% 30%) 3px)",
+      }} />
       <TopStatusBar />
 
       <div className="relative z-10 max-w-lg mx-auto px-3 pt-3">
 
         {/* ═══════════════════════════════════════════════
-            CLASH ROYALE-STYLE PLAYER CARD
+            DOC 1 PLAYER CARD — Floodlight Chrome Frame + Leather
             ═══════════════════════════════════════════════ */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="relative rounded-2xl overflow-hidden mb-4"
+          style={{
+            border: `3px solid ${tierChrome.border}`,
+            boxShadow: `0 8px 24px hsl(0 0% 0% / 0.5), 0 0 20px ${tierChrome.glow}, inset 0 1px 0 hsl(35 40% 40% / 0.15)`,
+          }}
         >
-          {/* Card outer border glow based on rank */}
-          <div className={`absolute inset-0 rounded-2xl ${tier.glowColor}`} />
+          {/* Leather texture background */}
+          <div className="absolute inset-0" style={{
+            background: "linear-gradient(180deg, hsl(28 35% 18%) 0%, hsl(25 30% 12%) 50%, hsl(222 25% 10%) 100%)",
+          }} />
+          {/* Leather grain overlay */}
+          <div className="absolute inset-0 opacity-[0.04]" style={{
+            backgroundImage: "radial-gradient(circle at 30% 50%, hsl(30 20% 30%), transparent 2px), radial-gradient(circle at 70% 30%, hsl(30 20% 30%), transparent 1.5px)",
+            backgroundSize: "6px 6px, 4px 4px",
+          }} />
 
-          {/* Card background */}
-          <div className={`relative rounded-2xl border-2 ${tier.borderColor} bg-gradient-to-b from-[hsl(222_40%_14%)] to-[hsl(222_40%_8%)] overflow-hidden`}>
-            {/* Top rank banner */}
-            <div className={`relative px-4 py-2.5 ${tier.bgColor} border-b border-muted/10`}>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <motion.span
-                    animate={{ scale: [1, 1.15, 1] }}
-                    transition={{ duration: 2.5, repeat: Infinity }}
-                    className="text-2xl"
-                  >
-                    {tier.emoji}
-                  </motion.span>
-                  <div>
-                    <span className={`font-display text-[10px] font-black ${tier.color} tracking-[0.2em] block`}>
-                      {tier.name.toUpperCase()} RANK
-                    </span>
-                    <span className="text-[8px] text-muted-foreground font-mono">{rankPoints} RP</span>
-                  </div>
+          {/* Top chrome rank banner */}
+          <div className="relative px-4 py-3" style={{
+            background: `linear-gradient(135deg, ${tierChrome.border}, hsl(220 15% 18%), ${tierChrome.border})`,
+            borderBottom: `2px solid hsl(220 10% 10%)`,
+            boxShadow: "inset 0 1px 0 hsl(220 15% 35% / 0.4), inset 0 -1px 0 hsl(220 10% 8%)",
+          }}>
+            {/* Chrome rivet corners */}
+            {["top-1.5 left-2", "top-1.5 right-2"].map(pos => (
+              <div key={pos} className={`absolute ${pos} w-2 h-2 rounded-full`} style={{
+                background: "radial-gradient(circle at 35% 35%, hsl(220 15% 55%), hsl(220 10% 25%))",
+                boxShadow: "inset 0 1px 0 hsl(220 15% 65%)",
+              }} />
+            ))}
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <motion.span
+                  animate={{ scale: [1, 1.15, 1] }}
+                  transition={{ duration: 2.5, repeat: Infinity }}
+                  className="text-2xl"
+                >{tier.emoji}</motion.span>
+                <div>
+                  <span className="font-game-display text-[10px] font-black tracking-[0.2em] block" style={{ color: tierChrome.accent }}>
+                    {tier.name.toUpperCase()} RANK
+                  </span>
+                  <span className="text-[8px] font-game-score" style={{ color: "hsl(220 10% 55%)" }}>{rankPoints} RP</span>
                 </div>
-                {user ? (
-                  <button onClick={async () => { await signOut(); navigate("/"); }}
-                    className="px-2.5 py-1 rounded-lg bg-game-red/10 border border-game-red/20 text-[7px] text-game-red/70 font-display font-bold tracking-wider">
-                    SIGN OUT
-                  </button>
-                ) : (
-                  <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/auth")}
-                    className="px-3 py-1.5 bg-gradient-to-r from-primary/20 to-accent/10 text-primary font-display font-bold text-[8px] rounded-lg border border-primary/30 tracking-wider">
-                    🔐 SIGN IN
-                  </motion.button>
-                )}
               </div>
-              {/* Rank progress bar */}
-              {nextTier && (
-                <div className="mt-2">
-                  <div className="flex items-center justify-between mb-0.5">
-                    <span className="text-[7px] text-muted-foreground font-display tracking-wider">
-                      Next: {nextTier.emoji} {nextTier.name}
-                    </span>
-                    <span className="text-[7px] text-muted-foreground font-mono">{pointsNeeded} RP</span>
-                  </div>
-                  <div className="w-full h-1.5 rounded-full bg-muted/30 overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${rankProgress}%` }}
-                      transition={{ duration: 1, ease: "easeOut" }}
-                      className={`h-full rounded-full bg-gradient-to-r ${
-                        tier.name === "Bronze" ? "from-[hsl(25_60%_50%)] to-[hsl(25_80%_60%)]" :
-                        tier.name === "Silver" ? "from-[hsl(210_10%_60%)] to-[hsl(210_10%_75%)]" :
-                        tier.name === "Gold" ? "from-score-gold to-[hsl(45_100%_65%)]" :
-                        tier.name === "Diamond" ? "from-[hsl(192_91%_50%)] to-[hsl(192_91%_65%)]" :
-                        "from-primary to-accent"
-                      }`}
-                    />
-                  </div>
-                </div>
-              )}
-              {!nextTier && (
-                <div className="flex items-center gap-1 mt-1.5">
-                  <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }}
-                    className="w-1.5 h-1.5 rounded-full bg-primary" />
-                  <span className="text-[7px] text-primary font-display font-bold tracking-widest">MAX RANK ACHIEVED</span>
-                </div>
+              {user ? (
+                <button onClick={async () => { await signOut(); navigate("/"); }}
+                  className="px-3 py-1.5 rounded-lg font-game-display text-[7px] font-bold tracking-wider"
+                  style={{
+                    background: "linear-gradient(180deg, hsl(4 50% 25%), hsl(4 40% 18%))",
+                    border: "2px solid hsl(4 40% 15%)",
+                    borderBottom: "3px solid hsl(4 30% 12%)",
+                    color: "hsl(4 60% 65%)",
+                  }}>
+                  SIGN OUT
+                </button>
+              ) : (
+                <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/auth")}
+                  className="px-3 py-1.5 rounded-lg font-game-display text-[8px] font-bold tracking-wider"
+                  style={{
+                    background: "linear-gradient(180deg, hsl(207 90% 50%), hsl(207 90% 38%))",
+                    border: "2px solid hsl(207 80% 30%)",
+                    borderBottom: "3px solid hsl(207 70% 25%)",
+                    color: "white",
+                  }}>
+                  🔐 SIGN IN
+                </motion.button>
               )}
             </div>
 
-            {/* Main player info */}
-            <div className="px-4 py-3">
-              <div className="flex items-center gap-3">
-                {/* Avatar with level badge */}
-                <div className="relative">
-                  <button onClick={() => user && fileInputRef.current?.click()} className="relative group" disabled={uploading}>
-                    <PlayerAvatar avatarUrl={profile?.avatar_url} avatarIndex={profile?.avatar_index ?? 0} size="lg"
-                      frame={profile?.equipped_avatar_frame} />
-                    {user && (
-                      <div className="absolute inset-0 rounded-2xl bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <span className="text-[8px] font-display font-bold text-white tracking-wider">{uploading ? "..." : "EDIT"}</span>
-                      </div>
-                    )}
-                  </button>
-                  <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
-                  {/* Level badge */}
-                  <div className="absolute -bottom-1.5 -right-1.5 w-7 h-7 rounded-lg bg-gradient-to-br from-game-gold to-game-orange border-2 border-[hsl(222_40%_8%)] flex items-center justify-center">
-                    <span className="font-display text-[10px] font-black text-[hsl(222_40%_8%)]">{level}</span>
-                  </div>
+            {/* Rank progress bar */}
+            {nextTier && (
+              <div className="mt-2.5">
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-[7px] text-muted-foreground font-game-display tracking-wider">
+                    Next: {nextTier.emoji} {nextTier.name}
+                  </span>
+                  <span className="text-[7px] font-game-score" style={{ color: "hsl(220 10% 55%)" }}>{pointsNeeded} RP</span>
                 </div>
-
-                {/* Name + XP + quick stats */}
-                <div className="flex-1 min-w-0">
-                  <h1 className="font-display text-base font-black text-foreground tracking-wider truncate">
-                    {profile?.display_name || "PLAYER"}
-                  </h1>
-                  {/* XP bar */}
-                  <div className="mt-1 mb-2">
-                    <div className="flex items-center justify-between mb-0.5">
-                      <span className="text-[7px] text-muted-foreground font-display tracking-wider">LVL {level}</span>
-                      <span className="text-[7px] text-muted-foreground font-mono">{xpInLevel}/100 XP</span>
-                    </div>
-                    <div className="w-full h-1.5 rounded-full bg-muted/30 overflow-hidden">
-                      <motion.div initial={{ width: 0 }} animate={{ width: `${xpInLevel}%` }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
-                        className="h-full rounded-full bg-gradient-to-r from-game-blue to-game-teal" />
-                    </div>
-                  </div>
-                  {/* Coins */}
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs">🪙</span>
-                    <span className="font-display text-xs font-black text-game-gold">{profile?.coins || 0}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* 4-column stat ribbon */}
-            <div className="grid grid-cols-4 border-t border-muted/10">
-              {[
-                { value: totalWins, label: "WINS", color: "text-game-green" },
-                { value: totalLosses, label: "LOSSES", color: "text-game-red" },
-                { value: `${winRate}%`, label: "WIN RATE", color: "text-game-blue" },
-                { value: Math.max(profile?.high_score || 0, pvpRecord?.highScore || 0), label: "HIGH", color: "text-game-gold" },
-              ].map((s, i) => (
-                <div key={s.label} className={`text-center py-2.5 ${i > 0 ? "border-l border-muted/10" : ""}`}>
-                  <span className={`font-display text-lg font-black ${s.color} block leading-none`}>{s.value}</span>
-                  <span className="text-[6px] text-muted-foreground font-display font-bold tracking-[0.15em]">{s.label}</span>
-                </div>
-              ))}
-            </div>
-
-            {/* Equipped cosmetics carousel */}
-            <CosmeticsCarousel
-              batSkin={profile?.equipped_bat_skin}
-              vsEffect={profile?.equipped_vs_effect}
-              avatarFrame={profile?.equipped_avatar_frame}
-              buttonStyle={profile?.equipped_button_style}
-            />
-
-            {/* Recent form strip */}
-            {matches.length > 0 && (
-              <div className="border-t border-muted/10 px-3 py-2">
-                <div className="flex items-center gap-2">
-                  <span className="text-[7px] text-muted-foreground font-display tracking-widest shrink-0">FORM</span>
-                  <div className="flex gap-1">
-                    {matches.slice(0, 10).map((m) => (
-                      <div key={m.id} className={`w-5 h-5 rounded flex items-center justify-center text-[7px] font-display font-black ${
-                        m.result === "win" ? "bg-game-green/20 text-game-green" :
-                        m.result === "loss" ? "bg-game-red/20 text-game-red" :
-                        "bg-game-gold/20 text-game-gold"
-                      }`}>
-                        {m.result === "win" ? "W" : m.result === "loss" ? "L" : "D"}
-                      </div>
-                    ))}
-                  </div>
+                <div className="w-full h-2 rounded-full overflow-hidden" style={{
+                  background: "linear-gradient(180deg, hsl(220 15% 10%), hsl(220 12% 14%))",
+                  border: "1px solid hsl(220 10% 8%)",
+                  boxShadow: "inset 0 1px 3px hsl(0 0% 0% / 0.5)",
+                }}>
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${rankProgress}%` }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                    className="h-full rounded-full"
+                    style={{
+                      background: `linear-gradient(90deg, ${tierChrome.border}, ${tierChrome.accent})`,
+                      boxShadow: `0 0 8px ${tierChrome.glow}`,
+                    }}
+                  />
                 </div>
               </div>
             )}
+            {!nextTier && (
+              <div className="flex items-center gap-1 mt-2">
+                <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity }}
+                  className="w-1.5 h-1.5 rounded-full" style={{ background: tierChrome.accent }} />
+                <span className="text-[7px] font-game-display font-bold tracking-widest" style={{ color: tierChrome.accent }}>MAX RANK ACHIEVED</span>
+              </div>
+            )}
           </div>
+
+          {/* Main player info on leather */}
+          <div className="relative px-4 py-4">
+            <div className="flex items-center gap-3">
+              {/* Avatar with chrome ring */}
+              <div className="relative">
+                <button onClick={() => user && fileInputRef.current?.click()} className="relative group" disabled={uploading}>
+                  <div className="rounded-2xl p-0.5" style={{
+                    background: `linear-gradient(135deg, ${tierChrome.border}, hsl(220 10% 20%), ${tierChrome.border})`,
+                    boxShadow: `0 4px 12px hsl(0 0% 0% / 0.5), 0 0 12px ${tierChrome.glow}`,
+                  }}>
+                    <PlayerAvatar avatarUrl={profile?.avatar_url} avatarIndex={profile?.avatar_index ?? 0} size="lg"
+                      frame={profile?.equipped_avatar_frame} />
+                  </div>
+                  {user && (
+                    <div className="absolute inset-0 rounded-2xl bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <span className="text-[8px] font-game-display font-bold text-white tracking-wider">{uploading ? "..." : "EDIT"}</span>
+                    </div>
+                  )}
+                </button>
+                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+                {/* Level badge — 3D scoreboard paint */}
+                <div className="absolute -bottom-1.5 -right-1.5 px-2 py-0.5 rounded-lg" style={{
+                  background: "linear-gradient(180deg, hsl(43 90% 50%), hsl(43 80% 38%))",
+                  border: "2px solid hsl(43 70% 30%)",
+                  borderBottom: "3px solid hsl(43 60% 25%)",
+                  boxShadow: "0 3px 8px hsl(43 90% 50% / 0.3)",
+                }}>
+                  <span className="font-game-display text-[10px] font-black" style={{ color: "hsl(25 40% 12%)" }}>{level}</span>
+                </div>
+              </div>
+
+              {/* Name + XP bar */}
+              <div className="flex-1 min-w-0">
+                <h1 className="font-game-title text-lg text-foreground tracking-wider truncate">
+                  {profile?.display_name || "PLAYER"}
+                </h1>
+                {/* XP bar — scoreboard paint style */}
+                <div className="mt-1.5 mb-2">
+                  <div className="flex items-center justify-between mb-0.5">
+                    <span className="text-[7px] text-muted-foreground font-game-display tracking-wider">LVL {level}</span>
+                    <span className="text-[7px] font-game-score" style={{ color: "hsl(220 10% 55%)" }}>{xpInLevel}/100 XP</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full overflow-hidden" style={{
+                    background: "linear-gradient(180deg, hsl(25 30% 10%), hsl(25 25% 14%))",
+                    border: "1px solid hsl(25 20% 8%)",
+                    boxShadow: "inset 0 1px 3px hsl(0 0% 0% / 0.5)",
+                  }}>
+                    <motion.div initial={{ width: 0 }} animate={{ width: `${xpInLevel}%` }}
+                      transition={{ duration: 0.8, ease: "easeOut" }}
+                      className="h-full rounded-full"
+                      style={{
+                        background: "linear-gradient(90deg, hsl(207 90% 50%), hsl(168 80% 50%))",
+                        boxShadow: "0 0 6px hsl(207 90% 50% / 0.4)",
+                      }} />
+                  </div>
+                </div>
+                {/* Coins */}
+                <div className="flex items-center gap-1.5">
+                  <motion.span animate={{ rotateY: [0, 360] }} transition={{ repeat: Infinity, duration: 3, ease: "linear" }} className="text-sm inline-block">🪙</motion.span>
+                  <span className="font-game-score text-sm font-black" style={{ color: "hsl(43 100% 60%)" }}>{profile?.coins || 0}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 4-stat ribbon — scoreboard paint on concrete */}
+          <div className="grid grid-cols-4" style={{
+            background: "linear-gradient(180deg, hsl(222 20% 12%), hsl(222 18% 9%))",
+            borderTop: "2px solid hsl(222 15% 8%)",
+            boxShadow: "inset 0 1px 0 hsl(222 15% 18% / 0.3)",
+          }}>
+            {[
+              { value: totalWins, label: "WINS", color: "hsl(142 71% 55%)" },
+              { value: totalLosses, label: "LOSSES", color: "hsl(4 90% 58%)" },
+              { value: `${winRate}%`, label: "WIN RATE", color: "hsl(207 90% 60%)" },
+              { value: Math.max(profile?.high_score || 0, pvpRecord?.highScore || 0), label: "HIGH", color: "hsl(43 100% 60%)" },
+            ].map((s, i) => (
+              <div key={s.label} className="text-center py-3" style={{
+                borderLeft: i > 0 ? "1px solid hsl(222 15% 15%)" : undefined,
+              }}>
+                <span className="font-game-score text-xl font-black block leading-none" style={{ color: s.color }}>{s.value}</span>
+                <span className="text-[6px] text-muted-foreground font-game-display font-bold tracking-[0.15em]">{s.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Equipped cosmetics */}
+          <CosmeticsCarousel
+            batSkin={profile?.equipped_bat_skin}
+            vsEffect={profile?.equipped_vs_effect}
+            avatarFrame={profile?.equipped_avatar_frame}
+            buttonStyle={profile?.equipped_button_style}
+          />
+
+          {/* Form strip — chalk dots */}
+          {matches.length > 0 && (
+            <div className="px-3 py-2.5" style={{
+              borderTop: "1px solid hsl(222 15% 15%)",
+              background: "hsl(222 20% 10% / 0.5)",
+            }}>
+              <div className="flex items-center gap-2">
+                <span className="text-[7px] text-muted-foreground font-game-display tracking-widest shrink-0">FORM</span>
+                <div className="flex gap-1">
+                  {matches.slice(0, 10).map((m) => (
+                    <div key={m.id} className="w-5 h-5 rounded flex items-center justify-center text-[7px] font-game-display font-black" style={{
+                      background: m.result === "win" ? "hsl(142 71% 45% / 0.15)" : m.result === "loss" ? "hsl(4 90% 58% / 0.15)" : "hsl(43 100% 50% / 0.15)",
+                      color: m.result === "win" ? "hsl(142 71% 55%)" : m.result === "loss" ? "hsl(4 90% 60%)" : "hsl(43 100% 60%)",
+                      border: `1px solid ${m.result === "win" ? "hsl(142 71% 45% / 0.3)" : m.result === "loss" ? "hsl(4 90% 58% / 0.3)" : "hsl(43 100% 50% / 0.3)"}`,
+                    }}>
+                      {m.result === "win" ? "W" : m.result === "loss" ? "L" : "D"}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </motion.div>
 
         {/* Share Profile */}
@@ -442,16 +528,26 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* ═══ Tab Switcher ═══ */}
+        {/* ═══ Tab Switcher — 3D Jersey Mesh ═══ */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="flex gap-1 mb-4 rounded-xl p-1 bg-[hsl(222_40%_10%/0.8)] border border-muted/10">
+          className="flex gap-1 mb-4 rounded-xl p-1"
+          style={{
+            background: "linear-gradient(180deg, hsl(222 20% 12%), hsl(222 18% 9%))",
+            border: "2px solid hsl(222 15% 8%)",
+            boxShadow: "inset 0 1px 0 hsl(222 15% 18% / 0.3), 0 4px 12px hsl(0 0% 0% / 0.3)",
+          }}>
           {tabs.map((tab) => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)}
-              className={`flex-1 py-2 rounded-lg font-display text-[8px] font-bold tracking-widest transition-all duration-300 flex items-center justify-center gap-1 ${
-                activeTab === tab.key
-                  ? "bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20 shadow-[0_0_8px_hsl(217_91%_60%/0.15)]"
-                  : "text-muted-foreground"
-              }`}>
+              className="flex-1 py-2.5 rounded-lg font-game-display text-[8px] font-bold tracking-widest transition-all duration-200 flex items-center justify-center gap-1"
+              style={{
+                background: activeTab === tab.key
+                  ? "linear-gradient(180deg, hsl(207 90% 50%), hsl(207 90% 38%))"
+                  : "transparent",
+                border: activeTab === tab.key ? "1px solid hsl(207 80% 35%)" : "1px solid transparent",
+                borderBottom: activeTab === tab.key ? "3px solid hsl(207 70% 28%)" : "3px solid transparent",
+                color: activeTab === tab.key ? "white" : "hsl(220 10% 50%)",
+                boxShadow: activeTab === tab.key ? "0 2px 8px hsl(207 90% 50% / 0.3)" : "none",
+              }}>
               <span className="text-xs">{tab.icon}</span>
               {tab.label}
             </button>
@@ -463,20 +559,26 @@ export default function ProfilePage() {
           {/* ═══════ STATS TAB ═══════ */}
           {activeTab === "stats" && (
             <motion.div key="stats" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} transition={{ duration: 0.2 }}>
-              {/* Season stats grid */}
+              {/* Season stats grid — 3D stadium concrete cards */}
               <div className="grid grid-cols-4 gap-2 mb-4">
                 {[
-                  { icon: "🏏", value: totalMatches, label: "MATCHES" },
-                  { icon: "🔥", value: Math.max(profile?.best_streak || 0, pvpRecord?.bestStreak || 0), label: "STREAK" },
-                  { icon: "🤝", value: totalDraws, label: "DRAWS" },
-                  { icon: "🏳️", value: (profile?.abandons || 0) + (pvpRecord?.abandons || 0), label: "ABANDONS" },
+                  { icon: "🏏", value: totalMatches, label: "MATCHES", color: "text-foreground" },
+                  { icon: "🔥", value: Math.max(profile?.best_streak || 0, pvpRecord?.bestStreak || 0), label: "STREAK", color: "" },
+                  { icon: "🤝", value: totalDraws, label: "DRAWS", color: "" },
+                  { icon: "🏳️", value: (profile?.abandons || 0) + (pvpRecord?.abandons || 0), label: "ABANDONS", color: "" },
                 ].map((s, i) => (
                   <motion.div key={s.label} initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.1 + i * 0.05 }}
-                    className="rounded-xl p-2.5 text-center bg-[hsl(222_40%_10%/0.8)] border border-muted/10">
+                    className="rounded-xl p-2.5 text-center"
+                    style={{
+                      background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                      border: "2px solid hsl(222 15% 12%)",
+                      borderBottom: "4px solid hsl(222 12% 8%)",
+                      boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
+                    }}>
                     <span className="text-base block mb-0.5">{s.icon}</span>
-                    <span className="font-display text-lg font-black text-foreground block leading-none">{s.value}</span>
-                    <span className="text-[5px] text-muted-foreground font-display font-bold tracking-[0.2em] mt-0.5 block">{s.label}</span>
+                    <span className="font-game-score text-lg font-black text-foreground block leading-none">{s.value}</span>
+                    <span className="text-[5px] text-muted-foreground font-game-display font-bold tracking-[0.2em] mt-0.5 block">{s.label}</span>
                   </motion.div>
                 ))}
               </div>
@@ -484,34 +586,44 @@ export default function ProfilePage() {
               {/* PvP Record */}
               {pvpRecord && pvpRecord.totalGames > 0 && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
-                  className="rounded-xl p-3 mb-4 bg-[hsl(222_40%_10%/0.8)] border border-primary/15">
+                  className="rounded-xl p-3 mb-4"
+                  style={{
+                    background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                    border: "2px solid hsl(207 70% 40% / 0.3)",
+                    borderBottom: "4px solid hsl(207 60% 25% / 0.5)",
+                    boxShadow: "0 3px 12px hsl(207 90% 50% / 0.1)",
+                  }}>
+                  {/* Chalk divider label */}
                   <div className="flex items-center gap-2 mb-2.5">
-                    <div className="w-1 h-4 rounded-full bg-primary" />
-                    <span className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">⚔️ PvP RECORD</span>
+                    <div className="w-1 h-4 rounded-full" style={{ background: "hsl(207 90% 50%)" }} />
+                    <span className="font-game-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">⚔️ PvP RECORD</span>
                   </div>
                   <div className="grid grid-cols-4 gap-2 mb-2">
                     {[
-                      { icon: "⚔️", value: pvpRecord.totalGames, label: "GAMES", color: "text-foreground" },
-                      { icon: "🏆", value: pvpRecord.wins, label: "WINS", color: "text-game-green" },
-                      { icon: "💔", value: pvpRecord.losses, label: "LOSSES", color: "text-game-red" },
-                      { icon: "📊", value: `${pvpRecord.totalGames > 0 ? Math.round((pvpRecord.wins / pvpRecord.totalGames) * 100) : 0}%`, label: "WIN%", color: "text-primary" },
+                      { icon: "⚔️", value: pvpRecord.totalGames, label: "GAMES", color: "hsl(220 10% 85%)" },
+                      { icon: "🏆", value: pvpRecord.wins, label: "WINS", color: "hsl(142 71% 55%)" },
+                      { icon: "💔", value: pvpRecord.losses, label: "LOSSES", color: "hsl(4 90% 58%)" },
+                      { icon: "📊", value: `${pvpRecord.totalGames > 0 ? Math.round((pvpRecord.wins / pvpRecord.totalGames) * 100) : 0}%`, label: "WIN%", color: "hsl(207 90% 60%)" },
                     ].map((s) => (
                       <div key={s.label} className="text-center">
                         <span className="text-sm block">{s.icon}</span>
-                        <span className={`font-display text-base font-black ${s.color} block leading-none mt-0.5`}>{s.value}</span>
-                        <span className="text-[5px] font-display text-muted-foreground tracking-widest">{s.label}</span>
+                        <span className="font-game-score text-base font-black block leading-none mt-0.5" style={{ color: s.color }}>{s.value}</span>
+                        <span className="text-[5px] font-game-display text-muted-foreground tracking-widest">{s.label}</span>
                       </div>
                     ))}
                   </div>
                   <div className="grid grid-cols-3 gap-2">
                     {[
-                      { label: "HIGH", value: pvpRecord.highScore, color: "text-game-gold" },
-                      { label: "AVG", value: pvpRecord.avgScore, color: "text-foreground" },
-                      { label: "BEST WIN", value: `+${pvpRecord.biggestWin}`, color: "text-game-green" },
+                      { label: "HIGH", value: pvpRecord.highScore, color: "hsl(43 100% 60%)" },
+                      { label: "AVG", value: pvpRecord.avgScore, color: "hsl(220 10% 85%)" },
+                      { label: "BEST WIN", value: `+${pvpRecord.biggestWin}`, color: "hsl(142 71% 55%)" },
                     ].map(s => (
-                      <div key={s.label} className="rounded-lg p-1.5 text-center bg-muted/10 border border-muted/10">
-                        <span className="text-[5px] font-display text-muted-foreground tracking-widest block">{s.label}</span>
-                        <span className={`font-display text-sm font-black ${s.color}`}>{s.value}</span>
+                      <div key={s.label} className="rounded-lg p-1.5 text-center" style={{
+                        background: "hsl(222 15% 10%)",
+                        border: "1px solid hsl(222 12% 15%)",
+                      }}>
+                        <span className="text-[5px] font-game-display text-muted-foreground tracking-widest block">{s.label}</span>
+                        <span className="font-game-score text-sm font-black" style={{ color: s.color }}>{s.value}</span>
                       </div>
                     ))}
                   </div>
@@ -521,11 +633,16 @@ export default function ProfilePage() {
               {/* Batting & Performance stats */}
               {advancedStats && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+                  {/* Batting Stats */}
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="w-1 h-4 rounded-full bg-accent" />
-                    <span className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">BATTING STATS</span>
+                    <div className="w-1 h-4 rounded-full" style={{ background: "hsl(168 80% 50%)" }} />
+                    <span className="font-game-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">BATTING STATS</span>
                   </div>
-                  <div className="rounded-xl p-3 mb-4 bg-[hsl(222_40%_10%/0.8)] border border-muted/10">
+                  <div className="rounded-xl p-3 mb-4" style={{
+                    background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                    border: "2px solid hsl(222 15% 12%)",
+                    borderBottom: "4px solid hsl(222 12% 8%)",
+                  }}>
                     <StatRow icon="🏃" label="Total Runs" value={advancedStats.totalRuns} />
                     <StatRow icon="⚾" label="Total Balls" value={advancedStats.totalBalls} />
                     <StatRow icon="📈" label="Average" value={advancedStats.avgScore} />
@@ -535,29 +652,39 @@ export default function ProfilePage() {
                     <StatRow icon="🦆" label="Ducks" value={advancedStats.duckCount} />
                   </div>
 
+                  {/* Shot Distribution */}
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="w-1 h-4 rounded-full bg-primary" />
-                    <span className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">SHOT DISTRIBUTION</span>
+                    <div className="w-1 h-4 rounded-full" style={{ background: "hsl(207 90% 50%)" }} />
+                    <span className="font-game-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">SHOT DISTRIBUTION</span>
                   </div>
-                  <div className="rounded-xl p-3 mb-4 bg-[hsl(222_40%_10%/0.8)] border border-muted/10">
-                    <StatRow icon="6️⃣" label="Sixes" value={advancedStats.totalSixes} color="text-game-purple" />
-                    <StatRow icon="4️⃣" label="Fours" value={advancedStats.totalFours} color="text-game-green" />
+                  <div className="rounded-xl p-3 mb-4" style={{
+                    background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                    border: "2px solid hsl(222 15% 12%)",
+                    borderBottom: "4px solid hsl(222 12% 8%)",
+                  }}>
+                    <StatRow icon="6️⃣" label="Sixes" value={advancedStats.totalSixes} color="text-[hsl(280_60%_65%)]" />
+                    <StatRow icon="4️⃣" label="Fours" value={advancedStats.totalFours} color="text-[hsl(142_71%_55%)]" />
                     <StatRow icon="3️⃣" label="Threes" value={advancedStats.totalThrees} />
                     <StatRow icon="2️⃣" label="Twos" value={advancedStats.totalTwos} />
                     <StatRow icon="1️⃣" label="Singles" value={advancedStats.totalSingles} />
                     <StatRow icon="⏺️" label="Dots" value={advancedStats.totalDots} />
-                    <StatRow icon="💥" label="Boundary %" value={`${advancedStats.boundaryPct}%`} color="text-game-gold" />
-                    <StatRow icon="❌" label="Outs" value={advancedStats.totalWickets} color="text-game-red" />
+                    <StatRow icon="💥" label="Boundary %" value={`${advancedStats.boundaryPct}%`} color="text-[hsl(43_100%_60%)]" />
+                    <StatRow icon="❌" label="Outs" value={advancedStats.totalWickets} color="text-[hsl(4_90%_58%)]" />
                   </div>
 
+                  {/* Performance */}
                   <div className="flex items-center gap-2 mb-2">
-                    <div className="w-1 h-4 rounded-full bg-game-gold" />
-                    <span className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">PERFORMANCE</span>
+                    <div className="w-1 h-4 rounded-full" style={{ background: "hsl(43 100% 50%)" }} />
+                    <span className="font-game-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">PERFORMANCE</span>
                   </div>
-                  <div className="rounded-xl p-3 mb-4 bg-[hsl(222_40%_10%/0.8)] border border-muted/10">
+                  <div className="rounded-xl p-3 mb-4" style={{
+                    background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                    border: "2px solid hsl(222 15% 12%)",
+                    borderBottom: "4px solid hsl(222 12% 8%)",
+                  }}>
                     <StatRow icon="📊" label="Current Streak" value={`${profile?.current_streak || 0} 🔥`} />
-                    <StatRow icon="🏆" label="Biggest Win" value={`${advancedStats.highestWinMargin} runs`} color="text-game-green" />
-                    <StatRow icon="💔" label="Biggest Loss" value={`${advancedStats.biggestLoss} runs`} color="text-game-red" />
+                    <StatRow icon="🏆" label="Biggest Win" value={`${advancedStats.highestWinMargin} runs`} color="text-[hsl(142_71%_55%)]" />
+                    <StatRow icon="💔" label="Biggest Loss" value={`${advancedStats.biggestLoss} runs`} color="text-[hsl(4_90%_58%)]" />
                     <StatRow icon="🎯" label="Runs Conceded" value={advancedStats.totalAiRuns} />
                     <StatRow icon="🎮" label="Fav Mode" value={advancedStats.favMode.toUpperCase()} />
                   </div>
@@ -567,10 +694,14 @@ export default function ProfilePage() {
               {/* XP History */}
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-1 h-4 rounded-full bg-secondary" />
-                  <span className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">⚡ XP HISTORY</span>
+                  <div className="w-1 h-4 rounded-full" style={{ background: "hsl(280 60% 55%)" }} />
+                  <span className="font-game-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">⚡ XP HISTORY</span>
                 </div>
-                <div className="rounded-xl p-3 mb-4 bg-[hsl(222_40%_10%/0.8)] border border-muted/10">
+                <div className="rounded-xl p-3 mb-4" style={{
+                  background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                  border: "2px solid hsl(222 15% 12%)",
+                  borderBottom: "4px solid hsl(222 12% 8%)",
+                }}>
                   <XpHistoryFeed />
                 </div>
               </motion.div>
@@ -578,21 +709,33 @@ export default function ProfilePage() {
               {/* Achievements */}
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-1 h-4 rounded-full bg-primary" />
-                  <span className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">ACHIEVEMENTS</span>
-                  <span className="text-[8px] text-muted-foreground/50 font-display">{unlockedCount}/{ACHIEVEMENTS.length}</span>
+                  <div className="w-1 h-4 rounded-full" style={{ background: "hsl(207 90% 50%)" }} />
+                  <span className="font-game-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">ACHIEVEMENTS</span>
+                  <span className="text-[8px] text-muted-foreground/50 font-game-display">{unlockedCount}/{ACHIEVEMENTS.length}</span>
                 </div>
               </div>
 
-              <div className="rounded-xl p-3 mb-3 bg-[hsl(222_40%_10%/0.8)] border border-muted/10">
+              <div className="rounded-xl p-3 mb-3" style={{
+                background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                border: "2px solid hsl(222 15% 12%)",
+                borderBottom: "4px solid hsl(222 12% 8%)",
+              }}>
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[8px] text-muted-foreground font-display tracking-wider">COMPLETION</span>
-                  <span className="font-display text-sm font-black text-primary">{Math.round((unlockedCount / ACHIEVEMENTS.length) * 100)}%</span>
+                  <span className="text-[8px] text-muted-foreground font-game-display tracking-wider">COMPLETION</span>
+                  <span className="font-game-score text-sm font-black" style={{ color: "hsl(207 90% 60%)" }}>{Math.round((unlockedCount / ACHIEVEMENTS.length) * 100)}%</span>
                 </div>
-                <div className="w-full h-2 bg-muted/30 rounded-full overflow-hidden">
+                <div className="w-full h-2 rounded-full overflow-hidden" style={{
+                  background: "hsl(222 15% 10%)",
+                  border: "1px solid hsl(222 12% 8%)",
+                  boxShadow: "inset 0 1px 3px hsl(0 0% 0% / 0.5)",
+                }}>
                   <motion.div initial={{ width: 0 }} animate={{ width: `${(unlockedCount / ACHIEVEMENTS.length) * 100}%` }}
                     transition={{ delay: 0.3, duration: 0.8 }}
-                    className="h-full bg-gradient-to-r from-primary to-accent rounded-full" />
+                    className="h-full rounded-full"
+                    style={{
+                      background: "linear-gradient(90deg, hsl(207 90% 50%), hsl(168 80% 50%))",
+                      boxShadow: "0 0 6px hsl(207 90% 50% / 0.4)",
+                    }} />
                 </div>
                 <div className="flex justify-between mt-1.5">
                   {(["bronze", "silver", "gold", "legendary"] as AchievementTier[]).map(t => {
@@ -600,8 +743,8 @@ export default function ProfilePage() {
                     const total = ACHIEVEMENTS.filter(a => a.tier === t).length;
                     return (
                       <div key={t} className="text-center">
-                        <span className="font-display text-[10px] font-black text-foreground">{count}/{total}</span>
-                        <span className="text-[6px] text-muted-foreground font-display tracking-widest block">{TIER_STYLES[t].label}</span>
+                        <span className="font-game-score text-[10px] font-black text-foreground">{count}/{total}</span>
+                        <span className="text-[6px] text-muted-foreground font-game-display tracking-widest block">{TIER_STYLES[t].label}</span>
                       </div>
                     );
                   })}
@@ -613,9 +756,13 @@ export default function ProfilePage() {
                 <div className="flex gap-1 mb-3">
                   {["All", ...Array.from(new Set(ACHIEVEMENTS.map(a => a.category)))].map(cat => (
                     <button key={cat} onClick={() => setAchieveFilter(cat)}
-                      className={`px-2.5 py-1 rounded-lg font-display text-[7px] font-bold tracking-widest whitespace-nowrap transition-all ${
-                        achieveFilter === cat ? "bg-primary/15 text-primary border border-primary/20" : "text-muted-foreground/50"
-                      }`}>
+                      className="px-2.5 py-1.5 rounded-lg font-game-display text-[7px] font-bold tracking-widest whitespace-nowrap transition-all"
+                      style={{
+                        background: achieveFilter === cat ? "linear-gradient(180deg, hsl(207 90% 50%), hsl(207 90% 38%))" : "hsl(222 15% 12%)",
+                        border: achieveFilter === cat ? "1px solid hsl(207 80% 35%)" : "1px solid hsl(222 12% 15%)",
+                        borderBottom: achieveFilter === cat ? "3px solid hsl(207 70% 28%)" : "3px solid hsl(222 10% 10%)",
+                        color: achieveFilter === cat ? "white" : "hsl(220 10% 45%)",
+                      }}>
                       {cat.toUpperCase()}
                     </button>
                   ))}
@@ -631,24 +778,37 @@ export default function ProfilePage() {
                   return (
                     <motion.div key={a.key} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.1 + i * 0.03 }}
-                      className={`rounded-xl p-3 relative overflow-hidden ${tierStyle.border} border bg-[hsl(222_40%_10%/0.8)] ${unlocked ? tierStyle.glow : "opacity-50 grayscale"}`}>
-                      <div className={`absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl ${tierStyle.bg} rounded-bl-full`} />
+                      className="rounded-xl p-3 relative overflow-hidden"
+                      style={{
+                        background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                        border: unlocked ? `2px solid ${a.tier === "legendary" ? "hsl(43 80% 45%)" : a.tier === "gold" ? "hsl(43 90% 55%)" : a.tier === "silver" ? "hsl(210 10% 50%)" : "hsl(25 50% 40%)"}` : "2px solid hsl(222 15% 12%)",
+                        borderBottom: unlocked ? `4px solid ${a.tier === "legendary" ? "hsl(43 60% 30%)" : a.tier === "gold" ? "hsl(43 70% 35%)" : a.tier === "silver" ? "hsl(210 10% 35%)" : "hsl(25 40% 25%)"}` : "4px solid hsl(222 12% 8%)",
+                        opacity: unlocked ? 1 : 0.5,
+                        filter: unlocked ? "none" : "grayscale(0.5)",
+                        boxShadow: unlocked ? `0 0 12px ${a.tier === "legendary" ? "hsl(43 80% 50% / 0.2)" : "transparent"}` : "none",
+                      }}>
                       <div className="flex items-start gap-2 relative z-10">
                         <span className="text-xl">{a.icon}</span>
                         <div className="flex-1 min-w-0">
-                          <span className="font-display text-[10px] font-bold text-foreground block truncate">{a.title}</span>
+                          <span className="font-game-display text-[10px] font-bold text-foreground block truncate">{a.title}</span>
                           <span className="text-[7px] text-muted-foreground block">{a.desc}</span>
-                          <span className={`text-[6px] font-display font-bold tracking-widest mt-0.5 block ${
-                            a.tier === "legendary" ? "text-primary" : a.tier === "gold" ? "text-score-gold" : a.tier === "silver" ? "text-muted-foreground" : "text-[hsl(25,60%,50%)]"
-                          }`}>{tierStyle.label}</span>
+                          <span className="text-[6px] font-game-display font-bold tracking-widest mt-0.5 block" style={{
+                            color: a.tier === "legendary" ? "hsl(43 80% 55%)" : a.tier === "gold" ? "hsl(43 90% 60%)" : a.tier === "silver" ? "hsl(210 10% 60%)" : "hsl(25 60% 55%)",
+                          }}>{tierStyle.label}</span>
                         </div>
                       </div>
                       {prog && !unlocked && (
                         <div className="mt-2 relative z-10">
-                          <div className="w-full h-1.5 bg-muted/30 rounded-full overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-primary/60 to-primary/30 rounded-full transition-all" style={{ width: `${progPct}%` }} />
+                          <div className="w-full h-1.5 rounded-full overflow-hidden" style={{
+                            background: "hsl(222 15% 10%)",
+                            border: "1px solid hsl(222 12% 8%)",
+                          }}>
+                            <div className="h-full rounded-full transition-all" style={{
+                              width: `${progPct}%`,
+                              background: "linear-gradient(90deg, hsl(207 90% 50% / 0.6), hsl(207 90% 50% / 0.3))",
+                            }} />
                           </div>
-                          <span className="text-[6px] text-muted-foreground font-display mt-0.5 block">{prog.current}/{prog.target}</span>
+                          <span className="text-[6px] text-muted-foreground font-game-display mt-0.5 block">{prog.current}/{prog.target}</span>
                         </div>
                       )}
                       {unlocked ? (
@@ -672,9 +832,11 @@ export default function ProfilePage() {
                           />
                         </div>
                       ) : (
-                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-muted/30 flex items-center justify-center z-10"><span className="text-[7px]">🔒</span></div>
+                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center z-10" style={{
+                          background: "hsl(222 15% 15%)",
+                          border: "1px solid hsl(222 12% 12%)",
+                        }}><span className="text-[7px]">🔒</span></div>
                       )}
-                      {unlocked && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-game-green to-game-green/30" />}
                     </motion.div>
                   );
                 })}
@@ -693,45 +855,57 @@ export default function ProfilePage() {
           {activeTab === "matches" && (
             <motion.div key="matches" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} transition={{ duration: 0.2 }}>
               <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/history")}
-                className="w-full rounded-xl p-3 mb-4 flex items-center justify-between group bg-[hsl(222_40%_10%/0.8)] border border-muted/10">
+                className="w-full rounded-xl p-3 mb-4 flex items-center justify-between group"
+                style={{
+                  background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                  border: "2px solid hsl(222 15% 12%)",
+                  borderBottom: "4px solid hsl(222 12% 8%)",
+                }}>
                 <div className="flex items-center gap-2">
                   <span className="text-lg">📜</span>
                   <div>
-                    <span className="font-display text-[10px] font-bold text-foreground tracking-wider block">FULL MATCH HISTORY</span>
+                    <span className="font-game-display text-[10px] font-bold text-foreground tracking-wider block">FULL MATCH HISTORY</span>
                     <span className="text-[7px] text-muted-foreground">Filters, replay & detailed stats</span>
                   </div>
                 </div>
-                <span className="text-muted-foreground group-hover:text-primary transition-colors">→</span>
+                <span className="text-muted-foreground group-hover:text-foreground transition-colors">→</span>
               </motion.button>
 
               {matches.length > 0 && (
-                <div className="rounded-xl p-3 mb-4 flex items-center justify-between bg-[hsl(222_40%_10%/0.8)] border border-muted/10">
+                <div className="rounded-xl p-3 mb-4 flex items-center justify-between" style={{
+                  background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                  border: "2px solid hsl(222 15% 12%)",
+                  borderBottom: "4px solid hsl(222 12% 8%)",
+                }}>
                   {[
-                    { val: matches.filter(m => m.result === "win").length, label: "WON", color: "text-game-green" },
-                    { val: matches.filter(m => m.result === "loss").length, label: "LOST", color: "text-game-red" },
-                    { val: matches.filter(m => m.result === "draw").length, label: "DRAW", color: "text-game-gold" },
-                    { val: matches.length, label: "TOTAL", color: "text-foreground" },
+                    { val: matches.filter(m => m.result === "win").length, label: "WON", color: "hsl(142 71% 55%)" },
+                    { val: matches.filter(m => m.result === "loss").length, label: "LOST", color: "hsl(4 90% 58%)" },
+                    { val: matches.filter(m => m.result === "draw").length, label: "DRAW", color: "hsl(43 100% 60%)" },
+                    { val: matches.length, label: "TOTAL", color: "hsl(220 10% 85%)" },
                   ].map((s) => (
                     <div key={s.label} className="text-center flex-1">
-                      <span className={`font-display text-base font-black ${s.color} block leading-none`}>{s.val}</span>
-                      <span className="text-[6px] text-muted-foreground font-display tracking-widest">{s.label}</span>
+                      <span className="font-game-score text-base font-black block leading-none" style={{ color: s.color }}>{s.val}</span>
+                      <span className="text-[6px] text-muted-foreground font-game-display tracking-widest">{s.label}</span>
                     </div>
                   ))}
                 </div>
               )}
 
               {matches.length === 0 ? (
-                <div className="rounded-xl p-8 text-center bg-[hsl(222_40%_10%/0.8)] border border-muted/10">
+                <div className="rounded-xl p-8 text-center" style={{
+                  background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                  border: "2px solid hsl(222 15% 12%)",
+                  borderBottom: "4px solid hsl(222 12% 8%)",
+                }}>
                   <span className="text-3xl block mb-2">🏏</span>
-                  <span className="font-display text-xs font-bold text-muted-foreground tracking-wider">NO MATCHES YET</span>
+                  <span className="font-game-display text-xs font-bold text-muted-foreground tracking-wider">NO MATCHES YET</span>
                   <p className="text-[9px] text-muted-foreground/60 mt-1">Play your first match to see history</p>
                 </div>
               ) : (
                 <div className="space-y-2">
                   {matches.map((m, i) => {
                     const modeIcon = m.mode === "ar" ? "📸" : m.mode === "tournament" ? "🏆" : m.mode === "multiplayer" ? "⚔️" : "👆";
-                    const resultColor = m.result === "win" ? "text-game-green" : m.result === "loss" ? "text-game-red" : "text-game-gold";
-                    const resultBg = m.result === "win" ? "from-game-green/10" : m.result === "loss" ? "from-game-red/10" : "from-game-gold/10";
+                    const resultColor = m.result === "win" ? "hsl(142 71% 55%)" : m.result === "loss" ? "hsl(4 90% 58%)" : "hsl(43 100% 60%)";
                     const isExpanded = expandedMatch === m.id;
                     const margin = Math.abs(m.user_score - m.ai_score);
                     const runRate = m.balls_played > 0 ? (m.user_score / m.balls_played * 6).toFixed(1) : "0.0";
@@ -741,24 +915,34 @@ export default function ProfilePage() {
                     return (
                       <motion.div key={m.id} initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.04 }}
-                        className="rounded-xl relative overflow-hidden cursor-pointer bg-[hsl(222_40%_10%/0.8)] border border-muted/10"
+                        className="rounded-xl relative overflow-hidden cursor-pointer"
+                        style={{
+                          background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                          border: "2px solid hsl(222 15% 12%)",
+                          borderBottom: "4px solid hsl(222 12% 8%)",
+                          borderLeft: `3px solid ${resultColor}`,
+                        }}
                         onClick={() => setExpandedMatch(isExpanded ? null : m.id)}>
-                        <div className={`absolute inset-0 bg-gradient-to-r ${resultBg} to-transparent opacity-30`} />
                         <div className="p-3 flex items-center gap-3 relative z-10">
-                          <div className="w-10 h-10 rounded-xl bg-muted/20 flex items-center justify-center text-lg">{modeIcon}</div>
+                          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style={{
+                            background: "hsl(222 15% 12%)",
+                            border: "1px solid hsl(222 12% 15%)",
+                          }}>{modeIcon}</div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className={`font-display text-[10px] font-bold ${resultColor} tracking-wider`}>{m.result.toUpperCase()}</span>
-                              <span className="text-[7px] text-muted-foreground font-display px-1.5 py-0.5 rounded bg-muted/20">{m.mode.toUpperCase()}</span>
-                              {m.result !== "draw" && <span className={`text-[7px] ${resultColor} opacity-70 font-display`}>by {margin}</span>}
+                              <span className="font-game-display text-[10px] font-bold tracking-wider" style={{ color: resultColor }}>{m.result.toUpperCase()}</span>
+                              <span className="text-[7px] text-muted-foreground font-game-display px-1.5 py-0.5 rounded" style={{
+                                background: "hsl(222 15% 12%)",
+                              }}>{m.mode.toUpperCase()}</span>
+                              {m.result !== "draw" && <span className="text-[7px] opacity-70 font-game-display" style={{ color: resultColor }}>by {margin}</span>}
                             </div>
                             <span className="text-[8px] text-muted-foreground">{m.balls_played} balls • RR {runRate} • {getTimeAgo(m.created_at)}</span>
                           </div>
                           <div className="text-right">
                             <div className="flex items-baseline gap-1">
-                              <span className="font-display text-base font-black text-game-gold">{m.user_score}</span>
+                              <span className="font-game-score text-base font-black" style={{ color: "hsl(43 100% 60%)" }}>{m.user_score}</span>
                               <span className="text-[8px] text-muted-foreground">vs</span>
-                              <span className="font-display text-base font-black text-accent">{m.ai_score}</span>
+                              <span className="font-game-score text-base font-black" style={{ color: "hsl(168 80% 55%)" }}>{m.ai_score}</span>
                             </div>
                           </div>
                         </div>
@@ -767,57 +951,70 @@ export default function ProfilePage() {
                           {isExpanded && (
                             <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}
                               transition={{ duration: 0.2 }} className="overflow-hidden">
-                              <div className="px-3 pb-3 pt-1 border-t border-muted/10 relative z-10">
+                              <div className="px-3 pb-3 pt-1 relative z-10" style={{ borderTop: "1px solid hsl(222 15% 15%)" }}>
                                 <div className="grid grid-cols-2 gap-2 mb-3">
-                                  <div className="rounded-lg p-2 text-center bg-muted/10 border border-muted/10">
-                                    <span className="text-[7px] text-muted-foreground font-display tracking-widest block">YOU</span>
-                                    <span className="font-display text-lg font-black text-game-gold">{m.user_score}</span>
+                                  <div className="rounded-lg p-2 text-center" style={{
+                                    background: "hsl(222 15% 10%)",
+                                    border: "1px solid hsl(222 12% 15%)",
+                                  }}>
+                                    <span className="text-[7px] text-muted-foreground font-game-display tracking-widest block">YOU</span>
+                                    <span className="font-game-score text-lg font-black" style={{ color: "hsl(43 100% 60%)" }}>{m.user_score}</span>
                                     <span className="text-[7px] text-muted-foreground block">RR {runRate}</span>
                                   </div>
-                                  <div className="rounded-lg p-2 text-center bg-muted/10 border border-muted/10">
-                                    <span className="text-[7px] text-muted-foreground font-display tracking-widest block">AI</span>
-                                    <span className="font-display text-lg font-black text-accent">{m.ai_score}</span>
+                                  <div className="rounded-lg p-2 text-center" style={{
+                                    background: "hsl(222 15% 10%)",
+                                    border: "1px solid hsl(222 12% 15%)",
+                                  }}>
+                                    <span className="text-[7px] text-muted-foreground font-game-display tracking-widest block">AI</span>
+                                    <span className="font-game-score text-lg font-black" style={{ color: "hsl(168 80% 55%)" }}>{m.ai_score}</span>
                                     <span className="text-[7px] text-muted-foreground block">RR {aiRunRate}</span>
                                   </div>
                                 </div>
                                 {ballStats && (
-                                  <div className="rounded-lg p-2 mb-3 bg-muted/10 border border-muted/10">
-                                    <span className="text-[7px] text-muted-foreground font-display tracking-widest block mb-2">BATTING BREAKDOWN</span>
+                                  <div className="rounded-lg p-2 mb-3" style={{
+                                    background: "hsl(222 15% 10%)",
+                                    border: "1px solid hsl(222 12% 15%)",
+                                  }}>
+                                    <span className="text-[7px] text-muted-foreground font-game-display tracking-widest block mb-2">BATTING BREAKDOWN</span>
                                     <div className="grid grid-cols-4 gap-1.5">
                                       {[
-                                        { label: "6s", val: ballStats.sixes, color: "text-game-purple" },
-                                        { label: "4s", val: ballStats.fours, color: "text-game-green" },
-                                        { label: "3s", val: ballStats.threes, color: "text-game-gold" },
-                                        { label: "2s", val: ballStats.twos, color: "text-accent" },
-                                        { label: "1s", val: ballStats.singles, color: "text-foreground" },
-                                        { label: "Dots", val: ballStats.dots, color: "text-muted-foreground" },
-                                        { label: "Outs", val: ballStats.wickets, color: "text-game-red" },
-                                        { label: "Balls", val: ballStats.totalBalls, color: "text-foreground" },
+                                        { label: "6s", val: ballStats.sixes, color: "hsl(280 60% 65%)" },
+                                        { label: "4s", val: ballStats.fours, color: "hsl(142 71% 55%)" },
+                                        { label: "3s", val: ballStats.threes, color: "hsl(43 100% 60%)" },
+                                        { label: "2s", val: ballStats.twos, color: "hsl(168 80% 55%)" },
+                                        { label: "1s", val: ballStats.singles, color: "hsl(220 10% 85%)" },
+                                        { label: "Dots", val: ballStats.dots, color: "hsl(220 10% 50%)" },
+                                        { label: "Outs", val: ballStats.wickets, color: "hsl(4 90% 58%)" },
+                                        { label: "Balls", val: ballStats.totalBalls, color: "hsl(220 10% 85%)" },
                                       ].map(s => (
                                         <div key={s.label} className="text-center py-1">
-                                          <span className={`font-display text-sm font-black ${s.color} block leading-none`}>{s.val}</span>
-                                          <span className="text-[6px] text-muted-foreground font-display tracking-widest">{s.label}</span>
+                                          <span className="font-game-score text-sm font-black block leading-none" style={{ color: s.color }}>{s.val}</span>
+                                          <span className="text-[6px] text-muted-foreground font-game-display tracking-widest">{s.label}</span>
                                         </div>
                                       ))}
                                     </div>
                                   </div>
                                 )}
                                 {m.innings_data && Array.isArray(m.innings_data) && m.innings_data.length > 0 && (
-                                  <div className="rounded-lg p-2 mb-3 bg-muted/10 border border-muted/10">
-                                    <span className="text-[7px] text-muted-foreground font-display tracking-widest block mb-2">BALL-BY-BALL</span>
+                                  <div className="rounded-lg p-2 mb-3" style={{
+                                    background: "hsl(222 15% 10%)",
+                                    border: "1px solid hsl(222 12% 15%)",
+                                  }}>
+                                    <span className="text-[7px] text-muted-foreground font-game-display tracking-widest block mb-2">BALL-BY-BALL</span>
                                     <div className="flex flex-wrap gap-1">
                                       {(m.innings_data as BallRecord[]).map((b, bi) => {
                                         const isOut = b.runs === "OUT";
                                         const r = typeof b.runs === "number" ? b.runs : 0;
                                         const absR = Math.abs(r);
-                                        let bg = "bg-muted/30 text-muted-foreground";
-                                        if (isOut) bg = "bg-game-red/20 text-game-red";
-                                        else if (absR === 6) bg = "bg-game-purple/20 text-game-purple";
-                                        else if (absR === 4) bg = "bg-game-green/20 text-game-green";
-                                        else if (absR >= 2) bg = "bg-game-gold/20 text-game-gold";
-                                        else if (absR === 1) bg = "bg-accent/20 text-accent";
+                                        const dotStyle = isOut ? { bg: "hsl(4 90% 58% / 0.2)", color: "hsl(4 90% 60%)" }
+                                          : absR === 6 ? { bg: "hsl(280 60% 55% / 0.2)", color: "hsl(280 60% 65%)" }
+                                          : absR === 4 ? { bg: "hsl(142 71% 45% / 0.2)", color: "hsl(142 71% 55%)" }
+                                          : absR >= 2 ? { bg: "hsl(43 100% 50% / 0.2)", color: "hsl(43 100% 60%)" }
+                                          : absR === 1 ? { bg: "hsl(207 90% 50% / 0.2)", color: "hsl(207 90% 60%)" }
+                                          : { bg: "hsl(220 10% 20%)", color: "hsl(220 10% 50%)" };
                                         return (
-                                          <div key={bi} className={`w-6 h-6 rounded-md flex items-center justify-center text-[8px] font-display font-black ${bg}`}>
+                                          <div key={bi} className="w-6 h-6 rounded-md flex items-center justify-center text-[8px] font-game-display font-black"
+                                            style={{ background: dotStyle.bg, color: dotStyle.color }}>
                                             {isOut ? "W" : absR}
                                           </div>
                                         );
@@ -828,7 +1025,7 @@ export default function ProfilePage() {
                                 <div className="space-y-1.5 text-[8px]">
                                   <div className="flex justify-between">
                                     <span className="text-muted-foreground">Result</span>
-                                    <span className={`font-bold ${resultColor}`}>
+                                    <span className="font-bold" style={{ color: resultColor }}>
                                       {m.result === "draw" ? "Match Tied" : `${m.result === "win" ? "Won" : "Lost"} by ${margin} runs`}
                                     </span>
                                   </div>
@@ -852,31 +1049,55 @@ export default function ProfilePage() {
           {/* ═══════ FRIENDS TAB ═══════ */}
           {activeTab === "friends" && (
             <motion.div key="friends" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} transition={{ duration: 0.2 }}>
-              <div className="rounded-xl p-3 mb-4 flex items-center justify-between bg-[hsl(222_40%_10%/0.8)] border border-muted/10">
+              <div className="rounded-xl p-3 mb-4 flex items-center justify-between" style={{
+                background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                border: "2px solid hsl(222 15% 12%)",
+                borderBottom: "4px solid hsl(222 12% 8%)",
+              }}>
                 <div>
-                  <span className="text-[8px] text-muted-foreground font-display tracking-widest block">YOUR INVITE CODE</span>
-                  <span className="font-display text-lg font-black text-primary tracking-[0.2em]">{myCode}</span>
+                  <span className="text-[8px] text-muted-foreground font-game-display tracking-widest block">YOUR INVITE CODE</span>
+                  <span className="font-game-score text-lg font-black tracking-[0.2em]" style={{ color: "hsl(207 90% 60%)" }}>{myCode}</span>
                 </div>
                 <motion.button whileTap={{ scale: 0.9 }} onClick={() => navigator.clipboard.writeText(myCode)}
-                  className="px-3 py-2 rounded-xl bg-muted/10 border border-muted/10 text-[9px] font-display font-bold text-primary tracking-wider">
+                  className="px-3 py-2 rounded-xl font-game-display text-[9px] font-bold tracking-wider"
+                  style={{
+                    background: "linear-gradient(180deg, hsl(207 90% 50%), hsl(207 90% 38%))",
+                    border: "2px solid hsl(207 80% 30%)",
+                    borderBottom: "3px solid hsl(207 70% 25%)",
+                    color: "white",
+                  }}>
                   📋 COPY
                 </motion.button>
               </div>
 
               {user && (
-                <div className="rounded-xl p-3 mb-4 bg-[hsl(222_40%_10%/0.8)] border border-muted/10">
-                  <span className="text-[8px] text-muted-foreground font-display tracking-widest block mb-1">PLAYER ID</span>
-                  <span className="font-display text-[11px] font-bold text-foreground">{user.email}</span>
+                <div className="rounded-xl p-3 mb-4" style={{
+                  background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                  border: "2px solid hsl(222 15% 12%)",
+                  borderBottom: "4px solid hsl(222 12% 8%)",
+                }}>
+                  <span className="text-[8px] text-muted-foreground font-game-display tracking-widest block mb-1">PLAYER ID</span>
+                  <span className="font-game-display text-[11px] font-bold text-foreground">{user.email}</span>
                 </div>
               )}
 
               {friends.length === 0 ? (
-                <div className="rounded-xl p-8 text-center bg-[hsl(222_40%_10%/0.8)] border border-muted/10">
+                <div className="rounded-xl p-8 text-center" style={{
+                  background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                  border: "2px solid hsl(222 15% 12%)",
+                  borderBottom: "4px solid hsl(222 12% 8%)",
+                }}>
                   <span className="text-3xl block mb-2">👥</span>
-                  <span className="font-display text-xs font-bold text-muted-foreground tracking-wider">NO FRIENDS YET</span>
+                  <span className="font-game-display text-xs font-bold text-muted-foreground tracking-wider">NO FRIENDS YET</span>
                   <p className="text-[9px] text-muted-foreground/60 mt-1">Go to the Friends tab to add players</p>
                   <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/friends")}
-                    className="mt-3 px-4 py-2 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display text-[9px] font-bold tracking-wider">
+                    className="mt-3 px-4 py-2 rounded-xl font-game-display text-[9px] font-bold tracking-wider"
+                    style={{
+                      background: "linear-gradient(180deg, hsl(142 71% 45%), hsl(142 71% 35%))",
+                      border: "2px solid hsl(142 60% 28%)",
+                      borderBottom: "3px solid hsl(142 50% 22%)",
+                      color: "white",
+                    }}>
                     ➕ ADD FRIENDS
                   </motion.button>
                 </div>
@@ -884,11 +1105,17 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <div className="w-1 h-4 rounded-full bg-primary" />
-                      <span className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">FRIENDS ({friends.length})</span>
+                      <div className="w-1 h-4 rounded-full" style={{ background: "hsl(207 90% 50%)" }} />
+                      <span className="font-game-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">FRIENDS ({friends.length})</span>
                     </div>
                     <motion.button whileTap={{ scale: 0.9 }} onClick={() => navigate("/friends")}
-                      className="px-3 py-1.5 rounded-lg bg-muted/10 border border-muted/10 text-[8px] font-display font-bold text-primary tracking-wider">
+                      className="px-3 py-1.5 rounded-lg font-game-display text-[8px] font-bold tracking-wider"
+                      style={{
+                        background: "linear-gradient(180deg, hsl(207 90% 50%), hsl(207 90% 38%))",
+                        border: "1px solid hsl(207 80% 35%)",
+                        borderBottom: "3px solid hsl(207 70% 25%)",
+                        color: "white",
+                      }}>
                       ➕ ADD
                     </motion.button>
                   </div>
@@ -897,16 +1124,20 @@ export default function ProfilePage() {
                     return (
                       <motion.div key={f.user_id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.05 }}
-                        className="rounded-xl p-3 flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform bg-[hsl(222_40%_10%/0.8)] border border-muted/10"
+                        className="rounded-xl p-3 flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform"
+                        style={{
+                          background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                          border: "2px solid hsl(222 15% 12%)",
+                          borderBottom: "4px solid hsl(222 12% 8%)",
+                        }}
                         onClick={() => setSelectedFriend(f)}>
                         <PlayerAvatar avatarUrl={f.avatar_url} avatarIndex={f.avatar_index ?? 0} size="sm" />
                         <div className="flex-1 min-w-0">
-                          <span className="font-display text-[11px] font-bold text-foreground block truncate">{f.display_name}</span>
-                          <span className="text-[8px] text-muted-foreground">{f.wins}W {f.losses}L • {wr}% WR</span>
+                          <span className="font-game-display text-[10px] font-bold text-foreground tracking-wider block truncate">{f.display_name}</span>
+                          <span className="text-[7px] text-muted-foreground">{f.wins}W • {f.total_matches}G • {wr}%</span>
                         </div>
                         <div className="text-right">
-                          <span className="font-display text-sm font-black text-game-gold block leading-none">{f.high_score}</span>
-                          <span className="text-[6px] text-muted-foreground font-display tracking-widest">HIGH</span>
+                          <span className="font-game-score text-[10px] font-black" style={{ color: "hsl(43 100% 60%)" }}>🏆 {f.high_score}</span>
                         </div>
                       </motion.div>
                     );
