@@ -411,26 +411,65 @@ export default function EnhancedPostMatch({
               <WagonWheel ballHistory={ballHistory} isBatting={true} compact />
             </motion.div>
 
-            {/* ── MAN OF THE MATCH ── */}
+            {/* ── PLAYER OF THE MATCH — Gold-chrome card ── */}
             <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.75 }}
-              className="rounded-2xl p-5 mb-4 text-center"
+              initial={{ y: 20, opacity: 0, rotateY: 90 }}
+              animate={{ y: 0, opacity: 1, rotateY: 0 }}
+              transition={{ delay: 0.75, type: "spring", damping: 12 }}
+              className="rounded-2xl p-[3px] mb-4"
               style={{
-                background: "linear-gradient(180deg, hsl(43 40% 12%), hsl(220 25% 8%))",
-                border: "2px solid hsl(43 60% 30% / 0.4)",
-                boxShadow: "0 0 30px hsl(43 96% 56% / 0.08), inset 0 1px 0 hsl(43 50% 25%)",
+                background: "conic-gradient(from 0deg, hsl(43 100% 65%), hsl(35 90% 45%), hsl(43 100% 60%), hsl(45 100% 75%), hsl(35 80% 50%), hsl(43 100% 65%))",
+                boxShadow: "0 0 40px hsl(43 96% 56% / 0.15), 0 8px 24px rgba(0,0,0,0.5)",
               }}
             >
-              <span className="text-4xl block mb-2">🏅</span>
-              <span className="font-display text-[8px] font-bold tracking-[0.3em] block mb-1" style={{ color: "hsl(43 60% 50%)" }}>PLAYER OF THE MATCH</span>
-              <p className="font-display text-2xl font-black" style={{
-                color: "hsl(43 96% 56%)",
-                textShadow: "0 0 20px hsl(43 96% 56% / 0.3), 0 2px 0 hsl(43 70% 30%)",
+              <div className="rounded-[13px] p-5 text-center" style={{
+                background: "linear-gradient(180deg, hsl(43 30% 10%) 0%, hsl(220 25% 7%) 100%)",
               }}>
-                {isWin ? playerName : isLoss ? opponentName : "Shared!"}
-              </p>
+                {/* Trophy icon with glow */}
+                <motion.div
+                  animate={{ y: [0, -3, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  className="relative inline-block"
+                >
+                  <span className="text-5xl block" style={{ filter: "drop-shadow(0 0 16px hsl(43 96% 56% / 0.5))" }}>🏅</span>
+                  {/* Radial glow behind icon */}
+                  <div className="absolute inset-0 -m-4 rounded-full" style={{
+                    background: "radial-gradient(circle, hsl(43 96% 56% / 0.12) 0%, transparent 70%)",
+                  }} />
+                </motion.div>
+
+                {/* Label with chrome line accents */}
+                <div className="flex items-center justify-center gap-2 my-2">
+                  <div className="h-px flex-1 max-w-[40px]" style={{ background: "linear-gradient(90deg, transparent, hsl(43 80% 50%))" }} />
+                  <span className="font-display text-[8px] font-bold tracking-[0.35em]" style={{
+                    background: "linear-gradient(180deg, hsl(43 96% 70%), hsl(35 80% 45%))",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                  }}>PLAYER OF THE MATCH</span>
+                  <div className="h-px flex-1 max-w-[40px]" style={{ background: "linear-gradient(270deg, transparent, hsl(43 80% 50%))" }} />
+                </div>
+
+                {/* Name with 3D gold treatment */}
+                <motion.p
+                  initial={{ scale: 0.8 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 1, type: "spring" }}
+                  className="font-display text-2xl font-black"
+                  style={{
+                    background: "linear-gradient(180deg, hsl(43 100% 75%), hsl(43 96% 56%), hsl(35 80% 40%))",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    filter: "drop-shadow(0 2px 4px hsl(43 60% 20% / 0.6))",
+                  }}
+                >
+                  {isWin ? playerName : isLoss ? opponentName : "Shared!"}
+                </motion.p>
+
+                {/* Key stat line */}
+                <span className="font-body text-[9px] text-foreground/30 tracking-wider mt-1 block">
+                  {stats.strikeRate > 150 ? "🔥 Explosive innings" : stats.sixes > 2 ? "💥 Power hitting" : "🎯 Solid performance"}
+                </span>
+              </div>
             </motion.div>
 
             {/* ── REWARDS CASCADE ── */}
