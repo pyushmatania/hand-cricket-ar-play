@@ -136,8 +136,10 @@ function DailyResetTimer() {
   );
 }
 
-function CompetitiveCard({ mode, index, onNavigate }: { mode: typeof TOURNAMENTS[0] & { badge?: string | null; minRank?: string | null; liveCount?: boolean | null; statusText?: string | null }; index: number; onNavigate: (id: string) => void }) {
-  const isLocked = mode.badge === "SOON";
+function CompetitiveCard({ mode, index, onNavigate, userRank }: { mode: typeof TOURNAMENTS[0] & { badge?: string | null; minRank?: string | null; liveCount?: boolean | null; statusText?: string | null }; index: number; onNavigate: (id: string) => void; userRank: string }) {
+  const isComingSoon = mode.badge === "SOON";
+  const isRankLocked = !isComingSoon && !!mode.minRank && !meetsRank(userRank, mode.minRank);
+  const isLocked = isComingSoon || isRankLocked;
   return (
     <motion.button
       key={mode.id}
@@ -157,7 +159,8 @@ function CompetitiveCard({ mode, index, onNavigate }: { mode: typeof TOURNAMENTS
       }}
     >
       {mode.badge && <ModeBadge type={mode.badge} />}
-      {isLocked && <LockOverlay rank="clan" />}
+      {isComingSoon && <LockOverlay rank="coming soon" />}
+      {isRankLocked && <LockOverlay rank={mode.minRank!} />}
       <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl" style={{ background: mode.color, opacity: 0.6 }} />
       <span className="text-lg ml-1">{mode.emoji}</span>
       <div className="flex-1 text-left">
