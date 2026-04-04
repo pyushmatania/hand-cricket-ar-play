@@ -128,14 +128,27 @@ export default function CollectionPlayerCard({ player, size = "sm", onTap, delay
           </div>
         </div>
 
-        {/* Player initial / emoji placeholder */}
-        <div className={`${isSm ? "h-20" : "h-32"} flex items-center justify-center relative`}>
-          <div className="absolute inset-0 opacity-5 flex items-center justify-center">
-            <span className="font-game-display text-[48px] font-black">{player.short_name?.[0] || player.name[0]}</span>
-          </div>
-          <div className="text-4xl">
-            {player.role === "bowler" ? "🏏" : player.role === "wk_batsman" ? "🧤" : "🏏"}
-          </div>
+        {/* Player image or fallback */}
+        <div className={`${isSm ? "h-20" : "h-32"} flex items-center justify-center relative overflow-hidden`}>
+          {player.thumbnail_url && PLAYER_IMAGES[player.thumbnail_url] ? (
+            <img
+              src={PLAYER_IMAGES[player.thumbnail_url]}
+              alt={player.name}
+              className="w-full h-full object-cover object-top"
+              loading="lazy"
+              width={512}
+              height={704}
+            />
+          ) : (
+            <>
+              <div className="absolute inset-0 opacity-5 flex items-center justify-center">
+                <span className="font-game-display text-[48px] font-black">{player.short_name?.[0] || player.name[0]}</span>
+              </div>
+              <div className="text-4xl">
+                {player.role === "bowler" ? "🏏" : player.role === "wk_batsman" ? "🧤" : "🏏"}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Name ribbon */}
