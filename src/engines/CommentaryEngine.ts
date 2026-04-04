@@ -4,6 +4,7 @@
 // ═══════════════════════════════════════════════════
 
 import type { EventType, MatchContext, CommentaryLanguage, CommentaryLine } from './types';
+import { getCommentaryPool } from '@/data/commentary';
 
 export class CommentaryEngine {
   private language: CommentaryLanguage = 'english';
