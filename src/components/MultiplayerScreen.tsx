@@ -15,6 +15,8 @@ import TapPlayingUI from "./TapPlayingUI";
 import EnhancedPreMatch from "./EnhancedPreMatch";
 import EnhancedPostMatch from "./EnhancedPostMatch";
 import LobbyChat from "./LobbyChat";
+import EmotePicker, { type EmoteId } from "./EmotePicker";
+import EmoteBubble from "./EmoteBubble";
 import { pickConfiguredMatchCommentators, type Commentator } from "@/lib/commentaryDuo";
 import { useSettings } from "@/contexts/SettingsContext";
 import { SFX, Haptics } from "@/lib/sounds";
@@ -166,6 +168,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [sentTease, setSentTease] = useState<string | null>(null);
   const [receivedTease, setReceivedTease] = useState<string | null>(null);
   const [showTeasePanel, setShowTeasePanel] = useState(false);
+  const [sentEmote, setSentEmote] = useState<EmoteId | null>(null);
+  const [receivedEmote, setReceivedEmote] = useState<EmoteId | null>(null);
   const [showPvPPostMatch, setShowPvPPostMatch] = useState(false);
   const [showPvPPreMatch, setShowPvPPreMatch] = useState(false);
   const [pvpBallHistory, setPvpBallHistory] = useState<BallResult[]>([]);
@@ -482,6 +486,12 @@ export default function MultiplayerScreen({ onHome }: Props) {
           if (payload_data?.tease && payload_data?.from !== user?.id) {
             setReceivedTease(payload_data.tease);
             setTimeout(() => setReceivedTease(null), 4000);
+          }
+
+          // Check for incoming emote
+          if (payload_data?.emote && payload_data?.emote_from !== user?.id) {
+            setReceivedEmote(payload_data.emote as EmoteId);
+            setTimeout(() => setReceivedEmote(null), 4000);
           }
 
           // Guest-side innings break detection
@@ -1878,6 +1888,22 @@ export default function MultiplayerScreen({ onHome }: Props) {
                     ✅ Sent: "{sentTease}"
                   </motion.div>
                 )}
+
+                {/* Emote system */}
+                <EmoteBubble emoteId={receivedEmote} from="opponent" senderName={opponentName} />
+                <EmoteBubble emoteId={sentEmote} from="self" />
+                <EmotePicker
+                  disabled={phase !== "playing"}
+                  onSend={(emoteId) => {
+                    if (!currentGame) return;
+                    setSentEmote(emoteId);
+                    setTimeout(() => setSentEmote(null), 4000);
+                    const existingPayload = (currentGame as any).round_result_payload || {};
+                    supabase.from("multiplayer_games").update({
+                      round_result_payload: { ...existingPayload, emote: emoteId, emote_from: user?.id, emote_turn: currentGame.current_turn },
+                    }).eq("id", currentGame.id);
+                  }}
+                />
               </>
             }
           />
