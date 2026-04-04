@@ -927,7 +927,17 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   );
 }
 
-function ImmersiveScoreStrip({ game, playerName = "You", aiName = "Rohit AI" }: { game: import("@/hooks/useHandCricket").GameState; playerName?: string; aiName?: string }) {
+function ImmersiveScoreStrip({ game, playerName = "You", aiName = "Rohit AI", weather }: { game: import("@/hooks/useHandCricket").GameState; playerName?: string; aiName?: string; weather?: string }) {
+  const WEATHER_ICONS: Record<string, string> = {
+    clear: '☀️', overcast: '☁️', drizzle: '🌧️', heavy_dew: '💧',
+    dust_storm: '🌪️', night_lights: '🏟️', golden_hour: '🌅',
+  };
+  const WEATHER_LABELS: Record<string, string> = {
+    clear: 'Clear', overcast: 'Overcast', drizzle: 'Drizzle', heavy_dew: 'Dew',
+    dust_storm: 'Dust', night_lights: 'Night', golden_hour: 'Golden Hr',
+  };
+  const weatherIcon = weather ? WEATHER_ICONS[weather] || '☀️' : null;
+  const weatherLabel = weather ? WEATHER_LABELS[weather] || weather : null;
   const needRuns = game.target && game.isBatting && game.phase !== "finished"
     ? Math.max(0, game.target - game.userScore)
     : null;
