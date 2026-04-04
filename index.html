@@ -31,6 +31,12 @@
 
   <body>
     <div id="root"></div>
+
+    <!-- Doc 2 Engine Overlays -->
+    <div id="lighting-overlay" style="position:fixed;inset:0;pointer-events:none;z-index:9998;opacity:0;"></div>
+    <div id="vignette-overlay" style="position:fixed;inset:0;pointer-events:none;z-index:9997;opacity:0;background:radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.6) 100%);"></div>
+    <div id="weather-particles" style="position:fixed;inset:0;pointer-events:none;z-index:9996;"></div>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
