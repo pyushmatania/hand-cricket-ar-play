@@ -557,6 +557,9 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         <TeamLineupWalkout
           playerName={playerName}
           opponentName={opponentName}
+          playerAvatarIndex={playerAvatarIndex}
+          playerAvatarUrl={playerAvatarUrl}
+          playerFrame={cosmetics.avatarFrame}
           onComplete={handleWalkoutComplete}
         />
       )}
