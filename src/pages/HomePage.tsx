@@ -17,6 +17,7 @@ import avatarFrame from "@/assets/avatar-frame.png";
 import { getChestTier } from "@/lib/chests";
 import { getCurrentSeasonalTheme } from "@/lib/seasonalThemes";
 import SeasonalIslandOverlay from "@/components/SeasonalIslandOverlay";
+import ModeSelectDrawer from "@/components/ModeSelectDrawer";
 
 interface ProfileData {
   total_matches: number;
