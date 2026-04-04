@@ -544,7 +544,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
             if (!pvpPostMatchShownRef.current) {
               pvpPostMatchShownRef.current = true;
               if (multiplayerCeremoniesEnabled) {
-                setTimeout(() => setShowPvPPostMatch(true), 1000);
+                // Doc 5 §4.3: Show press conference first, then post-match
+                setTimeout(() => setShowPressConference(true), 1000);
               }
             }
           }
