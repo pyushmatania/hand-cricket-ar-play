@@ -8,6 +8,7 @@ import CurrencyPill from "@/components/shared/CurrencyPill";
 import ShopItemCard from "@/components/shop/ShopItemCard";
 import ShopItemModal from "@/components/shop/ShopItemModal";
 import ChestReveal from "@/components/shop/ChestReveal";
+import engines from "@/engines/EngineManager";
 import { toast } from "sonner";
 
 interface ShopItem {
@@ -62,8 +63,10 @@ export default function ShopPage() {
 
   const handlePurchase = async (item: ShopItem) => {
     if (!user || purchasing) return;
-    if (coins < item.price) { toast.error("Not enough coins!"); return; }
+    if (coins < item.price) { toast.error("Not enough coins!"); engines.sound.playEffect('ui_error'); return; }
     setPurchasing(true);
+    engines.sound.playEffect('coin_collect');
+    engines.sound.vibrate('medium');
     const newCoins = coins - item.price;
     await supabase.from("profiles").update({ coins: newCoins } as any).eq("user_id", user.id);
     await supabase.from("user_purchases").insert({ user_id: user.id, item_id: item.id } as any);
@@ -90,6 +93,8 @@ export default function ShopPage() {
       ...p,
       equipped: p.item_id === item.id ? true : categoryItems.some(ci => ci.id === p.item_id) ? false : p.equipped,
     })));
+    engines.sound.playEffect('ui_success');
+    engines.sound.vibrate('light');
     toast.success(`Equipped ${item.name}! ✨`);
     setSelectedItem(null);
   };

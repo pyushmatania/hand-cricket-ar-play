@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { SFX, Haptics } from "@/lib/sounds";
+import engines from "@/engines/EngineManager";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useDailyLogin } from "@/hooks/useDailyLogin";
@@ -168,6 +169,12 @@ export default function DailyRewardsPage() {
     if (day.day === cycleDay && todayClaimed) {
       SFX.chestOpen();
       Haptics.chestOpen();
+      engines.sound.playEffect('chest_unlock');
+      if (day.type === 'mega_chest') {
+        setTimeout(() => engines.sound.playEffect('card_legendary_reveal'), 400);
+      } else {
+        setTimeout(() => engines.sound.playEffect('coin_collect'), 300);
+      }
       setOpeningReward(day);
     }
   };

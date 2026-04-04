@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
+import engines from "@/engines/EngineManager";
 
 const SPIN_COST = 50;
 
@@ -86,12 +87,15 @@ export default function SpinWheelPage() {
     if (!user || spinning || spinRef.current) return;
     if (!isFree && (coins ?? 0) < SPIN_COST) {
       toast.error(`Need ${SPIN_COST} coins to spin!`);
+      engines.sound.playEffect('ui_error');
+      engines.sound.vibrate('error');
       return;
     }
 
     spinRef.current = true;
     setSpinning(true);
     setShowResult(false);
+    engines.sound.playEffect('coin_flip');
 
     let newCoins = coins ?? 0;
     if (isFree) {
@@ -118,6 +122,8 @@ export default function SpinWheelPage() {
       setShowResult(true);
       setSpinning(false);
       spinRef.current = false;
+      engines.sound.playEffect('coin_land');
+      engines.sound.vibrate('medium');
 
       const reward = SLICES[winIndex].reward;
 
@@ -126,6 +132,7 @@ export default function SpinWheelPage() {
         const updatedCoins = newCoins + reward.amount;
         setCoins(updatedCoins);
         await supabase.from("profiles").update({ coins: updatedCoins }).eq("user_id", user.id);
+        engines.sound.playEffect('coin_collect');
         toast.success(`+${reward.amount} coins!`);
       } else if (reward.type === "xp") {
         const { data: prof } = await supabase.from("profiles").select("xp").eq("user_id", user.id).single();
@@ -133,6 +140,7 @@ export default function SpinWheelPage() {
           await supabase.from("profiles").update({ xp: prof.xp + reward.amount }).eq("user_id", user.id);
         }
         await supabase.from("xp_history").insert({ user_id: user.id, amount: reward.amount, source: "lucky_spin" } as any);
+        engines.sound.playEffect('gem_collect');
         toast.success(`+${reward.amount} XP!`);
       } else if (reward.type === "chest" && reward.detail) {
         // Find empty chest slot
