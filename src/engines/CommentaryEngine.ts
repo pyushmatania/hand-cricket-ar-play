@@ -83,12 +83,22 @@ export class CommentaryEngine {
       available = pool;
     }
 
-    // Situation filter
-    const situationFiltered = available.filter(line => {
-      if (!line.minSituation) return true;
-      return line.minSituation === context.matchSituation;
-    });
-    const pool2 = situationFiltered.length > 0 ? situationFiltered : available;
+    // Situation filter — PRIORITIZE situation-matched lines in tense/critical moments
+    const isTenseOrCritical = context.matchSituation === 'tense' || context.matchSituation === 'critical';
+    const situationMatched = available.filter(line =>
+      line.minSituation && line.minSituation === context.matchSituation
+    );
+    const generic = available.filter(line => !line.minSituation);
+
+    // In tense/critical moments, 70% chance to pick a situation-specific line if available
+    let pool2: CommentaryLine[];
+    if (isTenseOrCritical && situationMatched.length > 0 && Math.random() < 0.7) {
+      pool2 = situationMatched;
+    } else if (generic.length > 0) {
+      pool2 = [...generic, ...situationMatched];
+    } else {
+      pool2 = available;
+    }
 
     // Theme filter
     const themeFiltered = pool2.filter(line => {

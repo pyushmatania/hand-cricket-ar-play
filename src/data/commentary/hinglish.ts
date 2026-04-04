@@ -190,3 +190,48 @@ export const HL_TOSS_RESULT: CommentaryLine[] = [
   { id: 'xtr1', text: 'Toss done bhai! Coin flip ho gaya! Decision time!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
   { id: 'xtr2', text: 'Coin toss complete! Ab dekhte hain kya choose karte hain!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
 ];
+
+// ═══════════════════════════════════════════════════
+// CLUTCH / SITUATION-AWARE — Hinglish
+// ═══════════════════════════════════════════════════
+
+export const HL_CLUTCH_RUNS: CommentaryLine[] = [
+  { id: 'xcr1', text: 'Every run is worth GOLD right now bhai! Single taken!', voice: 'main', emotion: 'excited', rate: 1.15, pitch: 1.1, delay: 100, minSituation: 'tense' },
+  { id: 'xcr2', text: 'Pressure mein run lena is next level! Smart cricket yaar!', voice: 'main', emotion: 'dramatic', rate: 1.1, pitch: 1.05, delay: 100, minSituation: 'tense' },
+  { id: 'xcr3', text: 'Match decide ho raha hai bhai! Ye run matter karega!', voice: 'main', emotion: 'excited', rate: 1.15, pitch: 1.1, delay: 100, minSituation: 'critical' },
+  { id: 'xcr4', text: 'Tight game mein tight running! Every run counts bro!', voice: 'main', emotion: 'dramatic', rate: 1.1, pitch: 1.05, delay: 100, minSituation: 'tense' },
+];
+
+export const HL_CLUTCH_FOUR: CommentaryLine[] = [
+  { id: 'xcf1', text: 'FOUR! Under pressure bhai! Kya CLUTCH shot hai!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.2, delay: 800, minSituation: 'tense',
+    followUp: { id: 'xcf1f', text: 'Big players show up in big moments yaar!', voice: 'color', emotion: 'excited', rate: 1.0, pitch: 1.1, delay: 0 }
+  },
+  { id: 'xcf2', text: 'BOUNDARY jab chahiye tab! Equation shift ho raha hai bro!', voice: 'main', emotion: 'excited', rate: 1.25, pitch: 1.15, delay: 800, minSituation: 'critical' },
+  { id: 'xcf3', text: 'CHAUKAA! Pressure mein! Ye batsman alag level hai yaar!', voice: 'main', emotion: 'excited', rate: 1.25, pitch: 1.15, delay: 800, minSituation: 'tense' },
+  { id: 'xcf4', text: 'FOUR! Ice in the veins bhai! No fear! Just shots!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.2, delay: 800, minSituation: 'critical' },
+];
+
+export const HL_CLUTCH_SIX: CommentaryLine[] = [
+  { id: 'xcs1', text: 'SIX bro! IN THE CLUTCH! This player is BUILT for this!', voice: 'main', emotion: 'excited', rate: 1.35, pitch: 1.25, delay: 1000, minSituation: 'critical',
+    followUp: { id: 'xcs1f', text: 'Unreal courage under fire yaar!', voice: 'color', emotion: 'excited', rate: 1.0, pitch: 1.1, delay: 0 }
+  },
+  { id: 'xcs2', text: 'MAXIMUM! When it matters! Stadium shake ho raha hai bhai!', voice: 'main', emotion: 'excited', rate: 1.35, pitch: 1.25, delay: 1000, minSituation: 'critical' },
+  { id: 'xcs3', text: 'CHHAKKAA! Equation DESTROYED! What a pressure hit yaar!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.2, delay: 1000, minSituation: 'tense' },
+  { id: 'xcs4', text: 'SIX! Finisher mode ON bhai! Match jeetne wala shot!', voice: 'main', emotion: 'excited', rate: 1.35, pitch: 1.25, delay: 1000, minSituation: 'critical' },
+];
+
+export const HL_CLUTCH_WICKET: CommentaryLine[] = [
+  { id: 'xcw1', text: 'WICKET bro! Pressure cooker mein! GAME CHANGER!', voice: 'main', emotion: 'dramatic', rate: 1.25, pitch: 1.15, delay: 500, minSituation: 'tense',
+    followUp: { id: 'xcw1f', text: 'Fielding side paagal ho gaya celebrating! What a moment!', voice: 'color', emotion: 'excited', rate: 1.0, pitch: 1.1, delay: 0 }
+  },
+  { id: 'xcw2', text: 'OUT! Sahi time pe sahi wicket! Match badal gaya yaar!', voice: 'main', emotion: 'dramatic', rate: 1.25, pitch: 1.15, delay: 500, minSituation: 'critical' },
+  { id: 'xcw3', text: 'Big wicket falls bhai! Batting side under serious pressure!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 500, minSituation: 'critical' },
+  { id: 'xcw4', text: 'WICKET in the death! Momentum shift! Drama bro!', voice: 'main', emotion: 'dramatic', rate: 1.25, pitch: 1.15, delay: 500, minSituation: 'tense' },
+];
+
+export const HL_LAST_OVER: CommentaryLine[] = [
+  { id: 'xlo1', text: 'LAST OVER bhai! Six balls! Match decide hone wala hai!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.15, delay: 0, minSituation: 'tense',
+    followUp: { id: 'xlo1f', text: 'Hearts pounding yaar. This is peak cricket.', voice: 'color', emotion: 'dramatic', rate: 1.0, pitch: 1.0, delay: 0 }
+  },
+  { id: 'xlo2', text: 'Final over! Everything on the line bro! Can they do it?!', voice: 'main', emotion: 'excited', rate: 1.25, pitch: 1.2, delay: 0, minSituation: 'critical' },
+];
