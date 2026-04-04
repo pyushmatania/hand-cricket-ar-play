@@ -374,6 +374,10 @@ export default function HomePage() {
         <ChestSlotsWidget />
       </div>
 
+        {/* ═══ G) DAILY QUESTS ═══ */}
+        <DailyQuestsWidget />
+      </div>
+
       <ModeSelectDrawer open={modeDrawerOpen} onOpenChange={setModeDrawerOpen} />
     </div>
   );
