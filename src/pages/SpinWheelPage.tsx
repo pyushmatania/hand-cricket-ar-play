@@ -295,24 +295,45 @@ export default function SpinWheelPage() {
         </motion.div>
       </div>
 
-      {/* Spin button */}
-      <motion.button
-        whileTap={!spinning ? { scale: 0.92 } : undefined}
-        onClick={handleSpin}
-        disabled={spinning}
-        className="relative px-10 py-3 rounded-2xl font-game-display text-sm tracking-wider overflow-hidden"
-        style={{
-          background: spinning
-            ? "linear-gradient(180deg, hsl(220 15% 20%), hsl(220 15% 15%))"
-            : "linear-gradient(180deg, hsl(35 70% 45%), hsl(35 60% 35%))",
-          border: spinning ? "3px solid hsl(220 15% 25%)" : "3px solid hsl(35 50% 55%)",
-          borderBottom: spinning ? "5px solid hsl(220 15% 12%)" : "5px solid hsl(35 40% 25%)",
-          color: spinning ? "hsl(220 10% 40%)" : "white",
-          boxShadow: spinning ? "none" : "0 0 20px hsl(35 60% 40% / 0.3)",
-        }}
-      >
-        {spinning ? "SPINNING..." : `SPIN (${SPIN_COST} 🪙)`}
-      </motion.button>
+      {/* Spin buttons */}
+      <div className="flex flex-col items-center gap-2">
+        {hasFreeSpinToday && (
+          <motion.button
+            whileTap={!spinning ? { scale: 0.92 } : undefined}
+            onClick={() => handleSpin(true)}
+            disabled={spinning}
+            className="relative px-10 py-3 rounded-2xl font-game-display text-sm tracking-wider overflow-hidden"
+            style={{
+              background: spinning
+                ? "linear-gradient(180deg, hsl(220 15% 20%), hsl(220 15% 15%))"
+                : "linear-gradient(180deg, hsl(142 60% 35%), hsl(142 50% 25%))",
+              border: spinning ? "3px solid hsl(220 15% 25%)" : "3px solid hsl(142 50% 45%)",
+              borderBottom: spinning ? "5px solid hsl(220 15% 12%)" : "5px solid hsl(142 40% 18%)",
+              color: spinning ? "hsl(220 10% 40%)" : "white",
+              boxShadow: spinning ? "none" : "0 0 20px hsl(142 60% 40% / 0.3)",
+            }}
+          >
+            {spinning ? "SPINNING..." : "🎁 FREE SPIN"}
+          </motion.button>
+        )}
+        <motion.button
+          whileTap={!spinning ? { scale: 0.92 } : undefined}
+          onClick={() => handleSpin(false)}
+          disabled={spinning}
+          className="relative px-10 py-3 rounded-2xl font-game-display text-sm tracking-wider overflow-hidden"
+          style={{
+            background: spinning
+              ? "linear-gradient(180deg, hsl(220 15% 20%), hsl(220 15% 15%))"
+              : "linear-gradient(180deg, hsl(35 70% 45%), hsl(35 60% 35%))",
+            border: spinning ? "3px solid hsl(220 15% 25%)" : "3px solid hsl(35 50% 55%)",
+            borderBottom: spinning ? "5px solid hsl(220 15% 12%)" : "5px solid hsl(35 40% 25%)",
+            color: spinning ? "hsl(220 10% 40%)" : "white",
+            boxShadow: spinning ? "none" : "0 0 20px hsl(35 60% 40% / 0.3)",
+          }}
+        >
+          {spinning ? "SPINNING..." : `SPIN (${SPIN_COST} 🪙)`}
+        </motion.button>
+      </div>
 
       {/* Result popup */}
       <AnimatePresence>
