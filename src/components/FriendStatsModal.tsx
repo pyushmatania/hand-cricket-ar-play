@@ -352,7 +352,8 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                 </div>
               </div>
               <motion.button whileTap={{ scale: 0.9 }} onClick={onClose}
-                className="w-8 h-8 rounded-xl glass-card flex items-center justify-center text-muted-foreground text-sm">✕</motion.button>
+                className="w-8 h-8 rounded-xl flex items-center justify-center text-muted-foreground text-sm"
+                style={{ background: CONCRETE_CARD, border: CHROME_BORDER, boxShadow: "0 2px 0 hsl(25 20% 6%)" }}>✕</motion.button>
             </div>
 
             {/* XP / Coins / Rank strip */}
