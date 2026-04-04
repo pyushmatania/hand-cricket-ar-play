@@ -28,6 +28,7 @@ import type { BallResult, Move } from "@/hooks/useHandCricket";
 import { useEngines } from "@/hooks/useEngines";
 import { WeatherParticles } from "./WeatherParticles";
 import BallPitchAnimation from "./BallPitchAnimation";
+import StadiumEstablishingShot from "./StadiumEstablishingShot";
 
 const MOVE_EMOJI: Record<string, string> = {
   DEF: "✊", "1": "☝️", "2": "✌️", "3": "🤟", "4": "🖖", "6": "👍",
