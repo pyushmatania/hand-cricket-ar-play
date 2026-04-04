@@ -138,6 +138,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const [myAvatarIndex, setMyAvatarIndex] = useState(0);
   const [myName, setMyName] = useState("You");
   const [showVSIntro, setShowVSIntro] = useState(false);
+  const [showJumbotron, setShowJumbotron] = useState(false);
+  const [showPressConference, setShowPressConference] = useState(false);
   const [cooldown, setCooldown] = useState(false);
   const [lastResult, setLastResult] = useState<string | null>(null);
   const [lastBallResult, setLastBallResult] = useState<BallResult | null>(null);
