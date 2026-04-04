@@ -3,7 +3,7 @@
 ## Core
 Hand Cricket mobile game. V1 Punchy Colors + 3D Chrome design system.
 Bungee Shade headings, Rubik body. Cricket leather/concrete/jersey materials.
-Lovable Cloud backend. 10 IPL teams. Docs 1-5 loaded.
+Lovable Cloud backend. 10 IPL teams. Docs 1-5 fully implemented.
 
 ## Memories
 - [Doc 4 Overview](mem://features/doc4-overview) — Social, tournaments, 200+ players, clans, progression, chests, battle pass, shop, DB schemas
@@ -21,7 +21,7 @@ Lovable Cloud backend. 10 IPL teams. Docs 1-5 loaded.
 - [Team System](mem://game/team-system) — Full rebuild into team-based hand cricket
 - [Social/Multiplayer](mem://features/social-multiplayer) — Presence, friends, DMs
 - [Cosmetic Shop](mem://features/cosmetic-shop) — Bat skins, VS effects, avatar frames
-- [Battle Pass](mem://features/battle-pass) — 12-tier seasonal pass (expanding to 60 per Doc 4)
+- [Battle Pass](mem://features/battle-pass) — 60-tier seasonal pass with free+premium tracks
 - [Daily Rewards](mem://features/daily-rewards) — 28-day calendar
 - [Crowd Atmosphere](mem://features/crowd-atmosphere) — CrowdEngine with mood-driven reactions
 - [Pitch Animations](mem://game/pitch-animations) — Top-down ball-by-ball visuals
@@ -30,6 +30,7 @@ Lovable Cloud backend. 10 IPL teams. Docs 1-5 loaded.
 - [Weather System](mem://game/weather-system) — 7 conditions with particle effects
 - [Tension System](mem://ui/tension-system) — Dynamic vignette based on match pressure
 - [Audio Architecture](mem://tech/audio-architecture) — Web Audio API, SFX, voice commentary
-- [Performance Scaling](mem://tech/performance-scaling) — Lazy loading, virtualization
+- [Performance Scaling](mem://tech/performance-scaling) — Lazy loading, virtualization, FPS monitoring, auto-quality scaling
 - [Edge Functions](mem://tech/edge-functions) — Season snapshot, ElevenLabs, player chat
 - [Multiplayer Schema](mem://tech/multiplayer-schema) — multiplayer_games table columns
+- [Tournament Chat](mem://features/tournament-chat) — Live realtime chat in tournament lobbies
