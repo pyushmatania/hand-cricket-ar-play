@@ -212,7 +212,6 @@ export default function EnhancedPostMatch({
                 <div className="mb-3">
                   <TrophyCeremony playerName={playerName} stars={stars} />
                 </div>
-                />
               ) : (
                 <motion.span
                   initial={{ scale: 0 }}
