@@ -56,9 +56,10 @@ export function useEngines() {
     engines.sound.setAmbientVolumeMaster(ambientVolume);
   }, [ambientVolume]);
 
-  // Sync commentary language
+  // Sync commentary language (map 'both' → 'hinglish' for engine)
   useEffect(() => {
-    engines.commentary.setLanguage(commentaryLanguage);
+    const engineLang = commentaryLanguage === 'both' ? 'hinglish' : commentaryLanguage;
+    engines.commentary.setLanguage(engineLang as any);
   }, [commentaryLanguage]);
 
   // Sync crowd enabled (start/stop crowd engine)
