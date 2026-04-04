@@ -12,12 +12,13 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["Lilita One", "sans-serif"],
-        body: ["Nunito", "sans-serif"],
-        heading: ["Fredoka", "sans-serif"],
-        score: ["Rubik", "monospace"],
-        "game-display": ["Bungee", "sans-serif"],
-        "game-display-3d": ["Bungee Shade", "sans-serif"],
+        /* Doc 1 Typography Stack */
+        display: ["Lilita One", "sans-serif"],         /* Screen titles, buttons */
+        body: ["Nunito", "sans-serif"],                 /* Body, descriptions, labels */
+        heading: ["Fredoka", "sans-serif"],             /* Section headers (alt) */
+        score: ["Rubik", "monospace"],                  /* Score numbers, stats, timers */
+        "game-display": ["Bungee", "sans-serif"],       /* Player names on cards, hand numbers, VS, flash text */
+        "game-display-3d": ["Bungee Shade", "sans-serif"], /* Game logo, VICTORY */
         "game-title": ["Lilita One", "sans-serif"],
         "game-body": ["Nunito", "sans-serif"],
         "game-card": ["Fredoka", "sans-serif"],
@@ -57,6 +58,23 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        /* Doc 1 Game Colors */
+        "green-play": "hsl(var(--green-play))",
+        "green-play-light": "hsl(var(--green-play-light))",
+        "green-play-dark": "hsl(var(--green-play-dark))",
+        "blue-info": "hsl(var(--blue-info))",
+        "blue-info-light": "hsl(var(--blue-info-light))",
+        "red-hot": "hsl(var(--red-hot))",
+        "red-hot-light": "hsl(var(--red-hot-light))",
+        "gold-accent": "hsl(var(--gold-accent))",
+        "gold-light": "hsl(var(--gold-light))",
+        /* Team dynamic */
+        "team-primary": "hsl(var(--team-primary))",
+        "team-secondary": "hsl(var(--team-secondary))",
+        "team-accent": "hsl(var(--team-accent))",
+        "team-dark": "hsl(var(--team-dark))",
+        "team-light": "hsl(var(--team-light))",
+        /* Legacy compat */
         glass: "hsl(var(--glass-border))",
         "score-gold": "hsl(var(--score-gold))",
         "out-red": "hsl(var(--out-red))",
@@ -72,20 +90,6 @@ export default {
         "game-dark": "hsl(var(--game-dark))",
         "game-medium": "hsl(var(--game-medium))",
         "game-teal": "hsl(var(--game-teal))",
-        "leather-dark": "hsl(var(--leather-dark))",
-        "leather-mid": "hsl(var(--leather-mid))",
-        "leather-light": "hsl(var(--leather-light))",
-        "grass-dark": "hsl(var(--grass-dark))",
-        "grass-mid": "hsl(var(--grass-mid))",
-        "grass-light": "hsl(var(--grass-light))",
-        "concrete-dark": "hsl(var(--concrete-dark))",
-        "concrete-mid": "hsl(var(--concrete-mid))",
-        "chrome-dark": "hsl(var(--chrome-dark))",
-        "chrome-mid": "hsl(var(--chrome-mid))",
-        "chrome-light": "hsl(var(--chrome-light))",
-        "scoreboard-dark": "hsl(var(--scoreboard-dark))",
-        "scoreboard-text": "hsl(var(--scoreboard-text))",
-        "chalk-white": "hsl(var(--chalk-white))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -103,11 +107,11 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       boxShadow: {
-        "game-card": "0 4px 12px rgba(0,0,0,0.3), inset 0 1px 2px rgba(255,255,255,0.1)",
-        "game-button": "0 4px 0 rgba(0,0,0,0.3), 0 6px 12px rgba(0,0,0,0.2)",
-        "game-button-pressed": "0 2px 0 rgba(0,0,0,0.3), 0 3px 6px rgba(0,0,0,0.2)",
-        "game-glow-green": "0 0 20px hsl(122 39% 49% / 0.4), 0 0 60px hsl(122 39% 49% / 0.2)",
-        "game-glow-gold": "0 0 20px hsl(51 100% 50% / 0.4), 0 0 60px hsl(51 100% 50% / 0.2)",
+        "game-card": "0 8px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)",
+        "game-button": "0 7px 0 rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,0,0.35)",
+        "game-button-pressed": "0 3px 0 rgba(0,0,0,0.15), 0 5px 10px rgba(0,0,0,0.25)",
+        "game-glow-green": "0 0 20px rgba(74,222,80,0.4), 0 0 60px rgba(74,222,80,0.2)",
+        "game-glow-gold": "0 0 20px rgba(255,215,0,0.4), 0 0 60px rgba(255,215,0,0.2)",
       },
       keyframes: {
         "accordion-down": {
