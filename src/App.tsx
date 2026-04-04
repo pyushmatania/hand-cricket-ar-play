@@ -34,6 +34,7 @@ const BattlePassPage = lazy(() => import("./pages/BattlePassPage"));
 const CollectionPage = lazy(() => import("./pages/CollectionPage"));
 const SpinWheelPage = lazy(() => import("./pages/SpinWheelPage"));
 const TeamBuilderPage = lazy(() => import("./pages/TeamBuilderPage"));
+const ClanPage = lazy(() => import("./pages/ClanPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
