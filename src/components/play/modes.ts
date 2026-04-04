@@ -60,6 +60,18 @@ export const MODES = [
     gradientTo: "hsl(217 80% 55%)",
   },
   {
+    id: "ipl",
+    icon: "🏟️",
+    title: "IPL SEASON",
+    subtitle: "Full Tournament",
+    description: "Pick a franchise and battle through group stage, playoffs, and the grand final.",
+    borderHue: 25,
+    accentHsl: "hsl(25 90% 55%)",
+    glowHsl: "hsl(25 90% 55% / 0.25)",
+    gradientFrom: "hsl(25 90% 50%)",
+    gradientTo: "hsl(45 100% 50%)",
+  },
+  {
     id: "practice",
     icon: "🎯",
     title: "PRACTICE",
