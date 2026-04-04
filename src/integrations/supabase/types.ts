@@ -900,6 +900,39 @@ export type Database = {
           },
         ]
       }
+      user_teams: {
+        Row: {
+          created_at: string
+          formation_type: string
+          id: string
+          player_ids: string[]
+          preset_index: number
+          team_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          formation_type?: string
+          id?: string
+          player_ids?: string[]
+          preset_index?: number
+          team_name?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          formation_type?: string
+          id?: string
+          player_ids?: string[]
+          preset_index?: number
+          team_name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       weekly_challenges: {
         Row: {
           challenge_type: string

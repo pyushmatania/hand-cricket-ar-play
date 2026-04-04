@@ -33,6 +33,7 @@ const DailyRewardsPage = lazy(() => import("./pages/DailyRewardsPage"));
 const BattlePassPage = lazy(() => import("./pages/BattlePassPage"));
 const CollectionPage = lazy(() => import("./pages/CollectionPage"));
 const SpinWheelPage = lazy(() => import("./pages/SpinWheelPage"));
+const TeamBuilderPage = lazy(() => import("./pages/TeamBuilderPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -74,6 +75,7 @@ function AnimatedRoutes() {
         <Route path="/battle-pass" element={<LazyPage><PageTransition><BattlePassPage /></PageTransition></LazyPage>} />
         <Route path="/collection" element={<LazyPage><PageTransition><CollectionPage /></PageTransition></LazyPage>} />
         <Route path="/spin" element={<LazyPage><PageTransition><SpinWheelPage /></PageTransition></LazyPage>} />
+        <Route path="/team-builder" element={<LazyPage><PageTransition><TeamBuilderPage /></PageTransition></LazyPage>} />
         <Route path="*" element={<LazyPage><PageTransition><NotFound /></PageTransition></LazyPage>} />
       </Routes>
     </AnimatePresence>
