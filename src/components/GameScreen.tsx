@@ -29,6 +29,7 @@ import { useEngines } from "@/hooks/useEngines";
 import { WeatherParticles } from "./WeatherParticles";
 import BallPitchAnimation from "./BallPitchAnimation";
 import StadiumEstablishingShot from "./StadiumEstablishingShot";
+import TeamLineupWalkout from "./TeamLineupWalkout";
 
 const MOVE_EMOJI: Record<string, string> = {
   DEF: "✊", "1": "☝️", "2": "✌️", "3": "🤟", "4": "🖖", "6": "👍",
@@ -193,6 +194,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
 
   // Ceremony states
   const [showEstablishingShot, setShowEstablishingShot] = useState(false);
+  const [showWalkout, setShowWalkout] = useState(false);
   const [showPreMatch, setShowPreMatch] = useState(false);
   const [showPostMatch, setShowPostMatch] = useState(false);
   const [tossInfo, setTossInfo] = useState<{ winner: string; battingFirst: string } | null>(null);
@@ -288,6 +290,11 @@ export default function GameScreen({ onHome }: GameScreenProps) {
 
   const handleEstablishingShotComplete = () => {
     setShowEstablishingShot(false);
+    setShowWalkout(true);
+  };
+
+  const handleWalkoutComplete = () => {
+    setShowWalkout(false);
     setShowPreMatch(true);
   };
 
@@ -473,6 +480,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     setTossInfo(null);
     setFireworkType(null);
     setShowEstablishingShot(false);
+    setShowWalkout(false);
     setShowPreMatch(false);
     setShowPostMatch(false);
     savedRef.current = false;
@@ -497,7 +505,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     ? (cameraRef.current.videoRef.current.className || "").includes("scale-x-[-1]")
     : false;
 
-  const isPreGame = game.phase === "not_started" && !showPreMatch && !showEstablishingShot && gameCdVal === null;
+  const isPreGame = game.phase === "not_started" && !showPreMatch && !showWalkout && !showEstablishingShot && gameCdVal === null;
   const isInGame = game.phase !== "not_started" && game.phase !== "finished";
 
   return (
@@ -534,6 +542,15 @@ export default function GameScreen({ onHome }: GameScreenProps) {
           opponentName={opponentName}
           arenaName={matchTheme?.name || "Stadium"}
           onComplete={handleEstablishingShotComplete}
+        />
+      )}
+
+      {/* Team lineup walkout — plays between establishing shot and pre-match */}
+      {showWalkout && (
+        <TeamLineupWalkout
+          playerName={playerName}
+          opponentName={opponentName}
+          onComplete={handleWalkoutComplete}
         />
       )}
 
