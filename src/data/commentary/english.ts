@@ -310,3 +310,20 @@ export const EN_MATCH_LOSS: CommentaryLine[] = [
   { id: 'eml3', text: 'Defeat. A bitter pill to swallow after that effort.', voice: 'main', emotion: 'disappointed', rate: 0.95, pitch: 0.9, delay: 0 },
   { id: 'eml4', text: "They'll be disappointed. But cricket is a cruel game.", voice: 'main', emotion: 'disappointed', rate: 0.95, pitch: 0.95, delay: 0 },
 ];
+
+// ── INNINGS START ──
+export const EN_INNINGS_START: CommentaryLine[] = [
+  { id: 'eis1', text: 'And we are underway! The innings begins!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
+  { id: 'eis2', text: 'New innings! The batsman takes guard. Here we go!', voice: 'main', emotion: 'neutral', rate: 1.05, pitch: 1.0, delay: 0 },
+  { id: 'eis3', text: 'The fielding side is set. Innings begins now.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
+  { id: 'eis4', text: 'Fresh start. New innings. Everything to play for.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0,
+    followUp: { id: 'eis4f', text: 'This is where champions are made.', voice: 'color', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 }
+  },
+];
+
+// ── TOSS RESULT ──
+export const EN_TOSS_RESULT: CommentaryLine[] = [
+  { id: 'etr1', text: 'The coin goes up! And the toss is done!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
+  { id: 'etr2', text: 'Toss decided! A crucial moment in every match.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
+  { id: 'etr3', text: 'The toss is complete. Let the battle begin!', voice: 'main', emotion: 'neutral', rate: 1.05, pitch: 1.0, delay: 0 },
+];
