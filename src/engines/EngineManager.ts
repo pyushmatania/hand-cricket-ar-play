@@ -11,7 +11,13 @@ import { CommentaryEngine } from './CommentaryEngine';
 import { LightingEngine } from './LightingEngine';
 import { WeatherEngine } from './WeatherEngine';
 import { CrowdEngine } from './CrowdEngine';
-import type { EventType } from './types';
+import {
+  SOUND_TRIGGER_MAP,
+  AMBIENT_INTENSITY_MAP,
+  WEATHER_AMBIENT_MAP,
+  MATCH_RESULT_SOUNDS,
+} from './SoundTriggerMap';
+import type { EventType, CrowdIntensity, WeatherState } from './types';
 
 /**
  * Perspective: determines which "side" the player is on for audio/effects.
