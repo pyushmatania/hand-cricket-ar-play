@@ -90,6 +90,14 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const [matchCommentators] = useState<[Commentator, Commentator]>(() => pickConfiguredMatchCommentators(commentaryVoice));
   const prevPhaseRef = useRef(game.phase);
 
+  // ── Initialize Engine System ──
+  useEffect(() => {
+    engines.initialize();
+    return () => {
+      engines.destroy();
+    };
+  }, []);
+
   // Ambient stadium music for AR mode — arena-specific
   useEffect(() => {
     if (soundEnabled && musicEnabled && !game.result) {
