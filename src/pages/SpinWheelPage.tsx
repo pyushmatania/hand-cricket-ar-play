@@ -198,9 +198,18 @@ export default function SpinWheelPage() {
         </div>
       </div>
 
-      {/* Spin cost info */}
-      <div className="text-center mb-4">
-        <span className="text-[10px] font-game-body text-muted-foreground">Cost per spin: {SPIN_COST} 🪙</span>
+      {/* Spin info */}
+      <div className="text-center mb-4 space-y-1">
+        {hasFreeSpinToday ? (
+          <span className="text-[10px] font-game-display text-game-gold tracking-wider animate-pulse">🎁 FREE SPIN AVAILABLE!</span>
+        ) : (
+          <>
+            <span className="text-[10px] font-game-body text-muted-foreground">Cost per spin: {SPIN_COST} 🪙</span>
+            {nextFreeIn && (
+              <p className="text-[9px] font-game-body text-muted-foreground/60">Next free spin in: {nextFreeIn}</p>
+            )}
+          </>
+        )}
       </div>
 
       {/* Wheel */}
