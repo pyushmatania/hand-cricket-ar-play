@@ -47,14 +47,40 @@ export default function SpinWheelPage() {
   const [rotation, setRotation] = useState(0);
   const [result, setResult] = useState<WheelSlice | null>(null);
   const [showResult, setShowResult] = useState(false);
+  const [hasFreeSpinToday, setHasFreeSpinToday] = useState(false);
+  const [nextFreeIn, setNextFreeIn] = useState("");
   const spinRef = useRef(false);
 
-  // Load coins
-  useState(() => {
+  // Load coins & free spin status
+  useEffect(() => {
     if (!user) return;
-    supabase.from("profiles").select("coins").eq("user_id", user.id).single()
-      .then(({ data }) => { if (data) setCoins(data.coins); });
-  });
+    supabase.from("profiles").select("coins, last_free_spin_date").eq("user_id", user.id).single()
+      .then(({ data }) => {
+        if (data) {
+          setCoins((data as any).coins);
+          const today = new Date().toISOString().slice(0, 10);
+          setHasFreeSpinToday((data as any).last_free_spin_date !== today);
+        }
+      });
+  }, [user]);
+
+  // Countdown timer for next free spin
+  useEffect(() => {
+    if (hasFreeSpinToday) { setNextFreeIn(""); return; }
+    const tick = () => {
+      const now = new Date();
+      const tomorrow = new Date(now);
+      tomorrow.setHours(24, 0, 0, 0);
+      const diff = tomorrow.getTime() - now.getTime();
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      setNextFreeIn(`${h}h ${m}m ${s}s`);
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [hasFreeSpinToday]);
 
   const handleSpin = useCallback(async () => {
     if (!user || spinning || spinRef.current) return;
