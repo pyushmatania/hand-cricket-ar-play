@@ -84,6 +84,18 @@ export const MODES = [
     gradientTo: "hsl(340 80% 50%)",
   },
   {
+    id: "auction",
+    icon: "💰",
+    title: "AUCTION LEAGUE",
+    subtitle: "Bid & Battle",
+    description: "Bid on real cricketers with a budget, build your dream team, then win knockout matches!",
+    borderHue: 43,
+    accentHsl: "hsl(43 85% 50%)",
+    glowHsl: "hsl(43 85% 50% / 0.25)",
+    gradientFrom: "hsl(43 85% 45%)",
+    gradientTo: "hsl(25 70% 40%)",
+  },
+  {
     id: "practice",
     icon: "🎯",
     title: "PRACTICE",
