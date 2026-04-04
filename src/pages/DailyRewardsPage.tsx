@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { SFX, Haptics } from "@/lib/sounds";
+import engines from "@/engines/EngineManager";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useDailyLogin } from "@/hooks/useDailyLogin";
