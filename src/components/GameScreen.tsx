@@ -440,17 +440,29 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       )}
 
       {/* ── TOP BAR ── always visible as overlay */}
-      <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-3 pt-3 pb-2 bg-gradient-to-b from-black/60 to-transparent pointer-events-auto">
+      <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-3 pt-3 pb-2 pointer-events-auto"
+        style={{ background: "linear-gradient(to bottom, hsl(25 15% 8% / 0.85) 0%, transparent 100%)" }}>
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={onHome}
-          className="w-9 h-9 rounded-xl bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center text-sm text-white"
+          className="w-9 h-9 rounded-xl flex items-center justify-center text-sm text-white"
+          style={{
+            background: "linear-gradient(180deg, hsl(25 18% 16%), hsl(25 15% 11%))",
+            border: "2px solid hsl(25 20% 22%)",
+            borderBottom: "3px solid hsl(25 20% 8%)",
+            boxShadow: "0 2px 0 hsl(25 20% 6%), 0 2px 8px rgba(0,0,0,0.5)",
+          }}
         >
           ←
         </motion.button>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-white/10">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full"
+          style={{
+            background: "linear-gradient(180deg, hsl(25 18% 16%), hsl(25 15% 11%))",
+            border: "2px solid hsl(25 20% 22%)",
+            boxShadow: "0 2px 0 hsl(25 20% 6%), 0 2px 8px rgba(0,0,0,0.4)",
+          }}>
           <div className="w-1.5 h-1.5 rounded-full bg-out-red animate-pulse" />
-          <span className="font-display text-[9px] tracking-[0.2em] text-white font-bold">AR CRICKET</span>
+          <span className="font-game-display text-[9px] tracking-[0.2em] text-foreground font-bold">AR CRICKET</span>
         </div>
         <div className="flex items-center gap-1.5">
           <button
@@ -489,9 +501,14 @@ export default function GameScreen({ onHome }: GameScreenProps) {
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
-            className="absolute top-14 right-3 z-40 bg-black/80 backdrop-blur-xl border border-white/10 rounded-xl p-2.5 space-y-2"
+            className="absolute top-14 right-3 z-40 rounded-xl p-2.5 space-y-2"
+            style={{
+              background: "linear-gradient(180deg, hsl(25 18% 16%), hsl(25 15% 11%))",
+              border: "2px solid hsl(25 20% 22%)",
+              boxShadow: "0 4px 0 hsl(25 20% 6%), 0 6px 20px rgba(0,0,0,0.6)",
+            }}
           >
-            <p className="text-[7px] font-display font-bold text-white/60 tracking-widest px-1">FILTER</p>
+            <p className="text-[7px] font-game-display font-bold text-muted-foreground tracking-widest px-1">FILTER</p>
             <div className="flex gap-1">
               {FILTER_OPTIONS.map((f) => (
                 <button
@@ -675,7 +692,13 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       {/* ── PRE-GAME: OverSelector bottom sheet ── */}
       {isPreGame && showOverSelector && (
         <div className="absolute bottom-0 left-0 right-0 z-30 max-w-lg mx-auto w-full px-3 pb-4">
-          <div className="bg-black/75 backdrop-blur-xl rounded-t-3xl border-t border-x border-white/10 px-4 pt-4 pb-6">
+          <div className="rounded-t-3xl px-4 pt-4 pb-6"
+            style={{
+              background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 10%) 100%)",
+              border: "2px solid hsl(25 20% 22%)",
+              borderBottom: "none",
+              boxShadow: "0 -4px 20px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+            }}>
             <OverSelector playerXP={playerXP} onSelect={handleOverSelect} />
           </div>
         </div>
@@ -691,7 +714,13 @@ export default function GameScreen({ onHome }: GameScreenProps) {
             exit={{ opacity: 0, y: 40 }}
             className="absolute bottom-0 left-0 right-0 z-30 max-w-lg mx-auto w-full px-3 pb-4"
           >
-            <div className="bg-black/80 backdrop-blur-xl rounded-t-3xl border-t border-x border-white/10 px-5 pt-5 pb-6 space-y-4">
+            <div className="rounded-t-3xl px-5 pt-5 pb-6 space-y-4"
+              style={{
+                background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 10%) 100%)",
+                border: "2px solid hsl(25 20% 22%)",
+                borderBottom: "none",
+                boxShadow: "0 -4px 20px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+              }}>
               {/* LIVE badge */}
               <div className="flex items-center justify-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-out-red animate-pulse" />
@@ -851,7 +880,13 @@ function ImmersiveScoreStrip({ game, playerName = "You", aiName = "Rohit AI" }: 
     : null;
 
   return (
-    <div className="rounded-2xl border-2 border-game-gold/30 shadow-game-card bg-gradient-to-b from-[hsl(220_20%_18%)] to-[hsl(220_25%_12%)] px-3 py-2">
+    <div className="rounded-2xl px-3 py-2"
+      style={{
+        background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)",
+        border: "2px solid hsl(25 20% 22%)",
+        borderBottom: "4px solid hsl(25 20% 8%)",
+        boxShadow: "0 4px 0 hsl(25 20% 6%), 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+      }}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="text-center">

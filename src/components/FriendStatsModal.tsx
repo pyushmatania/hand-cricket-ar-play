@@ -309,30 +309,40 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
   const formatDate = (d: string) => new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   const formatTime = (d: string) => new Date(d).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 
+  const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
+  const CHROME_BORDER = "2px solid hsl(25 20% 22%)";
+  const CARD_SHADOW = "0 4px 0 hsl(25 20% 6%), 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)";
+
   return (
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xl flex items-center justify-center p-4"
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        style={{ background: "hsl(25 30% 4% / 0.88)", backdropFilter: "blur(12px)" }}
         onClick={onClose}
       >
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 30 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 30 }}
-          className="w-full max-w-md max-h-[85vh] overflow-y-auto glass-premium rounded-3xl border border-primary/20 shadow-[0_0_60px_hsl(217_91%_60%/0.15)]"
+          className="w-full max-w-md max-h-[85vh] overflow-y-auto rounded-3xl"
+          style={{
+            background: "linear-gradient(180deg, hsl(28 30% 16%) 0%, hsl(25 25% 10%) 100%)",
+            border: CHROME_BORDER,
+            boxShadow: "0 8px 0 hsl(25 20% 6%), 0 12px 40px rgba(0,0,0,0.6), inset 0 1px 0 hsl(35 40% 40% / 0.1)",
+          }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header with rank */}
-          <div className="p-4 border-b border-border/20">
+          <div className="p-4" style={{ borderBottom: "1px solid hsl(25 20% 18%)" }}>
             <div className="flex items-center gap-3">
               <PlayerAvatar avatarUrl={fp.avatar_url} avatarIndex={fp.avatar_index ?? 0} size="md" />
               <div className="flex-1 min-w-0">
-                <h2 className="font-display text-lg font-black text-foreground tracking-wider truncate">{fp.display_name}</h2>
+                <h2 className="font-game-title text-lg text-foreground tracking-wider truncate" style={{ textShadow: "0 2px 0 hsl(25 30% 8%)" }}>{fp.display_name}</h2>
                 <div className="flex items-center gap-2 mt-0.5">
-                  <span className={`text-[8px] font-display font-bold ${friendTier.color}`}>{friendTier.emoji} {friendTier.name}</span>
+                  <span className={`text-[8px] font-game-display font-bold ${friendTier.color}`}>{friendTier.emoji} {friendTier.name}</span>
                   <span className="text-[7px] text-muted-foreground font-display">• {friendRP} RP</span>
                 </div>
                 <div className="flex items-center gap-2 mt-0.5">
@@ -342,22 +352,23 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                 </div>
               </div>
               <motion.button whileTap={{ scale: 0.9 }} onClick={onClose}
-                className="w-8 h-8 rounded-xl glass-card flex items-center justify-center text-muted-foreground text-sm">✕</motion.button>
+                className="w-8 h-8 rounded-xl flex items-center justify-center text-muted-foreground text-sm"
+                style={{ background: CONCRETE_CARD, border: CHROME_BORDER, boxShadow: "0 2px 0 hsl(25 20% 6%)" }}>✕</motion.button>
             </div>
 
             {/* XP / Coins / Rank strip */}
             <div className="flex items-center gap-2 mt-3">
-              <div className="flex-1 glass-card rounded-lg py-1.5 px-2 text-center">
+              <div className="flex-1 concrete-card rounded-lg py-1.5 px-2 text-center">
                 <span className="text-[6px] text-muted-foreground font-display tracking-widest block">XP</span>
-                <span className="font-display text-sm font-black text-primary">{fp.xp ?? 0}</span>
+                <span className="font-game-display text-sm font-bold text-primary">{fp.xp ?? 0}</span>
               </div>
-              <div className="flex-1 glass-card rounded-lg py-1.5 px-2 text-center">
+              <div className="flex-1 concrete-card rounded-lg py-1.5 px-2 text-center">
                 <span className="text-[6px] text-muted-foreground font-display tracking-widest block">COINS</span>
-                <span className="font-display text-sm font-black text-secondary">{fp.coins ?? 0}</span>
+                <span className="font-game-display text-sm font-bold text-secondary">{fp.coins ?? 0}</span>
               </div>
-              <div className="flex-1 glass-card rounded-lg py-1.5 px-2 text-center">
+              <div className="flex-1 concrete-card rounded-lg py-1.5 px-2 text-center">
                 <span className="text-[6px] text-muted-foreground font-display tracking-widest block">STREAK</span>
-                <span className="font-display text-sm font-black text-score-gold">🔥 {fp.current_streak ?? 0}</span>
+                <span className="font-game-display text-sm font-bold text-score-gold">🔥 {fp.current_streak ?? 0}</span>
               </div>
               <div className="flex-1">
                 <RankBadge stats={friendRankStats} compact />
@@ -366,18 +377,25 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
 
             {onChallenge && (
               <motion.button whileTap={{ scale: 0.95 }}
-                onClick={() => onChallenge(friend.user_id)}
-                className="w-full mt-3 py-2.5 rounded-xl bg-gradient-to-r from-primary to-primary/80 text-primary-foreground font-display text-[10px] font-bold tracking-widest">
+            onClick={() => onChallenge(friend.user_id)}
+                className="w-full mt-3 py-2.5 rounded-xl font-game-display text-[10px] font-bold tracking-widest text-white"
+                style={{
+                  background: "linear-gradient(180deg, #6AFF6A, #4ADE50, #2D8B2D)",
+                  border: "2px solid #1E6B1E",
+                  borderBottom: "4px solid #1A5E1A",
+                  boxShadow: "0 4px 0 rgba(0,0,0,0.15), 0 4px 16px rgba(74,222,80,0.3), inset 0 2px 0 rgba(255,255,255,0.2)",
+                  textShadow: "0 2px 4px rgba(0,0,0,0.5)",
+                }}>
                 ⚔️ CHALLENGE TO BATTLE
               </motion.button>
             )}
           </div>
 
           {/* Tabs */}
-          <div className="flex gap-0.5 p-2 mx-2 mt-2 glass-card rounded-xl">
+          <div className="flex gap-0.5 p-2 mx-2 mt-2 concrete-card rounded-xl">
             {tabs.map((t) => (
               <button key={t.key} onClick={() => setTab(t.key)}
-                className={`flex-1 py-1.5 rounded-lg font-display text-[7px] font-bold tracking-widest transition-all flex items-center justify-center gap-0.5 ${
+                className={`flex-1 py-1.5 rounded-lg font-game-display text-[7px] font-bold tracking-widest transition-all flex items-center justify-center gap-0.5 ${
                   tab === t.key ? "bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/20" : "text-muted-foreground"
                 }`}>
                 <span className="text-[9px]">{t.emoji}</span> {t.label}
@@ -405,9 +423,9 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                         { label: "HIGH", value: fp.high_score, emoji: "⭐", color: "text-score-gold" },
                         { label: "STREAK", value: fp.best_streak, emoji: "🔥", color: "text-secondary" },
                       ].map((s) => (
-                        <div key={s.label} className="glass-card rounded-xl p-2 text-center">
+                        <div key={s.label} className="concrete-card rounded-xl p-2 text-center">
                           <span className="text-sm block">{s.emoji}</span>
-                          <span className={`font-display text-lg font-black ${s.color} block leading-none mt-1`}>{s.value}</span>
+                          <span className={`font-game-title text-lg ${s.color} block leading-none mt-1`}>{s.value}</span>
                           <span className="text-[5px] font-display text-muted-foreground tracking-widest">{s.label}</span>
                         </div>
                       ))}
@@ -420,9 +438,9 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                         { label: "DRAWS", value: fp.draws ?? 0, emoji: "🤝" },
                         { label: "ABANDONS", value: fp.abandons ?? 0, emoji: "🏳️" },
                       ].map((s) => (
-                        <div key={s.label} className="glass-card rounded-lg p-2 text-center">
+                        <div key={s.label} className="concrete-card rounded-lg p-2 text-center">
                           <span className="text-xs block">{s.emoji}</span>
-                          <span className="font-display text-sm font-black text-foreground block leading-none mt-0.5">{s.value}</span>
+                          <span className="font-game-display text-sm font-bold text-foreground block leading-none mt-0.5">{s.value}</span>
                           <span className="text-[5px] font-display text-muted-foreground tracking-widest">{s.label}</span>
                         </div>
                       ))}
@@ -430,7 +448,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
 
                     {/* PvP Record */}
                     {friendPvp && friendPvp.totalGames > 0 && (
-                      <div className="glass-card rounded-xl p-2.5 border border-primary/15">
+                      <div className="concrete-card rounded-xl p-2.5 border border-primary/15">
                         <div className="flex items-center gap-1.5 mb-2">
                           <span className="text-xs">⚔️</span>
                           <span className="text-[6px] font-display text-muted-foreground tracking-widest">PvP RECORD</span>
@@ -443,7 +461,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                             { label: "WIN%", value: `${friendPvp.totalGames > 0 ? Math.round((friendPvp.wins / friendPvp.totalGames) * 100) : 0}%`, color: "text-primary" },
                           ].map((s) => (
                             <div key={s.label} className="text-center">
-                              <span className={`font-display text-sm font-black ${s.color} block leading-none`}>{s.value}</span>
+                              <span className={`font-game-display text-sm font-bold ${s.color} block leading-none`}>{s.value}</span>
                               <span className="text-[5px] font-display text-muted-foreground tracking-widest">{s.label}</span>
                             </div>
                           ))}
@@ -453,11 +471,11 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
 
                     {/* Login streak */}
                     {(fp.login_streak ?? 0) > 0 && (
-                      <div className="glass-card rounded-xl p-2.5 flex items-center gap-3">
+                      <div className="concrete-card rounded-xl p-2.5 flex items-center gap-3">
                         <span className="text-lg">📅</span>
                         <div className="flex-1">
                           <span className="text-[7px] text-muted-foreground font-display tracking-widest block">LOGIN STREAK</span>
-                          <span className="font-display text-sm font-black text-primary">{fp.login_streak} days</span>
+                          <span className="font-game-display text-sm font-bold text-primary">{fp.login_streak} days</span>
                         </div>
                         <div className="text-right">
                           <span className="text-[6px] text-muted-foreground font-display tracking-widest block">BEST</span>
@@ -483,12 +501,12 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                             { label: "XP", mine: myProfile.xp, theirs: fp.xp ?? 0, mineNum: myProfile.xp, theirsNum: fp.xp ?? 0 },
                             { label: "COINS", mine: myProfile.coins, theirs: fp.coins ?? 0, mineNum: myProfile.coins, theirsNum: fp.coins ?? 0 },
                           ].map((row) => (
-                            <div key={row.label} className="flex items-center gap-2 glass-card rounded-lg px-3 py-2">
-                              <span className={`font-display text-xs font-black flex-1 text-left ${row.mineNum > row.theirsNum ? "text-neon-green" : row.mineNum < row.theirsNum ? "text-out-red" : "text-foreground"}`}>
+                            <div key={row.label} className="flex items-center gap-2 concrete-card rounded-lg px-3 py-2">
+                              <span className={`font-game-display text-xs font-bold flex-1 text-left ${row.mineNum > row.theirsNum ? "text-neon-green" : row.mineNum < row.theirsNum ? "text-out-red" : "text-foreground"}`}>
                                 {row.mine}
                               </span>
                               <span className="text-[6px] font-display text-muted-foreground tracking-widest w-20 text-center">{row.label}</span>
-                              <span className={`font-display text-xs font-black flex-1 text-right ${row.theirsNum > row.mineNum ? "text-neon-green" : row.theirsNum < row.mineNum ? "text-out-red" : "text-foreground"}`}>
+                              <span className={`font-game-display text-xs font-bold flex-1 text-right ${row.theirsNum > row.mineNum ? "text-neon-green" : row.theirsNum < row.mineNum ? "text-out-red" : "text-foreground"}`}>
                                 {row.theirs}
                               </span>
                             </div>
@@ -512,7 +530,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                     </div>
 
                     {/* Overall record */}
-                    <div className="glass-card rounded-xl p-3">
+                    <div className="concrete-card rounded-xl p-3">
                       <span className="text-[6px] font-display text-muted-foreground tracking-widest block mb-2">OVERALL RECORD</span>
                       <div className="grid grid-cols-4 gap-2">
                         {[
@@ -523,7 +541,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                         ].map((s) => (
                           <div key={s.label} className="text-center">
                             <span className="text-sm block">{s.emoji}</span>
-                            <span className={`font-display text-lg font-black ${s.color} block leading-none mt-0.5`}>{s.value}</span>
+                            <span className={`font-game-title text-lg ${s.color} block leading-none mt-0.5`}>{s.value}</span>
                             <span className="text-[5px] font-display text-muted-foreground tracking-widest">{s.label}</span>
                           </div>
                         ))}
@@ -532,26 +550,26 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
 
                     {/* Draws & Abandons */}
                     <div className="grid grid-cols-3 gap-2">
-                      <div className="glass-card rounded-lg p-2 text-center">
+                      <div className="concrete-card rounded-lg p-2 text-center">
                         <span className="text-xs block">🤝</span>
-                        <span className="font-display text-sm font-black text-foreground">{fp.draws ?? 0}</span>
+                        <span className="font-game-display text-sm font-bold text-foreground">{fp.draws ?? 0}</span>
                         <span className="text-[5px] font-display text-muted-foreground tracking-widest block">DRAWS</span>
                       </div>
-                      <div className="glass-card rounded-lg p-2 text-center">
+                      <div className="concrete-card rounded-lg p-2 text-center">
                         <span className="text-xs block">🔥</span>
-                        <span className="font-display text-sm font-black text-secondary">{fp.current_streak ?? 0}</span>
+                        <span className="font-game-display text-sm font-bold text-secondary">{fp.current_streak ?? 0}</span>
                         <span className="text-[5px] font-display text-muted-foreground tracking-widest block">CUR STREAK</span>
                       </div>
-                      <div className="glass-card rounded-lg p-2 text-center">
+                      <div className="concrete-card rounded-lg p-2 text-center">
                         <span className="text-xs block">🏳️</span>
-                        <span className="font-display text-sm font-black text-out-red">{fp.abandons ?? 0}</span>
+                        <span className="font-game-display text-sm font-bold text-out-red">{fp.abandons ?? 0}</span>
                         <span className="text-[5px] font-display text-muted-foreground tracking-widest block">ABANDONS</span>
                       </div>
                     </div>
 
                     {/* Form Chart - Last 10 Results */}
                     {recentFriendMatches.length > 0 && (
-                      <div className="glass-card rounded-xl p-3">
+                      <div className="concrete-card rounded-xl p-3">
                         <span className="text-[6px] font-display text-muted-foreground tracking-widest block mb-2">RECENT FORM (LAST 10)</span>
                         <div className="flex items-center gap-1.5 justify-center mb-2">
                           {recentFriendMatches.slice(0, 10).map((m, i) => {
@@ -594,7 +612,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
 
                     {/* Streak History */}
                     {recentFriendMatches.length > 0 && (
-                      <div className="glass-card rounded-xl p-3">
+                      <div className="concrete-card rounded-xl p-3">
                         <span className="text-[6px] font-display text-muted-foreground tracking-widest block mb-2">STREAK HISTORY</span>
                         {(() => {
                           const streaks: { type: "W" | "L" | "D"; count: number }[] = [];
@@ -636,14 +654,14 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                             <span className="text-xs">🔥</span>
                             <span className="text-[6px] font-display text-muted-foreground tracking-widest">BEST WIN STREAK</span>
                           </div>
-                          <span className="font-display text-sm font-black text-score-gold">{fp.best_streak}</span>
+                          <span className="font-game-display text-sm font-bold text-score-gold">{fp.best_streak}</span>
                         </div>
                         <div className="flex items-center justify-between mt-1">
                           <div className="flex items-center gap-1">
                             <span className="text-xs">⚡</span>
                             <span className="text-[6px] font-display text-muted-foreground tracking-widest">CURRENT STREAK</span>
                           </div>
-                          <span className={`font-display text-sm font-black ${(fp.current_streak ?? 0) > 0 ? "text-neon-green" : "text-foreground"}`}>
+                          <span className={`font-game-display text-sm font-bold ${(fp.current_streak ?? 0) > 0 ? "text-neon-green" : "text-foreground"}`}>
                             {(fp.current_streak ?? 0) > 0 ? `${fp.current_streak}W` : fp.current_streak === 0 ? "—" : `${Math.abs(fp.current_streak ?? 0)}L`}
                           </span>
                         </div>
@@ -652,7 +670,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
 
                     {/* Performance metrics */}
                     {friendMatchStats && (
-                      <div className="glass-card rounded-xl p-3">
+                      <div className="concrete-card rounded-xl p-3">
                         <span className="text-[6px] font-display text-muted-foreground tracking-widest block mb-2">PERFORMANCE</span>
                         <div className="space-y-1.5">
                           {[
@@ -669,7 +687,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                                 <span className="text-sm">{row.emoji}</span>
                                 <span className="text-[8px] text-muted-foreground font-display tracking-wider">{row.label}</span>
                               </div>
-                              <span className={`font-display text-sm font-black ${row.color}`}>{row.value}</span>
+                              <span className={`font-game-display text-sm font-bold ${row.color}`}>{row.value}</span>
                             </div>
                           ))}
                         </div>
@@ -677,14 +695,14 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                     )}
 
                     {/* Rank & Progression */}
-                    <div className={`glass-card rounded-xl p-3 border ${friendTier.borderColor}`}>
+                    <div className={`concrete-card rounded-xl p-3 border ${friendTier.borderColor}`}>
                       <div className={`absolute inset-0 ${friendTier.bgColor} rounded-xl`} />
                       <div className="relative z-10">
                         <span className="text-[6px] font-display text-muted-foreground tracking-widest block mb-2">RANK & PROGRESSION</span>
                         <div className="flex items-center gap-3">
                           <RankBadge stats={friendRankStats} />
                           <div>
-                            <span className={`font-display text-sm font-black ${friendTier.color}`}>{friendTier.name}</span>
+                            <span className={`font-game-display text-sm font-bold ${friendTier.color}`}>{friendTier.name}</span>
                             <span className="text-[8px] text-muted-foreground font-display block">{friendRP} RP</span>
                           </div>
                           <div className="ml-auto text-right">
@@ -697,7 +715,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
 
                     {/* Win/Loss ratio visual */}
                     {fp.total_matches > 0 && (
-                      <div className="glass-card rounded-xl p-3">
+                      <div className="concrete-card rounded-xl p-3">
                         <span className="text-[6px] font-display text-muted-foreground tracking-widest block mb-2">WIN/LOSS RATIO</span>
                         <div className="h-3 rounded-full overflow-hidden flex bg-muted/30">
                           <div className="bg-gradient-to-r from-neon-green to-neon-green/70 rounded-l-full" style={{ width: `${friendWinRate}%` }} />
@@ -715,14 +733,14 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                       const lastWin = recentFriendMatches.find(m => m.result === "win");
                       if (!lastWin) return null;
                       return (
-                        <div className="glass-premium rounded-xl p-3 border border-neon-green/15">
+                        <div className="concrete-card rounded-xl p-3 border border-neon-green/15">
                           <div className="flex items-center gap-2 mb-2">
                             <span className="text-sm">🏆</span>
                             <span className="text-[6px] font-display text-muted-foreground tracking-widest">LAST WIN</span>
                           </div>
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-xl bg-neon-green/10 border border-neon-green/20 flex items-center justify-center">
-                              <span className="font-display text-lg font-black text-neon-green">{lastWin.user_score}</span>
+                              <span className="font-game-title text-lg text-neon-green">{lastWin.user_score}</span>
                             </div>
                             <div className="flex-1">
                               <span className="font-display text-[10px] font-bold text-foreground block">
@@ -743,7 +761,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                     })()}
 
                     {/* Lifetime Stats */}
-                    <div className="glass-premium rounded-xl p-3 border border-score-gold/15">
+                    <div className="concrete-card rounded-xl p-3 border border-score-gold/15">
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-sm">📊</span>
                         <span className="text-[6px] font-display text-muted-foreground tracking-widest">LIFETIME STATS</span>
@@ -754,22 +772,22 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                           { label: "TOTAL 6s", value: fp.total_sixes ?? friendMatchStats?.sixes ?? 0, emoji: "💥", color: "text-primary" },
                           { label: "TOTAL 4s", value: fp.total_fours ?? friendMatchStats?.fours ?? 0, emoji: "🎯", color: "text-neon-green" },
                         ].map((s) => (
-                          <div key={s.label} className="glass-card rounded-lg p-2 text-center">
+                          <div key={s.label} className="concrete-card rounded-lg p-2 text-center">
                             <span className="text-sm block">{s.emoji}</span>
-                            <span className={`font-display text-lg font-black ${s.color} block leading-none mt-0.5`}>{s.value}</span>
+                            <span className={`font-game-title text-lg ${s.color} block leading-none mt-0.5`}>{s.value}</span>
                             <span className="text-[5px] font-display text-muted-foreground tracking-widest">{s.label}</span>
                           </div>
                         ))}
                       </div>
                       {friendMatchStats && (
                         <div className="grid grid-cols-2 gap-2 mt-2">
-                          <div className="glass-card rounded-lg p-2 text-center">
+                          <div className="concrete-card rounded-lg p-2 text-center">
                             <span className="text-[5px] font-display text-muted-foreground tracking-widest block">AVG SCORE</span>
-                            <span className="font-display text-sm font-black text-foreground">{friendMatchStats.avgScore}</span>
+                            <span className="font-game-display text-sm font-bold text-foreground">{friendMatchStats.avgScore}</span>
                           </div>
-                          <div className="glass-card rounded-lg p-2 text-center">
+                          <div className="concrete-card rounded-lg p-2 text-center">
                             <span className="text-[5px] font-display text-muted-foreground tracking-widest block">STRIKE RATE</span>
-                            <span className="font-display text-sm font-black text-primary">{friendMatchStats.strikeRate}</span>
+                            <span className="font-game-display text-sm font-bold text-primary">{friendMatchStats.strikeRate}</span>
                           </div>
                         </div>
                       )}
@@ -807,9 +825,9 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                                     won ? "bg-neon-green/20 text-neon-green" : lost ? "bg-out-red/20 text-out-red" : "bg-secondary/20 text-secondary"
                                   }`}>{won ? "W" : lost ? "L" : "D"}</div>
                                   <div className="flex items-center gap-1.5">
-                                    <span className={`font-display text-xs font-black ${won ? "text-neon-green" : "text-foreground"}`}>{m.user_score}</span>
+                                    <span className={`font-game-display text-xs font-bold ${won ? "text-neon-green" : "text-foreground"}`}>{m.user_score}</span>
                                     <span className="text-[6px] text-muted-foreground font-display">vs</span>
-                                    <span className={`font-display text-xs font-black ${lost ? "text-out-red" : "text-foreground"}`}>{m.ai_score}</span>
+                                    <span className={`font-game-display text-xs font-bold ${lost ? "text-out-red" : "text-foreground"}`}>{m.ai_score}</span>
                                   </div>
                                   <span className="text-[6px] text-muted-foreground font-display">{m.mode === "tap" ? "🎮" : m.mode === "ar" ? "📸" : "🏏"}</span>
                                   <span className="flex-1" />
@@ -852,15 +870,15 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                           const mN = typeof row.mine === "number" ? row.mine : (row as any).mineNum ?? 0;
                           const tN = typeof row.theirs === "number" ? row.theirs : (row as any).theirsNum ?? 0;
                           return (
-                            <div key={row.label} className="flex items-center gap-2 glass-card rounded-lg px-3 py-2">
-                              <span className={`font-display text-xs font-black flex-1 text-left ${mN > tN ? "text-neon-green" : mN < tN ? "text-out-red" : "text-foreground"}`}>
+                            <div key={row.label} className="flex items-center gap-2 concrete-card rounded-lg px-3 py-2">
+                              <span className={`font-game-display text-xs font-bold flex-1 text-left ${mN > tN ? "text-neon-green" : mN < tN ? "text-out-red" : "text-foreground"}`}>
                                 {row.mine}
                               </span>
                               <div className="flex items-center gap-1 w-24 justify-center">
                                 <span className="text-[9px]">{row.emoji}</span>
                                 <span className="text-[6px] font-display text-muted-foreground tracking-widest">{row.label}</span>
                               </div>
-                              <span className={`font-display text-xs font-black flex-1 text-right ${tN > mN ? "text-neon-green" : tN < mN ? "text-out-red" : "text-foreground"}`}>
+                              <span className={`font-game-display text-xs font-bold flex-1 text-right ${tN > mN ? "text-neon-green" : tN < mN ? "text-out-red" : "text-foreground"}`}>
                                 {row.theirs}
                               </span>
                             </div>
@@ -872,7 +890,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                         </div>
                       </div>
                     ) : (
-                      <div className="glass-card rounded-xl p-6 text-center">
+                      <div className="concrete-card rounded-xl p-6 text-center">
                         <span className="text-2xl block mb-2">📊</span>
                         <p className="text-[10px] text-muted-foreground font-display">No match data available</p>
                       </div>
@@ -886,7 +904,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                     {h2h && h2h.totalGames > 0 ? (
                       <>
                         {/* Hero W/L record */}
-                        <div className="glass-premium rounded-xl p-4 border border-primary/15">
+                        <div className="concrete-card rounded-xl p-4 border border-primary/15">
                           <div className="flex items-center justify-between mb-3">
                             <div className="text-center flex-1">
                               <span className="font-display text-3xl font-black text-neon-green block leading-none">{h2h.myWins}</span>
@@ -936,13 +954,13 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                             const mN = typeof s.mine === "number" ? s.mine : 0;
                             const tN = typeof s.theirs === "number" ? s.theirs : 0;
                             return (
-                              <div key={s.label} className="flex items-center gap-2 glass-card rounded-lg px-3 py-2">
-                                <span className={`font-display text-xs font-black flex-1 text-left ${mN > tN ? "text-neon-green" : mN < tN ? "text-out-red" : "text-foreground"}`}>{s.mine}</span>
+                              <div key={s.label} className="flex items-center gap-2 concrete-card rounded-lg px-3 py-2">
+                                <span className={`font-game-display text-xs font-bold flex-1 text-left ${mN > tN ? "text-neon-green" : mN < tN ? "text-out-red" : "text-foreground"}`}>{s.mine}</span>
                                 <div className="flex items-center gap-1 w-24 justify-center">
                                   <span className="text-[9px]">{s.emoji}</span>
                                   <span className="text-[6px] font-display text-muted-foreground tracking-widest">{s.label}</span>
                                 </div>
-                                <span className={`font-display text-xs font-black flex-1 text-right ${tN > mN ? "text-neon-green" : tN < mN ? "text-out-red" : "text-foreground"}`}>{s.theirs}</span>
+                                <span className={`font-game-display text-xs font-bold flex-1 text-right ${tN > mN ? "text-neon-green" : tN < mN ? "text-out-red" : "text-foreground"}`}>{s.theirs}</span>
                               </div>
                             );
                           })}
@@ -958,15 +976,15 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                           <span className="font-display text-[8px] font-bold text-muted-foreground tracking-[0.25em]">STREAKS & MILESTONES</span>
                         </div>
                         <div className="grid grid-cols-2 gap-2">
-                          <div className="glass-card rounded-lg p-2.5 text-center">
+                          <div className="concrete-card rounded-lg p-2.5 text-center">
                             <span className="text-[6px] font-display text-muted-foreground tracking-widest block mb-1">CURRENT STREAK</span>
-                            <span className={`font-display text-lg font-black ${h2h.currentStreak > 0 ? "text-neon-green" : h2h.currentStreak < 0 ? "text-out-red" : "text-foreground"}`}>
+                            <span className={`font-game-title text-lg ${h2h.currentStreak > 0 ? "text-neon-green" : h2h.currentStreak < 0 ? "text-out-red" : "text-foreground"}`}>
                               {h2h.currentStreak > 0 ? `🔥 ${h2h.currentStreak}W` : h2h.currentStreak < 0 ? `${Math.abs(h2h.currentStreak)}L` : "—"}
                             </span>
                           </div>
-                          <div className="glass-card rounded-lg p-2.5 text-center">
+                          <div className="concrete-card rounded-lg p-2.5 text-center">
                             <span className="text-[6px] font-display text-muted-foreground tracking-widest block mb-1">BEST STREAK</span>
-                            <span className={`font-display text-lg font-black ${h2h.bestStreak > 0 ? "text-neon-green" : "text-out-red"}`}>
+                            <span className={`font-game-title text-lg ${h2h.bestStreak > 0 ? "text-neon-green" : "text-out-red"}`}>
                               {h2h.bestStreak > 0 ? `${h2h.bestStreak}W` : h2h.bestStreak < 0 ? `${Math.abs(h2h.bestStreak)}L` : "—"}
                             </span>
                           </div>
@@ -974,11 +992,11 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                         
                         {h2h.firstMatchDate && (
                           <div className="grid grid-cols-2 gap-2">
-                            <div className="glass-card rounded-lg p-2 text-center">
+                            <div className="concrete-card rounded-lg p-2 text-center">
                               <span className="text-[5px] font-display text-muted-foreground tracking-widest block mb-1">FIRST MATCH</span>
                               <span className="font-display text-[9px] font-bold text-foreground">{formatDate(h2h.firstMatchDate)}</span>
                             </div>
-                            <div className="glass-card rounded-lg p-2 text-center">
+                            <div className="concrete-card rounded-lg p-2 text-center">
                               <span className="text-[5px] font-display text-muted-foreground tracking-widest block mb-1">LAST PLAYED</span>
                               <span className="font-display text-[9px] font-bold text-foreground">{h2h.lastPlayed ? formatDate(h2h.lastPlayed) : "—"}</span>
                             </div>
@@ -990,7 +1008,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                           <div className="w-1 h-4 rounded-full bg-primary" />
                           <span className="font-display text-[8px] font-bold text-muted-foreground tracking-[0.25em]">MATCH TIMELINE</span>
                         </div>
-                        <div className="glass-premium rounded-xl p-3 border border-primary/10">
+                        <div className="concrete-card rounded-xl p-3 border border-primary/10">
                           {(() => {
                             const chronoMatches = [...h2h.matches].reverse();
                             const maxScore = Math.max(...chronoMatches.map(m => {
@@ -1064,7 +1082,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                           <div className="w-1 h-4 rounded-full bg-accent" />
                           <span className="font-display text-[8px] font-bold text-muted-foreground tracking-[0.25em]">SCORING TRENDS</span>
                         </div>
-                        <div className="glass-card rounded-xl p-3">
+                        <div className="concrete-card rounded-xl p-3">
                           {(() => {
                             const recent5 = h2h.matches.slice(0, 5);
                             const myRecent5Avg = recent5.length > 0 ? Math.round(recent5.reduce((s, m) => s + (m.host_id === user?.id ? m.host_score : m.guest_score), 0) / recent5.length) : 0;
@@ -1078,7 +1096,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                                 <div className="flex items-center justify-between">
                                   <span className="text-[7px] font-display text-muted-foreground tracking-wider">YOUR LAST 5 AVG</span>
                                   <div className="flex items-center gap-1">
-                                    <span className="font-display text-sm font-black text-foreground">{myRecent5Avg}</span>
+                                    <span className="font-game-display text-sm font-bold text-foreground">{myRecent5Avg}</span>
                                     <span className={`text-[8px] font-display font-bold ${myTrend > 0 ? "text-neon-green" : myTrend < 0 ? "text-out-red" : "text-muted-foreground"}`}>
                                       {myTrend > 0 ? `↑${myTrend}` : myTrend < 0 ? `↓${Math.abs(myTrend)}` : "→"}
                                     </span>
@@ -1087,7 +1105,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                                 <div className="flex items-center justify-between">
                                   <span className="text-[7px] font-display text-muted-foreground tracking-wider">{fp.display_name.toUpperCase()} LAST 5 AVG</span>
                                   <div className="flex items-center gap-1">
-                                    <span className="font-display text-sm font-black text-foreground">{theirRecent5Avg}</span>
+                                    <span className="font-game-display text-sm font-bold text-foreground">{theirRecent5Avg}</span>
                                     <span className={`text-[8px] font-display font-bold ${theirTrend > 0 ? "text-neon-green" : theirTrend < 0 ? "text-out-red" : "text-muted-foreground"}`}>
                                       {theirTrend > 0 ? `↑${theirTrend}` : theirTrend < 0 ? `↓${Math.abs(theirTrend)}` : "→"}
                                     </span>
@@ -1096,11 +1114,11 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                                 <div className="h-px bg-muted/20" />
                                 <div className="flex items-center justify-between">
                                   <span className="text-[7px] font-display text-muted-foreground tracking-wider">RUNS PER GAME (YOU)</span>
-                                  <span className="font-display text-xs font-black text-primary">{myOverallAvg}</span>
+                                  <span className="font-game-display text-xs font-bold text-primary">{myOverallAvg}</span>
                                 </div>
                                 <div className="flex items-center justify-between">
                                   <span className="text-[7px] font-display text-muted-foreground tracking-wider">RUNS PER GAME ({fp.display_name.slice(0, 6).toUpperCase()})</span>
-                                  <span className="font-display text-xs font-black text-out-red">{theirOverallAvg}</span>
+                                  <span className="font-game-display text-xs font-bold text-out-red">{theirOverallAvg}</span>
                                 </div>
                               </div>
                             );
@@ -1142,9 +1160,9 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                                     won ? "bg-neon-green/20 text-neon-green" : lost ? "bg-out-red/20 text-out-red" : "bg-secondary/20 text-secondary"
                                   }`}>{won ? "W" : lost ? "L" : "D"}</div>
                                   <div className="flex items-center gap-1.5">
-                                    <span className={`font-display text-sm font-black ${won ? "text-neon-green" : "text-foreground"}`}>{myScore}</span>
+                                    <span className={`font-game-display text-sm font-bold ${won ? "text-neon-green" : "text-foreground"}`}>{myScore}</span>
                                     <span className="text-[6px] text-muted-foreground font-display">vs</span>
-                                    <span className={`font-display text-sm font-black ${lost ? "text-out-red" : "text-foreground"}`}>{theirScore}</span>
+                                    <span className={`font-game-display text-sm font-bold ${lost ? "text-out-red" : "text-foreground"}`}>{theirScore}</span>
                                   </div>
                                   <span className="flex-1" />
                                   {margin > 0 && (
@@ -1160,7 +1178,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                         </div>
                       </>
                     ) : (
-                      <div className="glass-card rounded-xl p-8 text-center">
+                      <div className="concrete-card rounded-xl p-8 text-center">
                         <span className="text-3xl block mb-2">⚔️</span>
                         <p className="font-display text-sm font-bold text-foreground">No rivalry matches yet</p>
                         <p className="text-[9px] text-muted-foreground mt-1">Challenge {fp.display_name} to a multiplayer duel!</p>
@@ -1184,7 +1202,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                           const isBrokenByMe = r.broken_by === user?.id;
                           return (
                             <motion.div key={r.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}
-                              className="glass-premium rounded-xl p-3 border border-score-gold/15">
+                              className="concrete-card rounded-xl p-3 border border-score-gold/15">
                               <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-xl bg-score-gold/10 border border-score-gold/20 flex items-center justify-center">
                                   <span className="text-xl">{info.emoji}</span>
@@ -1208,7 +1226,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
                         })}
                       </div>
                     ) : (
-                      <div className="glass-card rounded-xl p-8 text-center">
+                      <div className="concrete-card rounded-xl p-8 text-center">
                         <span className="text-3xl block mb-2">🏅</span>
                         <p className="font-display text-sm font-bold text-foreground">No records broken yet</p>
                         <p className="text-[9px] text-muted-foreground mt-1">Keep playing — record breaks will be saved here as mementos!</p>
