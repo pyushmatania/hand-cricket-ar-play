@@ -6,6 +6,7 @@
 
 import { useEffect, useRef, memo } from 'react';
 import type { WeatherState } from '@/engines/types';
+import { isLowEndDevice } from '@/lib/performanceUtils';
 
 interface WeatherParticlesProps {
   weather: WeatherState;
