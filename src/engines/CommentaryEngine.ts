@@ -73,7 +73,7 @@ export class CommentaryEngine {
     // Use preferred language from tone config if set, otherwise user setting
     const lang = this.toneConfig.preferredLanguage || this.language;
 
-    const pool = this.getPool(eventType, perspective);
+    const pool = this.getPoolWithLang(eventType, perspective, lang);
     if (!pool || pool.length === 0) return;
 
     // Anti-repetition filter
