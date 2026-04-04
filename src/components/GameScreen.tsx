@@ -247,12 +247,15 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     }
   }, [fireworkType]);
 
-  // Innings change sound
+  // Innings change — emit through engine + commentary
   useEffect(() => {
     const prev = prevPhaseRef.current;
     prevPhaseRef.current = game.phase;
     if (prev !== game.phase && game.phase !== "not_started" && game.phase !== "finished") {
-      if (soundEnabled) SFX.gameStart();
+      // Update engine perspective based on batting/bowling
+      engines.setPerspective(game.isBatting ? 'batting' : 'bowling');
+      engines.event.emit('INNINGS_START', {});
+
       if (commentaryEnabled) {
         const text = getInningsChangeCommentary(game);
         const lines: CommentaryLine[] = [
@@ -264,7 +267,6 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         }
         setTimeout(() => setCommentary(null), 3000);
       }
-      if (crowdEnabled) CrowdSFX.ambientMurmur(2);
     }
   }, [game.phase]);
 
