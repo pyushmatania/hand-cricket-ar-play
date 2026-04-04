@@ -141,7 +141,7 @@ export class CommentaryEngine {
   async speakForEvent(
     eventType: EventType,
     context: MatchContext,
-    perspective: 'positive' | 'negative' | 'neutral'
+    perspective: string
   ): Promise<void> {
     if (this.isMuted || this.isSpeaking) return;
     // Stub — will be expanded with Doc 3 content
