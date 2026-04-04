@@ -67,6 +67,12 @@ export class CommentaryEngine {
   ): Promise<void> {
     if (this.isMuted || this.isSpeaking) return;
 
+    // Frequency gate — theme controls how chatty commentary is
+    if (Math.random() > this.toneConfig.frequency) return;
+
+    // Use preferred language from tone config if set, otherwise user setting
+    const lang = this.toneConfig.preferredLanguage || this.language;
+
     const pool = this.getPool(eventType, perspective);
     if (!pool || pool.length === 0) return;
 
