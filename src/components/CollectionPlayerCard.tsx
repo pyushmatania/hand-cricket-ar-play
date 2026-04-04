@@ -2,6 +2,24 @@ import { motion } from "framer-motion";
 import { DBPlayer, statToDiamonds, overallRating, roleLabel } from "@/hooks/usePlayers";
 import { Zap } from "lucide-react";
 
+/* ── Player image map for Mythic/Legendary cards ── */
+const PLAYER_IMAGES: Record<string, string> = {};
+
+// Dynamic imports for player images
+import dhoniImg from "@/assets/players/dhoni.jpg";
+import kohliImg from "@/assets/players/kohli.jpg";
+import rohitImg from "@/assets/players/rohit.jpg";
+import bumrahImg from "@/assets/players/bumrah.jpg";
+import russellImg from "@/assets/players/russell.jpg";
+
+Object.assign(PLAYER_IMAGES, {
+  dhoni: dhoniImg,
+  kohli: kohliImg,
+  rohit: rohitImg,
+  bumrah: bumrahImg,
+  russell: russellImg,
+});
+
 /* ── Rarity frame styles ── */
 const RARITY_FRAME: Record<string, { border: string; glow: string; bg: string; diamond: string }> = {
   common: {
@@ -110,14 +128,27 @@ export default function CollectionPlayerCard({ player, size = "sm", onTap, delay
           </div>
         </div>
 
-        {/* Player initial / emoji placeholder */}
-        <div className={`${isSm ? "h-20" : "h-32"} flex items-center justify-center relative`}>
-          <div className="absolute inset-0 opacity-5 flex items-center justify-center">
-            <span className="font-game-display text-[48px] font-black">{player.short_name?.[0] || player.name[0]}</span>
-          </div>
-          <div className="text-4xl">
-            {player.role === "bowler" ? "🏏" : player.role === "wk_batsman" ? "🧤" : "🏏"}
-          </div>
+        {/* Player image or fallback */}
+        <div className={`${isSm ? "h-20" : "h-32"} flex items-center justify-center relative overflow-hidden`}>
+          {player.thumbnail_url && PLAYER_IMAGES[player.thumbnail_url] ? (
+            <img
+              src={PLAYER_IMAGES[player.thumbnail_url]}
+              alt={player.name}
+              className="w-full h-full object-cover object-top"
+              loading="lazy"
+              width={512}
+              height={704}
+            />
+          ) : (
+            <>
+              <div className="absolute inset-0 opacity-5 flex items-center justify-center">
+                <span className="font-game-display text-[48px] font-black">{player.short_name?.[0] || player.name[0]}</span>
+              </div>
+              <div className="text-4xl">
+                {player.role === "bowler" ? "🏏" : player.role === "wk_batsman" ? "🧤" : "🏏"}
+              </div>
+            </>
+          )}
         </div>
 
         {/* Name ribbon */}
