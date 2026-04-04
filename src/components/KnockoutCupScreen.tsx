@@ -4,11 +4,11 @@ import { SFX, Haptics } from "@/lib/sounds";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { grantTournamentRewards, type TournamentReward } from "@/lib/tournamentRewards";
+import { useTournamentPersistence } from "@/hooks/useTournamentPersistence";
 
 interface Props { onHome: () => void; }
 
 const MATCH_BALLS = 12;
-const BRACKET_SIZE = 8;
 
 const AI_TEAMS = [
   { name: "Thunder Hawks", emoji: "⚡", strength: 70 },
@@ -26,8 +26,10 @@ interface BracketTeam { name: string; emoji: string; strength: number; isPlayer?
 
 export default function KnockoutCupScreen({ onHome }: Props) {
   const { soundEnabled, hapticsEnabled } = useSettings();
+  const { user } = useAuth();
+  const { createTournament, saveFixture, finishTournament } = useTournamentPersistence();
   const [phase, setPhase] = useState<Phase>("bracket");
-  const [round, setRound] = useState(0); // 0=QF, 1=SF, 2=Final
+  const [round, setRound] = useState(0);
   const [bracket, setBracket] = useState<BracketTeam[]>(() => {
     const shuffled = [...AI_TEAMS].sort(() => Math.random() - 0.5).slice(0, 7);
     const teams: BracketTeam[] = [
@@ -38,6 +40,8 @@ export default function KnockoutCupScreen({ onHome }: Props) {
   });
   const [currentOpponent, setCurrentOpponent] = useState<BracketTeam | null>(null);
   const [matchResults, setMatchResults] = useState<("win" | "loss")[]>([]);
+  const [tournamentId, setTournamentId] = useState<string | null>(null);
+  const tournamentCreated = useRef(false);
 
   // Match
   const [score, setScore] = useState(0);
@@ -51,21 +55,33 @@ export default function KnockoutCupScreen({ onHome }: Props) {
   const [finalPlacement, setFinalPlacement] = useState("");
   const [reward, setReward] = useState<TournamentReward | null>(null);
   const rewardedRef = useRef(false);
-  const { user } = useAuth();
+
+  // Create tournament on mount
+  useEffect(() => {
+    if (!tournamentCreated.current && user) {
+      tournamentCreated.current = true;
+      createTournament({
+        format: "knockout",
+        name: "Knockout Cup",
+        placement: null,
+        metadata: { bracketSize: 8 },
+      }).then(id => setTournamentId(id));
+    }
+  }, [user]);
 
   useEffect(() => {
     if (phase === "results" && finalPlacement && user && !rewardedRef.current) {
       rewardedRef.current = true;
       grantTournamentRewards(user.id, finalPlacement, "knockout").then(r => r && setReward(r));
+      if (tournamentId) finishTournament(tournamentId, finalPlacement);
     }
-  }, [phase, finalPlacement, user]);
+  }, [phase, finalPlacement, user, tournamentId]);
 
   const ROUND_NAMES = ["⚔️ QUARTER-FINAL", "🔥 SEMI-FINAL", "🏆 FINAL"];
 
   const getOpponentForRound = (): BracketTeam | null => {
     const alive = bracket.filter(t => !t.eliminated && !t.isPlayer);
     if (alive.length === 0) return null;
-    // Pick opponent by bracket position
     return alive[Math.min(round, alive.length - 1)];
   };
 
@@ -119,6 +135,21 @@ export default function KnockoutCupScreen({ onHome }: Props) {
     setMatchResult(result);
     if (result === "win") { if (soundEnabled) SFX.win(); if (hapticsEnabled) Haptics.success(); }
     else { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); }
+
+    // Persist fixture
+    if (tournamentId && user) {
+      saveFixture({
+        tournamentId,
+        roundNumber: round + 1,
+        matchIndex: round,
+        playerAId: user.id,
+        playerBId: null,
+        playerAScore: score,
+        playerBScore: oppScore,
+        winnerId: result === "win" ? user.id : null,
+        status: "completed",
+      });
+    }
   };
 
   const handleMatchDone = () => {
@@ -128,13 +159,11 @@ export default function KnockoutCupScreen({ onHome }: Props) {
 
     if (matchResult === "loss") {
       setFinalPlacement(["Quarter-Finalist", "Semi-Finalist", "Runner-Up"][round] || "Eliminated");
-      // Eliminate other AI teams randomly for bracket viz
       setBracket(prev => prev.map(t => t.name === currentOpponent.name ? t : { ...t }));
       setPhase("results");
       return;
     }
 
-    // Eliminate opponent
     setBracket(prev => prev.map(t => t.name === currentOpponent.name ? { ...t, eliminated: true } : t));
 
     if (round >= 2) {
@@ -143,7 +172,6 @@ export default function KnockoutCupScreen({ onHome }: Props) {
       return;
     }
 
-    // Also eliminate another AI team (simulating other bracket)
     setBracket(prev => {
       const alive = prev.filter(t => !t.eliminated && !t.isPlayer && t.name !== currentOpponent.name);
       if (alive.length > 0) {
@@ -170,13 +198,10 @@ export default function KnockoutCupScreen({ onHome }: Props) {
           <h2 className="font-game-display text-sm tracking-wider text-accent">🏆 KNOCKOUT CUP</h2>
           <div className="w-9" />
         </div>
-
         <div className="relative z-10 text-center py-3">
           <p className="font-game-display text-lg text-foreground">{ROUND_NAMES[round]}</p>
           <p className="font-game-body text-[10px] text-muted-foreground">{alive.length} teams remaining</p>
         </div>
-
-        {/* Bracket */}
         <div className="relative z-10 flex-1 overflow-y-auto px-4 pb-4">
           <div className="space-y-2">
             {bracket.map((team, i) => (
@@ -201,8 +226,6 @@ export default function KnockoutCupScreen({ onHome }: Props) {
             ))}
           </div>
         </div>
-
-        {/* Next match */}
         {opp && (
           <div className="relative z-10 p-4" style={{ background: "linear-gradient(transparent, hsl(25 15% 6%))" }}>
             <div className="text-center mb-3">

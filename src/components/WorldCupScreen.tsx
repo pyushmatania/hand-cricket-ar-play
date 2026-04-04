@@ -4,6 +4,7 @@ import { SFX, Haptics } from "@/lib/sounds";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { grantTournamentRewards, type TournamentReward } from "@/lib/tournamentRewards";
+import { useTournamentPersistence } from "@/hooks/useTournamentPersistence";
 
 interface Props { onHome: () => void; }
 
@@ -29,8 +30,12 @@ const MATCH_BALLS = 12;
 
 export default function WorldCupScreen({ onHome }: Props) {
   const { soundEnabled, hapticsEnabled } = useSettings();
+  const { user } = useAuth();
+  const { createTournament, saveFixture, finishTournament } = useTournamentPersistence();
   const [phase, setPhase] = useState<Phase>("pick");
   const [myTeam, setMyTeam] = useState<typeof TEAMS[0] | null>(null);
+  const [tournamentId, setTournamentId] = useState<string | null>(null);
+  const [fixtureIndex, setFixtureIndex] = useState(0);
 
   // Group stage
   const [groupTeams, setGroupTeams] = useState<GroupTeam[]>([]);
@@ -56,27 +61,35 @@ export default function WorldCupScreen({ onHome }: Props) {
   const [finalPlacement, setFinalPlacement] = useState("");
   const [reward, setReward] = useState<TournamentReward | null>(null);
   const rewardedRef = useRef(false);
-  const { user } = useAuth();
 
   useEffect(() => {
     if (phase === "results" && finalPlacement && user && !rewardedRef.current) {
       rewardedRef.current = true;
       grantTournamentRewards(user.id, finalPlacement, "worldcup").then(r => r && setReward(r));
+      if (tournamentId) finishTournament(tournamentId, finalPlacement);
     }
-  }, [phase, finalPlacement, user]);
+  }, [phase, finalPlacement, user, tournamentId]);
 
-  const pickTeam = (team: typeof TEAMS[0]) => {
+  const pickTeam = async (team: typeof TEAMS[0]) => {
     if (soundEnabled) SFX.tap();
     if (hapticsEnabled) Haptics.heavy();
     setMyTeam(team);
 
-    // Create group: my team + 4 random others
     const others = TEAMS.filter(t => t.name !== team.name).sort(() => Math.random() - 0.5).slice(0, 4);
     const group: GroupTeam[] = [
       { ...team, points: 0, wins: 0, losses: 0 },
       ...others.map(t => ({ ...t, points: 0, wins: 0, losses: 0 })),
     ];
     setGroupTeams(group);
+
+    // Persist tournament
+    const id = await createTournament({
+      format: "worldcup",
+      name: `World Cup - ${team.name}`,
+      placement: null,
+      metadata: { team: team.name, groupTeams: group.map(t => t.name) },
+    });
+    setTournamentId(id);
     setPhase("group");
   };
 
@@ -141,20 +154,40 @@ export default function WorldCupScreen({ onHome }: Props) {
     else { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); }
   };
 
+  const persistFixture = (roundNum: number, oppName: string, myS: number, oppS: number, won: boolean) => {
+    if (!tournamentId || !user) return;
+    const idx = fixtureIndex;
+    setFixtureIndex(prev => prev + 1);
+    saveFixture({
+      tournamentId,
+      roundNumber: roundNum,
+      matchIndex: idx,
+      playerAId: user.id,
+      playerBId: null, // AI opponent
+      playerAScore: myS,
+      playerBScore: oppS,
+      winnerId: won ? user.id : null,
+      status: "completed",
+    });
+  };
+
   const handleMatchDone = () => {
     if (!matchResult || !matchOpponent || !myTeam) return;
     const mr: MatchResult = { opponent: matchOpponent.name, opponentFlag: matchOpponent.flag, myScore: score, oppScore, won: matchResult === "win" };
 
+    // Determine round number for persistence
+    const roundNum = knockoutOpponents.length > 0
+      ? (knockoutStage === "super8" ? 2 : knockoutStage === "semi" ? 3 : 4)
+      : 1;
+    persistFixture(roundNum, matchOpponent.name, score, oppScore, matchResult === "win");
+
     if (phase === "match" && knockoutStage === "super8" && knockoutOpponents.length === 0) {
-      // Group stage match
       const newResults = [...groupResults, mr];
       setGroupResults(newResults);
 
-      // Update points
       setGroupTeams(prev => prev.map(t => {
         if (t.name === myTeam.name) return { ...t, points: t.points + (matchResult === "win" ? 2 : 0), wins: t.wins + (matchResult === "win" ? 1 : 0), losses: t.losses + (matchResult === "loss" ? 1 : 0) };
         if (t.name === matchOpponent.name) return { ...t, points: t.points + (matchResult === "loss" ? 2 : 0), wins: t.wins + (matchResult === "loss" ? 1 : 0), losses: t.losses + (matchResult === "win" ? 1 : 0) };
-        // Sim other matches
         return { ...t, points: t.points + (Math.random() > 0.5 ? 2 : 0), wins: t.wins + (Math.random() > 0.5 ? 1 : 0) };
       }));
 
@@ -163,15 +196,10 @@ export default function WorldCupScreen({ onHome }: Props) {
       const opponents = groupTeams.filter(t => t.name !== myTeam.name);
 
       if (nextIdx >= opponents.length) {
-        // Group stage done → Super 8
         const qualifiers = groupTeams
           .sort((a, b) => b.points - a.points)
           .slice(0, 4)
           .filter(t => t.name !== myTeam.name);
-        
-        if (!groupTeams.find(t => t.name === myTeam.name && t.points + (matchResult === "win" ? 2 : 0) > 0)) {
-          // Always qualify for fun
-        }
         setKnockoutOpponents(qualifiers.slice(0, 2));
         setKnockoutIdx(0);
         setKnockoutStage("super8");
@@ -180,7 +208,6 @@ export default function WorldCupScreen({ onHome }: Props) {
         setPhase("group");
       }
     } else {
-      // Knockout match
       const newAll = [...allResults, mr];
       setAllResults(newAll);
 
@@ -233,12 +260,10 @@ export default function WorldCupScreen({ onHome }: Props) {
           <h2 className="font-game-display text-sm tracking-wider text-accent">🌍 WORLD CUP</h2>
           <div className="w-9" />
         </div>
-
         <div className="relative z-10 text-center py-4">
           <h3 className="font-game-display text-lg text-foreground">PICK YOUR NATION</h3>
           <p className="font-game-body text-[10px] text-muted-foreground">Group Stage → Super 8 → Semi → Final</p>
         </div>
-
         <div className="relative z-10 flex-1 overflow-y-auto px-4 pb-6">
           <div className="grid grid-cols-2 gap-2">
             {TEAMS.map(team => (
@@ -272,8 +297,6 @@ export default function WorldCupScreen({ onHome }: Props) {
           <h2 className="font-game-display text-[10px] tracking-widest text-accent">GROUP STAGE</h2>
           <div className="w-9" />
         </div>
-
-        {/* Points table */}
         <div className="relative z-10 px-4 mt-2 mb-4">
           <div className="rounded-xl overflow-hidden" style={{ background: "hsl(25 15% 10%)", border: "1.5px solid hsl(25 18% 20%)" }}>
             <div className="grid grid-cols-4 px-3 py-2 text-center" style={{ background: "hsl(25 18% 14%)" }}>
@@ -292,8 +315,6 @@ export default function WorldCupScreen({ onHome }: Props) {
             ))}
           </div>
         </div>
-
-        {/* Next match */}
         {currentOpp && (
           <div className="relative z-10 flex-1 flex flex-col items-center justify-center px-4">
             <p className="font-game-display text-[9px] text-muted-foreground tracking-wider mb-4">MATCH {groupMatchIdx + 1} OF {opponents.length}</p>
@@ -324,7 +345,7 @@ export default function WorldCupScreen({ onHome }: Props) {
     );
   }
 
-  // KNOCKOUT STAGES (super8, semi, final)
+  // KNOCKOUT STAGES
   if ((phase === "super8" || phase === "semi" || phase === "final") && myTeam) {
     const stageNames: Record<string, string> = { super8: "SUPER 8", semi: "SEMI-FINAL", final: "🏆 GRAND FINAL" };
     const opp = knockoutOpponents[knockoutIdx];
@@ -345,13 +366,11 @@ export default function WorldCupScreen({ onHome }: Props) {
               <p className="font-game-display text-xs text-foreground mt-1">{opp?.name}</p>
             </div>
           </div>
-
           {allResults.length > 0 && (
             <div className="flex items-center justify-center gap-2 mb-4">
               {allResults.map((r, i) => <span key={i} className="text-lg">{r.won ? "✅" : "❌"}</span>)}
             </div>
           )}
-
           <motion.button whileTap={{ scale: 0.95 }} onClick={startKnockoutMatch}
             className="px-8 py-3 rounded-xl font-game-display text-sm tracking-wider"
             style={{

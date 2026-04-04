@@ -4,18 +4,22 @@ import { SFX, Haptics } from "@/lib/sounds";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { grantTournamentRewards, type TournamentReward } from "@/lib/tournamentRewards";
+import { useTournamentPersistence } from "@/hooks/useTournamentPersistence";
 
 interface Props { onHome: () => void; }
 
-const MATCH_BALLS = 18; // 3 overs per Test
+const MATCH_BALLS = 18;
 
 type Phase = "intro" | "match" | "between" | "results";
 
 export default function AshesScreen({ onHome }: Props) {
   const { soundEnabled, hapticsEnabled } = useSettings();
+  const { user } = useAuth();
+  const { createTournament, saveFixture, finishTournament } = useTournamentPersistence();
   const [phase, setPhase] = useState<Phase>("intro");
-  const [testNum, setTestNum] = useState(0); // 0-4
+  const [testNum, setTestNum] = useState(0);
   const [results, setResults] = useState<("win" | "loss" | "draw")[]>([]);
+  const [tournamentId, setTournamentId] = useState<string | null>(null);
 
   // Match state
   const [score, setScore] = useState(0);
@@ -30,7 +34,6 @@ export default function AshesScreen({ onHome }: Props) {
   const TEST_VENUES = ["🏟️ Brisbane", "🏟️ Adelaide", "🏟️ Melbourne", "🏟️ Sydney", "🏟️ Perth"];
   const [reward, setReward] = useState<TournamentReward | null>(null);
   const rewardedRef = useRef(false);
-  const { user } = useAuth();
 
   const myWins = results.filter(r => r === "win").length;
   const oppWins = results.filter(r => r === "loss").length;
@@ -40,8 +43,20 @@ export default function AshesScreen({ onHome }: Props) {
       rewardedRef.current = true;
       const placement = myWins > oppWins ? "🏆 SERIES WON!" : myWins === oppWins ? "SERIES DRAWN" : "SERIES LOST";
       grantTournamentRewards(user.id, placement, "ashes").then(r => r && setReward(r));
+      if (tournamentId) finishTournament(tournamentId, placement);
     }
-  }, [phase, user]);
+  }, [phase, user, tournamentId]);
+
+  const startSeries = async () => {
+    const id = await createTournament({
+      format: "ashes",
+      name: "The Ashes",
+      placement: null,
+      metadata: { tests: 5 },
+    });
+    setTournamentId(id);
+    startTest();
+  };
 
   const startTest = () => {
     setScore(0); setOppScore(0); setBalls(0); setInnings(1);
@@ -96,6 +111,21 @@ export default function AshesScreen({ onHome }: Props) {
     setMatchResult(result);
     if (result === "win") { if (soundEnabled) SFX.win(); if (hapticsEnabled) Haptics.success(); }
     else if (result === "loss") { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); }
+
+    // Persist fixture
+    if (tournamentId && user) {
+      saveFixture({
+        tournamentId,
+        roundNumber: testNum + 1,
+        matchIndex: testNum,
+        playerAId: user.id,
+        playerBId: null,
+        playerAScore: score,
+        playerBScore: oppScore,
+        winnerId: result === "win" ? user.id : null,
+        status: "completed",
+      });
+    }
   };
 
   const handleTestDone = () => {
@@ -108,10 +138,8 @@ export default function AshesScreen({ onHome }: Props) {
       return;
     }
 
-    // Check if series already decided
     const w = newResults.filter(r => r === "win").length;
     const l = newResults.filter(r => r === "loss").length;
-    const remaining = 4 - testNum;
     if (w > 2 || l > 2) {
       setPhase("results");
       return;
@@ -142,7 +170,7 @@ export default function AshesScreen({ onHome }: Props) {
               </div>
             ))}
           </div>
-          <motion.button whileTap={{ scale: 0.95 }} onClick={startTest}
+          <motion.button whileTap={{ scale: 0.95 }} onClick={startSeries}
             className="px-8 py-3 rounded-xl font-game-display text-sm tracking-wider"
             style={{ background: "linear-gradient(180deg, hsl(142 71% 50%) 0%, hsl(142 65% 38%) 100%)", border: "2px solid hsl(142 60% 55% / 0.4)", borderBottom: "5px solid hsl(142 55% 25%)", color: "hsl(142 80% 98%)" }}>
             🏏 START SERIES
@@ -160,8 +188,6 @@ export default function AshesScreen({ onHome }: Props) {
         <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative z-10 text-center">
           <p className="font-game-display text-[10px] tracking-[0.3em] text-muted-foreground mb-2">{TEST_VENUES[testNum]}</p>
           <h2 className="font-game-display text-xl text-foreground mb-4">TEST {testNum + 1} OF 5</h2>
-
-          {/* Series scoreline */}
           <div className="flex items-center justify-center gap-4 mb-4">
             <div className="text-center">
               <span className="text-2xl">🇮🇳</span>
@@ -173,7 +199,6 @@ export default function AshesScreen({ onHome }: Props) {
               <p className="font-game-display text-2xl text-foreground">{oppWins}</p>
             </div>
           </div>
-
           <div className="flex items-center justify-center gap-1 mb-6">
             {results.map((r, i) => (
               <span key={i} className="text-lg">{r === "win" ? "✅" : r === "loss" ? "❌" : "➖"}</span>
@@ -182,7 +207,6 @@ export default function AshesScreen({ onHome }: Props) {
               <span key={`e${i}`} className="w-6 h-6 rounded border border-muted-foreground/20" />
             ))}
           </div>
-
           <motion.button whileTap={{ scale: 0.95 }} onClick={startTest}
             className="px-8 py-3 rounded-xl font-game-display text-sm tracking-wider"
             style={{ background: "linear-gradient(180deg, hsl(0 70% 50%) 0%, hsl(0 60% 35%) 100%)", border: "2px solid hsl(0 60% 55% / 0.4)", borderBottom: "5px solid hsl(0 50% 22%)", color: "hsl(0 90% 95%)" }}>

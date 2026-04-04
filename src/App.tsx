@@ -35,6 +35,7 @@ const CollectionPage = lazy(() => import("./pages/CollectionPage"));
 const SpinWheelPage = lazy(() => import("./pages/SpinWheelPage"));
 const TeamBuilderPage = lazy(() => import("./pages/TeamBuilderPage"));
 const ClanPage = lazy(() => import("./pages/ClanPage"));
+const TournamentHistoryPage = lazy(() => import("./pages/TournamentHistoryPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -78,6 +79,7 @@ function AnimatedRoutes() {
         <Route path="/spin" element={<LazyPage><PageTransition><SpinWheelPage /></PageTransition></LazyPage>} />
         <Route path="/team-builder" element={<LazyPage><PageTransition><TeamBuilderPage /></PageTransition></LazyPage>} />
         <Route path="/clan" element={<LazyPage><PageTransition><ClanPage /></PageTransition></LazyPage>} />
+        <Route path="/tournament-history" element={<LazyPage><PageTransition><TournamentHistoryPage /></PageTransition></LazyPage>} />
         <Route path="*" element={<LazyPage><PageTransition><NotFound /></PageTransition></LazyPage>} />
       </Routes>
     </AnimatePresence>
