@@ -286,6 +286,11 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [matchConfig, arCeremoniesEnabled, tossInfo]);
 
+  const handleEstablishingShotComplete = () => {
+    setShowEstablishingShot(false);
+    setShowPreMatch(true);
+  };
+
   const handlePreMatchComplete = () => {
     setShowPreMatch(false);
     if (pendingBatFirst !== null && matchConfig) {
