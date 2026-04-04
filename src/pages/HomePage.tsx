@@ -7,6 +7,7 @@ import OnboardingTutorial from "@/components/OnboardingTutorial";
 import ModeSelectDrawer from "@/components/ModeSelectDrawer";
 import floatingIsland from "@/assets/floating-island.png";
 import { getChestTier } from "@/lib/chests";
+import ChestSlotsWidget from "@/components/ChestSlotsWidget";
 
 interface ProfileData {
   total_matches: number;
