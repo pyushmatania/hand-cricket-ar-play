@@ -6,6 +6,7 @@ import MultiplayerScreen from "@/components/MultiplayerScreen";
 import TournamentScreen from "@/components/TournamentScreen";
 import DailyChallengeScreen from "@/components/DailyChallengeScreen";
 import IPLTournamentScreen from "@/components/ipl/IPLTournamentScreen";
+import CricketRoyaleScreen from "@/components/CricketRoyaleScreen";
 
 export default function GamePage() {
   const { mode } = useParams<{ mode: string }>();
@@ -18,6 +19,7 @@ export default function GamePage() {
   if (mode === "tournament") return <TournamentScreen onHome={goHome} />;
   if (mode === "ipl") return <IPLTournamentScreen onHome={goHome} />;
   if (mode === "daily") return <DailyChallengeScreen onHome={goHome} />;
+  if (mode === "royale") return <CricketRoyaleScreen onHome={goHome} />;
 
   return <GameScreen onHome={goHome} />;
 }
