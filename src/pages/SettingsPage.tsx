@@ -209,16 +209,24 @@ export default function SettingsPage() {
     },
   ];
 
+  const LEATHER_BG = "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)";
+  const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
+  const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
+
   const cardStyle = {
-    background: "linear-gradient(135deg, hsl(222 40% 13% / 0.9), hsl(222 40% 8% / 0.95))",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)",
+    background: CONCRETE_CARD,
+    border: "2px solid hsl(25 20% 22%)",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
   };
 
   return (
-    <div className="min-h-screen bg-game-dark relative overflow-hidden pb-24">
-      {/* Background effects */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 0%, hsl(222 40% 18%) 0%, hsl(222 40% 6%) 70%)" }} />
-      <div className="absolute inset-0 vignette pointer-events-none" />
+    <div className="min-h-screen relative overflow-hidden pb-24" style={{ background: LEATHER_BG }}>
+      {/* Leather grain overlay */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{ backgroundImage: LEATHER_GRAIN, backgroundRepeat: "repeat" }} />
+      {/* Vignette */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }} />
 
       <TopStatusBar />
 
