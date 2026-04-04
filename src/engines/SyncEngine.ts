@@ -1,6 +1,7 @@
 // ═══════════════════════════════════════════════════
 // Doc 2 — Chapter 3: Sync Engine
 // PvP synchronization via Supabase Realtime
+// Doc 5 §1.4 — Connection health monitoring
 // ═══════════════════════════════════════════════════
 
 import type { BallResult } from './types';
@@ -13,6 +14,63 @@ interface SyncPoint {
   timeout: ReturnType<typeof setTimeout>;
 }
 
+// Doc 5 §1.4: Connection health monitor
+class ConnectionMonitor {
+  private heartbeatInterval: ReturnType<typeof setInterval> | null = null;
+  private staleCheckInterval: ReturnType<typeof setInterval> | null = null;
+  private lastHeartbeat: number = Date.now();
+  private maxHeartbeatAge: number = 10000; // 10 seconds
+  private reconnectAttempts: number = 0;
+  private maxReconnectAttempts: number = 3;
+  private onDisconnect?: () => void;
+  private onReconnect?: () => void;
+
+  start(channel: RealtimeChannel, userId: string, onDisconnect?: () => void, onReconnect?: () => void): void {
+    this.onDisconnect = onDisconnect;
+    this.onReconnect = onReconnect;
+    this.lastHeartbeat = Date.now();
+    this.reconnectAttempts = 0;
+
+    // Send heartbeat every 3 seconds
+    this.heartbeatInterval = setInterval(() => {
+      channel.send({
+        type: 'broadcast', event: 'heartbeat',
+        payload: { userId, timestamp: Date.now() },
+      });
+    }, 3000);
+
+    // Listen for opponent heartbeats
+    channel.on('broadcast', { event: 'heartbeat' }, ({ payload }) => {
+      if (payload.userId !== userId) {
+        this.lastHeartbeat = Date.now();
+        if (this.reconnectAttempts > 0) {
+          this.reconnectAttempts = 0;
+          this.onReconnect?.();
+        }
+      }
+    });
+
+    // Check for stale connection every 5 seconds
+    this.staleCheckInterval = setInterval(() => {
+      if (Date.now() - this.lastHeartbeat > this.maxHeartbeatAge) {
+        this.reconnectAttempts++;
+        if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+          this.onDisconnect?.();
+        }
+      }
+    }, 5000);
+  }
+
+  stop(): void {
+    if (this.heartbeatInterval) { clearInterval(this.heartbeatInterval); this.heartbeatInterval = null; }
+    if (this.staleCheckInterval) { clearInterval(this.staleCheckInterval); this.staleCheckInterval = null; }
+  }
+
+  isStale(): boolean {
+    return Date.now() - this.lastHeartbeat > this.maxHeartbeatAge;
+  }
+}
+
 export class SyncEngine {
   private channel: RealtimeChannel | null = null;
   private matchId: string = '';
@@ -21,10 +79,17 @@ export class SyncEngine {
   private pendingSyncPoints: Map<string, SyncPoint> = new Map();
   private ballPicks: Map<string, { pick: number; role: 'batting' | 'bowling' }> = new Map();
   private isHost: boolean = false;
+  private connectionMonitor: ConnectionMonitor = new ConnectionMonitor();
 
   // Callbacks
   private onOpponentPick?: (pick: number) => void;
   private onBallResult?: (result: BallResult) => void;
+  private onOpponentDisconnect?: () => void;
+  private onOpponentReconnect?: () => void;
+
+  // Doc 5 §1.1: Toss broadcast callbacks
+  private onTossCall?: (call: string, userId: string) => void;
+  private onTossResult?: (result: string) => void;
 
   // ── CONNECTION ──
 
@@ -49,12 +114,27 @@ export class SyncEngine {
       })
       .on('broadcast', { event: 'disconnect' }, ({ payload }) => {
         this.handleDisconnect(payload);
+      })
+      // Doc 5 §1.1: Toss call/result broadcasts
+      .on('broadcast', { event: 'toss_call' }, ({ payload }) => {
+        this.onTossCall?.(payload.call, payload.userId);
+      })
+      .on('broadcast', { event: 'toss_result' }, ({ payload }) => {
+        this.onTossResult?.(payload.result);
       });
 
     await this.channel.subscribe();
+
+    // Doc 5 §1.4: Start connection health monitoring
+    this.connectionMonitor.start(
+      this.channel, userId,
+      () => this.onOpponentDisconnect?.(),
+      () => this.onOpponentReconnect?.(),
+    );
   }
 
   disconnect(): void {
+    this.connectionMonitor.stop();
     if (this.channel) {
       this.channel.send({
         type: 'broadcast',
@@ -64,6 +144,22 @@ export class SyncEngine {
       this.channel.unsubscribe();
       this.channel = null;
     }
+  }
+
+  // ── Doc 5 §1.1: TOSS BROADCASTS ──
+
+  async sendTossCall(call: string): Promise<void> {
+    await this.channel?.send({
+      type: 'broadcast', event: 'toss_call',
+      payload: { userId: this.userId, call, timestamp: Date.now() },
+    });
+  }
+
+  async sendTossResult(result: string): Promise<void> {
+    await this.channel?.send({
+      type: 'broadcast', event: 'toss_result',
+      payload: { result, timestamp: Date.now() },
+    });
   }
 
   // ── SYNC POINTS ──
@@ -192,6 +288,7 @@ export class SyncEngine {
   private handleDisconnect(payload: { userId: string }): void {
     if (payload.userId === this.opponentId) {
       console.warn('[SyncEngine] Opponent disconnected');
+      this.onOpponentDisconnect?.();
     }
   }
 
@@ -199,8 +296,16 @@ export class SyncEngine {
   setOnOpponentPick(cb: (pick: number) => void): void { this.onOpponentPick = cb; }
   setOnBallResult(cb: (result: BallResult) => void): void { this.onBallResult = cb; }
   setIsHost(isHost: boolean): void { this.isHost = isHost; }
+  setOnOpponentDisconnect(cb: () => void): void { this.onOpponentDisconnect = cb; }
+  setOnOpponentReconnect(cb: () => void): void { this.onOpponentReconnect = cb; }
+  setOnTossCall(cb: (call: string, userId: string) => void): void { this.onTossCall = cb; }
+  setOnTossResult(cb: (result: string) => void): void { this.onTossResult = cb; }
+
+  // Doc 5 §1.4: Check if opponent connection is stale
+  isOpponentStale(): boolean { return this.connectionMonitor.isStale(); }
 
   destroy(): void {
+    this.connectionMonitor.stop();
     this.disconnect();
     for (const [, sp] of this.pendingSyncPoints) {
       clearTimeout(sp.timeout);
