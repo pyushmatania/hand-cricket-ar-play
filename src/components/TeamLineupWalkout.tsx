@@ -30,7 +30,7 @@ export default function TeamLineupWalkout({
   const { soundEnabled } = useSettings();
 
   useEffect(() => {
-    if (soundEnabled) SFX.whoosh();
+    if (soundEnabled) SFX.gameStart();
     const t1 = setTimeout(() => setPhase("face"), 1800);
     const t2 = setTimeout(() => {
       setPhase("done");
