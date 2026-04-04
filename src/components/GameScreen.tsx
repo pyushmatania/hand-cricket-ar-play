@@ -290,6 +290,11 @@ export default function GameScreen({ onHome }: GameScreenProps) {
 
   const handleEstablishingShotComplete = () => {
     setShowEstablishingShot(false);
+    setShowWalkout(true);
+  };
+
+  const handleWalkoutComplete = () => {
+    setShowWalkout(false);
     setShowPreMatch(true);
   };
 
