@@ -7,6 +7,7 @@ import OnboardingTutorial from "@/components/OnboardingTutorial";
 import ModeSelectDrawer from "@/components/ModeSelectDrawer";
 import floatingIsland from "@/assets/floating-island.png";
 import { getChestTier } from "@/lib/chests";
+import ChestSlotsWidget from "@/components/ChestSlotsWidget";
 
 interface ProfileData {
   total_matches: number;
@@ -30,12 +31,6 @@ const ARENA_LEVELS = [
   { name: "World Cup", trophies: 5000 },
 ];
 
-const CHEST_SLOTS = [
-  { state: "ready" as const, type: "gold", label: "OPEN!", timer: "" },
-  { state: "unlocking" as const, type: "silver", label: "", timer: "59m" },
-  { state: "locked" as const, type: "bronze", label: "", timer: "3h" },
-  { state: "empty" as const, type: null, label: "", timer: "" },
-];
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -375,87 +370,7 @@ export default function HomePage() {
         </motion.div>
 
         {/* ═══ F) CHEST SLOT ROW ═══ */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
-          className="flex gap-2 mb-4"
-        >
-          {CHEST_SLOTS.map((slot, i) => {
-            const chestTier = slot.type ? getChestTier(slot.type) : null;
-            const isReady = slot.state === "ready";
-            const isEmpty = slot.state === "empty";
-
-            return (
-              <motion.button
-                key={i}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => isReady ? navigate("/shop") : undefined}
-                className="flex-1 relative rounded-xl flex flex-col items-center justify-center overflow-hidden"
-                style={{
-                  height: 96,
-                  borderRadius: "14px",
-                  background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)",
-                  border: isReady
-                    ? "2px solid hsl(43 80% 50%)"
-                    : isEmpty
-                      ? "2px solid hsl(25 15% 20%)"
-                      : slot.state === "unlocking"
-                        ? "2px solid hsl(142 60% 40%)"
-                        : "2px solid hsl(217 60% 45%)",
-                  borderBottom: isReady
-                    ? "5px solid hsl(43 60% 30%)"
-                    : "4px solid hsl(25 20% 10%)",
-                  boxShadow: isReady ? "0 0 16px hsl(43 90% 50% / 0.2)" : undefined,
-                }}
-              >
-                {isReady && (
-                  <motion.div className="absolute inset-0 pointer-events-none"
-                    animate={{ opacity: [0.05, 0.2, 0.05] }}
-                    transition={{ duration: 1.5, repeat: Infinity }}
-                    style={{ background: "radial-gradient(circle, hsl(43 90% 55% / 0.15), transparent 70%)" }}
-                  />
-                )}
-
-                {chestTier ? (
-                  <>
-                    <img
-                      src={chestTier.image}
-                      alt={chestTier.name}
-                      className="w-11 h-11 object-contain relative z-10"
-                      style={{ filter: slot.state === "locked" ? "brightness(0.5)" : undefined }}
-                      width={512} height={512} loading="lazy"
-                    />
-                    {isReady && (
-                      <span className="font-game-display text-[11px] relative z-10 mt-0.5 tracking-wider"
-                        style={{ color: "hsl(43 90% 55%)" }}
-                      >OPEN</span>
-                    )}
-                    {slot.state === "unlocking" && (
-                      <div className="absolute bottom-0 left-0 right-0 h-6 flex items-center justify-center z-10"
-                        style={{ background: "hsl(25 20% 6% / 0.8)" }}
-                      >
-                        <span className="text-[10px] mr-1">🕐</span>
-                        <span className="font-game-score text-[11px] text-foreground">{slot.timer}</span>
-                      </div>
-                    )}
-                    {slot.state === "locked" && (
-                      <div className="flex flex-col items-center gap-0.5 relative z-10">
-                        <span className="text-sm">🔒</span>
-                        <span className="font-game-score text-[9px] text-muted-foreground">{slot.timer}</span>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="flex flex-col items-center gap-1 opacity-30">
-                    <span className="text-muted-foreground text-lg">+</span>
-                    <span className="font-game-body text-[8px] text-muted-foreground uppercase">Chest Slot</span>
-                  </div>
-                )}
-              </motion.button>
-            );
-          })}
-        </motion.div>
+        <ChestSlotsWidget />
       </div>
 
       <ModeSelectDrawer open={modeDrawerOpen} onOpenChange={setModeDrawerOpen} />
