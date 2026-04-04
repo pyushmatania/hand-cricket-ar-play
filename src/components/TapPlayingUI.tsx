@@ -413,14 +413,17 @@ export default function TapPlayingUI({
         />
       )}
 
-      {/* Commentary strip */}
       <AnimatePresence>
         {commentary && commentary.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: -5 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -5 }}
-            className="rounded-xl px-3 py-2 space-y-1 bg-[hsl(220_20%_14%/0.9)] border border-game-gold/15 backdrop-blur-md"
+            className="rounded-xl px-3 py-2 space-y-1 backdrop-blur-md"
+            style={{
+              background: "linear-gradient(135deg, hsl(var(--scoreboard-dark) / 0.95), hsl(var(--scoreboard-mid) / 0.9))",
+              border: "1px solid hsl(var(--chrome-dark) / 0.3)",
+            }}
           >
             {commentary.map((line, i) => {
               const comm = matchCommentators.find(c => c.name === line.commentatorId || c.id === line.commentatorId) || matchCommentators[0];
@@ -428,10 +431,11 @@ export default function TapPlayingUI({
                 <div key={i} className="flex items-start gap-1.5">
                   <span className="text-[9px] flex-shrink-0">{comm.avatar}</span>
                   <div>
-                    <span className={`text-[6px] font-game-display font-bold tracking-wider ${
-                      comm.id === matchCommentators[0].id ? "text-game-green" : "text-game-gold"
-                    }`}>{comm.name}</span>
-                    <p className="font-game-body text-[9px] font-bold text-white/90 tracking-wide line-clamp-2">
+                    <span className="text-[6px] font-display font-bold tracking-wider"
+                      style={{ color: comm.id === matchCommentators[0].id ? "hsl(var(--grass-light))" : "hsl(var(--secondary))" }}
+                    >{comm.name}</span>
+                    <p className="font-body text-[9px] font-bold tracking-wide line-clamp-2"
+                      style={{ color: "hsl(var(--chalk-white) / 0.9)" }}>
                       {line.text}
                     </p>
                   </div>
