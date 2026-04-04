@@ -327,3 +327,59 @@ export const EN_TOSS_RESULT: CommentaryLine[] = [
   { id: 'etr2', text: 'Toss decided! A crucial moment in every match.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
   { id: 'etr3', text: 'The toss is complete. Let the battle begin!', voice: 'main', emotion: 'neutral', rate: 1.05, pitch: 1.0, delay: 0 },
 ];
+
+// ═══════════════════════════════════════════════════
+// CLUTCH / SITUATION-AWARE COMMENTARY
+// ═══════════════════════════════════════════════════
+
+export const EN_CLUTCH_RUNS: CommentaryLine[] = [
+  { id: 'ecr1', text: 'Every single run is GOLD now! They take one!', voice: 'main', emotion: 'excited', rate: 1.15, pitch: 1.1, delay: 100, minSituation: 'tense' },
+  { id: 'ecr2', text: 'The pressure is immense. A single. Crucial.', voice: 'main', emotion: 'dramatic', rate: 1.0, pitch: 1.0, delay: 100, minSituation: 'tense' },
+  { id: 'ecr3', text: 'Nerves of steel! Takes the run under tremendous pressure!', voice: 'main', emotion: 'excited', rate: 1.1, pitch: 1.05, delay: 100, minSituation: 'tense',
+    followUp: { id: 'ecr3f', text: 'This is what separates the good from the great.', voice: 'color', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 }
+  },
+  { id: 'ecr4', text: 'Runs on the board when they matter MOST!', voice: 'main', emotion: 'excited', rate: 1.15, pitch: 1.1, delay: 100, minSituation: 'critical' },
+  { id: 'ecr5', text: 'The equation is getting tighter! Every run counts!', voice: 'main', emotion: 'dramatic', rate: 1.1, pitch: 1.05, delay: 100, minSituation: 'tense' },
+  { id: 'ecr6', text: 'Match-winning territory now! That run could be the difference!', voice: 'main', emotion: 'excited', rate: 1.15, pitch: 1.1, delay: 100, minSituation: 'critical' },
+];
+
+export const EN_CLUTCH_FOUR: CommentaryLine[] = [
+  { id: 'ecf1', text: 'FOUR! Under pressure! That is a CLUTCH shot!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.2, delay: 800, minSituation: 'tense',
+    followUp: { id: 'ecf1f', text: 'Big players make big plays in big moments!', voice: 'color', emotion: 'excited', rate: 1.0, pitch: 1.1, delay: 0 }
+  },
+  { id: 'ecf2', text: 'BOUNDARY when it matters! The equation shifts!', voice: 'main', emotion: 'excited', rate: 1.25, pitch: 1.15, delay: 800, minSituation: 'tense' },
+  { id: 'ecf3', text: 'FOUR! That could be the turning point of this match!', voice: 'main', emotion: 'excited', rate: 1.25, pitch: 1.15, delay: 800, minSituation: 'critical' },
+  { id: 'ecf4', text: 'Pressure? What pressure! FOUR! Ice in the veins!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.2, delay: 800, minSituation: 'critical' },
+  { id: 'ecf5', text: 'FOUR! The required rate drops! Breathing room at last!', voice: 'main', emotion: 'excited', rate: 1.25, pitch: 1.15, delay: 800, minSituation: 'tense' },
+];
+
+export const EN_CLUTCH_SIX: CommentaryLine[] = [
+  { id: 'ecs1', text: 'SIX! IN THE CLUTCH! This player is BUILT for these moments!', voice: 'main', emotion: 'excited', rate: 1.35, pitch: 1.25, delay: 1000, minSituation: 'critical',
+    followUp: { id: 'ecs1f', text: 'Unbelievable courage under fire!', voice: 'color', emotion: 'excited', rate: 1.0, pitch: 1.1, delay: 0 }
+  },
+  { id: 'ecs2', text: 'MAXIMUM! When it matters MOST! The stadium ERUPTS!', voice: 'main', emotion: 'excited', rate: 1.35, pitch: 1.25, delay: 1000, minSituation: 'critical' },
+  { id: 'ecs3', text: 'SIX! The equation just CRUMBLED! What a hit under pressure!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.2, delay: 1000, minSituation: 'tense' },
+  { id: 'ecs4', text: 'Into the stands! SIX! This is why they call it a FINISHER!', voice: 'main', emotion: 'excited', rate: 1.35, pitch: 1.25, delay: 1000, minSituation: 'critical' },
+  { id: 'ecs5', text: 'SIX! Match-winning intent! The crowd is on its FEET!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.2, delay: 1000, minSituation: 'tense' },
+];
+
+export const EN_CLUTCH_WICKET: CommentaryLine[] = [
+  { id: 'ecw1', text: 'WICKET! In the pressure cooker! That changes EVERYTHING!', voice: 'main', emotion: 'dramatic', rate: 1.25, pitch: 1.15, delay: 500, minSituation: 'tense',
+    followUp: { id: 'ecw1f', text: 'The fielding side celebrates like they\'ve won the World Cup!', voice: 'color', emotion: 'excited', rate: 1.0, pitch: 1.1, delay: 0 }
+  },
+  { id: 'ecw2', text: 'OUT! A breakthrough when they needed it MOST!', voice: 'main', emotion: 'dramatic', rate: 1.25, pitch: 1.15, delay: 500, minSituation: 'tense' },
+  { id: 'ecw3', text: 'GONE! That wicket could win this match!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 500, minSituation: 'critical' },
+  { id: 'ecw4', text: 'The big wicket falls! Pandemonium in the field!', voice: 'main', emotion: 'dramatic', rate: 1.25, pitch: 1.15, delay: 500, minSituation: 'critical' },
+  { id: 'ecw5', text: 'WICKET at the DEATH! The game swings dramatically!', voice: 'main', emotion: 'dramatic', rate: 1.25, pitch: 1.15, delay: 500, minSituation: 'tense' },
+  { id: 'ecw6', text: 'OUT! Can the batting side recover from THIS?!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 500, minSituation: 'critical',
+    followUp: { id: 'ecw6f', text: 'The dressing room is nervous. Very nervous.', voice: 'color', emotion: 'dramatic', rate: 1.0, pitch: 1.0, delay: 0 }
+  },
+];
+
+export const EN_LAST_OVER: CommentaryLine[] = [
+  { id: 'elo1', text: 'LAST OVER! Six balls to decide the match!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.15, delay: 0, minSituation: 'tense',
+    followUp: { id: 'elo1f', text: 'Hearts are pounding. This is cricket at its finest.', voice: 'color', emotion: 'dramatic', rate: 1.0, pitch: 1.0, delay: 0 }
+  },
+  { id: 'elo2', text: 'The final over begins! Everything on the line!', voice: 'main', emotion: 'dramatic', rate: 1.15, pitch: 1.1, delay: 0, minSituation: 'tense' },
+  { id: 'elo3', text: 'We\'re down to the WIRE! Last over! Can they do it?!', voice: 'main', emotion: 'excited', rate: 1.25, pitch: 1.2, delay: 0, minSituation: 'critical' },
+];

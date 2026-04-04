@@ -200,3 +200,48 @@ export const HI_TOSS_RESULT: CommentaryLine[] = [
   { id: 'htr1', text: 'Toss hua! Dekhte hain kaun jeetega!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
   { id: 'htr2', text: 'Sikka hawa mein! Toss ka faisla ho gaya!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
 ];
+
+// ═══════════════════════════════════════════════════
+// CLUTCH / SITUATION-AWARE — Hindi
+// ═══════════════════════════════════════════════════
+
+export const HI_CLUTCH_RUNS: CommentaryLine[] = [
+  { id: 'hcr1', text: 'Har run sone jaisa hai ab! Ek run liya!', voice: 'main', emotion: 'excited', rate: 1.15, pitch: 1.1, delay: 100, minSituation: 'tense' },
+  { id: 'hcr2', text: 'Pressure mein run lena aasaan nahi! Par le liya!', voice: 'main', emotion: 'dramatic', rate: 1.1, pitch: 1.05, delay: 100, minSituation: 'tense' },
+  { id: 'hcr3', text: 'Match ka faisla in runs pe hoga! Important single!', voice: 'main', emotion: 'excited', rate: 1.15, pitch: 1.1, delay: 100, minSituation: 'critical' },
+  { id: 'hcr4', text: 'Equation tight hai! Har run matter karta hai!', voice: 'main', emotion: 'dramatic', rate: 1.1, pitch: 1.05, delay: 100, minSituation: 'tense' },
+];
+
+export const HI_CLUTCH_FOUR: CommentaryLine[] = [
+  { id: 'hcf1', text: 'CHAUKAA! Pressure mein! Kya himmat hai!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.2, delay: 800, minSituation: 'tense',
+    followUp: { id: 'hcf1f', text: 'Bade players bade moment mein khelke dikhate hain!', voice: 'color', emotion: 'excited', rate: 1.0, pitch: 1.1, delay: 0 }
+  },
+  { id: 'hcf2', text: 'FOUR! Jab zaroorat thi tab maara! Match badal sakta hai!', voice: 'main', emotion: 'excited', rate: 1.25, pitch: 1.15, delay: 800, minSituation: 'critical' },
+  { id: 'hcf3', text: 'Boundary! Equation badal raha hai! Kya shot tha!', voice: 'main', emotion: 'excited', rate: 1.25, pitch: 1.15, delay: 800, minSituation: 'tense' },
+  { id: 'hcf4', text: 'CHAUKAA! Pressure? Kaunsa pressure! Ice cold batsman!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.2, delay: 800, minSituation: 'critical' },
+];
+
+export const HI_CLUTCH_SIX: CommentaryLine[] = [
+  { id: 'hcs1', text: 'CHHAKKAA! Pressure mein! Kya player hai ye!', voice: 'main', emotion: 'excited', rate: 1.35, pitch: 1.25, delay: 1000, minSituation: 'critical',
+    followUp: { id: 'hcs1f', text: 'Himmat aur talent dono chahiye ye shot maarne ke liye!', voice: 'color', emotion: 'excited', rate: 1.0, pitch: 1.1, delay: 0 }
+  },
+  { id: 'hcs2', text: 'MAXIMUM! Jab matter karta hai tab! Stadium paagal!', voice: 'main', emotion: 'excited', rate: 1.35, pitch: 1.25, delay: 1000, minSituation: 'critical' },
+  { id: 'hcs3', text: 'SIX! Equation toot gaya! Kya maara hai pressure mein!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.2, delay: 1000, minSituation: 'tense' },
+  { id: 'hcs4', text: 'CHHAKKAA! Finisher ka kaam! Match jeetne wala shot!', voice: 'main', emotion: 'excited', rate: 1.35, pitch: 1.25, delay: 1000, minSituation: 'critical' },
+];
+
+export const HI_CLUTCH_WICKET: CommentaryLine[] = [
+  { id: 'hcw1', text: 'WICKET! Pressure mein! Sab badal gaya!', voice: 'main', emotion: 'dramatic', rate: 1.25, pitch: 1.15, delay: 500, minSituation: 'tense',
+    followUp: { id: 'hcw1f', text: 'Fielding side celebrations mein hai!', voice: 'color', emotion: 'excited', rate: 1.0, pitch: 1.1, delay: 0 }
+  },
+  { id: 'hcw2', text: 'OUT! Sahi waqt pe sahi wicket! Game changer!', voice: 'main', emotion: 'dramatic', rate: 1.25, pitch: 1.15, delay: 500, minSituation: 'critical' },
+  { id: 'hcw3', text: 'Bada wicket gira hai! Batting side mushkil mein!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 500, minSituation: 'critical' },
+  { id: 'hcw4', text: 'WICKET! Death overs mein! Game ka mood badal gaya!', voice: 'main', emotion: 'dramatic', rate: 1.25, pitch: 1.15, delay: 500, minSituation: 'tense' },
+];
+
+export const HI_LAST_OVER: CommentaryLine[] = [
+  { id: 'hlo1', text: 'Aakhri over! Chhe balls! Match ka faisla ab hoga!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.15, delay: 0, minSituation: 'tense',
+    followUp: { id: 'hlo1f', text: 'Dil tez dhadak raha hai. Ye hai asli cricket.', voice: 'color', emotion: 'dramatic', rate: 1.0, pitch: 1.0, delay: 0 }
+  },
+  { id: 'hlo2', text: 'Last over shuru! Sab kuch line pe hai! Kaun jeetega?!', voice: 'main', emotion: 'excited', rate: 1.25, pitch: 1.2, delay: 0, minSituation: 'critical' },
+];
