@@ -336,7 +336,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header with rank */}
-          <div className="p-4 border-b border-border/20">
+          <div className="p-4" style={{ borderBottom: "1px solid hsl(25 20% 18%)" }}>
             <div className="flex items-center gap-3">
               <PlayerAvatar avatarUrl={fp.avatar_url} avatarIndex={fp.avatar_index ?? 0} size="md" />
               <div className="flex-1 min-w-0">
