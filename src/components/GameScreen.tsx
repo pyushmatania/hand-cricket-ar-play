@@ -16,7 +16,6 @@ import { useHandDetection } from "@/hooks/useHandDetection";
 import { useMatchSaver } from "@/hooks/useMatchSaver";
 import { startAmbientStadium, stopAmbientStadium, setAmbientVolume } from "@/lib/ambientStadium";
 import { getInningsChangeCommentary } from "@/lib/commentary";
-import { getInningsChangeCommentary } from "@/lib/commentary";
 import { speakDuoCommentary, speakCommentary } from "@/lib/voiceCommentary";
 import { useSettings } from "@/contexts/SettingsContext";
 import { pickConfiguredMatchCommentators, getDuoCommentary, type Commentator, type CommentaryLine } from "@/lib/commentaryDuo";
