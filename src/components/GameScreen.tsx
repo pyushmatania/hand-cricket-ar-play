@@ -92,6 +92,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const prevPhaseRef = useRef(game.phase);
 
   // Engine lifecycle managed by useEngines() hook above
+  const [matchWeather] = useState(() => engines.weather.constructor.getRandomWeather?.('stadium') ?? 'clear' as const);
 
   // Ambient stadium music for AR mode — arena-specific
   useEffect(() => {
