@@ -93,7 +93,7 @@ export default function TeamLineupWalkout({
             name={playerName}
             emoji={resolvedPlayerEmoji}
             avatarUrl={playerAvatarUrl}
-            avatarGradient={`linear-gradient(135deg, ${preset.gradient.replace("from-[", "").replace("] to-[", ", ").replace("]", "")})`}
+            avatarPresetGradient={preset.gradient}
             frame={frameStyle}
             teamColor="hsl(217 91% 55%)"
           />
