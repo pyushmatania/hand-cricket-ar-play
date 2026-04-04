@@ -534,7 +534,6 @@ export default function TapPlayingUI({
             </p>
             <MatchEmotes disabled={effectiveCooldown} />
           </div>
-          </p>
           <div
             className="grid grid-cols-3 gap-3 px-4 py-3"
             style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.5), transparent)" }}
