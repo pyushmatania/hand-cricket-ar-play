@@ -161,60 +161,10 @@ export class CommentaryEngine {
 
   /**
    * Get commentary pool for event + perspective.
-   * Commentary CONTENT (500+ lines per language) will come from Doc 3.
-   * For now, uses built-in fallback lines.
+   * Uses full Doc 3 content pools (500+ lines across 3 languages).
    */
-  private getPool(eventType: EventType, perspective: string): CommentaryLine[] {
-    // Fallback commentary lines until Doc 3 content is loaded
-    const fallbacks: Record<string, CommentaryLine[]> = {
-      DOT_BALL: [
-        { id: 'dot1', text: 'Defended. Dot ball.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
-        { id: 'dot2', text: 'Good length, no run.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
-        { id: 'dot3', text: 'Beaten outside off. Good bowling.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
-      ],
-      RUNS_SCORED: [
-        { id: 'run1', text: 'Pushed into the gap, quick single.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
-        { id: 'run2', text: 'Nicely placed, they run two.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
-        { id: 'run3', text: 'Worked away, good running between the wickets.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
-      ],
-      BOUNDARY_FOUR: [
-        { id: 'four1', text: 'FOUR! Beautiful shot through the covers!', voice: 'main', emotion: 'excited', rate: 1.2, pitch: 1.1, delay: 0,
-          followUp: { id: 'four1f', text: "That's batting of the highest class.", voice: 'color', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 } },
-        { id: 'four2', text: 'FOUR! Driven to the boundary!', voice: 'main', emotion: 'excited', rate: 1.2, pitch: 1.1, delay: 0 },
-        { id: 'four3', text: 'FOUR! That raced away to the fence!', voice: 'main', emotion: 'excited', rate: 1.2, pitch: 1.1, delay: 0 },
-      ],
-      BOUNDARY_SIX: [
-        { id: 'six1', text: 'SIX! MAXIMUM! That has gone all the way!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.2, delay: 0,
-          followUp: { id: 'six1f', text: 'Absolutely monstrous! Into the stands!', voice: 'color', emotion: 'excited', rate: 1.0, pitch: 1.0, delay: 0 } },
-        { id: 'six2', text: "SIX! That's gone into orbit!", voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.2, delay: 0 },
-        { id: 'six3', text: 'SIX! What a hit! The crowd goes wild!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.2, delay: 0 },
-      ],
-      WICKET_BOWLED: [
-        { id: 'wb1', text: 'BOWLED! The stumps are shattered!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 0,
-          followUp: { id: 'wb1f', text: 'Clean bowled. Nothing the batsman could do.', voice: 'color', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 } },
-        { id: 'wb2', text: "OUT! Timber! That's cleaned him up!", voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 0 },
-      ],
-      WICKET_CAUGHT: [
-        { id: 'wc1', text: 'CAUGHT! What a grab!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 0 },
-        { id: 'wc2', text: "OUT! Caught in the deep! That's a big wicket!", voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 0 },
-      ],
-      WICKET_LBW: [
-        { id: 'wl1', text: 'LBW! The finger goes up! OUT!', voice: 'main', emotion: 'dramatic', rate: 1.1, pitch: 1.0, delay: 0 },
-        { id: 'wl2', text: 'Plumb in front! Given LBW!', voice: 'main', emotion: 'dramatic', rate: 1.1, pitch: 1.0, delay: 0 },
-      ],
-      MILESTONE_50: [
-        { id: 'm50', text: 'FIFTY! Well deserved half-century!', voice: 'main', emotion: 'excited', rate: 1.1, pitch: 1.1, delay: 0 },
-      ],
-      MILESTONE_100: [
-        { id: 'm100', text: 'CENTURY! What a magnificent innings!', voice: 'main', emotion: 'excited', rate: 1.3, pitch: 1.2, delay: 0 },
-      ],
-      OVER_END: [
-        { id: 'oe1', text: 'End of the over.', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
-        { id: 'oe2', text: "That's the end of the over. Time for a change.", voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
-      ],
-    };
-
-    return fallbacks[eventType] || [];
+  private getPool(eventType: EventType, _perspective: string): CommentaryLine[] {
+    return getCommentaryPool(eventType, this.language);
   }
 
   destroy(): void {
