@@ -505,7 +505,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     ? (cameraRef.current.videoRef.current.className || "").includes("scale-x-[-1]")
     : false;
 
-  const isPreGame = game.phase === "not_started" && !showPreMatch && !showEstablishingShot && gameCdVal === null;
+  const isPreGame = game.phase === "not_started" && !showPreMatch && !showWalkout && !showEstablishingShot && gameCdVal === null;
   const isInGame = game.phase !== "not_started" && game.phase !== "finished";
 
   return (
