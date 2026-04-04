@@ -625,9 +625,36 @@ export default function LeaderboardPage() {
           {/* TOURNAMENT LEADERBOARD */}
           {mainTab === "tourney" && (
             <motion.div key="tourney" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-3">
-              <div className="mb-3 flex items-center gap-2">
-                <div className="w-1 h-4 rounded-full" style={{ background: "hsl(43 90% 55%)" }} />
-                <span className="font-game-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">TOURNAMENT CHAMPIONS</span>
+              <div className="mb-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-1 h-4 rounded-full" style={{ background: "hsl(43 90% 55%)" }} />
+                  <span className="font-game-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">TOURNAMENT CHAMPIONS</span>
+                </div>
+                {(() => {
+                  const myEntry = tourneyLeaders.find(e => user && e.user_id === user.id);
+                  const myRankIdx = myEntry ? tourneyLeaders.indexOf(myEntry) : -1;
+                  if (!myEntry || myRankIdx < 0) return null;
+                  return (
+                    <ShareButton
+                      title="My Tournament Ranking 🏅"
+                      text={`#${myRankIdx + 1} on the Tournament Leaderboard with ${myEntry.tournament_wins} titles!`}
+                      variant="gold"
+                      size="sm"
+                      renderCard={() => (
+                        <TournamentShareCard
+                          playerName={myEntry.display_name}
+                          rank={myRankIdx + 1}
+                          totalPlayers={tourneyLeaders.length}
+                          tournamentWins={myEntry.tournament_wins}
+                          tournamentsPlayed={myEntry.tournaments_played}
+                          runnerUps={myEntry.runner_ups}
+                          winRate={myEntry.tournaments_played > 0 ? Math.round((myEntry.tournament_wins / myEntry.tournaments_played) * 100) : 0}
+                          bestFormat={myEntry.best_format}
+                        />
+                      )}
+                    />
+                  );
+                })()}
               </div>
               {tourneyLeaders.length === 0 ? (
                 <div className="rounded-2xl p-8 text-center" style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
