@@ -2214,6 +2214,19 @@ export default function MultiplayerScreen({ onHome }: Props) {
         </div>
       )}
 
+      {/* Doc 5 §4.2: Jumbotron Zoom Transition — plays before VS Intro */}
+      {showJumbotron && (
+        <JumbotronZoom
+          team1Name={myName}
+          team2Name={opponentName}
+          onComplete={() => {
+            setShowJumbotron(false);
+            setShowVSIntro(true);
+          }}
+          duration={2000}
+        />
+      )}
+
       {/* VS Intro Overlay */}
       {showVSIntro && (
         <VSIntroScreen
@@ -2229,6 +2242,21 @@ export default function MultiplayerScreen({ onHome }: Props) {
             } else if (currentGame) {
               setPhase(statusToPhase(currentGame.status));
             }
+          }}
+        />
+      )}
+
+      {/* Doc 5 §4.3: Post-Match Press Conference — plays before post-match stats */}
+      {showPressConference && currentGame && (
+        <PostMatchPressConference
+          result={currentGame.winner_id === user?.id ? "win" : currentGame.winner_id ? "loss" : "draw"}
+          playerName={myName}
+          opponentName={opponentName}
+          playerScore={isHost ? currentGame.host_score : currentGame.guest_score}
+          opponentScore={isHost ? currentGame.guest_score : currentGame.host_score}
+          onComplete={() => {
+            setShowPressConference(false);
+            setShowPvPPostMatch(true);
           }}
         />
       )}
