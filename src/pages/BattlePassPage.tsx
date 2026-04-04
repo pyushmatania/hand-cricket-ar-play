@@ -466,7 +466,7 @@ export default function BattlePassPage() {
           }}>
           <div className="flex justify-between items-center mb-1.5">
             <span className="font-game-display text-[9px] tracking-wider text-muted-foreground">
-              TIER {currentTier} → {currentTier + 1}
+              TIER {currentTier}/60 → {Math.min(currentTier + 1, 60)}
             </span>
             <span className="font-game-score text-sm font-black" style={{ color: "hsl(207 90% 55%)" }}>
               {currentXp} XP
