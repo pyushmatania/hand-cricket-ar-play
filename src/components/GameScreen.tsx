@@ -545,6 +545,15 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         />
       )}
 
+      {/* Team lineup walkout — plays between establishing shot and pre-match */}
+      {showWalkout && (
+        <TeamLineupWalkout
+          playerName={playerName}
+          opponentName={opponentName}
+          onComplete={handleWalkoutComplete}
+        />
+      )}
+
       {/* Pre-match ceremony */}
       {showPreMatch && tossInfo && (
         <EnhancedPreMatch
