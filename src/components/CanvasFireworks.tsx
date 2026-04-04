@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import confetti from "canvas-confetti";
+import { isLowEndDevice } from "@/lib/performanceUtils";
 
 const COLORS: Record<string, string[]> = {
   win: ["#FFD700", "#FF6B35", "#FF1493", "#00BFFF", "#7FFF00", "#FF4500", "#DA70D6"],
