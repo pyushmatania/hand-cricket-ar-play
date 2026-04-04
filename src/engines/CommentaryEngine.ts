@@ -170,6 +170,8 @@ export class CommentaryEngine {
   // ── Configuration ──
   setLanguage(lang: CommentaryLanguage): void { this.language = lang; }
   setTheme(theme: string): void { this.currentTheme = theme; }
+  setToneConfig(config: CommentaryToneConfig): void { this.toneConfig = config; }
+  getToneConfig(): CommentaryToneConfig { return this.toneConfig; }
   setMuted(muted: boolean): void {
     this.isMuted = muted;
     if (muted && typeof speechSynthesis !== 'undefined') {
