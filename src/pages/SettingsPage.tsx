@@ -77,7 +77,7 @@ function GameToggle({ enabled, onToggle, color = "green" }: { enabled: boolean; 
   );
 }
 
-/* ──── Section Header ──── */
+/* ──── Section Header — Stadium Concrete ──── */
 function SectionHeader({ icon, title, expanded, onToggle, accentColor }: {
   icon: string; title: string; expanded: boolean; onToggle: () => void; accentColor: string;
 }) {
@@ -85,11 +85,13 @@ function SectionHeader({ icon, title, expanded, onToggle, accentColor }: {
     <motion.button
       whileTap={{ scale: 0.98 }}
       onClick={onToggle}
-      className="w-full flex items-center gap-3 rounded-2xl p-3 border-b-[3px] transition-all"
+      className="w-full flex items-center gap-3 rounded-2xl p-3 border-b-[4px] transition-all"
       style={{
-        background: `linear-gradient(135deg, hsl(222 40% 14% / 0.95), hsl(222 40% 10% / 0.98))`,
-        borderColor: `${accentColor}33`,
-        boxShadow: `0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)`,
+        background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)",
+        borderColor: "hsl(25 25% 10%)",
+        border: `2px solid hsl(25 20% 22%)`,
+        borderBottom: `4px solid hsl(25 25% 10%)`,
+        boxShadow: `0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)`,
       }}
     >
       <div className="w-10 h-10 rounded-xl flex items-center justify-center border-b-2"
@@ -207,31 +209,42 @@ export default function SettingsPage() {
     },
   ];
 
+  const LEATHER_BG = "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)";
+  const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
+  const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
+
   const cardStyle = {
-    background: "linear-gradient(135deg, hsl(222 40% 13% / 0.9), hsl(222 40% 8% / 0.95))",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)",
+    background: CONCRETE_CARD,
+    border: "2px solid hsl(25 20% 22%)",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
   };
 
   return (
-    <div className="min-h-screen bg-game-dark relative overflow-hidden pb-24">
-      {/* Background effects */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 0%, hsl(222 40% 18%) 0%, hsl(222 40% 6%) 70%)" }} />
-      <div className="absolute inset-0 vignette pointer-events-none" />
+    <div className="min-h-screen relative overflow-hidden pb-24" style={{ background: LEATHER_BG }}>
+      {/* Leather grain overlay */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        style={{ backgroundImage: LEATHER_GRAIN, backgroundRepeat: "repeat" }} />
+      {/* Vignette */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }} />
 
       <TopStatusBar />
 
       <div className="relative z-10 max-w-lg mx-auto px-4 pt-4 space-y-4">
         {/* Title */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 mb-2">
-          <div className="w-12 h-12 rounded-2xl flex items-center justify-center border-b-[3px]" style={{
-            background: "linear-gradient(135deg, hsl(var(--game-gold) / 0.3), hsl(var(--game-gold) / 0.1))",
-            borderColor: "hsl(var(--game-gold) / 0.4)",
-          }}>
-            <span className="text-2xl">⚙️</span>
+          <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
+            style={{
+              background: "linear-gradient(180deg, hsl(43 80% 50%) 0%, hsl(35 60% 35%) 100%)",
+              border: "2px solid hsl(43 60% 55% / 0.5)",
+              borderBottom: "4px solid hsl(35 50% 25%)",
+              boxShadow: "0 4px 16px hsl(43 90% 50% / 0.3)",
+            }}>
+            ⚙️
           </div>
           <div>
-            <h1 className="font-game-display text-xl tracking-wider text-game-gold">SETTINGS</h1>
-            <p className="text-[10px] text-muted-foreground font-game-body tracking-wide">Customize your experience</p>
+            <h1 className="font-game-title text-lg text-foreground" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>Settings</h1>
+            <p className="text-[9px] text-muted-foreground font-game-display tracking-[0.2em]">CUSTOMIZE YOUR EXPERIENCE</p>
           </div>
         </motion.div>
 
@@ -576,20 +589,19 @@ export default function SettingsPage() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="rounded-2xl p-5 text-center border-b-[3px] mb-4"
+          className="rounded-2xl p-5 text-center mb-4"
           style={{
             ...cardStyle,
-            borderColor: "hsl(var(--game-gold) / 0.2)",
+            borderBottom: "5px solid hsl(25 25% 10%)",
           }}
         >
           <span className="text-3xl block mb-2">🏏</span>
-          <p className="font-game-display text-sm tracking-wider text-game-gold">HAND CRICKET AR</p>
+          <p className="font-game-title text-sm text-foreground" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>HAND CRICKET</p>
           <p className="text-[9px] text-muted-foreground/50 font-game-display mt-1 tracking-widest">v3.0 • PREMIUM EDITION</p>
-          <div className="flex items-center justify-center gap-3 mt-3">
-            <div className="w-10 h-[2px]" style={{ background: "linear-gradient(to right, transparent, hsl(var(--game-gold) / 0.3))" }} />
-            <span className="text-[7px] text-muted-foreground/40 font-game-display tracking-[0.3em]">POWERED BY AI</span>
-            <div className="w-10 h-[2px]" style={{ background: "linear-gradient(to left, transparent, hsl(var(--game-gold) / 0.3))" }} />
-          </div>
+          {/* Chalk divider */}
+          <div className="h-px my-3 mx-8 opacity-20"
+            style={{ background: "repeating-linear-gradient(90deg, hsl(45 30% 80%) 0px, hsl(45 30% 80%) 8px, transparent 8px, transparent 14px)" }} />
+          <span className="text-[7px] text-muted-foreground/40 font-game-display tracking-[0.3em]">POWERED BY AI</span>
         </motion.div>
       </div>
 
