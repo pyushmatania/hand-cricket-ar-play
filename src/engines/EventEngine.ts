@@ -108,6 +108,9 @@ export class EventEngine {
 
     if (this.currentEvent.blocking && this.currentEvent.duration > 0) {
       await this.sleep(this.currentEvent.duration);
+      // Doc 5 §1.3: Breathing pause (300ms) between blocking events
+      // prevents rapid-fire stacking of results
+      await this.sleep(300);
     }
 
     this.onEventProcessed?.(this.currentEvent);

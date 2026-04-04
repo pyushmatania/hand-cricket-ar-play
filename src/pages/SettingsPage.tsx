@@ -127,6 +127,7 @@ export default function SettingsPage() {
   const [expandedGroup, setExpandedGroup] = useState<string | null>("AUDIO & SOUND");
   const [previewingVoice, setPreviewingVoice] = useState<string | null>(null);
   const [selectedButtonStyle, setSelectedButtonStyle] = useState<string>("classic");
+  const [versionTaps, setVersionTaps] = useState(0);
 
   // Load current button style
   useEffect(() => {
@@ -597,7 +598,13 @@ export default function SettingsPage() {
         >
           <span className="text-3xl block mb-2">🏏</span>
           <p className="font-game-title text-sm text-foreground" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>HAND CRICKET</p>
-          <p className="text-[9px] text-muted-foreground/50 font-game-display mt-1 tracking-widest">v3.0 • PREMIUM EDITION</p>
+          <p className="text-[9px] text-muted-foreground/50 font-game-display mt-1 tracking-widest cursor-pointer select-none"
+            onClick={() => {
+              const next = versionTaps + 1;
+              setVersionTaps(next);
+              if (next >= 5) { setVersionTaps(0); navigate("/hidden-features"); }
+            }}
+          >v3.0 • PREMIUM EDITION{versionTaps > 0 && versionTaps < 5 ? ` (${5 - versionTaps} more)` : ""}</p>
           {/* Chalk divider */}
           <div className="h-px my-3 mx-8 opacity-20"
             style={{ background: "repeating-linear-gradient(90deg, hsl(45 30% 80%) 0px, hsl(45 30% 80%) 8px, transparent 8px, transparent 14px)" }} />
