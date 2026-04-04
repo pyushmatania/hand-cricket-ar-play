@@ -118,6 +118,17 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     return pool[Math.floor(Math.random() * pool.length)];
   });
 
+  // Apply theme's commentary tone config
+  useEffect(() => {
+    engines.commentary.setToneConfig({
+      tone: matchTheme.commentary.tone,
+      speechRate: matchTheme.commentary.speechRate,
+      frequency: matchTheme.commentary.frequency,
+      preferredLanguage: matchTheme.commentary.preferredLanguage,
+    });
+    engines.commentary.setTheme(matchTheme.id);
+  }, [matchTheme]);
+
   // Apply weather modifiers to gameplay engine
   useEffect(() => {
     engines.weather.setWeather(matchWeather, {
