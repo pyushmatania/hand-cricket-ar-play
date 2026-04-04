@@ -129,6 +129,18 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     engines.commentary.setTheme(matchTheme.id);
   }, [matchTheme]);
 
+  // Apply theme's crowd config
+  useEffect(() => {
+    engines.crowd.setThemeConfig({
+      type: matchTheme.crowd.type,
+      count: matchTheme.crowd.count,
+      baseNoise: matchTheme.crowd.noise,
+      chantStyle: matchTheme.crowd.chantStyle,
+      reactionSpeed: matchTheme.crowd.reactionSpeed,
+      peakEvents: matchTheme.crowd.peakEvents,
+    });
+  }, [matchTheme]);
+
   // Apply weather modifiers to gameplay engine
   useEffect(() => {
     engines.weather.setWeather(matchWeather, {
