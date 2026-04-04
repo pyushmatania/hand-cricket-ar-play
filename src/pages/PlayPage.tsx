@@ -93,11 +93,20 @@ export default function PlayPage() {
         </motion.div>
 
         {/* Arena selector */}
-        <div className="mb-5">
+        <div className="mb-4">
           <ArenaSelector
             currentTierIndex={tierIndex}
             selectedArenaId={selectedArena.id}
             onSelect={handleArenaSelect}
+          />
+        </div>
+
+        {/* Theme selector */}
+        <div className="mb-5">
+          <ThemeSelector
+            currentTierIndex={tierIndex}
+            selectedThemeId={selectedTheme.id}
+            onSelect={handleThemeSelect}
           />
         </div>
 
