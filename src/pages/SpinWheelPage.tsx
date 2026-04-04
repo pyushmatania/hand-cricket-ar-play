@@ -95,6 +95,7 @@ export default function SpinWheelPage() {
     spinRef.current = true;
     setSpinning(true);
     setShowResult(false);
+    engines.sound.playEffect('coin_flip');
 
     let newCoins = coins ?? 0;
     if (isFree) {
