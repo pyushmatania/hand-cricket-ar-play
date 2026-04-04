@@ -413,32 +413,37 @@ export default function TapPlayingUI({
         />
       )}
 
+      {/* ── Commentary Strip — Doc 1 §3.6: 44px, team-colored left border ── */}
       <AnimatePresence>
         {commentary && commentary.length > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: -5 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -5 }}
-            className="rounded-xl px-3 py-2 space-y-1 backdrop-blur-md"
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
+            className="rounded-lg overflow-hidden"
             style={{
-              background: "linear-gradient(135deg, hsl(var(--scoreboard-dark) / 0.95), hsl(var(--scoreboard-mid) / 0.9))",
-              border: "1px solid hsl(var(--chrome-dark) / 0.3)",
+              height: 44,
+              background: "rgba(0,0,0,0.3)",
+              borderLeft: "3px solid hsl(var(--team-primary))",
+              padding: "8px 12px",
             }}
           >
-            {commentary.map((line, i) => {
+            {commentary.slice(0, 1).map((line, i) => {
               const comm = matchCommentators.find(c => c.name === line.commentatorId || c.id === line.commentatorId) || matchCommentators[0];
               return (
-                <div key={i} className="flex items-start gap-1.5">
+                <div key={i} className="flex items-center gap-2 h-full">
                   <span className="text-[9px] flex-shrink-0">{comm.avatar}</span>
-                  <div>
-                    <span className="text-[6px] font-display font-bold tracking-wider"
-                      style={{ color: comm.id === matchCommentators[0].id ? "hsl(var(--grass-light))" : "hsl(var(--secondary))" }}
-                    >{comm.name}</span>
-                    <p className="font-body text-[9px] font-bold tracking-wide line-clamp-2"
-                      style={{ color: "hsl(var(--chalk-white) / 0.9)" }}>
-                      {line.text}
-                    </p>
-                  </div>
+                  <p className="font-body text-[13px] italic text-white/85 line-clamp-1 flex-1">
+                    {line.text}
+                  </p>
+                  <motion.div
+                    animate={{ opacity: [0.3, 1, 0.3] }}
+                    transition={{ duration: 1.5, repeat: Infinity }}
+                    className="w-3 h-3 flex-shrink-0"
+                  >
+                    🔊
+                  </motion.div>
                 </div>
               );
             })}
