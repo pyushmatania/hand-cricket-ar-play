@@ -372,7 +372,6 @@ export default function HomePage() {
 
         {/* ═══ F) CHEST SLOT ROW ═══ */}
         <ChestSlotsWidget />
-      </div>
 
         {/* ═══ G) DAILY QUESTS ═══ */}
         <DailyQuestsWidget />
