@@ -413,6 +413,54 @@ export default function LeaderboardPage() {
     }
   };
 
+  const loadTourneyLeaderboard = async () => {
+    try {
+      const { data: participants } = await supabase
+        .from("tournament_participants")
+        .select("user_id, placement, tournament_id, tournaments(format)")
+        .not("placement", "is", null);
+      if (!participants || !participants.length) { setTourneyLeaders([]); return; }
+
+      const statsMap: Record<string, { wins: number; played: number; runnerUps: number; formats: Record<string, number> }> = {};
+      for (const p of participants) {
+        const uid = p.user_id;
+        if (!statsMap[uid]) statsMap[uid] = { wins: 0, played: 0, runnerUps: 0, formats: {} };
+        statsMap[uid].played++;
+        const pl = (p.placement || "").toLowerCase();
+        const fmt = (p.tournaments as any)?.format || "knockout";
+        if (pl.includes("champion") || pl.includes("won")) {
+          statsMap[uid].wins++;
+          statsMap[uid].formats[fmt] = (statsMap[uid].formats[fmt] || 0) + 1;
+        }
+        if (pl.includes("runner")) statsMap[uid].runnerUps++;
+      }
+
+      const userIds = Object.keys(statsMap);
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("user_id, display_name, avatar_index, avatar_url")
+        .in("user_id", userIds);
+
+      const entries: TourneyLeaderEntry[] = userIds.map(uid => {
+        const s = statsMap[uid];
+        const profile = profiles?.find((pr: any) => pr.user_id === uid);
+        const bestFormat = Object.entries(s.formats).sort((a, b) => b[1] - a[1])[0]?.[0] || "-";
+        return {
+          user_id: uid,
+          display_name: (profile as any)?.display_name || "Player",
+          avatar_index: (profile as any)?.avatar_index ?? 0,
+          avatar_url: (profile as any)?.avatar_url ?? null,
+          tournament_wins: s.wins,
+          tournaments_played: s.played,
+          runner_ups: s.runnerUps,
+          best_format: bestFormat,
+        };
+      }).sort((a, b) => b.tournament_wins - a.tournament_wins || b.tournaments_played - a.tournaments_played);
+
+      setTourneyLeaders(entries);
+    } catch (e) { console.error("loadTourneyLeaderboard:", e); setTourneyLeaders([]); }
+  };
+
   const loadArchive = async (seasonLabel: string) => {
     setViewingArchive(seasonLabel);
     const { data } = await supabase.from("season_snapshots").select("*").eq("season_label", seasonLabel).order("rank", { ascending: true });
