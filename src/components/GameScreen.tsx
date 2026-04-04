@@ -364,10 +364,19 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       }
     }
 
-    // ── Visual effects (screen shake + fireworks — not sound) ──
+    // ── Visual effects (screen shake + fireworks + DRS) ──
     if (r.runs === "OUT") {
       shake("heavy");
       setFireworkType("wicket");
+
+      // 25% chance to trigger DRS review on LBW/caught dismissals for dramatic effect
+      if (Math.random() < 0.25) {
+        const dismissalTypes: Array<'lbw' | 'caught_behind' | 'caught'> = ['lbw', 'caught_behind', 'caught'];
+        const randomDismissal = dismissalTypes[Math.floor(Math.random() * dismissalTypes.length)];
+        setDrsDismissal(randomDismissal);
+        setDrsOutcome('out'); // Always confirms out (it's dramatic effect)
+        setDrsActive(true);
+      }
     } else if (typeof r.runs === "number") {
       if (r.runs === 6) {
         shake("medium");
