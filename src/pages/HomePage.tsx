@@ -399,7 +399,28 @@ export default function HomePage() {
           <span className="font-game-display text-[10px] text-game-gold">50 🪙</span>
         </motion.button>
 
-        {/* ═══ H) DAILY QUESTS ═══ */}
+        {/* ═══ TEAM BUILDER BANNER ═══ */}
+        <motion.button
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45 }}
+          whileTap={{ scale: 0.96 }}
+          onClick={() => navigate("/team-builder")}
+          className="mx-4 mb-3 flex items-center gap-3 rounded-xl px-4 py-3"
+          style={{
+            background: "linear-gradient(135deg, hsl(142 30% 14%), hsl(142 25% 8%))",
+            border: "2px solid hsl(142 35% 25%)",
+            boxShadow: "0 0 16px hsl(142 50% 30% / 0.15)",
+          }}
+        >
+          <span className="text-2xl">⚔️</span>
+          <div className="flex-1 text-left">
+            <span className="font-game-display text-xs text-foreground tracking-wider block">TEAM BUILDER</span>
+            <span className="text-[9px] font-game-body text-muted-foreground">Build your dream XI squad</span>
+          </div>
+          <span className="font-game-display text-[10px] text-green-400">→</span>
+        </motion.button>
+
         <DailyQuestsWidget />
       </div>
 
