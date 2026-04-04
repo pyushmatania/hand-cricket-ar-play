@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import ScrollHint from "@/components/shared/ScrollHint";
 import { motion, AnimatePresence } from "framer-motion";
 import ShareButton from "@/components/share/ShareButton";
+import TournamentShareCard from "@/components/share/TournamentShareCard";
 import LeaderboardShareCard from "@/components/share/LeaderboardShareCard";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
