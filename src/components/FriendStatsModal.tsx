@@ -340,7 +340,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
             <div className="flex items-center gap-3">
               <PlayerAvatar avatarUrl={fp.avatar_url} avatarIndex={fp.avatar_index ?? 0} size="md" />
               <div className="flex-1 min-w-0">
-                <h2 className="font-display text-lg font-black text-foreground tracking-wider truncate">{fp.display_name}</h2>
+                <h2 className="font-game-title text-lg text-foreground tracking-wider truncate" style={{ textShadow: "0 2px 0 hsl(25 30% 8%)" }}>{fp.display_name}</h2>
                 <div className="flex items-center gap-2 mt-0.5">
                   <span className={`text-[8px] font-display font-bold ${friendTier.color}`}>{friendTier.emoji} {friendTier.name}</span>
                   <span className="text-[7px] text-muted-foreground font-display">• {friendRP} RP</span>
