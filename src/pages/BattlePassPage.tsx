@@ -544,15 +544,28 @@ export default function BattlePassPage() {
 
         {/* ═══ Reward Tiers — Stadium Concrete Cards ═══ */}
         <div className="space-y-2 pb-4">
-          {REWARDS.map((r) => (
-            <TierCard
-              key={r.tier}
-              reward={r}
-              currentXp={currentXp}
-              isPremium={isPremium}
-              claimed={claimed}
-              onClaim={handleClaim}
-            />
+          {REWARDS.map((r, i) => (
+            <div key={r.tier}>
+              {/* Section header every 10 tiers */}
+              {r.tier % 10 === 1 && (
+                <div className="flex items-center gap-2 py-2 mb-1">
+                  <div className="flex-1 h-px opacity-20" style={{ background: CHALK_DIVIDER }} />
+                  <span className="font-game-display text-[8px] tracking-[0.3em] px-2" style={{
+                    color: r.tier <= currentTier + 1 ? "hsl(43 90% 55%)" : "hsl(25 15% 40%)",
+                  }}>
+                    {r.tier === 1 ? "TIER 1–10" : r.tier === 11 ? "TIER 11–20" : r.tier === 21 ? "TIER 21–30" : r.tier === 31 ? "TIER 31–40" : r.tier === 41 ? "TIER 41–50" : "TIER 51–60"}
+                  </span>
+                  <div className="flex-1 h-px opacity-20" style={{ background: CHALK_DIVIDER }} />
+                </div>
+              )}
+              <TierCard
+                reward={r}
+                currentXp={currentXp}
+                isPremium={isPremium}
+                claimed={claimed}
+                onClaim={handleClaim}
+              />
+            </div>
           ))}
         </div>
       </div>
