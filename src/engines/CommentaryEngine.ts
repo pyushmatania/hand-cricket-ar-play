@@ -191,6 +191,10 @@ export class CommentaryEngine {
     return getCommentaryPool(eventType, this.language);
   }
 
+  private getPoolWithLang(eventType: EventType, _perspective: string, lang: CommentaryLanguage): CommentaryLine[] {
+    return getCommentaryPool(eventType, lang);
+  }
+
   destroy(): void {
     if (typeof speechSynthesis !== 'undefined') {
       speechSynthesis.cancel();
