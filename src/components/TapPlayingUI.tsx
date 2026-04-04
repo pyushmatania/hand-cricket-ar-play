@@ -385,13 +385,16 @@ export default function TapPlayingUI({
         )}
       </AnimatePresence>
 
-      {/* Commentator badges */}
+      {/* Commentator badges — chrome framed */}
       {phase !== "not_started" && phase !== "finished" && (
         <div className="flex items-center justify-center gap-2 mb-1">
           {matchCommentators.map((c, i) => (
-            <div key={c.id} className={`flex items-center gap-1 px-2 py-0.5 rounded-full text-[7px] font-game-display font-bold tracking-wider ${
-              i === 0 ? "bg-game-green/10 text-game-green border border-game-green/15" : "bg-game-gold/10 text-game-gold border border-game-gold/15"
-            }`}>
+            <div key={c.id} className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[7px] font-display font-bold tracking-wider"
+              style={{
+                background: i === 0 ? "hsl(var(--grass-dark) / 0.3)" : "hsl(var(--secondary) / 0.12)",
+                border: `1px solid ${i === 0 ? "hsl(var(--grass-mid) / 0.25)" : "hsl(var(--secondary) / 0.2)"}`,
+                color: i === 0 ? "hsl(var(--grass-light))" : "hsl(var(--secondary))",
+              }}>
               <span className="text-[9px]">{c.avatar}</span>
               {c.name}
             </div>
