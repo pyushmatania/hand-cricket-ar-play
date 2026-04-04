@@ -27,6 +27,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { BallResult, Move } from "@/hooks/useHandCricket";
 import { useEngines } from "@/hooks/useEngines";
 import { WeatherParticles } from "./WeatherParticles";
+import BallPitchAnimation from "./BallPitchAnimation";
 
 const MOVE_EMOJI: Record<string, string> = {
   DEF: "✊", "1": "☝️", "2": "✌️", "3": "🤟", "4": "🖖", "6": "👍",
@@ -496,6 +497,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       <CelebrationEffects lastResult={game.lastResult} gameResult={game.result} phase={game.phase} />
       <CanvasFireworks type={fireworkType} duration={fireworkType === "win" ? 5000 : 3000} />
       <WeatherParticles weather={matchWeather} />
+      <BallPitchAnimation lastResult={game.lastResult} triggerKey={game.innings1Balls + game.innings2Balls} />
       <CrowdWave active={crowdWaveActive} intensity={crowdWaveIntensity} />
       <DRSReview
         active={drsActive}
