@@ -44,13 +44,16 @@ class EngineManager {
     this.crowd = new CrowdEngine();
   }
 
+  /** Set which side the player is on — affects audio perspective */
+  setPerspective(p: Perspective): void { this._perspective = p; }
+  getPerspective(): Perspective { return this._perspective; }
+
   initialize(): void {
     if (this._initialized) return;
     this._initialized = true;
     this.wireEngines();
     this.crowd.start();
 
-    // Debug logging in development
     if (import.meta.env.DEV) {
       this.event.onAny((payload, event) => {
         console.debug(`[Engine] ${event.type}`, payload);
