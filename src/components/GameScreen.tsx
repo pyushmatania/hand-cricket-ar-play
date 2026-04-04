@@ -11,6 +11,8 @@ import CelebrationEffects from "./CelebrationEffects";
 import CanvasFireworks, { type FireworkType } from "./CanvasFireworks";
 import EnhancedPreMatch from "./EnhancedPreMatch";
 import EnhancedPostMatch from "./EnhancedPostMatch";
+import CrowdWave from "./CrowdWave";
+import DRSReview from "./DRSReview";
 import { useHandCricket } from "@/hooks/useHandCricket";
 import { useHandDetection } from "@/hooks/useHandDetection";
 import { useMatchSaver } from "@/hooks/useMatchSaver";
