@@ -309,20 +309,30 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
   const formatDate = (d: string) => new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   const formatTime = (d: string) => new Date(d).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 
+  const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
+  const CHROME_BORDER = "2px solid hsl(25 20% 22%)";
+  const CARD_SHADOW = "0 4px 0 hsl(25 20% 6%), 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)";
+
   return (
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 bg-black/80 backdrop-blur-xl flex items-center justify-center p-4"
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+        style={{ background: "hsl(25 30% 4% / 0.88)", backdropFilter: "blur(12px)" }}
         onClick={onClose}
       >
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 30 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 30 }}
-          className="w-full max-w-md max-h-[85vh] overflow-y-auto glass-premium rounded-3xl border border-primary/20 shadow-[0_0_60px_hsl(217_91%_60%/0.15)]"
+          className="w-full max-w-md max-h-[85vh] overflow-y-auto rounded-3xl"
+          style={{
+            background: "linear-gradient(180deg, hsl(28 30% 16%) 0%, hsl(25 25% 10%) 100%)",
+            border: CHROME_BORDER,
+            boxShadow: "0 8px 0 hsl(25 20% 6%), 0 12px 40px rgba(0,0,0,0.6), inset 0 1px 0 hsl(35 40% 40% / 0.1)",
+          }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header with rank */}
