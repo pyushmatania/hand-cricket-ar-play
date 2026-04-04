@@ -158,4 +158,35 @@ export const HL_MATCH_WIN: CommentaryLine[] = [
 export const HL_MATCH_LOSS: CommentaryLine[] = [
   { id: 'xml1', text: 'Haar gaye yaar. Better luck next time.', voice: 'main', emotion: 'disappointed', rate: 0.95, pitch: 0.95, delay: 0 },
   { id: 'xml2', text: "Wasn't meant to be today. Agle baar pakka.", voice: 'main', emotion: 'disappointed', rate: 0.95, pitch: 0.95, delay: 0 },
+  { id: 'xml3', text: 'Tough loss bro. But we go again next match!', voice: 'main', emotion: 'disappointed', rate: 0.95, pitch: 0.95, delay: 0 },
+];
+
+// ── RUN OUT ──
+export const HL_WICKET_RUN_OUT: CommentaryLine[] = [
+  { id: 'xwr1', text: 'RUN OUT! Direct hit bhai! What fielding!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 800 },
+  { id: 'xwr2', text: 'Mix-up yaar! RUN OUT! Communication fail!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 800 },
+  { id: 'xwr3', text: 'Diving throw! Stumps pe! RUN OUT! Incredible!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 800 },
+  { id: 'xwr4', text: 'Short of crease bro! RUN OUT! That hurts!', voice: 'main', emotion: 'dramatic', rate: 1.15, pitch: 1.05, delay: 800 },
+  { id: 'xwr5', text: 'Criminal running! RUN OUT! Batsman sacrificed!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 800 },
+];
+
+// ── STUMPED ──
+export const HL_WICKET_STUMPED: CommentaryLine[] = [
+  { id: 'xws1', text: 'STUMPED! Keeper ne bails uda diye! Lightning fast bro!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 800 },
+  { id: 'xws2', text: 'Aage aaya and missed! STUMPED yaar! Gone!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 800 },
+  { id: 'xws3', text: 'STUMPED! Crease chhoda and paid the price! Out!', voice: 'main', emotion: 'dramatic', rate: 1.15, pitch: 1.05, delay: 800 },
+  { id: 'xws4', text: 'Quick hands from the keeper! STUMPED! Superb glovework!', voice: 'main', emotion: 'dramatic', rate: 1.2, pitch: 1.1, delay: 800 },
+];
+
+// ── INNINGS START ──
+export const HL_INNINGS_START: CommentaryLine[] = [
+  { id: 'xis1', text: 'Innings start ho raha hai! Let\'s go bhai!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
+  { id: 'xis2', text: 'New innings! Fresh start yaar! Here we go!', voice: 'main', emotion: 'neutral', rate: 1.05, pitch: 1.0, delay: 0 },
+  { id: 'xis3', text: 'Game on! Innings shuru! Batsman ready hai!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
+];
+
+// ── TOSS ──
+export const HL_TOSS_RESULT: CommentaryLine[] = [
+  { id: 'xtr1', text: 'Toss done bhai! Coin flip ho gaya! Decision time!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
+  { id: 'xtr2', text: 'Coin toss complete! Ab dekhte hain kya choose karte hain!', voice: 'main', emotion: 'neutral', rate: 1.0, pitch: 1.0, delay: 0 },
 ];
