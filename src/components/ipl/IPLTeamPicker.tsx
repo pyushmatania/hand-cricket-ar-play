@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { IPL_TEAMS } from "./IPLData";
-import { TEAM_STAR_ART } from "@/assets/players";
+import { TEAM_STAR_ART, TEAM_BOWLER_ART } from "@/assets/players";
 
 interface Props { onPick: (teamId: string) => void; }
 
