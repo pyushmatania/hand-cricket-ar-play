@@ -1,10 +1,13 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePlayers, IPL_TEAMS, DBPlayer, overallRating, statToDiamonds, roleLabel } from "@/hooks/usePlayers";
+import { useUserCards, UPGRADE_COSTS, useUpgradeCard } from "@/hooks/useUserCards";
 import CollectionPlayerCard from "@/components/CollectionPlayerCard";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { ChevronLeft, Search, X, Zap, Filter } from "lucide-react";
+import { ChevronLeft, Search, X, Zap, Filter, ArrowUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const RARITY_FILTERS = ["all", "mythic", "legendary", "epic", "rare", "common"] as const;
 const ROLE_FILTERS = ["all", "batsman", "bowler", "all_rounder", "wk_batsman"] as const;
