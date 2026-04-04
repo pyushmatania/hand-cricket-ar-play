@@ -477,6 +477,13 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       <CelebrationEffects lastResult={game.lastResult} gameResult={game.result} phase={game.phase} />
       <CanvasFireworks type={fireworkType} duration={fireworkType === "win" ? 5000 : 3000} />
       <WeatherParticles weather={matchWeather} />
+      <CrowdWave active={crowdWaveActive} intensity={crowdWaveIntensity} />
+      <DRSReview
+        active={drsActive}
+        dismissalType={drsDismissal}
+        outcome={drsOutcome}
+        onComplete={() => setDrsActive(false)}
+      />
 
       {/* Camera fills the full screen */}
       <div className="absolute inset-0">
