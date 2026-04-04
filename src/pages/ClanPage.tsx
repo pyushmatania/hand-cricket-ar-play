@@ -13,7 +13,7 @@ const ROLE_COLORS: Record<string, string> = { leader: "text-secondary", co_leade
 const CLAN_EMOJIS = ["🏏", "⚡", "🔥", "💎", "🦁", "🐯", "🦅", "🐉", "⭐", "🌟", "👑", "🛡️"];
 const LEVEL_XP = [0, 100, 300, 600, 1000, 1500, 2200, 3000, 4000, 5500];
 
-type Tab = "info" | "chat" | "browse";
+type Tab = "info" | "chat" | "donate" | "browse";
 
 export default function ClanPage() {
   const navigate = useNavigate();
