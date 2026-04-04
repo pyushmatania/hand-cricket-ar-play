@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useClan, type Clan } from "@/hooks/useClan";
 import { supabase } from "@/integrations/supabase/client";
 import TopBar from "@/components/layout/TopBar";
+import ClanDonations from "@/components/clan/ClanDonations";
 
 const ROLE_ORDER = { leader: 0, co_leader: 1, elder: 2, member: 3 };
 const ROLE_LABELS: Record<string, string> = { leader: "👑 Leader", co_leader: "⚔️ Co-Leader", elder: "🛡️ Elder", member: "🏏 Member" };
