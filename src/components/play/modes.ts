@@ -72,6 +72,18 @@ export const MODES = [
     gradientTo: "hsl(45 100% 50%)",
   },
   {
+    id: "royale",
+    icon: "💀",
+    title: "CRICKET ROYALE",
+    subtitle: "Battle Royale",
+    description: "Survive 5 rounds of shrinking overs. Beat the target or get eliminated!",
+    borderHue: 280,
+    accentHsl: "hsl(280 70% 55%)",
+    glowHsl: "hsl(280 70% 55% / 0.25)",
+    gradientFrom: "hsl(280 70% 50%)",
+    gradientTo: "hsl(340 80% 50%)",
+  },
+  {
     id: "practice",
     icon: "🎯",
     title: "PRACTICE",
