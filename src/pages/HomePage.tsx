@@ -11,9 +11,24 @@ import ChestReveal from "@/components/shop/ChestReveal";
 import StumpHitAnimation from "@/components/StumpHitAnimation";
 import { toast } from "sonner";
 import gullyIsland from "@/assets/islands/gully-grounds.png";
+import schoolIsland from "@/assets/islands/school-ground.png";
+import districtIsland from "@/assets/islands/district-stadium.png";
+import ranjiIsland from "@/assets/islands/ranji-trophy.png";
+import iplIsland from "@/assets/islands/ipl-stadium.png";
+import internationalIsland from "@/assets/islands/international.png";
+import worldCupIsland from "@/assets/islands/world-cup.png";
 
 const ISLAND_IMAGES: Record<string, string> = {
   "Gully Grounds": gullyIsland,
+  "School Ground": schoolIsland,
+  "Rooftop": schoolIsland,
+  "Beach Cricket": gullyIsland,
+  "Village Maidan": districtIsland,
+  "District Stadium": districtIsland,
+  "Ranji Trophy": ranjiIsland,
+  "IPL Stadium": iplIsland,
+  "International": internationalIsland,
+  "World Cup": worldCupIsland,
 };
 const getIslandImage = (name: string) => ISLAND_IMAGES[name] || gullyIsland;
 
