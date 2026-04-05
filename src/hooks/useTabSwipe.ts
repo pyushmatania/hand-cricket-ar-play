@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const TAB_ORDER = ["/shop", "/friends", "/play", "/leaderboard", "/profile"];
+const TAB_ORDER = ["/shop", "/collection", "/", "/clan", "/leaderboard"];
 
 const SWIPE_THRESHOLD = 60;
 const SWIPE_MAX_Y = 80;
@@ -11,7 +11,7 @@ export function useTabSwipe() {
   const navigate = useNavigate();
   const touchStart = useRef<{ x: number; y: number; t: number } | null>(null);
 
-  const currentPath = location.pathname === "/" ? "/play" : location.pathname;
+  const currentPath = location.pathname;
   const currentIndex = TAB_ORDER.indexOf(currentPath);
   const isTabPage = currentIndex !== -1;
 
