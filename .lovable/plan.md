@@ -14,7 +14,7 @@ When the player taps the Quick Match icon, a dramatic shatter animation plays be
 6. **Navigate** — after 700ms total, the Quick Match game mode loads
 
 ### Technical details
-- Create a `QuickMatchIcon` sub-component inside `ModeIconGrid.tsx` with local `shattered` state that resets after each animation
+- Create a `QuickMatchIcon` sub-component inside `ModeIconGrid.tsx` with local `shattered` state that resets after animation completes
 - Use framer-motion `animate` props driven by the `shattered` boolean for each stump, bail, and spark element
 - The parent grid intercepts the Quick Match button's `onClick` to trigger shatter first, then calls `onSelect("quick")` after a 700ms timeout
 - All other 13 mode icons remain completely unchanged
