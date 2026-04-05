@@ -772,6 +772,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
         }).eq("id", currentGame.id).eq("phase", "action_window");
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentGame?.id, currentGame?.phase, currentGame?.phase_started_at, currentGame?.turn_deadline_at, currentGame?.host_move, currentGame?.guest_move, user?.id]);
 
   const stopTimer = () => {
@@ -1216,6 +1217,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
       });
     }, 1000);
     return () => { if (inningsBreakTimerRef.current) { clearInterval(inningsBreakTimerRef.current); inningsBreakTimerRef.current = null; } };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showInningsBreak, inningsBreakReady]);
 
   // Warning sound + haptic at 5s and below
