@@ -192,8 +192,9 @@ export default function HomePage() {
   return (
     <div
       style={{
-        position: "absolute",
-        inset: 0,
+        position: "relative",
+        width: "100%",
+        height: "100dvh",
         overflow: "hidden",
         background: "#080818",
       }}
