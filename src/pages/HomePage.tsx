@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,12 +10,12 @@ import { useUserChests, useStartUnlock, useCollectChest, chestTimeRemaining, typ
 import { getChestTier } from "@/lib/chests";
 import ChestReveal from "@/components/shop/ChestReveal";
 import StumpHitAnimation from "@/components/StumpHitAnimation";
-import { Settings, Bell, Trophy, Target, MessageCircle, Mail, Backpack, Lock } from "lucide-react";
+import { Settings, Bell } from "lucide-react";
 import { toast } from "sonner";
 
-/* ══════════════════════════════════════════════
+/* ═══════════════════════════════════════
    TYPES & CONSTANTS
-   ══════════════════════════════════════════════ */
+   ═══════════════════════════════════════ */
 
 interface ProfileData {
   total_matches: number;
@@ -49,21 +49,25 @@ function formatTime(seconds: number): string {
   return `${s}s`;
 }
 
-const CRICKET_CHEST: Record<string, { icon: string; label: string; color: string; glow: string; border: string }> = {
-  bronze:  { icon: "🎾", label: "Tennis Ball", color: "hsl(35 80% 55%)",  glow: "hsl(35 80% 55% / 0.4)",  border: "hsl(35 50% 30%)" },
-  silver:  { icon: "🏏", label: "Red Ball",    color: "hsl(0 65% 50%)",   glow: "hsl(0 65% 50% / 0.4)",   border: "hsl(0 40% 30%)" },
-  gold:    { icon: "🏆", label: "Trophy",      color: "hsl(43 100% 55%)", glow: "hsl(43 100% 55% / 0.5)", border: "hsl(35 70% 35%)" },
-  diamond: { icon: "💎", label: "Crystal Bat",  color: "hsl(200 80% 65%)", glow: "hsl(200 80% 65% / 0.5)", border: "hsl(210 50% 40%)" },
+const CRICKET_CHEST: Record<string, { icon: string; label: string; color: string }> = {
+  bronze:  { icon: "🎾", label: "Tennis Ball", color: "hsl(35 80% 55%)" },
+  silver:  { icon: "🏏", label: "Red Ball",    color: "hsl(0 65% 50%)" },
+  gold:    { icon: "🏆", label: "Trophy",      color: "hsl(43 100% 55%)" },
+  diamond: { icon: "💎", label: "Crystal Bat",  color: "hsl(200 80% 65%)" },
 };
 
-/* Light direction constants — light from upper-left (fairy lights + dusk sky) */
-const SHADOW_DIR = { x: 6, y: 10 }; // consistent for all elements
-const WARM_LIGHT = "rgba(255,180,100,0.08)";
-const WARM_LIGHT_STRONG = "rgba(255,180,100,0.12)";
+/* Mode button configs */
+const MODES = {
+  tap:        { icon: "⚡", label: "TAP",        bg: "#4ADE50", dark: "#1A5E1A", route: "tap" },
+  pvp:        { icon: "⚔️", label: "PVP",        bg: "#EF4444", dark: "#991B1B", route: "pvp" },
+  ar:         { icon: "📷", label: "AR",          bg: "#06B6D4", dark: "#0E7490", route: "ar" },
+  tournament: { icon: "🏆", label: "Tournament", bg: "#A855F7", dark: "#6B21A8", route: "tournament" },
+  practice:   { icon: "🎯", label: "Practice",   bg: "#22C55E", dark: "#166534", route: "practice" },
+};
 
-/* ══════════════════════════════════════════════
+/* ═══════════════════════════════════════
    MAIN COMPONENT
-   ══════════════════════════════════════════════ */
+   ═══════════════════════════════════════ */
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -75,21 +79,26 @@ export default function HomePage() {
   const [revealData, setRevealData] = useState<{ name: string; emoji: string; rarity: string } | null>(null);
   const [pendingMode, setPendingMode] = useState<string | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [tiltX, setTiltX] = useState(0);
+  const [tiltY, setTiltY] = useState(0);
 
   const { data: chests } = useUserChests();
   const startUnlock = useStartUnlock();
   const collectChest = useCollectChest();
 
+  // Tick for chest timers
   useEffect(() => {
     const interval = setInterval(() => setTick(t => t + 1), 1000);
     return () => clearInterval(interval);
   }, []);
 
+  // Onboarding
   useEffect(() => {
     const seen = localStorage.getItem("hc_onboarding_done");
     if (!seen) setShowOnboarding(true);
   }, []);
 
+  // Profile + notifications
   useEffect(() => {
     if (!user) return;
     supabase
@@ -106,6 +115,18 @@ export default function HomePage() {
       .eq("read", false)
       .then(({ count }) => setUnreadCount(count || 0));
   }, [user]);
+
+  // Device tilt for parallax
+  useEffect(() => {
+    const handleOrientation = (e: DeviceOrientationEvent) => {
+      if (e.gamma !== null && e.beta !== null) {
+        setTiltX(Math.max(-15, Math.min(15, e.gamma * 0.3)));
+        setTiltY(Math.max(-10, Math.min(10, (e.beta - 45) * 0.2)));
+      }
+    };
+    window.addEventListener("deviceorientation", handleOrientation);
+    return () => window.removeEventListener("deviceorientation", handleOrientation);
+  }, []);
 
   const completeOnboarding = () => {
     localStorage.setItem("hc_onboarding_done", "1");
@@ -159,514 +180,601 @@ export default function HomePage() {
   const currentArena = ARENA_LEVELS.reduce((prev, curr) => currentTrophies >= curr.trophies ? curr : prev, ARENA_LEVELS[0]);
   const nextArena = ARENA_LEVELS[ARENA_LEVELS.indexOf(currentArena) + 1] || currentArena;
   const playerLevel = Math.floor((profile?.xp ?? 0) / 500) + 1;
-  const xpInLevel = (profile?.xp ?? 0) % 500;
   const playerName = profile?.display_name || user?.email?.split("@")[0]?.slice(0, 10) || "Player";
   const arenaProgress = ((currentTrophies - currentArena.trophies) / Math.max(nextArena.trophies - currentArena.trophies, 1)) * 100;
   const chestSlots = Array.from({ length: 4 }, (_, i) => chests?.find(c => c.slot_index === i) || null);
 
+  // Parallax multiplier based on Z-depth
+  const tiltStyle = (zDepth: number) => ({
+    transform: `translate(${tiltX * (zDepth / 100)}px, ${tiltY * (zDepth / 100)}px)`,
+  });
+
   return (
-    <div className="relative w-full overflow-hidden" style={{ height: "100dvh", paddingBottom: "calc(68px + env(safe-area-inset-bottom, 16px))" }}>
+    <div
+      style={{
+        position: "relative",
+        width: "100%",
+        height: "100dvh",
+        overflow: "hidden",
+        background: "#080818",
+      }}
+    >
+      {/* ═══ THE 3D SCENE ═══ */}
+      <div style={{ position: "absolute", inset: 0 }}>
 
-      {/* ═══ LAYER 0: FULL-SCREEN IMMERSIVE BACKGROUND ═══ */}
-      <div className="absolute inset-0">
-        <img
-          src={gullyBg}
-          alt="Gully Grounds"
-          className="w-full h-full"
-          width={1080} height={1920}
-          style={{ objectFit: "cover", objectPosition: "center 30%" }}
-        />
-        {/* Depth fog — blends scene into bottom UI */}
-        <div className="absolute inset-0 pointer-events-none" style={{
-          background: `linear-gradient(180deg, 
-            rgba(0,0,0,0.15) 0%, 
-            rgba(0,0,0,0) 10%, 
-            rgba(0,0,0,0) 45%, 
-            rgba(15,23,42,0.5) 65%, 
-            rgba(15,23,42,0.85) 80%, 
-            rgba(15,23,42,0.95) 100%)`,
-        }} />
-        {/* Warm light leak overlay — ties scene lighting to UI */}
-        <motion.div
-          className="absolute inset-0 pointer-events-none"
-          animate={{ opacity: [0.6, 1, 0.6], x: [-3, 3, -3] }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        {/* ── LAYER 1: Background image with parallax tilt ── */}
+        <div
           style={{
-            background: `
-              radial-gradient(ellipse at 30% 55%, rgba(255,180,100,0.07) 0%, transparent 50%),
-              radial-gradient(ellipse at 70% 45%, rgba(255,150,200,0.04) 0%, transparent 40%),
-              radial-gradient(ellipse at 50% 30%, rgba(255,220,150,0.05) 0%, transparent 45%)
-            `,
-          }}
-        />
-      </div>
-
-      {/* ═══ ATMOSPHERIC PARTICLES — float OVER everything for 3D depth ═══ */}
-      <div className="absolute inset-0 pointer-events-none z-[60]">
-        {/* Golden dust motes */}
-        {Array.from({ length: 15 }).map((_, i) => {
-          const size = 1.5 + (i % 4) * 0.8;
-          return (
-            <motion.div
-              key={`dust-${i}`}
-              className="absolute rounded-full"
-              style={{
-                width: size,
-                height: size,
-                left: `${8 + (i * 6.2) % 84}%`,
-                top: `${12 + (i * 7.3) % 65}%`,
-                background: "hsl(43 90% 75%)",
-                boxShadow: "0 0 4px hsl(43 90% 65% / 0.5)",
-              }}
-              animate={{
-                y: [0, -(15 + (i % 5) * 6), 0],
-                x: [0, ((i % 2 === 0 ? 1 : -1) * (5 + (i % 3) * 3)), 0],
-                opacity: [0.15, 0.55, 0.15],
-              }}
-              transition={{ duration: 5 + (i % 3) * 2, repeat: Infinity, delay: (i * 0.7) % 4 }}
-            />
-          );
-        })}
-        {/* Fireflies — brighter, larger, slower */}
-        {Array.from({ length: 4 }).map((_, i) => (
-          <motion.div
-            key={`fly-${i}`}
-            className="absolute rounded-full"
-            style={{
-              width: 3,
-              height: 3,
-              left: `${15 + (i * 22) % 70}%`,
-              top: `${8 + (i * 18) % 50}%`,
-              background: "hsl(50 100% 80%)",
-              boxShadow: "0 0 8px hsl(50 100% 70% / 0.7), 0 0 16px hsl(43 90% 60% / 0.3)",
-            }}
-            animate={{
-              y: [0, -25, 5, -15, 0],
-              x: [0, 15, -10, 8, 0],
-              opacity: [0, 0.8, 0.3, 0.9, 0],
-            }}
-            transition={{ duration: 7 + i * 2, repeat: Infinity, delay: i * 3 }}
-          />
-        ))}
-      </div>
-
-      {/* ═══ FLOATING COLLECTIBLES IN SKY ═══ */}
-      <motion.div
-        className="absolute pointer-events-none z-[5]"
-        style={{ top: "8%", left: "12%", filter: "drop-shadow(0 0 10px rgba(255,215,0,0.5))" }}
-        animate={{ y: [-5, 5, -5], rotate: [0, 360] }}
-        transition={{ y: { duration: 3, repeat: Infinity }, rotate: { duration: 6, repeat: Infinity, ease: "linear" } }}
-      >
-        <span className="text-2xl">🏏</span>
-      </motion.div>
-      <motion.div
-        className="absolute pointer-events-none z-[5]"
-        style={{ top: "12%", right: "15%", filter: "drop-shadow(0 0 8px rgba(255,215,0,0.5))" }}
-        animate={{ y: [-4, 6, -4], rotate: [0, -360] }}
-        transition={{ y: { duration: 3.5, repeat: Infinity }, rotate: { duration: 8, repeat: Infinity, ease: "linear" } }}
-      >
-        <span className="text-xl">🪙</span>
-      </motion.div>
-      <motion.div
-        className="absolute pointer-events-none z-[5]"
-        style={{ top: "5%", left: "55%", filter: "drop-shadow(0 0 6px rgba(100,200,255,0.5))" }}
-        animate={{ y: [-3, 7, -3] }}
-        transition={{ duration: 4, repeat: Infinity }}
-      >
-        <span className="text-lg">💎</span>
-      </motion.div>
-
-      {/* ═══ LAYER 3: TOP HUD ═══ */}
-      <div className="absolute top-0 left-0 right-0 z-30 px-3 pt-[env(safe-area-inset-top,8px)]">
-        <div className="max-w-[430px] mx-auto flex items-center gap-2 py-2 px-3 rounded-b-2xl"
-          style={{
-            background: "rgba(10,15,30,0.65)",
-            backdropFilter: "blur(12px)",
-            borderBottom: "1px solid rgba(255,255,255,0.08)",
-            boxShadow: `0 ${SHADOW_DIR.y}px 20px rgba(0,0,0,0.3), inset 0 -1px 0 rgba(255,255,255,0.05)`,
+            position: "absolute",
+            inset: "-5%",
+            transform: `translate(${tiltX * 2}px, ${tiltY * 2}px) scale(1.1)`,
+            transition: "transform 0.3s ease-out",
           }}
         >
-          {/* Avatar + Level */}
-          <button onClick={() => navigate(user ? "/profile" : "/auth")} className="relative flex-shrink-0 active:scale-95 transition-transform">
-            <div className="w-11 h-11 rounded-full flex items-center justify-center"
-              style={{
-                border: "2.5px solid hsl(43 80% 50%)",
-                background: "rgba(30,40,60,0.8)",
-                boxShadow: `0 0 12px hsl(43 80% 50% / 0.3), ${SHADOW_DIR.x * 0.3}px ${SHADOW_DIR.y * 0.3}px 8px rgba(0,0,0,0.4)`,
-              }}
-            >
-              <span className="text-lg">{user ? "🏏" : "👤"}</span>
-            </div>
-            <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-1.5 py-0.5 rounded-full"
-              style={{ background: "linear-gradient(180deg, hsl(207 90% 54%), hsl(207 90% 38%))", border: "2px solid hsl(207 80% 28%)", boxShadow: "0 2px 6px hsl(207 90% 54% / 0.4)" }}
-            >
-              <span className="font-score text-[7px] text-white font-bold leading-none">{playerLevel}</span>
-            </div>
-          </button>
-
-          {/* Name + XP */}
-          <div className="flex flex-col gap-1 min-w-0">
-            <span className="font-heading text-[11px] font-bold text-white truncate leading-none" style={{ textShadow: "1px 2px 4px rgba(0,0,0,0.5)" }}>{playerName}</span>
-            <div className="w-16 h-[5px] rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.1)" }}>
-              <motion.div initial={{ width: 0 }} animate={{ width: `${(xpInLevel / 500) * 100}%` }}
-                className="h-full rounded-full" style={{ background: "linear-gradient(90deg, hsl(134 61% 58%), hsl(51 100% 50%))" }}
-              />
-            </div>
-          </div>
-
-          <div className="flex-1" />
-
-          {/* Currencies */}
-          <div className="flex items-center gap-1.5">
-            {[
-              { icon: "🏏", val: currentTrophies, border: "hsl(43 40% 35%)" },
-              { icon: "🪙", val: profile?.coins ?? 0, border: "hsl(43 40% 35%)", plus: true },
-              { icon: "💎", val: 0, border: "hsl(280 40% 40%)", plus: true },
-            ].map((c, i) => (
-              <button key={i} onClick={c.plus ? () => navigate("/shop") : undefined}
-                className="flex items-center gap-1 px-2 py-1 rounded-full"
-                style={{ background: "rgba(20,30,50,0.7)", border: `1px solid ${c.border}` }}
-              >
-                <span className="text-[10px]">{c.icon}</span>
-                <span className="font-score text-[9px] text-white font-bold" style={{ textShadow: "1px 2px 4px rgba(0,0,0,0.5)" }}>{c.val >= 1000 ? `${(c.val / 1000).toFixed(1)}K` : c.val}</span>
-                {c.plus && <span className="text-[8px] font-bold w-3 h-3 flex items-center justify-center rounded-full" style={{ background: "hsl(142 71% 45%)", color: "#000" }}>+</span>}
-              </button>
-            ))}
-          </div>
-
-          {/* Bell */}
-          <button onClick={() => navigate("/notifications")} className="relative w-8 h-8 rounded-full flex items-center justify-center"
-            style={{ background: "rgba(20,30,50,0.7)", border: "1px solid rgba(255,255,255,0.08)" }}
-          >
-            <Bell className="w-4 h-4 text-white/70" />
-            {unreadCount > 0 && (
-              <div className="absolute -top-1 -right-1 min-w-[14px] h-[14px] px-0.5 rounded-full flex items-center justify-center"
-                style={{ background: "hsl(0 84% 55%)", border: "2px solid rgba(10,15,30,0.8)" }}
-              >
-                <span className="text-[7px] text-white font-bold">{unreadCount > 9 ? "9+" : unreadCount}</span>
-              </div>
-            )}
-          </button>
-
-          {/* Settings */}
-          <button onClick={() => navigate("/settings")} className="w-8 h-8 rounded-full flex items-center justify-center"
-            style={{ background: "rgba(20,30,50,0.7)", border: "1px solid rgba(255,255,255,0.08)" }}
-          >
-            <Settings className="w-4 h-4 text-white/60" />
-          </button>
+          <img
+            src={gullyBg}
+            alt="Gully Grounds"
+            className="w-full h-full"
+            style={{ objectFit: "cover", objectPosition: "center 30%" }}
+          />
         </div>
-      </div>
 
-      {/* ═══ LAYER 1: CHARACTER + PEDESTAL (3D objects IN the scene) ═══ */}
-      <div className="absolute left-1/2 -translate-x-1/2 z-10 flex flex-col items-center" style={{ top: "36%" }}>
-        {/* Cricket bat — 3D perspective, casting shadow matching scene lighting */}
-        <motion.div
-          animate={{ rotateY: [-3, 3, -3] }}
-          transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-          className="relative"
+        {/* ── Atmospheric fog + depth gradient ── */}
+        <div
           style={{
-            width: 140,
-            height: 200,
-            transform: "perspective(600px) rotateY(-5deg) rotateX(3deg)",
-          }}
-        >
-          {/* Glow aura — warm, matching scene fairy lights */}
-          <motion.div
-            className="absolute inset-0 rounded-full pointer-events-none"
-            animate={{ opacity: [0.15, 0.35, 0.15], scale: [0.9, 1.1, 0.9] }}
-            transition={{ duration: 3, repeat: Infinity }}
-            style={{ background: "radial-gradient(circle, hsl(43 90% 55% / 0.25), transparent 65%)" }}
-          />
-          <div className="w-full h-full flex items-center justify-center">
-            <span
-              className="text-8xl"
-              style={{
-                filter: `drop-shadow(${SHADOW_DIR.x}px ${SHADOW_DIR.y}px 16px rgba(0,0,0,0.6))`,
-                transform: "perspective(600px) rotateY(-8deg) rotateX(5deg)",
-              }}
-            >🏏</span>
-          </div>
-        </motion.div>
-
-        {/* Glowing platform — painted neon circle ON the concrete, not floating */}
-        <motion.div
-          animate={{
-            boxShadow: [
-              `0 0 20px hsl(43 90% 55% / 0.2), 0 0 40px hsl(43 90% 55% / 0.1)`,
-              `0 0 30px hsl(43 90% 55% / 0.4), 0 0 60px hsl(43 90% 55% / 0.2)`,
-              `0 0 20px hsl(43 90% 55% / 0.2), 0 0 40px hsl(43 90% 55% / 0.1)`,
-            ]
-          }}
-          transition={{ repeat: Infinity, duration: 3 }}
-          className="-mt-5"
-          style={{
-            width: 170,
-            height: 30,
-            borderRadius: "50%",
-            background: "radial-gradient(ellipse, hsl(43 90% 55% / 0.2) 0%, hsl(43 90% 55% / 0.1) 40%, hsl(43 90% 55% / 0.03) 70%, transparent 100%)",
-            border: "2px solid hsl(43 80% 50% / 0.5)",
-            filter: "blur(0.5px)",
+            position: "absolute",
+            inset: 0,
+            background: `
+              linear-gradient(to top, rgba(8,8,24,0.97) 0%, rgba(8,8,24,0.6) 25%, transparent 50%),
+              radial-gradient(ellipse at 30% 55%, rgba(255,170,80,0.12) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 45%, rgba(200,100,255,0.06) 0%, transparent 40%)
+            `,
+            pointerEvents: "none",
           }}
         />
 
-        {/* Arena name — wooden signboard style */}
+        {/* Animated warm light leak */}
         <motion.div
-          animate={{ opacity: [0.8, 1, 0.8] }}
-          transition={{ duration: 3, repeat: Infinity }}
-          className="mt-2 px-4 py-1.5 rounded-lg relative"
+          animate={{ opacity: [0.5, 1, 0.5], x: [-4, 4, -4] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           style={{
-            background: "linear-gradient(180deg, rgba(92,64,30,0.7), rgba(60,40,18,0.85))",
-            border: "1.5px solid rgba(139,115,85,0.5)",
-            borderBottom: "3px solid rgba(50,30,10,0.7)",
-            boxShadow: `${SHADOW_DIR.x * 0.5}px ${SHADOW_DIR.y * 0.5}px 12px rgba(0,0,0,0.4)`,
+            position: "absolute",
+            inset: 0,
+            background: `
+              radial-gradient(ellipse at 25% 60%, rgba(255,180,100,0.08) 0%, transparent 45%),
+              radial-gradient(ellipse at 75% 40%, rgba(255,150,200,0.05) 0%, transparent 35%)
+            `,
+            pointerEvents: "none",
+          }}
+        />
+
+        {/* ── LAYER 3: Atmospheric particles (crossing Z depths) ── */}
+        <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+          {Array.from({ length: 22 }).map((_, i) => {
+            const z = -80 + Math.random() * 200;
+            const size = 1.5 + Math.random() * 3;
+            const x = Math.random() * 100;
+            const y = Math.random() * 75 + 10;
+            const dur = 5 + Math.random() * 7;
+            const delay = Math.random() * 5;
+            const isFirefly = i > 17;
+            return (
+              <motion.div
+                key={`p-${i}`}
+                animate={{
+                  y: [0, -15 - Math.random() * 20, 0],
+                  x: [0, (Math.random() - 0.5) * 20, 0],
+                  opacity: isFirefly ? [0.1, 0.8, 0.1] : [0.15, 0.4, 0.15],
+                }}
+                transition={{ duration: dur, delay, repeat: Infinity, ease: "easeInOut" }}
+                style={{
+                  position: "absolute",
+                  left: `${x}%`,
+                  top: `${y}%`,
+                  width: size,
+                  height: size,
+                  borderRadius: "50%",
+                  background: isFirefly
+                    ? "radial-gradient(circle, rgba(255,220,100,0.9), rgba(255,200,50,0.3))"
+                    : "rgba(255,210,150,0.5)",
+                  boxShadow: isFirefly ? "0 0 8px rgba(255,200,50,0.6)" : "none",
+                  // no translateZ in flat mode
+                }}
+              />
+            );
+          })}
+        </div>
+
+        {/* ── LAYER 4: Character + Platform (at Z:0) ── */}
+        <div
+          style={{
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            transform: "translateX(-50%)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            zIndex: 10,
           }}
         >
-          {/* Warm light reflection on signboard */}
-          <div className="absolute top-0 left-0 right-0 h-[45%] rounded-t-lg pointer-events-none"
-            style={{ background: "linear-gradient(180deg, rgba(255,200,150,0.1), transparent)" }}
+          {/* Character (bat + ball) with idle sway */}
+          <motion.div
+            animate={{ rotateY: [-3, 3, -3], y: [-2, 2, -2] }}
+            transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+            style={{
+              fontSize: 72,
+              filter: "drop-shadow(6px 10px 16px rgba(0,0,0,0.6))",
+              marginBottom: -10,
+            }}
+          >
+            🏏
+          </motion.div>
+
+          {/* Glowing platform — painted on the concrete */}
+          <motion.div
+            animate={{
+              boxShadow: [
+                "0 0 25px rgba(74,222,80,0.2), 0 0 50px rgba(74,222,80,0.1), inset 0 0 15px rgba(74,222,80,0.15)",
+                "0 0 35px rgba(74,222,80,0.35), 0 0 70px rgba(74,222,80,0.15), inset 0 0 25px rgba(74,222,80,0.25)",
+                "0 0 25px rgba(74,222,80,0.2), 0 0 50px rgba(74,222,80,0.1), inset 0 0 15px rgba(74,222,80,0.15)",
+              ],
+            }}
+            transition={{ duration: 3, repeat: Infinity }}
+            style={{
+              width: 190,
+              height: 48,
+              borderRadius: "50%",
+              background: "radial-gradient(ellipse, rgba(74,222,80,0.2) 0%, rgba(74,222,80,0.05) 60%, transparent 100%)",
+              border: "2px solid rgba(74,222,80,0.4)",
+              filter: "blur(0.5px)",
+            }}
           />
-          <span className="font-heading text-[10px] tracking-[0.2em] font-bold relative" style={{ color: "hsl(43 90% 60%)", textShadow: "0 1px 3px rgba(0,0,0,0.6)" }}>
+
+          {/* Arena name */}
+          <span
+            style={{
+              fontFamily: "'Lilita One', sans-serif",
+              fontSize: 10,
+              letterSpacing: "0.15em",
+              color: "rgba(255,255,255,0.5)",
+              marginTop: 6,
+              textShadow: "0 1px 3px rgba(0,0,0,0.6)",
+            }}
+          >
             ⭐ {currentArena.name.toUpperCase()} ⭐
           </span>
-        </motion.div>
-      </div>
+        </div>
 
-      {/* ═══ LAYER 2: FLOATING 3D RIBBONS — RIGHT (TAP / PVP / AR) ═══ */}
-      <div className="absolute right-1 z-20 flex flex-col gap-3" style={{ top: "30%" }}>
-        <FloatingRibbon3D
-          label="⚡ TAP"
-          lightColor="hsl(142 70% 50%)"
-          darkColor="hsl(142 55% 25%)"
-          glowRgb="74,222,80"
-          rotateY={-10}
+        {/* ── LAYER 5: Mode Buttons (pushed FORWARD in Z) ── */}
+
+        {/* TAP — Right side, upper */}
+        <ModeRibbon
+          icon={MODES.tap.icon}
+          label={MODES.tap.label}
+          bg={MODES.tap.bg}
+          dark={MODES.tap.dark}
+          side="right"
+          top="33%"
+          width={150}
+          fontSize={24}
+          rotateY={-12}
           rotateX={2}
           delay={0}
-          onClick={() => handleModeSelect("tap")}
-          size="lg"
+          onClick={() => handleModeSelect(MODES.tap.route)}
         />
-        <FloatingRibbon3D
-          label="⚔️ PVP"
-          lightColor="hsl(0 75% 55%)"
-          darkColor="hsl(0 60% 22%)"
-          glowRgb="239,68,68"
-          rotateY={-8}
+
+        {/* PVP — Right side, middle */}
+        <ModeRibbon
+          icon={MODES.pvp.icon}
+          label={MODES.pvp.label}
+          bg={MODES.pvp.bg}
+          dark={MODES.pvp.dark}
+          side="right"
+          top="43%"
+          width={140}
+          fontSize={22}
+          rotateY={-10}
           rotateX={3}
           delay={0.3}
-          onClick={() => handleModeSelect("multiplayer")}
-          size="md"
+          onClick={() => handleModeSelect(MODES.pvp.route)}
         />
-        <FloatingRibbon3D
-          label="📷 AR"
-          lightColor="hsl(190 80% 50%)"
-          darkColor="hsl(200 60% 25%)"
-          glowRgb="6,182,212"
-          rotateY={-6}
+
+        {/* AR — Right side, lower */}
+        <ModeRibbon
+          icon={MODES.ar.icon}
+          label={MODES.ar.label}
+          bg={MODES.ar.bg}
+          dark={MODES.ar.dark}
+          side="right"
+          top="53%"
+          width={130}
+          fontSize={20}
+          rotateY={-8}
           rotateX={4}
           delay={0.6}
-          onClick={() => handleModeSelect("classic")}
-          size="sm"
+          onClick={() => handleModeSelect(MODES.ar.route)}
         />
-      </div>
 
-      {/* ═══ LAYER 2: FLOATING 3D PILLS — LEFT (Tournament / Practice) ═══ */}
-      <div className="absolute left-3 z-20 flex flex-col gap-3" style={{ top: "40%" }}>
-        <FloatingPill3D
-          icon="🏆"
-          label="Tournament"
-          lightColor="hsl(270 60% 50%)"
-          darkColor="hsl(270 50% 22%)"
-          glowRgb="168,85,247"
-          onClick={() => handleModeSelect("tournament")}
-          delay={0.2}
-        />
-        <FloatingPill3D
-          icon="🎯"
-          label="Practice"
-          lightColor="hsl(142 55% 45%)"
-          darkColor="hsl(142 45% 20%)"
-          glowRgb="34,197,94"
-          onClick={() => handleModeSelect("practice")}
+        {/* Tournament — Left side */}
+        <ModeRibbon
+          icon={MODES.tournament.icon}
+          label={MODES.tournament.label}
+          bg={MODES.tournament.bg}
+          dark={MODES.tournament.dark}
+          side="left"
+          top="42%"
+          width={135}
+          fontSize={13}
+          rotateY={12}
+          rotateX={2}
           delay={0.4}
+          onClick={() => handleModeSelect(MODES.tournament.route)}
         />
-      </div>
 
-      {/* ═══ LAYER 4: SIDE ICON BUTTONS — LEFT ═══ */}
-      <div className="absolute left-2 z-20 flex flex-col gap-2" style={{ top: "18%" }}>
-        <SideButton3D icon={<Trophy className="w-[18px] h-[18px]" />} label="Rank" onClick={() => navigate("/leaderboard")} />
-        <SideButton3D icon={<Target className="w-[18px] h-[18px]" />} label="Quests" badge={3} onClick={() => navigate("/game/daily")} />
-        <SideButton3D icon={<MessageCircle className="w-[18px] h-[18px]" />} label="Chat" onClick={() => navigate("/friends")} />
-      </div>
+        {/* Practice — Left side, below */}
+        <ModeRibbon
+          icon={MODES.practice.icon}
+          label={MODES.practice.label}
+          bg={MODES.practice.bg}
+          dark={MODES.practice.dark}
+          side="left"
+          top="52%"
+          width={125}
+          fontSize={13}
+          rotateY={10}
+          rotateX={3}
+          delay={0.7}
+          onClick={() => handleModeSelect(MODES.practice.route)}
+        />
 
-      {/* ═══ LAYER 4: SIDE ICON BUTTONS — RIGHT ═══ */}
-      <div className="absolute right-2 z-20 flex flex-col gap-2" style={{ top: "18%" }}>
-        <SideButton3D icon={<Mail className="w-[18px] h-[18px]" />} label="Mail" badge={unreadCount} onClick={() => navigate("/notifications")} />
-        <SideButton3D icon={<Backpack className="w-[18px] h-[18px]" />} label="Cards" onClick={() => navigate("/collection")} />
-        <SideButton3D icon={<Lock className="w-[18px] h-[18px] opacity-40" />} label="Soon" />
-      </div>
+        {/* ── LAYER 6: Side icon buttons ── */}
+        {/* Left side */}
+        {[
+          { icon: "🏆", label: "Rank", top: "24%", action: () => navigate("/leaderboard") },
+          { icon: "🎯", label: "Quests", top: "32%", badge: "3", action: () => navigate("/daily-rewards") },
+          { icon: "💬", label: "Chat", top: "40%", action: () => navigate("/friends") },
+        ].map((item, i) => (
+          <SideIconButton key={`l-${i}`} {...item} side="left" />
+        ))}
 
-      {/* ═══ LAYER 5: BOTTOM AREA (Chest Slots + Arena Progress) ═══ */}
-      <div className="absolute bottom-0 left-0 right-0 z-20" style={{ paddingBottom: "calc(68px + env(safe-area-inset-bottom, 16px))" }}>
-        <div className="max-w-[430px] mx-auto px-3">
+        {/* Right side */}
+        {[
+          { icon: "✉️", label: "Mail", top: "24%", action: () => navigate("/notifications") },
+          { icon: "🃏", label: "Cards", top: "32%", action: () => navigate("/collection") },
+        ].map((item, i) => (
+          <SideIconButton key={`r-${i}`} {...item} side="right" />
+        ))}
 
-          {/* Chest slot row — wooden crate shelf */}
-          <div className="flex gap-2 mb-2 px-2 py-2.5 rounded-xl relative overflow-hidden"
+        {/* Floating sky collectibles */}
+        {[
+          { emoji: "🏏", x: "20%", y: "12%", dur: 6 },
+          { emoji: "🪙", x: "75%", y: "8%", dur: 5 },
+          { emoji: "✨", x: "55%", y: "15%", dur: 7 },
+        ].map((c, i) => (
+          <motion.div
+            key={`sky-${i}`}
+            animate={{ y: [0, -10, 0], rotate: [0, 360] }}
+            transition={{ duration: c.dur, repeat: Infinity, ease: "linear" }}
             style={{
-              background: "linear-gradient(180deg, rgba(92,64,30,0.55) 0%, rgba(50,32,12,0.75) 100%)",
-              borderTop: "2px solid rgba(139,115,85,0.4)",
-              borderBottom: "3px solid rgba(30,18,5,0.6)",
-              boxShadow: `inset 0 4px 12px rgba(0,0,0,0.35), 0 -${SHADOW_DIR.y * 0.3}px 8px rgba(0,0,0,0.2)`,
+              position: "absolute",
+              left: c.x,
+              top: c.y,
+              fontSize: 22,
+              opacity: 0.5,
+              filter: "drop-shadow(0 0 6px rgba(255,200,50,0.5))",
+              // decorative floating
+              pointerEvents: "none",
             }}
           >
-            {/* Wood plank lines */}
-            <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
+            {c.emoji}
+          </motion.div>
+        ))}
+
+        {/* More Modes button */}
+        <motion.button
+          whileTap={{ scale: 0.95 }}
+          onClick={() => navigate("/play")}
+          style={{
+            position: "absolute",
+            bottom: "22%",
+            left: "50%",
+            transform: "translateX(-50%) perspective(600px) rotateX(5deg)",
+            background: "linear-gradient(180deg, #8B7355, #6B5335)",
+            border: "2px solid #5A4225",
+            borderBottom: "4px solid #4A3215",
+            borderRadius: 8,
+            padding: "7px 18px",
+            color: "#F5DEB3",
+            fontFamily: "'Lilita One', sans-serif",
+            fontSize: 12,
+            letterSpacing: "0.05em",
+            boxShadow: "4px 6px 12px rgba(0,0,0,0.5)",
+            cursor: "pointer",
+            zIndex: 20,
+          }}
+        >
+          More Modes ▼
+        </motion.button>
+      </div>
+
+      {/* ═══ HUD OVERLAY (Flat HTML on top of 3D scene) ═══ */}
+      <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 50 }}>
+
+        {/* Top HUD — Player info + currencies */}
+        <div
+          style={{
+            pointerEvents: "auto",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "env(safe-area-inset-top, 8px) 12px 6px",
+            background: "rgba(8,8,24,0.5)",
+            backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
+            borderBottom: "1px solid rgba(255,255,255,0.06)",
+          }}
+        >
+          {/* Avatar + name */}
+          <div className="flex items-center gap-2">
+            <div
               style={{
-                backgroundImage: "repeating-linear-gradient(90deg, transparent, transparent 23%, rgba(0,0,0,1) 23.5%, transparent 24%)",
+                width: 40,
+                height: 40,
+                borderRadius: "50%",
+                background: "linear-gradient(135deg, #4ADE50, #22C55E)",
+                border: "2px solid rgba(74,222,80,0.6)",
+                boxShadow: "0 0 10px rgba(74,222,80,0.3)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 18,
+                fontWeight: 700,
+                color: "white",
+                position: "relative",
               }}
-            />
-            {/* Warm light from above reflecting on shelf */}
-            <div className="absolute top-0 left-0 right-0 h-[40%] pointer-events-none"
-              style={{ background: `linear-gradient(180deg, ${WARM_LIGHT_STRONG}, transparent)` }}
-            />
-            {chestSlots.map((chest, i) => (
-              <MiniChestSlot key={i} chest={chest} tick={tick} onTap={handleChestTap} />
-            ))}
+            >
+              {playerName[0]?.toUpperCase()}
+              <span
+                style={{
+                  position: "absolute",
+                  bottom: -3,
+                  right: -3,
+                  fontSize: 9,
+                  background: "#0F172A",
+                  border: "1.5px solid rgba(74,222,80,0.6)",
+                  borderRadius: "50%",
+                  width: 18,
+                  height: 18,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#4ADE50",
+                  fontWeight: 700,
+                }}
+              >
+                {playerLevel}
+              </span>
+            </div>
+            <div>
+              <div style={{ fontFamily: "'Bungee', sans-serif", fontSize: 12, color: "white" }}>{playerName}</div>
+              <div style={{ width: 60, height: 3, borderRadius: 2, background: "rgba(255,255,255,0.1)", marginTop: 2 }}>
+                <div style={{ height: "100%", borderRadius: 2, background: "#4ADE50", width: `${((profile?.xp ?? 0) % 500) / 5}%` }} />
+              </div>
+            </div>
+          </div>
+
+          {/* Currencies */}
+          <div className="flex items-center gap-2">
+            <CurrencyPill icon="🏏" value={profile?.total_matches ?? 0} />
+            <CurrencyPill icon="🪙" value={profile?.coins ?? 0} plus />
+            <CurrencyPill icon="💎" value={45} plus />
+          </div>
+
+          {/* Utility icons */}
+          <div className="flex items-center gap-2">
+            <button onClick={() => navigate("/notifications")} className="relative" style={{ color: "rgba(255,255,255,0.7)" }}>
+              <Bell size={20} />
+              {unreadCount > 0 && (
+                <span style={{
+                  position: "absolute", top: -4, right: -4, width: 14, height: 14,
+                  borderRadius: "50%", background: "#EF4444", fontSize: 8,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  color: "white", fontWeight: 700,
+                }}>{unreadCount}</span>
+              )}
+            </button>
+            <button onClick={() => navigate("/settings")} style={{ color: "rgba(255,255,255,0.7)" }}>
+              <Settings size={20} />
+            </button>
+          </div>
+        </div>
+
+        {/* Bottom area — Chest slots + Arena progress */}
+        <div
+          style={{
+            pointerEvents: "auto",
+            position: "absolute",
+            bottom: "calc(68px + env(safe-area-inset-bottom, 0px))",
+            left: 0,
+            right: 0,
+            background: "rgba(8,8,24,0.75)",
+            backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
+            borderTop: "1px solid rgba(255,255,255,0.06)",
+            padding: "8px 12px 6px",
+          }}
+        >
+          {/* Chest slots */}
+          <div className="flex justify-center gap-3 mb-2">
+            {chestSlots.map((chest, i) => {
+              const chestInfo = chest ? CRICKET_CHEST[chest.chest_tier] || CRICKET_CHEST.bronze : null;
+              const isReady = chest && (chest.status === "ready" || (chest.status === "unlocking" && chestTimeRemaining(chest) <= 0));
+              const isUnlocking = chest?.status === "unlocking" && chestTimeRemaining(chest) > 0;
+
+              return (
+                <motion.button
+                  key={i}
+                  whileTap={{ scale: 0.92 }}
+                  onClick={() => handleChestTap(chest)}
+                  style={{
+                    width: 54,
+                    height: 54,
+                    borderRadius: 10,
+                    background: chest
+                      ? "linear-gradient(180deg, rgba(92,64,30,0.6), rgba(60,40,18,0.8))"
+                      : "rgba(255,255,255,0.05)",
+                    border: isReady
+                      ? `2px solid ${chestInfo?.color}`
+                      : "1.5px solid rgba(255,255,255,0.1)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow: isReady
+                      ? `0 0 12px ${chestInfo?.color}60, inset 0 2px 6px rgba(0,0,0,0.4)`
+                      : "inset 0 2px 6px rgba(0,0,0,0.4), 2px 4px 8px rgba(0,0,0,0.3)",
+                    cursor: "pointer",
+                    position: "relative",
+                  }}
+                >
+                  <span style={{ fontSize: chest ? 22 : 18, opacity: chest ? 1 : 0.3 }}>
+                    {chest ? chestInfo?.icon : "+"}
+                  </span>
+                  {isUnlocking && (
+                    <span style={{ fontSize: 7, color: "rgba(255,255,255,0.6)", marginTop: 1 }}>
+                      {formatTime(chestTimeRemaining(chest))}
+                    </span>
+                  )}
+                  {isReady && (
+                    <span style={{ fontSize: 7, color: "#4ADE50", fontWeight: 700, marginTop: 1 }}>OPEN!</span>
+                  )}
+                </motion.button>
+              );
+            })}
           </div>
 
           {/* Arena progress */}
-          <div className="px-2 py-1.5 rounded-xl mb-1"
-            style={{
-              background: "rgba(10,15,30,0.7)",
-              backdropFilter: "blur(8px)",
-              border: "1px solid rgba(255,255,255,0.06)",
-              boxShadow: `${SHADOW_DIR.x * 0.2}px ${SHADOW_DIR.y * 0.2}px 8px rgba(0,0,0,0.25)`,
-            }}
-          >
-            <div className="flex justify-between items-center mb-1">
-              <span className="font-body text-[9px] font-semibold text-white/60" style={{ textShadow: "1px 2px 4px rgba(0,0,0,0.5)" }}>🏏 {currentArena.name}</span>
-              <span className="font-body text-[9px] font-semibold text-white/60" style={{ textShadow: "1px 2px 4px rgba(0,0,0,0.5)" }}>→ {nextArena.name}</span>
+          <div>
+            <div className="flex justify-between items-center" style={{ fontSize: 9, marginBottom: 3 }}>
+              <span style={{ color: "rgba(255,255,255,0.6)", fontFamily: "'Lilita One', sans-serif" }}>
+                🏏 {currentArena.name}
+              </span>
+              <span style={{ color: "rgba(255,255,255,0.4)" }}>
+                → {nextArena.name}
+              </span>
             </div>
-            <div className="h-[5px] rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.1)" }}>
-              <motion.div initial={{ width: 0 }} animate={{ width: `${arenaProgress}%` }}
-                className="h-full rounded-full"
-                style={{ background: "linear-gradient(90deg, hsl(43 90% 55%), hsl(35 80% 45%))", boxShadow: "0 0 8px hsl(43 90% 55% / 0.4)" }}
+            <div style={{ height: 5, borderRadius: 3, background: "rgba(255,255,255,0.08)" }}>
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${Math.min(arenaProgress, 100)}%` }}
+                style={{ height: "100%", borderRadius: 3, background: "linear-gradient(90deg, #4ADE50, #22C55E)" }}
               />
             </div>
-            <div className="text-center mt-0.5">
-              <span className="font-score text-[8px] text-white/50">🏆 {currentTrophies}/{nextArena.trophies}</span>
+            <div style={{ textAlign: "center", fontSize: 8, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>
+              🏆 {currentTrophies}/{nextArena.trophies}
             </div>
           </div>
         </div>
       </div>
 
-      {/* ═══ MORE MODES — 3D wooden signboard ═══ */}
-      <motion.button
-        className="absolute z-20 left-1/2 -translate-x-1/2 px-4 py-1.5 relative overflow-hidden"
-        style={{
-          bottom: "calc(68px + env(safe-area-inset-bottom, 16px) + 140px)",
-          background: "linear-gradient(180deg, rgba(92,64,30,0.7), rgba(60,40,18,0.85))",
-          border: "1.5px solid rgba(139,115,85,0.4)",
-          borderBottom: "3px solid rgba(50,30,10,0.6)",
-          borderRadius: "8px",
-          boxShadow: `${SHADOW_DIR.x * 0.4}px ${SHADOW_DIR.y * 0.4}px 10px rgba(0,0,0,0.4)`,
-          transform: "perspective(600px) rotateX(3deg)",
-        }}
-        whileTap={{ scale: 0.95, y: 2 }}
-        onClick={() => navigate("/play")}
-      >
-        {/* Warm light reflection */}
-        <div className="absolute top-0 left-0 right-0 h-[50%] pointer-events-none rounded-t-md"
-          style={{ background: `linear-gradient(180deg, ${WARM_LIGHT}, transparent)` }}
-        />
-        {/* Wood grain */}
-        <div className="absolute inset-0 pointer-events-none opacity-[0.04]"
-          style={{ backgroundImage: "repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(0,0,0,1) 4px, rgba(0,0,0,1) 5px)" }}
-        />
-        <span className="font-body text-[10px] font-semibold relative" style={{ color: "hsl(30 30% 78%)", textShadow: "1px 2px 4px rgba(0,0,0,0.5)", letterSpacing: "0.05em" }}>More Modes ▾</span>
-      </motion.button>
-
-      {/* Stump animation overlay */}
+      {/* Stump shatter overlay */}
       <StumpHitAnimation show={showStumpAnim} onComplete={handleStumpComplete} />
 
       {/* Chest reveal overlay */}
-      <AnimatePresence>
-        {revealData && (
-          <ChestReveal
-            itemName={revealData.name}
-            itemEmoji={revealData.emoji}
-            rarity={revealData.rarity}
-            onComplete={() => setRevealData(null)}
-          />
-        )}
-      </AnimatePresence>
+      {revealData && (
+        <ChestReveal
+          itemName={revealData.name}
+          itemEmoji={revealData.emoji}
+          rarity={revealData.rarity}
+          onComplete={() => setRevealData(null)}
+        />
+      )}
+
+      <style>{``}</style>
     </div>
   );
 }
 
-/* ══════════════════════════════════════════════
-   3D FLOATING RIBBON (TAP / PVP / AR)
-   — perspective-tilted, thick bottom edge, warm light reflection, scene-matching shadow
-   ══════════════════════════════════════════════ */
+/* ═══════════════════════════════════════
+   SUB-COMPONENTS
+   ═══════════════════════════════════════ */
 
-function FloatingRibbon3D({ label, lightColor, darkColor, glowRgb, rotateY, rotateX, delay, onClick, size }: {
-  label: string; lightColor: string; darkColor: string; glowRgb: string;
-  rotateY: number; rotateX: number; delay: number; onClick: () => void;
-  size: "lg" | "md" | "sm";
+function ModeRibbon({
+  icon, label, bg, dark, side, top, width, fontSize, rotateY, rotateX, delay, onClick,
+}: {
+  icon: string; label: string; bg: string; dark: string;
+  side: "left" | "right"; top: string; width: number;
+  fontSize: number; rotateY: number; rotateX: number; delay: number;
+  onClick: () => void;
 }) {
-  const fontSize = size === "lg" ? 18 : size === "md" ? 15 : 13;
-  const py = size === "lg" ? 14 : size === "md" ? 11 : 9;
-  const px = size === "lg" ? 26 : size === "md" ? 20 : 16;
-
   return (
     <motion.button
-      initial={{ opacity: 0, x: 50 }}
-      animate={{ opacity: 1, x: 0, rotate: [-1.5, 1.5, -1.5], y: [-2, 2, -2] }}
+      initial={{ opacity: 0, x: side === "right" ? 60 : -60 }}
+      animate={{
+        opacity: 1,
+        x: 0,
+        rotate: [-1.5, 1.5, -1.5],
+        y: [-2, 3, -2],
+      }}
       transition={{
         opacity: { delay, duration: 0.4 },
         x: { delay, duration: 0.5, type: "spring" },
         rotate: { delay: delay + 0.5, duration: 3.5, repeat: Infinity, ease: "easeInOut" },
-        y: { delay: delay + 0.5, duration: 3, repeat: Infinity, ease: "easeInOut" },
+        y: { delay: delay + 0.3, duration: 3, repeat: Infinity, ease: "easeInOut" },
       }}
-      whileTap={{ scale: 1.05, y: 3 }}
+      whileTap={{ scale: 0.93 }}
       onClick={onClick}
-      className="relative"
       style={{
-        perspective: "800px",
+        position: "absolute",
+        [side]: 10,
+        top,
+        transform: `perspective(800px) rotateY(${rotateY}deg) rotateX(${rotateX}deg)`,
+        transformStyle: "preserve-3d",
+        cursor: "pointer",
+        zIndex: 20,
+        // No default button styles
+        background: "none",
+        border: "none",
+        padding: 0,
       }}
     >
+      {/* Front face */}
       <div
-        className="relative overflow-hidden"
         style={{
-          padding: `${py}px ${px}px`,
-          borderRadius: "14px 6px 6px 14px",
-          background: `linear-gradient(135deg, ${lightColor}, color-mix(in srgb, ${lightColor} 70%, black))`,
-          /* 3D thickness — visible side edges */
-          borderBottom: `6px solid ${darkColor}`,
-          borderRight: `3px solid ${darkColor}`,
-          /* Scene-matching shadow (light from upper-left) */
+          width,
+          padding: "10px 14px",
+          background: `linear-gradient(145deg, ${bg}ee, ${bg}cc)`,
+          borderRadius: 12,
+          // 3D thickness
+          borderBottom: `5px solid ${dark}`,
+          borderRight: side === "right" ? `3px solid ${dark}` : "none",
+          borderLeft: side === "left" ? `3px solid ${dark}` : "none",
           boxShadow: `
-            ${SHADOW_DIR.x}px ${SHADOW_DIR.y}px 20px rgba(0,0,0,0.5),
-            inset 0 2px 0 rgba(255,255,255,0.2),
-            0 0 30px rgba(${glowRgb}, 0.15)
+            6px 10px 20px rgba(0,0,0,0.5),
+            0 0 20px ${bg}22,
+            inset 0 2px 0 rgba(255,255,255,0.25),
+            inset 0 -1px 0 rgba(0,0,0,0.2)
           `,
-          /* Perspective tilt to match scene camera angle */
-          transform: `perspective(800px) rotateY(${rotateY}deg) rotateX(${rotateX}deg)`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 7,
+          // Warm scene light reflection
+          backgroundImage: "linear-gradient(180deg, rgba(255,200,150,0.1) 0%, transparent 40%)",
+          position: "relative",
         }}
       >
-        {/* Warm fairy light reflection on button surface */}
-        <div className="absolute top-0 left-0 right-0 h-[50%] pointer-events-none rounded-t-xl"
-          style={{ background: `linear-gradient(180deg, ${WARM_LIGHT_STRONG}, transparent)` }}
-        />
-        {/* Jersey mesh texture */}
-        <div className="absolute inset-0 pointer-events-none opacity-[0.05]"
-          style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,1) 0.4px, transparent 0.4px)", backgroundSize: "3px 3px" }}
-        />
-        <span className="relative z-10" style={{
-          fontFamily: "'Bungee', cursive",
-          fontSize,
-          color: "white",
-          textShadow: "0 2px 4px rgba(0,0,0,0.5), 1px 2px 4px rgba(0,0,0,0.3)",
-          letterSpacing: "0.05em",
-        }}>
+        <span style={{ fontSize: fontSize * 0.8 }}>{icon}</span>
+        <span
+          style={{
+            fontFamily: "'Bungee', sans-serif",
+            fontSize,
+            color: "white",
+            textShadow: "0 2px 4px rgba(0,0,0,0.5)",
+            letterSpacing: "0.03em",
+          }}
+        >
           {label}
         </span>
       </div>
@@ -674,148 +782,85 @@ function FloatingRibbon3D({ label, lightColor, darkColor, glowRgb, rotateY, rota
   );
 }
 
-/* ══════════════════════════════════════════════
-   3D FLOATING PILL (Tournament / Practice)
-   ══════════════════════════════════════════════ */
-
-function FloatingPill3D({ icon, label, lightColor, darkColor, glowRgb, onClick, delay }: {
-  icon: string; label: string; lightColor: string; darkColor: string; glowRgb: string;
-  onClick: () => void; delay: number;
+function SideIconButton({
+  icon, label, top, side, badge, action,
+}: {
+  icon: string; label: string; top: string; side: "left" | "right";
+  badge?: string; action: () => void;
 }) {
   return (
     <motion.button
-      initial={{ opacity: 0, x: -30 }}
-      animate={{ opacity: 1, x: 0, y: [-2, 3, -2] }}
-      transition={{
-        opacity: { delay, duration: 0.4 },
-        x: { delay, duration: 0.4, type: "spring" },
-        y: { delay: delay + 0.5, duration: 3.5, repeat: Infinity, ease: "easeInOut" },
-      }}
-      whileTap={{ scale: 1.05, y: 2 }}
-      onClick={onClick}
-      className="flex items-center gap-1.5 px-3 py-2 rounded-xl relative overflow-hidden"
+      whileTap={{ scale: 1.1 }}
+      onClick={action}
       style={{
-        background: `linear-gradient(135deg, ${lightColor}, color-mix(in srgb, ${lightColor} 65%, black))`,
-        borderBottom: `4px solid ${darkColor}`,
-        borderRight: `2px solid ${darkColor}`,
-        boxShadow: `
-          ${SHADOW_DIR.x * 0.7}px ${SHADOW_DIR.y * 0.7}px 14px rgba(0,0,0,0.4),
-          inset 0 1px 0 rgba(255,255,255,0.2),
-          0 0 20px rgba(${glowRgb}, 0.12)
-        `,
-        transform: "perspective(600px) rotateY(8deg) rotateX(2deg)",
+        position: "absolute",
+        [side]: 8,
+        top,
+        width: 42,
+        height: 42,
+        borderRadius: "50%",
+        background: "rgba(10,15,30,0.5)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        border: "1.5px solid rgba(255,255,255,0.1)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: 18,
+        color: "rgba(255,255,255,0.7)",
+        boxShadow: "4px 6px 14px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 8px rgba(255,180,100,0.05)",
+        cursor: "pointer",
+        // side icon button
+        zIndex: 15,
+        // Reset button defaults
+        padding: 0,
       }}
     >
-      {/* Warm light reflection */}
-      <div className="absolute top-0 left-0 right-0 h-[45%] pointer-events-none rounded-t-xl"
-        style={{ background: `linear-gradient(180deg, ${WARM_LIGHT}, transparent)` }}
-      />
-      <span className="text-sm relative z-10">{icon}</span>
-      <span className="font-body text-[11px] font-bold text-white relative z-10" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}>{label}</span>
-    </motion.button>
-  );
-}
-
-/* ══════════════════════════════════════════════
-   3D SIDE ICON BUTTON
-   — Physical glass button with bezel, consistent shadow, warm reflection
-   ══════════════════════════════════════════════ */
-
-function SideButton3D({ icon, label, badge, onClick }: {
-  icon: React.ReactNode; label: string; badge?: number; onClick?: () => void;
-}) {
-  return (
-    <motion.button
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      whileTap={{ scale: 0.92 }}
-      onClick={onClick}
-      className="flex flex-col items-center gap-0.5 relative"
-    >
-      <div className="w-11 h-11 rounded-full flex items-center justify-center text-white/80 relative overflow-hidden"
-        style={{
-          background: "rgba(15,23,42,0.5)",
-          backdropFilter: "blur(12px)",
-          /* 3D bezel ring */
-          border: "2px solid rgba(255,255,255,0.12)",
-          boxShadow: `
-            ${SHADOW_DIR.x * 0.5}px ${SHADOW_DIR.y * 0.5}px 10px rgba(0,0,0,0.5),
-            inset 0 1px 0 rgba(255,255,255,0.12),
-            inset 0 -1px 0 rgba(0,0,0,0.2),
-            0 0 8px rgba(255,180,100,0.06)
-          `,
-        }}
-      >
-        {/* Warm ambient reflection */}
-        <div className="absolute top-0 left-0 right-0 h-[40%] pointer-events-none"
-          style={{ background: `linear-gradient(180deg, ${WARM_LIGHT}, transparent)`, borderRadius: "50%" }}
-        />
-        <span className="relative z-10">{icon}</span>
-      </div>
-      {badge != null && badge > 0 && (
-        <div className="absolute -top-1 -right-1 min-w-[14px] h-[14px] px-0.5 rounded-full flex items-center justify-center"
-          style={{ background: "hsl(0 84% 55%)", border: "2px solid rgba(10,15,30,0.8)", boxShadow: "0 2px 4px rgba(0,0,0,0.4)" }}
+      {icon}
+      {badge && (
+        <span
+          style={{
+            position: "absolute",
+            top: -3,
+            right: -3,
+            width: 16,
+            height: 16,
+            borderRadius: "50%",
+            background: "#EF4444",
+            fontSize: 9,
+            fontWeight: 700,
+            color: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
         >
-          <span className="text-[7px] text-white font-bold">{badge > 9 ? "9+" : badge}</span>
-        </div>
+          {badge}
+        </span>
       )}
-      <span className="text-[7px] text-white/50 font-body" style={{ textShadow: "1px 2px 4px rgba(0,0,0,0.5)" }}>{label}</span>
     </motion.button>
   );
 }
 
-/* ══════════════════════════════════════════════
-   MINI CHEST SLOT (Bottom Bar)
-   ══════════════════════════════════════════════ */
-
-function MiniChestSlot({ chest, tick, onTap }: { chest: UserChest | null; tick: number; onTap: (c: UserChest | null) => void }) {
-  void tick;
-
-  if (!chest) {
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center py-2 rounded-lg"
-        style={{ border: "1px dashed rgba(255,255,255,0.08)" }}
-      >
-        <span className="text-white/15 text-sm">+</span>
-      </div>
-    );
-  }
-
-  const tierKey = (chest.chest_tier || "bronze").toLowerCase();
-  const cc = CRICKET_CHEST[tierKey] || CRICKET_CHEST.bronze;
-  const isUnlocking = chest.status === "unlocking";
-  const remaining = isUnlocking ? chestTimeRemaining(chest) : 0;
-  const isReady = chest.status === "ready" || (isUnlocking && remaining <= 0);
-  const isLocked = chest.status === "locked";
-
+function CurrencyPill({ icon, value, plus }: { icon: string; value: number; plus?: boolean }) {
   return (
-    <motion.button
-      whileTap={{ scale: 0.9 }}
-      onClick={() => onTap(chest)}
-      className="flex-1 flex flex-col items-center justify-center py-2 rounded-lg relative"
+    <div
       style={{
-        background: isReady ? `radial-gradient(ellipse at bottom, ${cc.glow}, transparent 70%)` : "transparent",
-        border: `1px solid ${isReady ? cc.color + "80" : "rgba(255,255,255,0.06)"}`,
-        boxShadow: isReady ? `0 0 12px ${cc.glow}` : "none",
+        display: "flex",
+        alignItems: "center",
+        gap: 3,
+        padding: "3px 8px",
+        borderRadius: 20,
+        background: "rgba(15,23,42,0.6)",
+        backdropFilter: "blur(8px)",
+        border: "1px solid rgba(255,255,255,0.08)",
+        fontSize: 11,
+        color: "rgba(255,255,255,0.85)",
       }}
     >
-      <motion.span
-        className="text-2xl"
-        animate={isReady ? { y: [-2, 2, -2], scale: [1, 1.05, 1] } : {}}
-        transition={isReady ? { duration: 2, repeat: Infinity } : {}}
-        style={{
-          filter: isLocked ? "grayscale(0.5) brightness(0.5)" : `drop-shadow(${SHADOW_DIR.x * 0.2}px ${SHADOW_DIR.y * 0.2}px 4px rgba(0,0,0,0.4))`,
-        }}
-      >
-        {cc.icon}
-      </motion.span>
-      {isLocked && <span className="text-[7px] text-white/30 font-score mt-0.5">🔒</span>}
-      {isUnlocking && !isReady && <span className="text-[7px] text-white/50 font-score mt-0.5">{formatTime(remaining)}</span>}
-      {isReady && (
-        <motion.span animate={{ opacity: [0.6, 1, 0.6] }} transition={{ duration: 1.2, repeat: Infinity }}
-          className="text-[7px] font-score font-bold mt-0.5" style={{ color: cc.color }}
-        >OPEN!</motion.span>
-      )}
-    </motion.button>
+      <span style={{ fontSize: 12 }}>{icon}</span>
+      <span style={{ fontWeight: 600, fontFamily: "'Rubik', sans-serif" }}>{value}</span>
+      {plus && <span style={{ color: "#4ADE50", fontWeight: 700, fontSize: 10 }}>+</span>}
+    </div>
   );
 }
