@@ -325,7 +325,7 @@ export default function KnockoutCupScreen({ onHome }: Props) {
             <motion.button whileTap={{ scale: 0.95 }} onClick={onHome}
               className="px-6 py-3 rounded-xl font-game-display text-[11px] tracking-wider"
               style={{ background: "hsl(25 15% 12%)", border: "1.5px solid hsl(25 15% 20%)", borderBottom: "4px solid hsl(25 12% 8%)", color: "hsl(25 30% 70%)" }}>HOME</motion.button>
-            <motion.button whileTap={{ scale: 0.95 }} onClick={() => window.location.reload()}
+            <motion.button whileTap={{ scale: 0.95 }} onClick={onHome}
               className="px-6 py-3 rounded-xl font-game-display text-[11px] tracking-wider"
               style={{ background: "linear-gradient(180deg, hsl(142 71% 50%) 0%, hsl(142 65% 38%) 100%)", border: "1.5px solid hsl(142 60% 55% / 0.4)", borderBottom: "4px solid hsl(142 55% 25%)", color: "hsl(142 80% 98%)" }}>PLAY AGAIN</motion.button>
           </div>

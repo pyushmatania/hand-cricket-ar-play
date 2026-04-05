@@ -140,9 +140,9 @@ export default function TournamentScreen({ onHome }: Props) {
         if (rewards) setMatchRewards(rewards);
       });
       if (game.result === "win") { if (soundEnabled) SFX.win(); if (hapticsEnabled) Haptics.success(); }
-      else { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); }
+      else if (game.result === "loss") { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); }
       const newRounds = [...rounds];
-      newRounds[currentRound] = { ...newRounds[currentRound], result: game.result === "win" ? "win" : "loss", userScore: game.userScore, oppScore: game.aiScore };
+      newRounds[currentRound] = { ...newRounds[currentRound], result: game.result === "win" ? "win" : game.result === "draw" ? "draw" : "loss", userScore: game.userScore, oppScore: game.aiScore };
       setRounds(newRounds);
       if (!postMatchShownRef.current) {
         postMatchShownRef.current = true;

@@ -722,7 +722,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
               HOME
             </motion.button>
             <motion.button whileTap={{ scale: 0.95 }}
-              onClick={() => window.location.reload()}
+              onClick={onHome}
               className="px-6 py-3 rounded-xl font-game-display text-[11px] tracking-wider"
               style={{
                 background: "linear-gradient(180deg, hsl(142 71% 50%) 0%, hsl(142 65% 38%) 100%)",

@@ -135,26 +135,32 @@ export default function ClanWars({ clan, myRole }: ClanWarsProps) {
 
     // Save attack
     if (user && activeWar) {
-      supabase.from("war_attacks").insert({
-        war_id: activeWar.id,
-        attacker_id: user.id,
-        defender_id: user.id, // simplified
-        clan_id: clan.id,
-        pitch_type: selectedPitch.id,
-        field_placement: selectedField.id,
-        score,
-        target_score: attackResult.par,
-        stars_earned: stars,
-      } as any);
+      const opponentClanId = activeWar.clan_a_id === clan.id ? activeWar.clan_b_id : activeWar.clan_a_id;
 
-      // Update war score
-      const isA = activeWar.clan_a_id === clan.id;
-      const scoreKey = isA ? "clan_a_score" : "clan_b_score";
-      const starsKey = isA ? "clan_a_stars" : "clan_b_stars";
-      supabase.from("clan_wars").update({
-        [scoreKey]: (activeWar[scoreKey] || 0) + score,
-        [starsKey]: (activeWar[starsKey] || 0) + stars,
-      } as any).eq("id", activeWar.id);
+      (async () => {
+        const { error: insertError } = await supabase.from("war_attacks").insert({
+          war_id: activeWar.id,
+          attacker_id: user.id,
+          defender_id: opponentClanId,
+          clan_id: clan.id,
+          pitch_type: selectedPitch.id,
+          field_placement: selectedField.id,
+          score,
+          target_score: attackResult.par,
+          stars_earned: stars,
+        } as any);
+        if (insertError) console.error("Failed to save war attack:", insertError);
+
+        // Update war score
+        const isA = activeWar.clan_a_id === clan.id;
+        const scoreKey = isA ? "clan_a_score" : "clan_b_score";
+        const starsKey = isA ? "clan_a_stars" : "clan_b_stars";
+        const { error: updateError } = await supabase.from("clan_wars").update({
+          [scoreKey]: (activeWar[scoreKey] || 0) + score,
+          [starsKey]: (activeWar[starsKey] || 0) + stars,
+        } as any).eq("id", activeWar.id);
+        if (updateError) console.error("Failed to update war score:", updateError);
+      })();
     }
 
     if (stars >= 2) { if (soundEnabled) SFX.win(); if (hapticsEnabled) Haptics.success(); }

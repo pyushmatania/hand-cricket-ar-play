@@ -725,15 +725,12 @@ export default function MultiplayerScreen({ onHome }: Props) {
         // Auto-submit random move
         const randomMoves: Move[] = [1, 2, 3, 4, 6];
         const randomMove = randomMoves[Math.floor(Math.random() * randomMoves.length)];
-        setMyConsecutiveMisses(prev => {
-          const newMisses = prev + 1;
-          if (newMisses >= MAX_CONSECUTIVE_MISSES) {
-            // Forfeit after 3 consecutive misses
-            handleAbandon();
-          }
-          return newMisses;
-        });
-        submitMove(randomMove);
+        setMyConsecutiveMisses(prev => prev + 1);
+        if (myConsecutiveMisses + 1 >= MAX_CONSECUTIVE_MISSES) {
+          handleAbandon();
+        } else {
+          submitMove(randomMove);
+        }
         stopTimer();
       }
     }, 50);

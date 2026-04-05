@@ -185,28 +185,43 @@ export default function WorldCupScreen({ onHome }: Props) {
       const newResults = [...groupResults, mr];
       setGroupResults(newResults);
 
-      setGroupTeams(prev => prev.map(t => {
-        if (t.name === myTeam.name) return { ...t, points: t.points + (matchResult === "win" ? 2 : 0), wins: t.wins + (matchResult === "win" ? 1 : 0), losses: t.losses + (matchResult === "loss" ? 1 : 0) };
-        if (t.name === matchOpponent.name) return { ...t, points: t.points + (matchResult === "loss" ? 2 : 0), wins: t.wins + (matchResult === "loss" ? 1 : 0), losses: t.losses + (matchResult === "win" ? 1 : 0) };
-        return { ...t, points: t.points + (Math.random() > 0.5 ? 2 : 0), wins: t.wins + (Math.random() > 0.5 ? 1 : 0) };
-      }));
-
       const nextIdx = groupMatchIdx + 1;
       setGroupMatchIdx(nextIdx);
-      const opponents = groupTeams.filter(t => t.name !== myTeam.name);
 
-      if (nextIdx >= opponents.length) {
-        const qualifiers = groupTeams
-          .sort((a, b) => b.points - a.points)
-          .slice(0, 4)
-          .filter(t => t.name !== myTeam.name);
-        setKnockoutOpponents(qualifiers.slice(0, 2));
-        setKnockoutIdx(0);
-        setKnockoutStage("super8");
-        setPhase("super8");
-      } else {
-        setPhase("group");
-      }
+      setGroupTeams(prev => {
+        const updated = prev.map(t => {
+          if (t.name === myTeam.name) {
+            const newWins = t.wins + (matchResult === "win" ? 1 : 0);
+            const newLosses = t.losses + (matchResult === "loss" ? 1 : 0);
+            return { ...t, points: newWins * 2, wins: newWins, losses: newLosses };
+          }
+          if (t.name === matchOpponent.name) {
+            const newWins = t.wins + (matchResult === "loss" ? 1 : 0);
+            const newLosses = t.losses + (matchResult === "win" ? 1 : 0);
+            return { ...t, points: newWins * 2, wins: newWins, losses: newLosses };
+          }
+          const won = Math.random() > 0.5;
+          const newWins = t.wins + (won ? 1 : 0);
+          const newLosses = t.losses + (won ? 0 : 1);
+          return { ...t, points: newWins * 2, wins: newWins, losses: newLosses };
+        });
+
+        const opponents = updated.filter(t => t.name !== myTeam.name);
+        if (nextIdx >= opponents.length) {
+          const qualifiers = [...updated]
+            .sort((a, b) => b.points - a.points)
+            .slice(0, 4)
+            .filter(t => t.name !== myTeam.name);
+          setKnockoutOpponents(qualifiers.slice(0, 2));
+          setKnockoutIdx(0);
+          setKnockoutStage("super8");
+          setPhase("super8");
+        } else {
+          setPhase("group");
+        }
+
+        return updated;
+      });
     } else {
       const newAll = [...allResults, mr];
       setAllResults(newAll);
@@ -472,7 +487,7 @@ export default function WorldCupScreen({ onHome }: Props) {
             <motion.button whileTap={{ scale: 0.95 }} onClick={onHome}
               className="px-6 py-3 rounded-xl font-game-display text-[11px] tracking-wider"
               style={{ background: "hsl(25 15% 12%)", border: "1.5px solid hsl(25 15% 20%)", borderBottom: "4px solid hsl(25 12% 8%)", color: "hsl(25 30% 70%)" }}>HOME</motion.button>
-            <motion.button whileTap={{ scale: 0.95 }} onClick={() => window.location.reload()}
+            <motion.button whileTap={{ scale: 0.95 }} onClick={onHome}
               className="px-6 py-3 rounded-xl font-game-display text-[11px] tracking-wider"
               style={{ background: "linear-gradient(180deg, hsl(142 71% 50%) 0%, hsl(142 65% 38%) 100%)", border: "1.5px solid hsl(142 60% 55% / 0.4)", borderBottom: "4px solid hsl(142 55% 25%)", color: "hsl(142 80% 98%)" }}>PLAY AGAIN</motion.button>
           </div>
