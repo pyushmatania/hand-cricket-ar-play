@@ -175,7 +175,7 @@ export default function HomePage() {
         />
         {/* Dark overlay for bottom readability */}
         <div className="absolute inset-0 pointer-events-none" style={{
-          background: "linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0.15) 55%, rgba(0,0,0,0.65) 80%, rgba(0,0,0,0.85) 100%)",
+          background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 15%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.7) 90%, rgba(0,0,0,0.85) 100%)",
         }} />
       </div>
 
