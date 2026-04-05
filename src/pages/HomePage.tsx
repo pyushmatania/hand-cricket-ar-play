@@ -268,21 +268,34 @@ export default function HomePage() {
           transition={{ delay: 0.1, type: "spring", damping: 18 }}
           className="relative mb-2 flex flex-col items-center"
         >
-          {/* Stadium name */}
-          <div className="mb-1 px-4 py-1 rounded-full z-10"
+          {/* Stadium name with shimmer */}
+          <div className="mb-1 px-4 py-1 rounded-full z-10 relative overflow-hidden"
             style={{
               background: "linear-gradient(180deg, hsl(25 20% 16% / 0.9), hsl(25 15% 10% / 0.95))",
               border: "1.5px solid hsl(43 50% 40%)",
               boxShadow: "0 2px 8px rgba(0,0,0,0.5)",
             }}
           >
-            <span className="font-game-display text-[10px] tracking-[0.2em]" style={{ color: "hsl(43 90% 55%)" }}>
+            {/* Text shimmer sweep */}
+            <motion.div
+              animate={{ x: ["-100%", "200%"] }}
+              transition={{ duration: 1.2, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
+              className="absolute inset-0 pointer-events-none"
+            >
+              <div style={{ width: 16, height: "100%", background: "linear-gradient(105deg, transparent 0%, rgba(255,255,255,0) 30%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 70%, transparent 100%)" }} />
+            </motion.div>
+            <span className="font-game-display text-[10px] tracking-[0.2em] relative" style={{ color: "hsl(43 90% 55%)" }}>
               {currentArena.name.toUpperCase()}
             </span>
           </div>
 
-          {/* Floating island */}
-          <div className="relative" style={{ height: 200 }}>
+          {/* Floating island with pulsing border glow */}
+          <motion.div
+            animate={{ boxShadow: ["0 0 10px rgba(200,170,100,0.1)", "0 0 20px rgba(200,170,100,0.25)", "0 0 10px rgba(200,170,100,0.1)"] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            className="relative rounded-2xl"
+            style={{ height: 200, border: "1.5px solid hsl(43 30% 25% / 0.3)", borderRadius: 16 }}
+          >
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
@@ -305,16 +318,16 @@ export default function HomePage() {
               className="absolute bottom-0 left-1/2 -translate-x-1/2"
               style={{ width: 160, height: 30, background: "radial-gradient(ellipse, rgba(0,0,0,0.5) 0%, transparent 70%)", borderRadius: "50%" }}
             />
-          </div>
+          </motion.div>
 
           {/* ═══ BIG PLAY BUTTON ═══ */}
           <motion.button
-            whileTap={{ scale: 0.93, y: 3 }}
+            whileTap={{ scale: 0.95, y: 4 }}
             whileHover={{ scale: 1.02 }}
             animate={{ y: [0, -3, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             onClick={handlePlay}
-            className="relative w-[70%] py-4 rounded-2xl font-game-display text-lg tracking-[0.15em] text-white"
+            className="relative w-[70%] py-4 rounded-2xl font-game-display text-lg tracking-[0.15em] text-white overflow-hidden"
             style={{
               background: "linear-gradient(180deg, #6AFF6A, #4ADE50, #2D8B2D)",
               border: "3px solid hsl(130 50% 20%)",
@@ -323,7 +336,23 @@ export default function HomePage() {
               textShadow: "0 2px 4px rgba(0,0,0,0.4)",
             }}
           >
-            PLAY ▶
+            {/* White shimmer sweep */}
+            <motion.div
+              animate={{ x: ["-100%", "200%"] }}
+              transition={{ duration: 1, repeat: Infinity, repeatDelay: 4, ease: "easeInOut" }}
+              className="absolute inset-0 pointer-events-none"
+              style={{ zIndex: 1 }}
+            >
+              <div
+                className="h-full"
+                style={{
+                  width: "20px",
+                  background: "linear-gradient(105deg, transparent 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0) 60%, transparent 100%)",
+                  height: "100%",
+                }}
+              />
+            </motion.div>
+            <span className="relative" style={{ zIndex: 2, textShadow: "0 2px 4px rgba(0,0,0,0.4)" }}>PLAY ▶</span>
           </motion.button>
         </motion.div>
 
@@ -372,7 +401,44 @@ export default function HomePage() {
 }
 
 /* ═══ 3D ANIMATED CHEST SLOT ═══ */
+
+const TIER_VISUALS: Record<string, {
+  body: string; bodyDark: string; fitting: string; fittingBorder: string;
+  plank: string; innerGlow: string; particle: string; isDiamond?: boolean;
+}> = {
+  bronze: {
+    body: "linear-gradient(180deg, hsl(25 50% 32%) 0%, hsl(20 45% 22%) 100%)",
+    bodyDark: "linear-gradient(180deg, hsl(25 40% 20%) 0%, hsl(20 35% 14%) 100%)",
+    fitting: "hsl(30 65% 50%)", fittingBorder: "hsl(30 50% 35%)",
+    plank: "hsl(25 35% 26%)", innerGlow: "hsl(35 80% 55%)",
+    particle: "hsl(35 70% 60%)",
+  },
+  silver: {
+    body: "linear-gradient(180deg, hsl(220 10% 45%) 0%, hsl(220 8% 30%) 100%)",
+    bodyDark: "linear-gradient(180deg, hsl(220 8% 30%) 0%, hsl(220 6% 20%) 100%)",
+    fitting: "hsl(220 15% 72%)", fittingBorder: "hsl(220 10% 50%)",
+    plank: "hsl(220 6% 38%)", innerGlow: "hsl(210 30% 70%)",
+    particle: "hsl(210 40% 80%)",
+  },
+  gold: {
+    body: "linear-gradient(180deg, hsl(25 40% 24%) 0%, hsl(20 50% 14%) 100%)",
+    bodyDark: "linear-gradient(180deg, hsl(25 35% 16%) 0%, hsl(20 40% 10%) 100%)",
+    fitting: "hsl(43 90% 55%)", fittingBorder: "hsl(40 70% 35%)",
+    plank: "hsl(25 30% 18%)", innerGlow: "hsl(43 100% 60%)",
+    particle: "hsl(43 95% 65%)",
+  },
+  diamond: {
+    body: "linear-gradient(180deg, hsl(200 40% 55% / 0.6) 0%, hsl(210 50% 35% / 0.7) 100%)",
+    bodyDark: "linear-gradient(180deg, hsl(200 30% 35% / 0.6) 0%, hsl(210 40% 22% / 0.7) 100%)",
+    fitting: "hsl(200 80% 75%)", fittingBorder: "hsl(210 60% 50%)",
+    plank: "hsl(200 25% 48% / 0.5)", innerGlow: "hsl(200 90% 70%)",
+    particle: "hsl(200 80% 85%)", isDiamond: true,
+  },
+};
+
 function ChestSlot3D({ chest, tick, onTap }: { chest: UserChest | null; tick: number; onTap: (c: UserChest | null) => void }) {
+  void tick; // consumed by parent for re-render
+
   if (!chest) {
     return (
       <div className="relative overflow-hidden rounded-xl flex flex-col items-center justify-center"
@@ -383,6 +449,7 @@ function ChestSlot3D({ chest, tick, onTap }: { chest: UserChest | null; tick: nu
           borderBottom: "4px solid hsl(25 12% 8%)",
         }}
       >
+        <span className="text-muted-foreground/20 text-lg">+</span>
         <span className="text-muted-foreground/30 font-game-display text-[8px] tracking-wider">EMPTY</span>
       </div>
     );
@@ -393,6 +460,144 @@ function ChestSlot3D({ chest, tick, onTap }: { chest: UserChest | null; tick: nu
   const remaining = isUnlocking ? chestTimeRemaining(chest) : 0;
   const isReady = chest.status === "ready" || (isUnlocking && remaining <= 0);
   const isLocked = chest.status === "locked";
+  const tierKey = (chest.chest_tier || "bronze").toLowerCase();
+  const tv = TIER_VISUALS[tierKey] || TIER_VISUALS.bronze;
+
+  // Unlock progress (0 to 1)
+  const unlockProgress = isUnlocking && !isReady && chest.unlock_duration_seconds
+    ? Math.max(0, Math.min(1, 1 - remaining / chest.unlock_duration_seconds))
+    : 0;
+
+  // CSS-only 3D chest body
+  const chestBody = (
+    <div style={{ width: "70%", position: "relative", margin: "0 auto" }}>
+      {/* Chest base / body */}
+      <div style={{
+        width: "100%",
+        aspectRatio: "1.2 / 1",
+        borderRadius: "3px 3px 4px 4px",
+        background: isLocked || (isUnlocking && !isReady) ? tv.bodyDark : tv.body,
+        border: `1.5px solid ${tv.fittingBorder}`,
+        position: "relative",
+        overflow: "hidden",
+        boxShadow: tv.isDiamond
+          ? `inset 0 0 12px hsl(200 60% 60% / 0.3), 0 2px 6px rgba(0,0,0,0.4)`
+          : `inset 0 1px 0 rgba(255,255,255,0.08), 0 2px 6px rgba(0,0,0,0.4)`,
+        opacity: isLocked ? 0.85 : 1,
+      }}>
+        {/* Wood plank lines */}
+        {[0.33, 0.66].map((pos, i) => (
+          <div key={i} style={{
+            position: "absolute", left: 0, right: 0,
+            top: `${pos * 100}%`, height: "1px",
+            background: tv.plank, opacity: 0.6,
+          }} />
+        ))}
+        {/* Metal band across middle */}
+        <div style={{
+          position: "absolute", left: 0, right: 0,
+          top: "42%", height: "16%",
+          background: `linear-gradient(180deg, ${tv.fitting}33 0%, ${tv.fitting}66 50%, ${tv.fitting}33 100%)`,
+          borderTop: `0.5px solid ${tv.fitting}88`,
+          borderBottom: `0.5px solid ${tv.fitting}88`,
+        }} />
+        {/* Corner brackets */}
+        {([
+          { top: 0, left: 0 }, { top: 0, right: 0 },
+          { bottom: 0, left: 0 }, { bottom: 0, right: 0 },
+        ] as const).map((pos, i) => (
+          <div key={i} style={{
+            position: "absolute",
+            ...pos,
+            width: "6px", height: "6px",
+            borderTop: "top" in pos ? `1.5px solid ${tv.fitting}` : "none",
+            borderBottom: "bottom" in pos ? `1.5px solid ${tv.fitting}` : "none",
+            borderLeft: "left" in pos ? `1.5px solid ${tv.fitting}` : "none",
+            borderRight: "right" in pos ? `1.5px solid ${tv.fitting}` : "none",
+          }} />
+        ))}
+        {/* Keyhole / lock plate */}
+        <div style={{
+          position: "absolute", left: "50%", top: "42%",
+          transform: "translateX(-50%)", width: "8px", height: "10px",
+          borderRadius: "2px",
+          background: `radial-gradient(circle at center, ${tv.fitting}, ${tv.fittingBorder})`,
+          border: `0.5px solid ${tv.fittingBorder}`,
+        }}>
+          <div style={{
+            position: "absolute", left: "50%", top: "55%",
+            transform: "translateX(-50%)", width: "2px", height: "3px",
+            background: "rgba(0,0,0,0.6)", borderRadius: "0 0 1px 1px",
+          }} />
+        </div>
+        {/* Diamond frost overlay */}
+        {tv.isDiamond && (
+          <div style={{
+            position: "absolute", inset: 0,
+            background: "linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 40%, rgba(255,255,255,0.05) 60%, transparent 100%)",
+            pointerEvents: "none",
+          }} />
+        )}
+      </div>
+
+      {/* Chest lid */}
+      <motion.div
+        animate={isReady
+          ? { rotateX: [-5, -8, -5] }
+          : { rotateX: 0 }
+        }
+        transition={isReady
+          ? { duration: 2, repeat: Infinity, ease: "easeInOut" }
+          : {}}
+        style={{
+          width: "106%",
+          marginLeft: "-3%",
+          height: "35%",
+          position: "absolute",
+          top: "-2px",
+          transformOrigin: "top center",
+          borderRadius: "4px 4px 2px 2px",
+          background: isLocked || (isUnlocking && !isReady) ? tv.bodyDark : tv.body,
+          border: `1.5px solid ${tv.fittingBorder}`,
+          borderBottom: `1px solid ${tv.fitting}66`,
+          zIndex: 2,
+          opacity: isLocked ? 0.85 : 1,
+          boxShadow: tv.isDiamond
+            ? "inset 0 0 8px hsl(200 60% 60% / 0.2)"
+            : "inset 0 1px 0 rgba(255,255,255,0.1)",
+        }}
+      >
+        {/* Lid band */}
+        <div style={{
+          position: "absolute", left: 0, right: 0,
+          bottom: "15%", height: "25%",
+          background: `linear-gradient(180deg, ${tv.fitting}22 0%, ${tv.fitting}55 50%, ${tv.fitting}22 100%)`,
+        }} />
+        {/* Lid top curve highlight */}
+        <div style={{
+          position: "absolute", left: "10%", right: "10%", top: "8%",
+          height: "2px", borderRadius: "1px",
+          background: `linear-gradient(90deg, transparent, ${tv.fitting}44, transparent)`,
+        }} />
+      </motion.div>
+
+      {/* Golden light rays from inside (ready state) */}
+      {isReady && (
+        <motion.div
+          animate={{ opacity: [0.4, 0.8, 0.4] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+          style={{
+            position: "absolute",
+            top: "-4px", left: "10%", right: "10%",
+            height: "8px", zIndex: 1,
+            background: `radial-gradient(ellipse at center, ${tv.innerGlow}CC 0%, ${tv.innerGlow}44 40%, transparent 70%)`,
+            filter: "blur(2px)",
+            pointerEvents: "none",
+          }}
+        />
+      )}
+    </div>
+  );
 
   return (
     <motion.button
@@ -407,57 +612,129 @@ function ChestSlot3D({ chest, tick, onTap }: { chest: UserChest | null; tick: nu
         boxShadow: isReady
           ? `0 4px 20px ${tier.glowColor}, 0 0 30px ${tier.glowColor}`
           : "0 4px 8px rgba(0,0,0,0.3)",
+        perspective: "200px",
       }}
     >
+      {/* Ready: warm golden glow underneath */}
       {isReady && (
         <motion.div
-          animate={{ opacity: [0.1, 0.4, 0.1] }}
+          animate={{ opacity: [0.15, 0.4, 0.15] }}
           transition={{ duration: 1.2, repeat: Infinity }}
           className="absolute inset-0 pointer-events-none"
-          style={{ background: `radial-gradient(circle, ${tier.glowColor}, transparent 70%)` }}
+          style={{ background: `radial-gradient(ellipse at center bottom, ${tv.innerGlow}55 0%, transparent 65%)` }}
         />
       )}
+
+      {/* Unlocking: progress ring glow */}
+      {isUnlocking && !isReady && (
+        <div className="absolute pointer-events-none" style={{
+          top: "18%", left: "50%", transform: "translateX(-50%)",
+          width: "32px", height: "32px",
+        }}>
+          <svg viewBox="0 0 36 36" style={{ width: "100%", height: "100%", transform: "rotate(-90deg)" }}>
+            <circle cx="18" cy="18" r="15" fill="none" stroke="hsl(25 15% 20%)" strokeWidth="2.5" />
+            <motion.circle
+              cx="18" cy="18" r="15" fill="none"
+              stroke={tv.fitting}
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeDasharray={`${unlockProgress * 94.25} 94.25`}
+              style={{ filter: `drop-shadow(0 0 3px ${tv.fitting})` }}
+            />
+          </svg>
+        </div>
+      )}
+
+      {/* The 3D chest with breathing animation */}
       <motion.div
-        animate={isReady ? { y: [0, -4, 0], rotate: [0, -2, 2, 0] } : isLocked ? {} : { y: [0, -2, 0] }}
-        transition={{ duration: isReady ? 0.8 : 2, repeat: Infinity }}
-        className="relative"
-        style={{ width: "75%", aspectRatio: "1" }}
+        animate={isReady
+          ? { scale: [1, 1.03, 1] }
+          : {}}
+        transition={isReady
+          ? { duration: 3, repeat: Infinity, ease: "easeInOut" }
+          : {}}
+        className="relative flex items-center justify-center"
+        style={{ width: "100%", paddingTop: "8px", paddingBottom: "2px" }}
       >
-        <img
-          src={tier.image}
-          alt={tier.name}
-          className="w-full h-full object-contain"
+        {chestBody}
+      </motion.div>
+
+      {/* Sparkle particles (ready state) */}
+      {isReady && (
+        <>
+          {[0, 1, 2, ...(tierKey === "gold" || tierKey === "diamond" ? [3] : [])].map(i => (
+            <motion.div
+              key={i}
+              animate={{
+                scale: [0, 1, 0],
+                opacity: [0, 1, 0],
+                y: [-5, -18 - i * 4],
+                x: [0, (i - 1.5) * 10],
+              }}
+              transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.28 }}
+              className="absolute left-1/2 rounded-full"
+              style={{
+                top: "25%",
+                width: tv.isDiamond ? "2.5px" : "2px",
+                height: tv.isDiamond ? "2.5px" : "2px",
+                background: tv.particle,
+                boxShadow: `0 0 4px ${tv.particle}`,
+              }}
+            />
+          ))}
+        </>
+      )}
+
+      {/* Diamond frost particles */}
+      {tv.isDiamond && isReady && (
+        <>
+          {[0, 1, 2].map(i => (
+            <motion.div
+              key={`frost-${i}`}
+              animate={{
+                opacity: [0, 0.7, 0],
+                y: [-2, -12],
+                x: [(i - 1) * 14, (i - 1) * 18],
+              }}
+              transition={{ duration: 2, repeat: Infinity, delay: 0.5 + i * 0.4 }}
+              className="absolute left-1/2 rounded-full"
+              style={{
+                top: "30%", width: "1.5px", height: "1.5px",
+                background: "hsl(200 80% 90%)",
+                boxShadow: "0 0 3px hsl(200 80% 85%)",
+              }}
+            />
+          ))}
+        </>
+      )}
+
+      {/* Unlocking: chain crack particle */}
+      {isUnlocking && !isReady && (
+        <motion.div
+          animate={{ opacity: [0.3, 0.8, 0.3], scale: [0.8, 1.1, 0.8] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+          className="absolute"
           style={{
-            filter: isLocked
-              ? "grayscale(0.3) brightness(0.7)"
-              : `drop-shadow(0 4px 8px ${tier.glowColor}) brightness(1.1)`,
+            top: "38%", left: "28%",
+            width: "4px", height: "4px", borderRadius: "50%",
+            background: tv.fitting,
+            boxShadow: `0 0 6px ${tv.fitting}`,
           }}
         />
-        {isReady && (
-          <>
-            {[0, 1, 2].map(i => (
-              <motion.div
-                key={i}
-                animate={{
-                  scale: [0, 1, 0],
-                  opacity: [0, 1, 0],
-                  y: [-5, -15 - i * 5],
-                  x: [0, (i - 1) * 12],
-                }}
-                transition={{ duration: 1, repeat: Infinity, delay: i * 0.3 }}
-                className="absolute top-0 left-1/2 w-1.5 h-1.5 rounded-full"
-                style={{ background: tier.color, boxShadow: `0 0 4px ${tier.color}` }}
-              />
-            ))}
-          </>
-        )}
-      </motion.div>
+      )}
+
+      {/* Bottom label area */}
       <div className="absolute bottom-0 inset-x-0 py-1 text-center rounded-b-lg"
         style={{ background: "linear-gradient(180deg, transparent, rgba(0,0,0,0.8))" }}
       >
         {isLocked && (
           <div className="flex items-center justify-center gap-0.5">
-            <Lock className="w-2.5 h-2.5 text-muted-foreground/60" />
+            <motion.div
+              animate={{ rotate: [-5, 5, -5] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <Lock className="w-2.5 h-2.5 text-muted-foreground/60" />
+            </motion.div>
             <span className="text-[7px] font-game-display text-muted-foreground/60 tracking-wider">TAP</span>
           </div>
         )}

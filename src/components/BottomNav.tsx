@@ -4,11 +4,11 @@ import { cn } from "@/lib/utils";
 import { SFX, Haptics } from "@/lib/sounds";
 
 const NAV_ITEMS = [
-  { path: "/shop", label: "Shop", icon: "🎁" },
-  { path: "/collection", label: "Collection", icon: "🏏" },
-  { path: "/", label: "Battle", icon: "⚔️", center: true },
-  { path: "/clan", label: "Clan", icon: "👥" },
-  { path: "/leaderboard", label: "Rankings", icon: "🏆" },
+  { path: "/shop", label: "Shop", icon: "🎁", underlineColor: "hsl(43 80% 50%)" },
+  { path: "/collection", label: "Collection", icon: "🏏", underlineColor: "hsl(210 80% 55%)" },
+  { path: "/", label: "Battle", icon: "⚔️", center: true, underlineColor: "hsl(142 71% 45%)" },
+  { path: "/clan", label: "Clan", icon: "👥", underlineColor: "hsl(25 80% 55%)" },
+  { path: "/leaderboard", label: "Rankings", icon: "🏆", underlineColor: "hsl(43 80% 50%)" },
 ];
 
 export default function BottomNav() {
@@ -39,8 +39,9 @@ export default function BottomNav() {
             >
               {item.center ? (
                 <motion.div
-                  animate={isActive ? { y: -4 } : { y: 0 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                  key={`center-${isActive}`}
+                  animate={isActive ? { y: -4, scale: [1, 1.15, 1] } : { y: 0 }}
+                  transition={isActive ? { y: { type: "spring", stiffness: 400, damping: 15 }, scale: { duration: 0.2 } } : { type: "spring", stiffness: 400, damping: 15 }}
                   className="absolute -top-6 w-[56px] h-[56px] rounded-full flex items-center justify-center"
                   style={{
                     background: isActive
@@ -53,13 +54,20 @@ export default function BottomNav() {
                       : "0 4px 0 hsl(130 57% 12%), 0 4px 12px rgba(0,0,0,0.5), inset 0 1px 2px rgba(255,255,255,0.15)",
                   }}
                 >
+                  {/* Pulsing glow */}
+                  <motion.div
+                    animate={{ boxShadow: ["0 0 15px 5px rgba(74,222,80,0.3)", "0 0 25px 10px rgba(74,222,80,0.5)", "0 0 15px 5px rgba(74,222,80,0.3)"] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute inset-0 rounded-full pointer-events-none"
+                  />
                   <span className="text-2xl drop-shadow-lg">{item.icon}</span>
                 </motion.div>
               ) : (
                 <div className="relative">
                   <motion.div
-                    animate={isActive ? { y: -4 } : { y: 0 }}
-                    transition={{ type: "spring", stiffness: 400, damping: 20 }}
+                    key={`tab-${item.path}-${isActive}`}
+                    animate={isActive ? { y: -4, scale: [1, 1.15, 1] } : { y: 0 }}
+                    transition={isActive ? { y: { type: "spring", stiffness: 400, damping: 20 }, scale: { duration: 0.2 } } : { type: "spring", stiffness: 400, damping: 20 }}
                     className="w-7 h-7 flex items-center justify-center"
                   >
                     <span
@@ -69,6 +77,12 @@ export default function BottomNav() {
                       {item.icon}
                     </span>
                   </motion.div>
+                  {isActive && (
+                    <div
+                      className="absolute -bottom-1 left-1/2 -translate-x-1/2 h-[3px] w-5 rounded-full"
+                      style={{ background: item.underlineColor, boxShadow: `0 0 6px ${item.underlineColor}` }}
+                    />
+                  )}
                 </div>
               )}
 
@@ -81,6 +95,12 @@ export default function BottomNav() {
               >
                 {item.label.toUpperCase()}
               </span>
+              {isActive && item.center && (
+                <div
+                  className="h-[3px] w-5 rounded-full mx-auto mt-0.5"
+                  style={{ background: item.underlineColor, boxShadow: `0 0 6px ${item.underlineColor}` }}
+                />
+              )}
             </motion.button>
           );
         })}
