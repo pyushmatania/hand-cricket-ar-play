@@ -9,6 +9,7 @@ import floatingIsland from "@/assets/floating-island.png";
 import { useUserChests, useStartUnlock, useCollectChest, chestTimeRemaining, type UserChest } from "@/hooks/useUserChests";
 import { getChestTier } from "@/lib/chests";
 import ChestReveal from "@/components/shop/ChestReveal";
+import GameModeCards from "@/components/GameModeCards";
 import StumpHitAnimation from "@/components/StumpHitAnimation";
 import { Lock, Timer, Settings } from "lucide-react";
 import { toast } from "sonner";
@@ -89,10 +90,23 @@ export default function HomePage() {
     setShowStumpAnim(true);
   }, []);
 
+  const [pendingMode, setPendingMode] = useState<string | null>(null);
+
+  const handleBattle = useCallback((modeId: string) => {
+    try { SFX.tap(); Haptics.heavy(); } catch { /* Intentionally ignored - non-critical */ }
+    setPendingMode(modeId);
+    setShowStumpAnim(true);
+  }, []);
+
   const handleStumpComplete = useCallback(() => {
     setShowStumpAnim(false);
-    navigate("/play");
-  }, [navigate]);
+    if (pendingMode) {
+      navigate(`/game/${pendingMode}`);
+      setPendingMode(null);
+    } else {
+      navigate("/play");
+    }
+  }, [navigate, pendingMode]);
 
   const hasUnlocking = chests?.some(c => c.status === "unlocking") ?? false;
 
@@ -380,6 +394,11 @@ export default function HomePage() {
           </div>
         </motion.div>
 
+        {/* ═══ F) GAME MODE CARDS ═══ */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.25 }} className="mb-4 px-1">
+          <GameModeCards onSelect={handleBattle} />
+        </motion.div>
+
       </div>
 
       {/* Stump animation overlay */}
@@ -405,34 +424,39 @@ export default function HomePage() {
 const TIER_VISUALS: Record<string, {
   body: string; bodyDark: string; fitting: string; fittingBorder: string;
   plank: string; innerGlow: string; particle: string; isDiamond?: boolean;
+  cricketIcon: string; cricketLabel: string;
 }> = {
   bronze: {
-    body: "linear-gradient(180deg, hsl(25 50% 32%) 0%, hsl(20 45% 22%) 100%)",
-    bodyDark: "linear-gradient(180deg, hsl(25 40% 20%) 0%, hsl(20 35% 14%) 100%)",
+    body: "linear-gradient(180deg, hsl(40 55% 50%) 0%, hsl(30 45% 35%) 100%)",
+    bodyDark: "linear-gradient(180deg, hsl(40 40% 30%) 0%, hsl(30 35% 20%) 100%)",
     fitting: "hsl(30 65% 50%)", fittingBorder: "hsl(30 50% 35%)",
     plank: "hsl(25 35% 26%)", innerGlow: "hsl(35 80% 55%)",
     particle: "hsl(35 70% 60%)",
+    cricketIcon: "🎾", cricketLabel: "Tennis Ball",
   },
   silver: {
-    body: "linear-gradient(180deg, hsl(220 10% 45%) 0%, hsl(220 8% 30%) 100%)",
-    bodyDark: "linear-gradient(180deg, hsl(220 8% 30%) 0%, hsl(220 6% 20%) 100%)",
-    fitting: "hsl(220 15% 72%)", fittingBorder: "hsl(220 10% 50%)",
-    plank: "hsl(220 6% 38%)", innerGlow: "hsl(210 30% 70%)",
-    particle: "hsl(210 40% 80%)",
+    body: "linear-gradient(180deg, hsl(0 65% 40%) 0%, hsl(0 55% 28%) 100%)",
+    bodyDark: "linear-gradient(180deg, hsl(0 45% 25%) 0%, hsl(0 35% 18%) 100%)",
+    fitting: "hsl(0 10% 95%)", fittingBorder: "hsl(0 5% 70%)",
+    plank: "hsl(0 30% 30%)", innerGlow: "hsl(0 50% 55%)",
+    particle: "hsl(0 40% 70%)",
+    cricketIcon: "🏏", cricketLabel: "Red Ball",
   },
   gold: {
-    body: "linear-gradient(180deg, hsl(25 40% 24%) 0%, hsl(20 50% 14%) 100%)",
-    bodyDark: "linear-gradient(180deg, hsl(25 35% 16%) 0%, hsl(20 40% 10%) 100%)",
+    body: "linear-gradient(180deg, hsl(43 90% 55%) 0%, hsl(35 80% 35%) 100%)",
+    bodyDark: "linear-gradient(180deg, hsl(43 60% 30%) 0%, hsl(35 50% 20%) 100%)",
     fitting: "hsl(43 90% 55%)", fittingBorder: "hsl(40 70% 35%)",
-    plank: "hsl(25 30% 18%)", innerGlow: "hsl(43 100% 60%)",
+    plank: "hsl(43 50% 40%)", innerGlow: "hsl(43 100% 60%)",
     particle: "hsl(43 95% 65%)",
+    cricketIcon: "🏆", cricketLabel: "Trophy",
   },
   diamond: {
-    body: "linear-gradient(180deg, hsl(200 40% 55% / 0.6) 0%, hsl(210 50% 35% / 0.7) 100%)",
-    bodyDark: "linear-gradient(180deg, hsl(200 30% 35% / 0.6) 0%, hsl(210 40% 22% / 0.7) 100%)",
+    body: "linear-gradient(180deg, hsl(200 60% 65% / 0.8) 0%, hsl(210 70% 45% / 0.9) 100%)",
+    bodyDark: "linear-gradient(180deg, hsl(200 40% 40% / 0.7) 0%, hsl(210 50% 28% / 0.8) 100%)",
     fitting: "hsl(200 80% 75%)", fittingBorder: "hsl(210 60% 50%)",
     plank: "hsl(200 25% 48% / 0.5)", innerGlow: "hsl(200 90% 70%)",
     particle: "hsl(200 80% 85%)", isDiamond: true,
+    cricketIcon: "💎", cricketLabel: "Crystal Bat",
   },
 };
 
@@ -529,6 +553,16 @@ function ChestSlot3D({ chest, tick, onTap }: { chest: UserChest | null; tick: nu
             transform: "translateX(-50%)", width: "2px", height: "3px",
             background: "rgba(0,0,0,0.6)", borderRadius: "0 0 1px 1px",
           }} />
+        </div>
+        {/* Cricket item icon centered on chest */}
+        <div style={{
+          position: "absolute", left: "50%", top: "50%",
+          transform: "translate(-50%, -50%)",
+          fontSize: "18px", zIndex: 1,
+          filter: isLocked ? "grayscale(0.5) brightness(0.7)" : "none",
+          opacity: isLocked ? 0.5 : 0.85,
+        }}>
+          {tv.cricketIcon}
         </div>
         {/* Diamond frost overlay */}
         {tv.isDiamond && (
