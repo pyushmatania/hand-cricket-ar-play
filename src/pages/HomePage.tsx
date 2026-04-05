@@ -277,7 +277,7 @@ export default function HomePage() {
                     ? "radial-gradient(circle, rgba(255,220,100,0.9), rgba(255,200,50,0.3))"
                     : "rgba(255,210,150,0.5)",
                   boxShadow: isFirefly ? "0 0 8px rgba(255,200,50,0.6)" : "none",
-                  transform: `translateZ(${z}px)`,
+                  // no translateZ in flat mode
                 }}
               />
             );
@@ -290,7 +290,7 @@ export default function HomePage() {
             position: "absolute",
             left: "50%",
             top: "50%",
-            transform: "translateX(-50%) translateZ(0px)",
+            transform: "translateX(-50%)",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -462,7 +462,7 @@ export default function HomePage() {
               fontSize: 22,
               opacity: 0.5,
               filter: "drop-shadow(0 0 6px rgba(255,200,50,0.5))",
-              transform: "translateZ(40px)",
+              // decorative floating
               pointerEvents: "none",
             }}
           >
@@ -478,7 +478,7 @@ export default function HomePage() {
             position: "absolute",
             bottom: "22%",
             left: "50%",
-            transform: "translateX(-50%) translateZ(60px) perspective(600px) rotateX(5deg)",
+            transform: "translateX(-50%) perspective(600px) rotateX(5deg)",
             background: "linear-gradient(180deg, #8B7355, #6B5335)",
             border: "2px solid #5A4225",
             borderBottom: "4px solid #4A3215",
@@ -690,14 +690,7 @@ export default function HomePage() {
         />
       )}
 
-      {/* Global CSS for 3D background animation */}
-      <style>{`
-        @keyframes bgBreath {
-          0% { transform: translateZ(-200px) scale(1.4) translate(0, 0); }
-          50% { transform: translateZ(-200px) scale(1.42) translate(-3px, -2px); }
-          100% { transform: translateZ(-200px) scale(1.4) translate(0, 0); }
-        }
-      `}</style>
+      <style>{``}</style>
     </div>
   );
 }
@@ -735,7 +728,7 @@ function ModeRibbon({
         position: "absolute",
         [side]: 10,
         top,
-        transform: `translateZ(80px) rotateY(${rotateY}deg) rotateX(${rotateX}deg)`,
+        transform: `perspective(800px) rotateY(${rotateY}deg) rotateX(${rotateX}deg)`,
         transformStyle: "preserve-3d",
         cursor: "pointer",
         zIndex: 20,
@@ -816,7 +809,7 @@ function SideIconButton({
         color: "rgba(255,255,255,0.7)",
         boxShadow: "4px 6px 14px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 8px rgba(255,180,100,0.05)",
         cursor: "pointer",
-        transform: "translateZ(30px)",
+        // side icon button
         zIndex: 15,
         // Reset button defaults
         padding: 0,
