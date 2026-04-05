@@ -170,12 +170,13 @@ export default function HomePage() {
         <img
           src={gullyBg}
           alt="Gully Grounds"
-          className="w-full h-full object-cover"
+          className="w-full h-full"
           width={1080} height={1920}
+          style={{ objectFit: "cover", objectPosition: "center 30%" }}
         />
-        {/* Dark overlay for bottom readability */}
+        {/* Subtle vignette — keep background vivid */}
         <div className="absolute inset-0 pointer-events-none" style={{
-          background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 15%, rgba(0,0,0,0) 50%, rgba(0,0,0,0.3) 70%, rgba(0,0,0,0.7) 90%, rgba(0,0,0,0.85) 100%)",
+          background: "linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 12%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.45) 80%, rgba(0,0,0,0.75) 100%)",
         }} />
       </div>
 
