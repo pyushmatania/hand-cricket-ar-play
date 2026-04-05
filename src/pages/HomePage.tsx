@@ -413,7 +413,7 @@ export default function HomePage() {
           </motion.span>
           {/* Swipe dots */}
           <div className="flex justify-center gap-1 mt-1">
-            {ARENA_LEVELS.slice(0, 5).map((_, i) => (
+            {ARENA_LEVELS.map((_, i) => (
               <div key={i} className="rounded-full transition-all" style={{
                 width: i === currentArenaIdx ? 14 : 4,
                 height: 4,
