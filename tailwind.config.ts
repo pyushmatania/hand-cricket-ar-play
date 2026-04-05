@@ -12,19 +12,24 @@ export default {
     },
     extend: {
       fontFamily: {
-        /* V7 Typography Stack */
-        display: ["Bungee", "sans-serif"],               /* Headlines, scores, popups — chunky, impactful */
-        "v7-ui": ["Rajdhani", "sans-serif"],              /* Labels, stats, nav, sub-headings — sporty angular */
-        "v7-body": ["Outfit", "sans-serif"],              /* Descriptions, chat, body text — clean geometric */
-        body: ["Nunito", "sans-serif"],                   /* Legacy body */
-        heading: ["Fredoka", "sans-serif"],               /* Section headers (alt) */
-        score: ["Rubik", "monospace"],                    /* Score numbers, stats, timers */
+        /* V8 Typography — 3 fonts, 3 roles */
+        display: ["Bungee", "sans-serif"],           /* HERO: scores, titles, popups, buttons */
+        "game-title": ["Rajdhani", "sans-serif"],    /* UI: nav, stats, cards, sub-headings */
+        "game-body": ["Outfit", "sans-serif"],       /* BODY: descriptions, chat, tooltips */
+        /* V8 aliases */
+        "v8-display": ["Bungee", "sans-serif"],
+        "v8-ui": ["Rajdhani", "sans-serif"],
+        "v8-body": ["Outfit", "sans-serif"],
+        /* Legacy compat */
+        "v7-ui": ["Rajdhani", "sans-serif"],
+        "v7-body": ["Outfit", "sans-serif"],
+        body: ["Outfit", "sans-serif"],
+        heading: ["Bungee", "sans-serif"],
+        score: ["Bungee", "monospace"],
         "game-display": ["Bungee", "sans-serif"],
-        "game-display-3d": ["Bungee Shade", "sans-serif"],
-        "game-title": ["Rajdhani", "sans-serif"],         /* V7: mapped to Rajdhani */
-        "game-body": ["Outfit", "sans-serif"],            /* V7: mapped to Outfit */
-        "game-card": ["Fredoka", "sans-serif"],
-        "game-mono": ["Rubik", "monospace"],
+        "game-display-3d": ["Bungee", "sans-serif"],
+        "game-card": ["Rajdhani", "sans-serif"],
+        "game-mono": ["Rajdhani", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -60,7 +65,18 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        /* Doc 1 Game Colors */
+        /* V8 Neon Colors */
+        "neon-green": "hsl(var(--neon-green))",
+        "neon-cyan": "hsl(var(--neon-cyan))",
+        "neon-pink": "hsl(var(--neon-pink))",
+        "neon-gold": "hsl(var(--neon-gold))",
+        "neon-orange": "hsl(var(--neon-orange))",
+        "neon-purple": "hsl(var(--neon-purple))",
+        /* V8 Cricket */
+        "cricket-red": "hsl(var(--cricket-red))",
+        "cricket-willow": "hsl(var(--cricket-willow))",
+        "cricket-grass": "hsl(var(--cricket-grass))",
+        /* Game Colors */
         "green-play": "hsl(var(--green-play))",
         "green-play-light": "hsl(var(--green-play-light))",
         "green-play-dark": "hsl(var(--green-play-dark))",
@@ -76,17 +92,11 @@ export default {
         "team-accent": "hsl(var(--team-accent))",
         "team-dark": "hsl(var(--team-dark))",
         "team-light": "hsl(var(--team-light))",
-        /* Legacy compat */
+        /* Legacy */
         glass: "hsl(var(--glass-border))",
         "score-gold": "hsl(var(--score-gold))",
         "out-red": "hsl(var(--out-red))",
         floodlight: "hsl(var(--floodlight))",
-        "neon-green": "hsl(var(--neon-green))",
-        "neon-cyan": "hsl(var(--neon-cyan))",
-        "neon-pink": "hsl(var(--neon-pink))",
-        "neon-gold": "hsl(var(--neon-gold))",
-        "neon-orange": "hsl(var(--neon-orange))",
-        "neon-purple": "hsl(var(--neon-purple))",
         "game-green": "hsl(var(--game-green))",
         "game-gold": "hsl(var(--game-gold))",
         "game-blue": "hsl(var(--game-blue))",
@@ -116,8 +126,9 @@ export default {
         "game-card": "0 8px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)",
         "game-button": "0 7px 0 rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,0,0.35)",
         "game-button-pressed": "0 3px 0 rgba(0,0,0,0.15), 0 5px 10px rgba(0,0,0,0.25)",
-        "game-glow-green": "0 0 20px rgba(74,222,80,0.4), 0 0 60px rgba(74,222,80,0.2)",
+        "game-glow-green": "0 0 20px rgba(0,255,136,0.4), 0 0 60px rgba(0,255,136,0.2)",
         "game-glow-gold": "0 0 20px rgba(255,215,0,0.4), 0 0 60px rgba(255,215,0,0.2)",
+        "stadium-glass": "0 8px 28px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.07)",
       },
       keyframes: {
         "accordion-down": {
@@ -152,7 +163,7 @@ export default {
         },
         "float": {
           "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-8px)" },
+          "50%": { transform: "translateY(-7px)" },
         },
       },
       animation: {
@@ -163,7 +174,7 @@ export default {
         "fade-in": "fade-in 0.3s ease-out",
         "scale-in": "scale-in 0.2s ease-out",
         "bounce-in": "bounce-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)",
-        "float": "float 3s ease-in-out infinite",
+        "float": "float 4.5s ease-in-out infinite",
       },
     },
   },
