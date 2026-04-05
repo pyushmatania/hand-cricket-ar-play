@@ -263,10 +263,9 @@
 @layer utilities {
 
   .app-bg {
-    background:
-      radial-gradient(ellipse at 50% 25%, rgba(var(--team-primary-rgb), 0.08) 0%, transparent 55%),
-      linear-gradient(180deg, #0F172A 0%, #020617 100%);
+    background: #070B1A;
     min-height: 100vh;
+    position: relative;
   }
 
   .match-bg {
