@@ -163,7 +163,7 @@ export default function HomePage() {
   const chestSlots = Array.from({ length: 4 }, (_, i) => chests?.find(c => c.slot_index === i) || null);
 
   return (
-    <div className="fixed inset-0 overflow-hidden" style={{ paddingBottom: "calc(68px + env(safe-area-inset-bottom, 16px))" }}>
+    <div className="relative w-full overflow-hidden" style={{ height: "100dvh", paddingBottom: "calc(68px + env(safe-area-inset-bottom, 16px))" }}>
 
       {/* ═══ LAYER 0: FULL-SCREEN IMMERSIVE BACKGROUND ═══ */}
       <div className="absolute inset-0">
