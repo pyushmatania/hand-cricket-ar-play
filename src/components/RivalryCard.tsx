@@ -75,7 +75,7 @@ export default function RivalryCard({ friend, onChallenge }: Props) {
 
     let myWins = 0, theirWins = 0, draws = 0, myHighScore = 0, theirHighScore = 0;
     let myTotalRuns = 0, theirTotalRuns = 0, myAbandons = 0, theirAbandons = 0;
-    let currentStreak = 0, bestStreak = 0, streakCounted = false;
+    let currentStreak = 0, bestStreak = 0; const streakCounted = false;
 
     // Process in chronological order for streaks
     const chronological = [...data].reverse();

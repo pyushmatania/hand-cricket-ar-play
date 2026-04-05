@@ -40,8 +40,9 @@ interface Props { onHome: () => void; }
 
 export default function TournamentScreen({ onHome }: Props) {
   const location = useLocation();
-  const arenaImage = (location.state as any)?.arenaImage as string | undefined;
-  const arenaId = (location.state as any)?.arenaId as string | undefined;
+  const locState = location.state as Record<string, string> | null;
+  const arenaImage = locState?.arenaImage;
+  const arenaId = locState?.arenaId;
   const { soundEnabled, hapticsEnabled, commentaryVoice, tournamentCeremoniesEnabled } = useSettings();
   const cosmetics = useEquippedCosmetics();
   const { user } = useAuth();
@@ -82,7 +83,7 @@ export default function TournamentScreen({ onHome }: Props) {
     setPhase("bracket");
   };
 
-  useEffect(() => { startTournament(); }, []);
+  useEffect(() => { startTournament(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const startRound = () => {
     setPhase("config");
@@ -153,7 +154,7 @@ export default function TournamentScreen({ onHome }: Props) {
         }
       }
     }
-  }, [game.phase]);
+  }, [game.phase, saveMatch, game, soundEnabled, hapticsEnabled, rounds, currentRound, tournamentCeremoniesEnabled]);
 
   const advanceRound = () => {
     if (currentRound < AI_OPPONENTS.length - 1) { setCurrentRound(currentRound + 1); setPhase("bracket"); }

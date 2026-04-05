@@ -68,7 +68,7 @@ export default function WorldCupScreen({ onHome }: Props) {
       grantTournamentRewards(user.id, finalPlacement, "worldcup").then(r => r && setReward(r));
       if (tournamentId) finishTournament(tournamentId, finalPlacement);
     }
-  }, [phase, finalPlacement, user, tournamentId]);
+  }, [phase, finalPlacement, user, tournamentId, finishTournament]);
 
   const pickTeam = async (team: typeof TEAMS[0]) => {
     if (soundEnabled) SFX.tap();
@@ -106,6 +106,12 @@ export default function WorldCupScreen({ onHome }: Props) {
     setScore(0); setOppScore(0); setBalls(0); setInnings(1); setTarget(0);
     setMatchResult(null); setLastBall(""); ballsRef.current = 0;
   };
+
+  const finishMatch = useCallback((result: "win" | "loss") => {
+    setMatchResult(result);
+    if (result === "win") { if (soundEnabled) SFX.win(); if (hapticsEnabled) Haptics.success(); }
+    else { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); }
+  }, [soundEnabled, hapticsEnabled]);
 
   const playBall = useCallback((move: number) => {
     if (matchResult) return;
@@ -146,13 +152,7 @@ export default function WorldCupScreen({ onHome }: Props) {
       if (newOpp >= target) { finishMatch("loss"); return; }
       if (newBalls >= MATCH_BALLS) { finishMatch("win"); }
     }
-  }, [innings, score, oppScore, target, matchResult, soundEnabled, hapticsEnabled]);
-
-  const finishMatch = (result: "win" | "loss") => {
-    setMatchResult(result);
-    if (result === "win") { if (soundEnabled) SFX.win(); if (hapticsEnabled) Haptics.success(); }
-    else { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); }
-  };
+  }, [innings, score, oppScore, target, matchResult, soundEnabled, hapticsEnabled, finishMatch]);
 
   const persistFixture = (roundNum: number, oppName: string, myS: number, oppS: number, won: boolean) => {
     if (!tournamentId || !user) return;

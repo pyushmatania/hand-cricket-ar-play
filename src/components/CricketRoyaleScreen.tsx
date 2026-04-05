@@ -102,7 +102,7 @@ export default function CricketRoyaleScreen({ onHome }: CricketRoyaleScreenProps
       setPhase("result");
       if (soundEnabled) SFX.out();
     }
-  }, [game.phase]);
+  }, [game.phase, phase, game.userScore, targetScore, playersRemaining, currentRound, soundEnabled, hapticsEnabled]);
 
   // Advance to next round
   const handleNextRound = () => {

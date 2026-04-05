@@ -47,13 +47,13 @@ export default function PlayPage() {
   const handleArenaSelect = (arena: Arena) => {
     setSelectedArena(arena);
     localStorage.setItem("selectedArena", arena.id);
-    try { SFX.tap(); Haptics.light(); } catch {}
+    try { SFX.tap(); Haptics.light(); } catch { /* Intentionally ignored - non-critical */ }
   };
 
   const handleThemeSelect = (theme: MatchTheme) => {
     setSelectedTheme(theme);
     localStorage.setItem("selectedTheme", theme.id);
-    try { SFX.tap(); Haptics.light(); } catch {}
+    try { SFX.tap(); Haptics.light(); } catch { /* Intentionally ignored - non-critical */ }
   };
 
   const handleModeSelect = (modeId: string) => {

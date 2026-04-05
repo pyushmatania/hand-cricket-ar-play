@@ -124,8 +124,7 @@ class EngineManager {
       const intensity = p.intensity as CrowdIntensity;
       const ambientCategory = AMBIENT_INTENSITY_MAP[intensity];
       if (ambientCategory) {
-        const manifest = this.sound as any;
-        const cat = manifest.categories?.get(ambientCategory);
+        const cat = this.sound.getCategory(ambientCategory);
         if (cat?.variants?.[0]) {
           this.sound.setAmbient(cat.variants[0].src);
         }
@@ -137,8 +136,7 @@ class EngineManager {
       const weather = p.weather as string;
       const ambientKey = WEATHER_AMBIENT_MAP[weather];
       if (ambientKey) {
-        const manifest = this.sound as any;
-        const cat = manifest.categories?.get(ambientKey);
+        const cat = this.sound.getCategory(ambientKey);
         if (cat?.variants?.[0]) {
           this.sound.setAmbient(cat.variants[0].src, 0.15);
         }

@@ -131,7 +131,7 @@ export default function CelebrationEffects({ lastResult, gameResult, phase, batS
         setTimeout(() => setEffectType("none"), 1500);
       }
     }
-  }, [lastResult]);
+  }, [lastResult, skinEffect]);
 
   useEffect(() => {
     if (phase === "finished" && gameResult === "win") {

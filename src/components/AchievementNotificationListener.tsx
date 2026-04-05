@@ -25,8 +25,8 @@ export default function AchievementNotificationListener() {
     if (!current && queue.length > 0) {
       setCurrent(queue[0]);
       setQueue(q => q.slice(1));
-      try { SFX.levelUp(); } catch {}
-      try { Haptics.heavy(); } catch {}
+      try { SFX.levelUp(); } catch { /* Intentionally ignored - non-critical */ }
+      try { Haptics.heavy(); } catch { /* Intentionally ignored - non-critical */ }
     }
   }, [current, queue]);
 

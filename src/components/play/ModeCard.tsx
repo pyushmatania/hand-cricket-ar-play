@@ -33,7 +33,7 @@ export default function ModeCard({ mode, index, onSelect }: ModeCardProps) {
       onPointerDown={() => setIsPressed(true)}
       onPointerUp={() => setIsPressed(false)}
       onClick={() => {
-        try { SFX.tap(); Haptics.medium(); } catch {}
+        try { SFX.tap(); Haptics.medium(); } catch { /* Intentionally ignored - non-critical */ }
         onSelect();
       }}
       className="relative cursor-pointer"

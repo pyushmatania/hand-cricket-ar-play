@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -35,12 +35,7 @@ export default function FriendsNetworkGraph({ onSelectFriend }: Props) {
   const [loading, setLoading] = useState(true);
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
 
-  useEffect(() => {
-    if (!user) return;
-    loadNetwork();
-  }, [user?.id]);
-
-  const loadNetwork = async () => {
+  const loadNetwork = useCallback(async () => {
     if (!user) return;
     setLoading(true);
 
@@ -83,7 +78,12 @@ export default function FriendsNetworkGraph({ onSelectFriend }: Props) {
 
     setEdges(computedEdges);
     setLoading(false);
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    loadNetwork();
+  }, [user, loadNetwork]);
 
   // Position nodes in a circle
   const nodePositions = useMemo(() => {

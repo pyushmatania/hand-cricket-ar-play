@@ -34,17 +34,17 @@ export default function LevelUpModal({ rewards, onClose }: LevelUpModalProps) {
     const t1 = setTimeout(() => {
       if (didLevelUp) {
         setPhase(1);
-        try { SFX.levelUp(); Haptics.rewardClaim(); } catch {}
+        try { SFX.levelUp(); Haptics.rewardClaim(); } catch { /* Intentionally ignored - non-critical */ }
       } else if (didRankUp) {
         setPhase(2);
-        try { SFX.levelUp(); Haptics.chestOpen(); } catch {}
+        try { SFX.levelUp(); Haptics.chestOpen(); } catch { /* Intentionally ignored - non-critical */ }
       }
     }, 800);
 
     const t2 = setTimeout(() => {
       if (didLevelUp && didRankUp) {
         setPhase(2);
-        try { SFX.levelUp(); Haptics.chestOpen(); } catch {}
+        try { SFX.levelUp(); Haptics.chestOpen(); } catch { /* Intentionally ignored - non-critical */ }
       }
     }, 2200);
 

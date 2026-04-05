@@ -342,7 +342,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
     };
 
     void hydrateGame();
-  }, [user, gameIdFromQuery]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, gameIdFromQuery, joinExistingGame]);
 
   useEffect(() => {
     if (!user || gameIdFromQuery || phase !== "lobby") return;
@@ -379,7 +380,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
       );
     }, 1000);
     return () => { clearInterval(loadInterval); clearInterval(tickInterval); };
-  }, [phase]);
+  }, [phase, loadGames, loadLobbyFriends]);
 
   // Subscribe to game changes
   useEffect(() => {
@@ -554,6 +555,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentGame?.id]);
 
   // Subscribe to rematch invites when game is finished
@@ -611,6 +613,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
       clearInterval(interval);
       supabase.removeChannel(channel);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id, currentGame?.id, currentGame?.status, opponentName]);
 
   // ─── Gaslighting messages when rematch expires ──────────────────
@@ -655,6 +658,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
       });
     }, 1000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rematchSent]);
 
   // Incoming rematch countdown — 45s for the receiver
@@ -677,7 +681,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
         osc.stop(ctx.currentTime + i * 0.15 + 0.4);
       });
       navigator.vibrate?.([100, 50, 150]);
-    } catch {}
+    } catch { /* Intentionally ignored - non-critical */ }
     setIncomingRematchCountdown(45);
     const interval = setInterval(() => {
       setIncomingRematchCountdown(prev => {
@@ -696,6 +700,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
       });
     }, 1000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [incomingRematch?.inviteId]);
 
   // Timer management — 5s synced countdown per turn
@@ -733,6 +738,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
       }
     }, 50);
     return () => stopTimer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentGame?.current_turn, waitingForOpponent, phase]);
 
   // Host-side phase transition (pre_round_countdown -> action_window)
@@ -790,7 +796,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
     setPhase("finished");
   };
 
-  const loadGames = async () => {
+  const loadGames = useCallback(async () => {
     if (!user) {
       setGames([]);
       return;
@@ -855,9 +861,9 @@ export default function MultiplayerScreen({ onHome }: Props) {
     } else {
       setOwnHostedGame(null);
     }
-  };
+  }, [user, myName]);
 
-  const loadLobbyFriends = async () => {
+  const loadLobbyFriends = useCallback(async () => {
     if (!user) return;
     const { data: friendRows } = await supabase
       .from("friends")
@@ -870,7 +876,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
       .select("user_id, display_name, avatar_index, wins, total_matches")
       .in("user_id", friendIds);
     setLobbyFriends(profiles || []);
-  };
+  }, [user]);
 
   const loadOpponentName = async (game: MultiplayerGame) => {
     const oppId = user?.id === game.host_id ? game.guest_id : game.host_id;

@@ -45,7 +45,7 @@ export default function AshesScreen({ onHome }: Props) {
       grantTournamentRewards(user.id, placement, "ashes").then(r => r && setReward(r));
       if (tournamentId) finishTournament(tournamentId, placement);
     }
-  }, [phase, user, tournamentId]);
+  }, [phase, user, tournamentId, finishTournament, myWins, oppWins]);
 
   const startSeries = async () => {
     const id = await createTournament({
@@ -63,6 +63,27 @@ export default function AshesScreen({ onHome }: Props) {
     setTarget(0); setMatchResult(null); setLastBall(""); ballsRef.current = 0;
     setPhase("match");
   };
+
+  const finishTest = useCallback((result: "win" | "loss" | "draw") => {
+    setMatchResult(result);
+    if (result === "win") { if (soundEnabled) SFX.win(); if (hapticsEnabled) Haptics.success(); }
+    else if (result === "loss") { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); }
+
+    // Persist fixture
+    if (tournamentId && user) {
+      saveFixture({
+        tournamentId,
+        roundNumber: testNum + 1,
+        matchIndex: testNum,
+        playerAId: user.id,
+        playerBId: null,
+        playerAScore: score,
+        playerBScore: oppScore,
+        winnerId: result === "win" ? user.id : null,
+        status: "completed",
+      });
+    }
+  }, [soundEnabled, hapticsEnabled, tournamentId, user, testNum, score, oppScore, saveFixture]);
 
   const playBall = useCallback((move: number) => {
     if (matchResult) return;
@@ -105,28 +126,7 @@ export default function AshesScreen({ onHome }: Props) {
         else finishTest("win");
       }
     }
-  }, [innings, score, oppScore, target, matchResult, soundEnabled, hapticsEnabled, testNum]);
-
-  const finishTest = (result: "win" | "loss" | "draw") => {
-    setMatchResult(result);
-    if (result === "win") { if (soundEnabled) SFX.win(); if (hapticsEnabled) Haptics.success(); }
-    else if (result === "loss") { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); }
-
-    // Persist fixture
-    if (tournamentId && user) {
-      saveFixture({
-        tournamentId,
-        roundNumber: testNum + 1,
-        matchIndex: testNum,
-        playerAId: user.id,
-        playerBId: null,
-        playerAScore: score,
-        playerBScore: oppScore,
-        winnerId: result === "win" ? user.id : null,
-        status: "completed",
-      });
-    }
-  };
+  }, [innings, score, oppScore, target, matchResult, soundEnabled, hapticsEnabled, testNum, finishTest]);
 
   const handleTestDone = () => {
     if (!matchResult) return;

@@ -98,7 +98,7 @@ const CameraFeed = forwardRef<CameraFeedHandle, CameraFeedProps>(
     useEffect(() => {
       startCamera("environment");
       return () => stopStream();
-    }, []);
+    }, [startCamera, stopStream]);
 
     if (error) {
       return (

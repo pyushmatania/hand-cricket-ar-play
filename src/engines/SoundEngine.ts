@@ -164,6 +164,7 @@ export class SoundEngine {
 
   getVolumes() { return { ...this.volumes }; }
   getEnabled() { return { ...this.enabled }; }
+  getCategory(id: string): SoundCategory | undefined { return this.categories.get(id); }
 
   destroy(): void {
     this.stopAllEffects();

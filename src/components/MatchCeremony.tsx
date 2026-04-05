@@ -162,7 +162,8 @@ export function PostMatchCeremony({ playerName, opponentName, result, playerScor
     }, t));
 
     return () => timers.forEach(t => clearTimeout(t));
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [soundEnabled, voiceEnabled, voiceEngine, result, isPvP]);
 
   const resultEmoji = result === "win" ? "🏆" : result === "loss" ? "😔" : "🤝";
   const resultText = result === "win" ? "VICTORY!" : result === "loss" ? "DEFEAT" : "TIE!";
@@ -448,7 +449,8 @@ export function PreMatchCeremony({ playerName, opponentName, tossWinner, batting
     }, t));
 
     return () => timers.forEach(clearTimeout);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [soundEnabled, voiceEnabled, voiceEngine]);
 
   return (
     <AnimatePresence>

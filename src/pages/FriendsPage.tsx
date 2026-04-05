@@ -106,7 +106,7 @@ export default function FriendsPage() {
       .from("friend_requests").select("*").eq("to_user_id", user.id).eq("status", "pending");
     if (inc) {
       const fromIds = inc.map((r: any) => r.from_user_id);
-      let names: Record<string, string> = {};
+      const names: Record<string, string> = {};
       if (fromIds.length) {
         const { data: p } = await supabase.from("profiles").select("user_id, display_name").in("user_id", fromIds);
         if (p) p.forEach((pr: any) => { names[pr.user_id] = pr.display_name; });
@@ -117,7 +117,7 @@ export default function FriendsPage() {
       .from("friend_requests").select("*").eq("from_user_id", user.id).eq("status", "pending");
     if (out) {
       const toIds = out.map((r: any) => r.to_user_id);
-      let names: Record<string, string> = {};
+      const names: Record<string, string> = {};
       if (toIds.length) {
         const { data: p } = await supabase.from("profiles").select("user_id, display_name").in("user_id", toIds);
         if (p) p.forEach((pr: any) => { names[pr.user_id] = pr.display_name; });

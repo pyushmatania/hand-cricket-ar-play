@@ -89,7 +89,7 @@ export default function HomePage() {
   };
 
   const handleBattle = useCallback((modeId: string) => {
-    try { SFX.tap(); Haptics.heavy(); } catch {}
+    try { SFX.tap(); Haptics.heavy(); } catch { /* Intentionally ignored - non-critical */ }
     setPendingMode(modeId);
     setShowStumpAnim(true);
   }, []);

@@ -86,12 +86,14 @@ export class CrowdEngine {
       case 'WICKET_RUN_OUT':
       case 'WICKET_STUMPED':
       case 'WICKET_CAUGHT_BEHIND':
+      case 'WICKET_HIT_WICKET':
         this.mood = isPeakEvent ? 100 : Math.max(85 * speed, this.mood);
         break;
       case 'MILESTONE_50':
         this.mood = Math.min(100, this.mood + 30 * speed);
         break;
       case 'MILESTONE_100':
+      case 'MILESTONE_5_WICKETS':
       case 'HATTRICK':
         this.mood = 100;
         break;
@@ -174,5 +176,13 @@ export class CrowdEngine {
 
   destroy(): void {
     this.stop();
+    this.mood = 30;
+    this.lastMexicanWave = 0;
+    this.themeConfig = DEFAULT_CROWD_CONFIG;
+    this.mexicanWaveThreshold = 90;
+    this.onMoodChange = undefined;
+    this.onMexicanWave = undefined;
+    this.soundEngine = undefined;
+    this.eventEngine = undefined;
   }
 }

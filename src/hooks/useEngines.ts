@@ -59,7 +59,7 @@ export function useEngines() {
   // Sync commentary language (map 'both' → 'hinglish' for engine)
   useEffect(() => {
     const engineLang = commentaryLanguage === 'both' ? 'hinglish' : commentaryLanguage;
-    engines.commentary.setLanguage(engineLang as any);
+    engines.commentary.setLanguage(engineLang as 'english' | 'hindi' | 'hinglish');
   }, [commentaryLanguage]);
 
   // Sync crowd enabled (start/stop crowd engine)
