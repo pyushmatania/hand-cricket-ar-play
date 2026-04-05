@@ -257,19 +257,14 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     // staggered reveal
     setTimeout(() => setTossReveal(1), 600);
     setTimeout(() => setTossReveal(2), 1200);
-    setTimeout(() => {
-      setTossReveal(3);
-      setTossWon((prev) => {
-        // need tossPlayerOE at this point — read from closure
-        return prev; // computed below via functional update
-      });
-    }, 1800);
+    setTimeout(() => setTossReveal(3), 1800);
     // compute winner outside the staggered chain so we have tossPlayerOE in scope
     setTossPlayerOE((oe) => {
       const won = oe === "even" ? sumEven : !sumEven;
       setTossWon(won);
       if (!won) {
         const aiBats = Math.random() > 0.5;
+        setTossInfo({ winner: opponentName, battingFirst: aiBats ? opponentName : playerName });
         setTimeout(() => startMatchWithCountdown(aiBats), 3500);
       }
       return oe;
@@ -519,7 +514,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
 
   return (
     <div className="fixed inset-0 bg-black overflow-hidden">
-      <CelebrationEffects lastResult={game.lastResult} gameResult={game.result} phase={game.phase} />
+      <CelebrationEffects lastResult={game.lastResult} gameResult={game.result} phase={game.phase} batSkin={cosmetics.batSkin} />
       <CanvasFireworks type={fireworkType} duration={fireworkType === "win" ? 5000 : 3000} />
       <WeatherParticles weather={matchWeather} />
       <BallPitchAnimation lastResult={game.lastResult} triggerKey={game.innings1Balls + game.innings2Balls} />
@@ -586,6 +581,8 @@ export default function GameScreen({ onHome }: GameScreenProps) {
           result={game.result}
           playerScore={game.userScore}
           opponentScore={game.aiScore}
+          playerWickets={game.userWickets}
+          opponentWickets={game.aiWickets}
           ballHistory={game.ballHistory}
           commentators={matchCommentators}
           matchRewards={matchRewards}
@@ -978,11 +975,11 @@ export default function GameScreen({ onHome }: GameScreenProps) {
                   )}
                   {tossReveal >= 3 && tossWon && (
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="flex gap-3">
-                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => startMatchWithCountdown(true)}
+                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setTossInfo({ winner: playerName, battingFirst: playerName }); startMatchWithCountdown(true); }}
                         className="flex-1 py-4 bg-primary/20 border border-primary/40 text-primary font-display font-black rounded-2xl text-sm tracking-wider">
                         🏏 BAT FIRST
                       </motion.button>
-                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => startMatchWithCountdown(false)}
+                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setTossInfo({ winner: playerName, battingFirst: opponentName }); startMatchWithCountdown(false); }}
                         className="flex-1 py-4 bg-accent/20 border border-accent/40 text-accent font-display font-black rounded-2xl text-sm tracking-wider">
                         🎯 BOWL FIRST
                       </motion.button>
