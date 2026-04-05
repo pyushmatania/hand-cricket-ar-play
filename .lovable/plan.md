@@ -17,12 +17,12 @@ When the player taps the Quick Match icon, a dramatic shatter animation plays be
 
 **New sub-component: `QuickMatchIcon`** inside `ModeIconGrid.tsx`
 - Manages local `shattered` boolean state via `useState`
-- When idle (`shattered=false`): shows the existing looping animation — ball bouncing toward stumps on repeat
+- When idle (`shattered=false`): shows the existing looping animation — ball bouncing toward stumps
 - When `shattered=true`:
   - Ball snaps to impact position instantly
   - 3 stumps each get unique framer-motion `animate` — left flies left with -35deg rotation, right flies right with +35deg, center launches upward — all fade to opacity 0
   - 2 bails spin upward (~200deg rotation) and fade out
-  - 4 golden spark particles burst outward from the impact center in different directions
+  - 4 golden spark particles burst outward from the impact center
   - White radial gradient flash div scales from 0 to 1.5x and fades
 
 **Parent grid integration:**
