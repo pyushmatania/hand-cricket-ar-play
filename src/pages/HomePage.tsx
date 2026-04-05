@@ -703,15 +703,15 @@ export default function HomePage() {
       </div>
 
       {/* Stump shatter overlay */}
-      {showStumpAnim && <StumpHitAnimation onComplete={handleStumpComplete} />}
+      <StumpHitAnimation show={showStumpAnim} onComplete={handleStumpComplete} />
 
       {/* Chest reveal overlay */}
       {revealData && (
         <ChestReveal
-          chestName={revealData.name}
-          chestEmoji={revealData.emoji}
+          itemName={revealData.name}
+          itemEmoji={revealData.emoji}
           rarity={revealData.rarity}
-          onClose={() => setRevealData(null)}
+          onComplete={() => setRevealData(null)}
         />
       )}
 
