@@ -501,50 +501,103 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ═══ D: BATTLE BUTTON ═══ */}
-      <div className="relative z-10 flex justify-center -mt-1 mb-4 v7-section-anim" style={{ animationDelay: "0.3s" }}>
+      {/* ═══ D: V8 BATTLE BUTTON — Supercell-style ═══ */}
+      <div className="relative z-10 flex flex-col items-center -mt-1 mb-4 v7-section-anim" style={{ animationDelay: "0.3s" }}>
+        {/* Stats bar above button */}
+        <div className="flex items-center gap-3 mb-2 px-4">
+          <div className="flex items-center gap-1">
+            <span className="text-[9px]" style={{ color: "#94A3B8" }}>W/L</span>
+            <span className="font-game-title text-[11px] font-bold" style={{ color: "#00FF88" }}>{profile?.wins ?? 0}</span>
+            <span className="text-[9px]" style={{ color: "#475569" }}>/</span>
+            <span className="font-game-title text-[11px] font-bold" style={{ color: "#FF2D7B" }}>{profile?.losses ?? 0}</span>
+          </div>
+          <div className="w-px h-3" style={{ background: "rgba(148,163,184,0.15)" }} />
+          <div className="flex items-center gap-1">
+            <span className="text-[9px]" style={{ color: "#94A3B8" }}>STREAK</span>
+            <span className="font-game-title text-[11px] font-bold" style={{ color: "#FFD700" }}>🔥{profile?.current_streak ?? 0}</span>
+          </div>
+          <div className="w-px h-3" style={{ background: "rgba(148,163,184,0.15)" }} />
+          <div className="flex items-center gap-1">
+            <span className="text-[9px]" style={{ color: "#94A3B8" }}>BEST</span>
+            <span className="font-game-title text-[11px] font-bold text-white">{profile?.high_score ?? 0}</span>
+          </div>
+        </div>
+
         <motion.button
-          animate={{ scale: [1, 1.015, 1] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-          whileTap={{ scale: 0.95, y: 3 }}
+          animate={{ scale: [1, 1.02, 1] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          whileTap={{ scale: 0.94, y: 4 }}
           onClick={() => {
             try { SFX.tap(); Haptics.heavy(); } catch {}
             setShowStumpAnim(true);
           }}
-          className="relative overflow-hidden"
+          className="relative overflow-hidden group"
           style={{
-            width: 260,
-            height: 64,
-            borderRadius: 18,
-            background: "linear-gradient(180deg, #00FF88 0%, #00CC6A 60%, #009950 100%)",
+            width: 280,
+            height: 68,
+            borderRadius: 20,
+            background: "linear-gradient(180deg, #22FF99 0%, #00E676 30%, #00CC6A 70%, #00A854 100%)",
             border: "none",
-            borderBottom: "5px solid #006633",
-            boxShadow: "0 5px 0 #006633, 0 8px 20px rgba(0,255,136,0.3), 0 0 40px rgba(0,255,136,0.15), inset 0 2px 0 rgba(255,255,255,0.25)",
+            borderBottom: "6px solid #006633",
+            boxShadow: `
+              0 6px 0 #005528,
+              0 10px 30px rgba(0,255,136,0.35),
+              0 0 60px rgba(0,255,136,0.15),
+              inset 0 2px 0 rgba(255,255,255,0.35),
+              inset 0 -2px 4px rgba(0,0,0,0.15)
+            `,
             cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
           }}
         >
-          {/* Pulsing glow */}
-          <motion.div
-            animate={{ boxShadow: ["0 0 15px rgba(0,255,136,0.3)", "0 0 40px rgba(0,255,136,0.5)", "0 0 15px rgba(0,255,136,0.3)"] }}
-            transition={{ duration: 2.5, repeat: Infinity }}
-            className="absolute inset-0 rounded-[18px] pointer-events-none"
-          />
+          {/* Inner highlight bar */}
+          <div className="absolute top-[3px] left-[8%] right-[8%] h-[6px] rounded-full" style={{
+            background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)",
+          }} />
+
+          {/* Sparkle particles */}
+          {[0, 1, 2, 3, 4].map(s => (
+            <motion.div
+              key={s}
+              animate={{
+                y: [-10, -30],
+                x: [0, (s - 2) * 8],
+                opacity: [0, 1, 0],
+                scale: [0.3, 1, 0.3],
+              }}
+              transition={{ duration: 1.5, repeat: Infinity, delay: s * 0.3, ease: "easeOut" }}
+              className="absolute w-1.5 h-1.5 rounded-full pointer-events-none"
+              style={{
+                background: "#FFD700",
+                left: `${20 + s * 15}%`,
+                top: "20%",
+                boxShadow: "0 0 6px #FFD700, 0 0 12px rgba(255,215,0,0.3)",
+              }}
+            />
+          ))}
+
           {/* Shimmer sweep */}
           <motion.div
-            animate={{ left: ["-60%", "200%"] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", repeatDelay: 1.5 }}
-            className="absolute top-0 h-full w-1/3 pointer-events-none"
-            style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }}
+            animate={{ left: ["-40%", "140%"] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
+            className="absolute top-0 h-full w-1/4 pointer-events-none"
+            style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)", transform: "skewX(-15deg)" }}
           />
-          <span className="relative z-10 font-display text-[22px] tracking-[4px]" style={{
-            color: "#0A0E27",
-            textShadow: "0 1px 0 rgba(255,255,255,0.3)",
-          }}>
-            ⚔️ BATTLE
-          </span>
+
+          {/* Button text */}
+          <div className="relative z-10 flex items-center justify-center h-full gap-2">
+            <span className="text-2xl">⚔️</span>
+            <span className="font-display text-[24px] tracking-[5px]" style={{
+              color: "#0A0E27",
+              textShadow: "0 1px 0 rgba(255,255,255,0.4), 0 2px 4px rgba(0,0,0,0.1)",
+            }}>
+              BATTLE
+            </span>
+          </div>
+
+          {/* Bottom edge reflection */}
+          <div className="absolute bottom-0 left-[10%] right-[10%] h-[2px] rounded-full" style={{
+            background: "linear-gradient(90deg, transparent, rgba(0,255,136,0.6), transparent)",
+          }} />
         </motion.button>
       </div>
 
