@@ -12,15 +12,17 @@ export default {
     },
     extend: {
       fontFamily: {
-        /* Doc 1 Typography Stack */
-        display: ["Lilita One", "sans-serif"],         /* Screen titles, buttons */
-        body: ["Nunito", "sans-serif"],                 /* Body, descriptions, labels */
-        heading: ["Fredoka", "sans-serif"],             /* Section headers (alt) */
-        score: ["Rubik", "monospace"],                  /* Score numbers, stats, timers */
-        "game-display": ["Bungee", "sans-serif"],       /* Player names on cards, hand numbers, VS, flash text */
-        "game-display-3d": ["Bungee Shade", "sans-serif"], /* Game logo, VICTORY */
-        "game-title": ["Lilita One", "sans-serif"],
-        "game-body": ["Nunito", "sans-serif"],
+        /* V7 Typography Stack */
+        display: ["Bungee", "sans-serif"],               /* Headlines, scores, popups — chunky, impactful */
+        "v7-ui": ["Rajdhani", "sans-serif"],              /* Labels, stats, nav, sub-headings — sporty angular */
+        "v7-body": ["Outfit", "sans-serif"],              /* Descriptions, chat, body text — clean geometric */
+        body: ["Nunito", "sans-serif"],                   /* Legacy body */
+        heading: ["Fredoka", "sans-serif"],               /* Section headers (alt) */
+        score: ["Rubik", "monospace"],                    /* Score numbers, stats, timers */
+        "game-display": ["Bungee", "sans-serif"],
+        "game-display-3d": ["Bungee Shade", "sans-serif"],
+        "game-title": ["Rajdhani", "sans-serif"],         /* V7: mapped to Rajdhani */
+        "game-body": ["Outfit", "sans-serif"],            /* V7: mapped to Outfit */
         "game-card": ["Fredoka", "sans-serif"],
         "game-mono": ["Rubik", "monospace"],
       },
@@ -81,6 +83,10 @@ export default {
         floodlight: "hsl(var(--floodlight))",
         "neon-green": "hsl(var(--neon-green))",
         "neon-cyan": "hsl(var(--neon-cyan))",
+        "neon-pink": "hsl(var(--neon-pink))",
+        "neon-gold": "hsl(var(--neon-gold))",
+        "neon-orange": "hsl(var(--neon-orange))",
+        "neon-purple": "hsl(var(--neon-purple))",
         "game-green": "hsl(var(--game-green))",
         "game-gold": "hsl(var(--game-gold))",
         "game-blue": "hsl(var(--game-blue))",

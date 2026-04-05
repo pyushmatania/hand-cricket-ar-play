@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Rubik:wght@400;500;600;700;800;900&family=Nunito:wght@400;500;600;700;800;900&family=Fredoka:wght@400;500;600;700&family=Bungee&family=Bungee+Shade&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Rubik:wght@400;500;600;700;800;900&family=Nunito:wght@400;500;600;700;800;900&family=Fredoka:wght@400;500;600;700&family=Bungee&family=Bungee+Shade&family=Rajdhani:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -10,68 +10,91 @@
 @layer base {
   :root {
     /* ═══════════════════════════════════════════════════
-       DOC 1 — V1 PUNCHY COLORS + 3D CHROME DEPTH
-       Complete Design Token System
+       V7 NEON CRICKET CARNIVAL — Design Tokens
+       Supersedes V6 wood/metal system
        ═══════════════════════════════════════════════════ */
 
-    /* ── Core Backgrounds ── */
-    --background: 222 47% 4%;       /* #020617 → deep dark */
-    --bg-deep: 222 47% 4%;
-    --bg-card: 222 40% 10%;         /* Card surface */
+    /* ── V7 Background Layers ── */
+    --bg-abyss: 230 57% 6%;          /* #070B1A */
+    --bg-deep: 232 58% 10%;          /* #0A0E27 */
+    --bg-surface: 232 51% 14%;       /* #111633 */
+    --bg-raised: 232 37% 18%;        /* #1A2042 */
+
+    /* ── V7 Neon Accents ── */
+    --neon-green: 153 100% 50%;      /* #00FF88 */
+    --neon-cyan: 195 100% 50%;       /* #00D4FF */
+    --neon-pink: 343 100% 59%;       /* #FF2D7B */
+    --neon-gold: 51 100% 50%;        /* #FFD700 */
+    --neon-orange: 19 100% 60%;      /* #FF6B35 */
+    --neon-purple: 258 90% 66%;      /* #A855F7 */
+
+    /* ── Core Backgrounds (mapped to V7) ── */
+    --background: 230 57% 6%;
+    --bg-deep-val: 232 58% 10%;
+    --bg-card: 232 51% 14%;
     --foreground: 210 40% 96%;
 
-    --card: 222 40% 10%;
+    --card: 232 51% 14%;
     --card-foreground: 210 40% 96%;
-    --popover: 222 40% 10%;
+    --popover: 232 51% 14%;
     --popover-foreground: 210 40% 96%;
 
+    /* ── Text Hierarchy ── */
+    --text-primary: 0 0% 100%;
+    --text-secondary: 215 16% 62%;   /* #94A3B8 */
+    --text-muted: 215 19% 35%;      /* #475569 */
+
+    /* ── Borders ── */
+    --border-subtle: 215 16% 62% / 0.12;
+    --border-glow: 153 100% 50% / 0.3;
+
     /* ── Global Game Colors (Fixed — Never Change) ── */
-    --green-play: 134 61% 58%;       /* #4ADE50 */
-    --green-play-light: 130 100% 71%; /* #6AFF6A */
-    --green-play-dark: 130 50% 36%;  /* #2D8B2D */
-    --green-play-shadow: 130 57% 23%; /* #1A5E1A */
-    --blue-info: 217 91% 60%;       /* #3B82F6 */
-    --blue-info-light: 217 93% 68%; /* #60A5FA */
-    --blue-info-dark: 224 76% 48%;  /* #1D4ED8 */
-    --red-hot: 0 84% 60%;           /* #EF4444 */
-    --red-hot-light: 0 91% 71%;     /* #FCA5A5 */
-    --red-hot-dark: 0 63% 31%;      /* #991B1B */
-    --gold-accent: 45 93% 58%;      /* #EAB308-ish */
-    --gold-light: 48 96% 89%;       /* #FDE047 */
+    --green-play: 153 100% 50%;      /* #00FF88 — V7 neon green */
+    --green-play-light: 153 100% 60%;
+    --green-play-dark: 153 100% 30%;
+    --green-play-shadow: 153 100% 20%;
+    --blue-info: 195 100% 50%;       /* #00D4FF — V7 neon cyan */
+    --blue-info-light: 195 100% 60%;
+    --blue-info-dark: 195 100% 35%;
+    --red-hot: 343 100% 59%;         /* #FF2D7B — V7 neon pink */
+    --red-hot-light: 343 100% 70%;
+    --red-hot-dark: 343 100% 40%;
+    --gold-accent: 51 100% 50%;      /* #FFD700 */
+    --gold-light: 48 96% 89%;
 
     /* ── Dynamic Team Colors (CSK Default) ── */
-    --team-primary: 57 100% 66%;     /* #FFF44F */
+    --team-primary: 57 100% 66%;
     --team-primary-rgb: 255, 244, 79;
-    --team-secondary: 216 57% 26%;   /* #1C3A6B */
-    --team-accent: 51 100% 50%;      /* #FFD700 */
-    --team-dark: 60 100% 27%;        /* #8B8B00 */
-    --team-light: 60 100% 97%;       /* #FFFFF0 */
-    --team-text: 216 57% 26%;        /* #1C3A6B — text ON team bg */
+    --team-secondary: 216 57% 26%;
+    --team-accent: 51 100% 50%;
+    --team-dark: 60 100% 27%;
+    --team-light: 60 100% 97%;
+    --team-text: 216 57% 26%;
     --team-gradient-start: 60 100% 97%;
     --team-gradient-mid: 57 100% 66%;
     --team-gradient-end: 60 100% 40%;
 
     /* ── Rarity Colors ── */
-    --rarity-common-border: 215 14% 64%;   /* #9CA3AF */
-    --rarity-rare-border: 217 91% 60%;     /* #3B82F6 */
-    --rarity-epic-border: 258 90% 66%;     /* #8B5CF6 */
-    --rarity-legendary-border: 51 100% 50%; /* #FFD700 */
+    --rarity-common-border: 215 14% 64%;
+    --rarity-rare-border: 195 100% 50%;    /* neon-cyan */
+    --rarity-epic-border: 258 90% 66%;     /* neon-purple */
+    --rarity-legendary-border: 51 100% 50%; /* neon-gold */
 
     /* ── UI Component Colors ── */
-    --primary: 217 91% 60%;          /* Blue info */
+    --primary: 195 100% 50%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 215 25% 27%;        /* #334155 */
-    --secondary-foreground: 214 32% 91%; /* #E2E8F0 */
-    --muted: 222 30% 14%;
-    --muted-foreground: 215 16% 47%; /* #64748B */
-    --accent: 51 100% 50%;           /* Team accent gold */
+    --secondary: 232 37% 18%;
+    --secondary-foreground: 214 32% 91%;
+    --muted: 232 51% 14%;
+    --muted-foreground: 215 19% 35%;
+    --accent: 51 100% 50%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%;        /* #EF4444 */
+    --destructive: 343 100% 59%;
     --destructive-foreground: 210 40% 96%;
 
-    --border: 217 19% 27%;           /* #334155 */
-    --input: 217 19% 27%;
-    --ring: 217 91% 60%;
+    --border: 232 37% 18%;
+    --input: 232 37% 18%;
+    --ring: 195 100% 50%;
     --radius: 0.75rem;
 
     /* ── Spacing & Layout ── */
@@ -94,34 +117,32 @@
     --radius-full: 9999px;
 
     /* ── Legacy tokens for shadcn ── */
-    --sidebar-background: 222 40% 10%;
+    --sidebar-background: 232 51% 14%;
     --sidebar-foreground: 210 40% 96%;
-    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary: 195 100% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 30% 14%;
+    --sidebar-accent: 232 51% 14%;
     --sidebar-accent-foreground: 210 40% 96%;
-    --sidebar-border: 217 19% 27%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-border: 232 37% 18%;
+    --sidebar-ring: 195 100% 50%;
 
-    /* ── Glass (kept for shadcn compat) ── */
-    --glass-border: 222 25% 28% / 0.5;
+    /* ── Glass ── */
+    --glass-border: 232 25% 28% / 0.5;
 
-    /* Supercell palette aliases */
-    --game-green: 134 61% 58%;
+    /* Supercell palette aliases (mapped to V7) */
+    --game-green: 153 100% 50%;
     --game-gold: 51 100% 50%;
-    --game-blue: 217 91% 60%;
-    --game-red: 0 84% 60%;
-    --game-orange: 36 100% 50%;
+    --game-blue: 195 100% 50%;
+    --game-red: 343 100% 59%;
+    --game-orange: 19 100% 60%;
     --game-purple: 258 90% 66%;
-    --game-dark: 222 47% 4%;
-    --game-medium: 222 40% 10%;
+    --game-dark: 230 57% 6%;
+    --game-medium: 232 51% 14%;
     --game-teal: 174 72% 46%;
 
     /* Score/flash tokens */
     --score-gold: 51 100% 50%;
-    --out-red: 0 84% 60%;
-    --neon-green: 134 61% 58%;
-    --neon-cyan: 195 100% 60%;
+    --out-red: 343 100% 59%;
     --floodlight: 60 80% 95%;
   }
 }
@@ -132,10 +153,108 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Outfit', 'Nunito', sans-serif;
     overscroll-behavior: none;
     -webkit-tap-highlight-color: transparent;
   }
+}
+
+/* ═══════════════════════════════════════════════════
+   V7 MATERIAL SYSTEM
+   ═══════════════════════════════════════════════════ */
+
+/* Material 1: Neon Glass — Primary panels, cards, containers */
+.neon-glass {
+  background: linear-gradient(135deg, rgba(17,22,51,0.85) 0%, rgba(26,32,66,0.75) 50%, rgba(17,22,51,0.9) 100%);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  border: 1px solid rgba(148,163,184,0.12);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05) inset, 0 1px 0 rgba(255,255,255,0.08) inset;
+  position: relative;
+}
+
+/* Material 2: Holo Chrome — Premium/Legendary */
+.holo-chrome {
+  background: linear-gradient(135deg, rgba(30,35,70,0.9) 0%, rgba(40,50,90,0.85) 25%, rgba(50,40,80,0.85) 50%, rgba(30,45,85,0.9) 75%, rgba(25,30,65,0.9) 100%);
+  border: 1px solid transparent;
+  border-radius: 16px;
+  box-shadow: 0 0 15px rgba(168,85,247,0.2), 0 0 30px rgba(0,212,255,0.1), 0 8px 32px rgba(0,0,0,0.5);
+  animation: holo-shift 6s linear infinite;
+}
+@keyframes holo-shift {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+/* Material 3: Pitch Turf — Stadium/Ground surfaces */
+.pitch-turf {
+  background:
+    repeating-linear-gradient(90deg, rgba(34,139,34,0.15) 0px, rgba(34,139,34,0.15) 20px, rgba(46,160,46,0.15) 20px, rgba(46,160,46,0.15) 40px),
+    linear-gradient(180deg, #1B5E20 0%, #2E7D32 50%, #1B5E20 100%);
+  border: 2px solid rgba(76,175,80,0.3);
+  border-radius: 12px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Material 4: Scoreboard Metal — Stats/Numbers */
+.scoreboard-metal {
+  background: linear-gradient(180deg, #1E293B 0%, #0F172A 40%, #1E293B 60%, #0F172A 100%);
+  border: 1px solid rgba(148,163,184,0.15);
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.4);
+  background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, transparent 1px, transparent 3px);
+}
+
+/* V7 Layered Background */
+.v7-bg {
+  background: #070B1A;
+  position: relative;
+}
+.v7-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 80% 20%, rgba(var(--team-primary-rgb),0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 80%, rgba(var(--team-primary-rgb),0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(0,212,255,0.02) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+}
+.v7-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(45deg, transparent, transparent 39px, rgba(255,255,255,0.008) 39px, rgba(255,255,255,0.008) 40px);
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* V7 Vignette overlay */
+.v7-vignette {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.4) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* V7 Neon text glow helper */
+.neon-text-green {
+  text-shadow: 0 0 10px hsl(153 100% 50% / 0.6), 0 0 30px hsl(153 100% 50% / 0.3), 0 0 60px hsl(153 100% 50% / 0.15);
+}
+.neon-text-cyan {
+  text-shadow: 0 0 10px hsl(195 100% 50% / 0.6), 0 0 30px hsl(195 100% 50% / 0.3);
+}
+.neon-text-pink {
+  text-shadow: 0 0 10px hsl(343 100% 59% / 0.6), 0 0 30px hsl(343 100% 59% / 0.3);
+}
+.neon-text-gold {
+  text-shadow: 0 0 10px hsl(51 100% 50% / 0.6), 0 0 30px hsl(51 100% 50% / 0.3);
 }
 
 /* ═══════════════════════════════════════════════════
@@ -144,10 +263,9 @@
 @layer utilities {
 
   .app-bg {
-    background:
-      radial-gradient(ellipse at 50% 25%, rgba(var(--team-primary-rgb), 0.08) 0%, transparent 55%),
-      linear-gradient(180deg, #0F172A 0%, #020617 100%);
+    background: #070B1A;
     min-height: 100vh;
+    position: relative;
   }
 
   .match-bg {
