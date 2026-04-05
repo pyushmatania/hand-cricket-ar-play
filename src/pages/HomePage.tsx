@@ -192,30 +192,22 @@ export default function HomePage() {
   return (
     <div
       style={{
-        position: "fixed",
+        position: "absolute",
         inset: 0,
         overflow: "hidden",
         background: "#080818",
-        perspective: "1200px",
-        perspectiveOrigin: "50% 45%",
       }}
     >
       {/* ═══ THE 3D SCENE ═══ */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          transformStyle: "preserve-3d",
-          ...tiltStyle(0),
-        }}
-      >
-        {/* ── LAYER 1: Background (pushed far back in Z) ── */}
+      <div style={{ position: "absolute", inset: 0 }}>
+
+        {/* ── LAYER 1: Background image with parallax tilt ── */}
         <div
           style={{
             position: "absolute",
-            inset: "-10%",
-            transform: "translateZ(-200px) scale(1.4)",
-            ...tiltStyle(-200),
+            inset: "-5%",
+            transform: `translate(${tiltX * 2}px, ${tiltY * 2}px) scale(1.1)`,
+            transition: "transform 0.3s ease-out",
           }}
         >
           <img
@@ -226,12 +218,11 @@ export default function HomePage() {
           />
         </div>
 
-        {/* ── Atmospheric fog + light leak ── */}
+        {/* ── Atmospheric fog + depth gradient ── */}
         <div
           style={{
             position: "absolute",
             inset: 0,
-            transform: "translateZ(-199px) scale(1.4)",
             background: `
               linear-gradient(to top, rgba(8,8,24,0.97) 0%, rgba(8,8,24,0.6) 25%, transparent 50%),
               radial-gradient(ellipse at 30% 55%, rgba(255,170,80,0.12) 0%, transparent 50%),
@@ -248,26 +239,10 @@ export default function HomePage() {
           style={{
             position: "absolute",
             inset: 0,
-            transform: "translateZ(-198px) scale(1.4)",
             background: `
               radial-gradient(ellipse at 25% 60%, rgba(255,180,100,0.08) 0%, transparent 45%),
               radial-gradient(ellipse at 75% 40%, rgba(255,150,200,0.05) 0%, transparent 35%)
             `,
-            pointerEvents: "none",
-          }}
-        />
-
-        {/* ── LAYER 2: Ground reflection plane ── */}
-        <div
-          style={{
-            position: "absolute",
-            bottom: "12%",
-            left: "-20%",
-            width: "140%",
-            height: "45%",
-            transform: "translateZ(-50px) rotateX(60deg)",
-            transformOrigin: "center bottom",
-            background: "linear-gradient(to top, rgba(8,8,24,0.9) 0%, rgba(20,20,50,0.3) 60%, transparent 100%)",
             pointerEvents: "none",
           }}
         />
