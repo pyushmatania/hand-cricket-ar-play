@@ -16,7 +16,7 @@ import CrowdWave from "./CrowdWave";
 import DRSReview from "./DRSReview";
 import { useHandCricket } from "@/hooks/useHandCricket";
 import { useHandDetection } from "@/hooks/useHandDetection";
-import { useMatchSaver } from "@/hooks/useMatchSaver";
+import { useMatchSaver, type MatchRewardsResult } from "@/hooks/useMatchSaver";
 import { startAmbientStadium, stopAmbientStadium, setAmbientVolume } from "@/lib/ambientStadium";
 import { getInningsChangeCommentary } from "@/lib/commentary";
 import { speakDuoCommentary, speakCommentary } from "@/lib/voiceCommentary";
@@ -92,7 +92,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   // ── Big result animation ──
   const [bigResult, setBigResult] = useState<BallResult | null>(null);
   const [playerXP, setPlayerXP] = useState(0);
-  const [matchRewards, setMatchRewards] = useState<Record<string, unknown> | null>(null);
+  const [matchRewards, setMatchRewards] = useState<MatchRewardsResult | null>(null);
   const [stadiumMode, setStadiumMode] = useState(true);
   const [filter, setFilter] = useState<CameraFilter>("broadcast");
   const [gloveStyle, setGloveStyle] = useState<GloveStyle>("cricket");

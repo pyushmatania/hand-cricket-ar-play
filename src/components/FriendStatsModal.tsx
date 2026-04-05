@@ -168,9 +168,16 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
     if (!friend || !user) return;
     setTab("overview");
     setLoading(true);
-    Promise.all([loadMyProfile(), loadH2H(), loadMatchStats(), loadRecords(), loadFullFriendProfile()])
-      .finally(() => setLoading(false));
-  }, [friend, user, loadMyProfile, loadH2H, loadMatchStats, loadRecords, loadFullFriendProfile]);
+    // Functions are defined below but hoisted via useCallback
+    const doLoad = async () => {
+      const { data: myData } = await supabase.from("profiles").select("user_id, display_name, wins, losses, draws, total_matches, high_score, best_streak, current_streak, abandons, avatar_url, avatar_index, xp, coins, rank_tier, login_streak, best_login_streak, total_runs, total_sixes, total_fours").eq("user_id", user.id).single();
+      if (myData) setMyProfile(myData as any);
+      const { data: fpData } = await supabase.from("profiles").select("user_id, display_name, wins, losses, draws, total_matches, high_score, best_streak, current_streak, abandons, avatar_url, avatar_index, xp, coins, rank_tier, login_streak, best_login_streak, total_runs, total_sixes, total_fours").eq("user_id", friend.user_id).single();
+      if (fpData) setFullFriendProfile(fpData as unknown as FriendProfile);
+    };
+    doLoad().finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [friend, user]);
 
   const loadFullFriendProfile = useCallback(async () => {
     if (!friend) return;

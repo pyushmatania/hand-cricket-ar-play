@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import { useHandCricket, type Move, type MatchConfig } from "@/hooks/useHandCricket";
-import { useMatchSaver } from "@/hooks/useMatchSaver";
+import { useMatchSaver, type MatchRewardsResult } from "@/hooks/useMatchSaver";
 import { SFX, Haptics } from "@/lib/sounds";
 import { playCrowdForResult } from "@/lib/voiceCommentary";
 import { useSettings } from "@/contexts/SettingsContext";
@@ -44,7 +44,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const [matchConfig, setMatchConfig] = useState<MatchConfig | null>(null);
   const [showOverSelector, setShowOverSelector] = useState(true);
   const [playerXP, setPlayerXP] = useState(0);
-  const [matchRewards, setMatchRewards] = useState<Record<string, unknown> | null>(null);
+  const [matchRewards, setMatchRewards] = useState<MatchRewardsResult | null>(null);
   const [matchWeather] = useState<Weather>(() => {
     const pool = matchTheme.weatherPool;
     const weatherId = pool.length ? pool[Math.floor(Math.random() * pool.length)] : 'clear';
