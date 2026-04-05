@@ -350,7 +350,7 @@ export default function HomePage() {
       </div>
 
       {/* ═══ LAYER 2: FLOATING GAME MODE RIBBONS — RIGHT ═══ */}
-      <div className="absolute right-3 z-20 flex flex-col gap-3" style={{ top: "34%" }}>
+      <div className="absolute right-1 z-20 flex flex-col gap-3" style={{ top: "30%" }}>
         <FloatingRibbon
           label="⚡ TAP"
           gradient="linear-gradient(135deg, hsl(142 70% 50%), hsl(142 60% 38%))"
