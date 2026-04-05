@@ -186,32 +186,32 @@ export default function HomePage() {
       {/* V7 Vignette */}
       <div className="v7-vignette" />
 
-      {/* Ambient particles */}
-      <div className="fixed inset-0 pointer-events-none z-[2]">
-        {Array.from({ length: 20 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              width: 2 + Math.random() * 2,
-              height: 2 + Math.random() * 2,
-              left: `${Math.random() * 100}%`,
-              top: `${60 + Math.random() * 40}%`,
-              background: `rgba(var(--team-primary-rgb), ${0.15 + Math.random() * 0.1})`,
-            }}
-            animate={{
-              y: [0, -(200 + Math.random() * 400)],
-              x: [0, Math.sin(i) * 30],
-              opacity: [0, 0.5, 0],
-            }}
-            transition={{
-              duration: 8 + Math.random() * 6,
-              repeat: Infinity,
-              delay: Math.random() * 8,
-              ease: "linear",
-            }}
-          />
-        ))}
+      {/* Ambient particles — CSS-only, GPU accelerated */}
+      <div className="fixed inset-0 pointer-events-none z-[2] overflow-hidden">
+        {Array.from({ length: 28 }).map((_, i) => {
+          const size = 1.5 + (i % 5) * 0.8;
+          const colors = ["rgba(0,255,136,", "rgba(0,212,255,", "rgba(255,215,0,", "rgba(168,85,247,"];
+          const color = colors[i % colors.length];
+          return (
+            <div
+              key={i}
+              className="v7-particle"
+              style={{
+                width: size,
+                height: size,
+                left: `${(i * 3.7 + 5) % 100}%`,
+                bottom: `${-5 - (i % 8) * 3}%`,
+                background: `${color}${0.4 + (i % 3) * 0.15})`,
+                boxShadow: `0 0 ${size * 2}px ${color}0.2)`,
+                ['--rise-dur' as string]: `${8 + (i % 7) * 2}s`,
+                ['--delay' as string]: `${(i * 0.6) % 10}s`,
+                ['--drift-x' as string]: `${Math.sin(i * 0.8) * 30}px`,
+                ['--sway-amount' as string]: `${8 + (i % 4) * 5}px`,
+                ['--sway-dur' as string]: `${4 + (i % 5) * 1.5}s`,
+              }}
+            />
+          );
+        })}
       </div>
 
       {/* ═══ A: TOP BAR — Neon Glass Scoreboard ═══ */}
@@ -307,7 +307,7 @@ export default function HomePage() {
       </div>
 
       {/* ═══ B: CHEST BANNER ROW ═══ */}
-      <div className="relative z-10 flex gap-2 px-3 mt-3">
+      <div className="relative z-10 flex gap-2 px-3 mt-3 v7-section-anim" style={{ animationDelay: "0.1s" }}>
         {/* Free Chest */}
         <motion.button
           whileTap={{ scale: 0.96 }}
@@ -377,7 +377,7 @@ export default function HomePage() {
       </div>
 
       {/* ═══ C: 3D FLOATING ISLAND ═══ */}
-      <div className="relative z-10 mt-3">
+      <div className="relative z-10 mt-3 v7-section-anim" style={{ animationDelay: "0.2s" }}>
         {/* Arena title with shimmer */}
         <div className="text-center mb-1">
           <motion.span
@@ -483,7 +483,7 @@ export default function HomePage() {
       </div>
 
       {/* ═══ D: BATTLE BUTTON ═══ */}
-      <div className="relative z-10 flex justify-center -mt-1 mb-4">
+      <div className="relative z-10 flex justify-center -mt-1 mb-4 v7-section-anim" style={{ animationDelay: "0.3s" }}>
         <motion.button
           animate={{ scale: [1, 1.015, 1] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
@@ -530,7 +530,7 @@ export default function HomePage() {
       </div>
 
       {/* ═══ E: MAIN MODE CARDS ═══ */}
-      <div className="relative z-10 flex gap-2 px-3 mb-4">
+      <div className="relative z-10 flex gap-2 px-3 mb-4 v7-section-anim" style={{ animationDelay: "0.35s" }}>
         {MAIN_MODES.map((mode) => (
           <motion.button
             key={mode.id}
@@ -580,7 +580,7 @@ export default function HomePage() {
       </div>
 
       {/* ═══ F: ARENA PROGRESS BAR ═══ */}
-      <div className="relative z-10 mx-3 mb-3 p-3 rounded-xl neon-glass" style={{ borderRadius: 14 }}>
+      <div className="relative z-10 mx-3 mb-3 p-3 rounded-xl neon-glass v7-section-anim" style={{ borderRadius: 14, animationDelay: "0.4s" }}>
         <div className="flex justify-between items-center mb-1.5">
           <span className="font-game-title text-[11px] font-semibold tracking-wide text-white">
             🏏 {currentArena.name}
@@ -616,7 +616,7 @@ export default function HomePage() {
       </div>
 
       {/* ═══ G: CHEST SLOT ROW ═══ */}
-      <div className="relative z-10 mx-3 mb-4 p-3 rounded-xl neon-glass" style={{ borderRadius: 14 }}>
+      <div className="relative z-10 mx-3 mb-4 p-3 rounded-xl neon-glass v7-section-anim" style={{ borderRadius: 14, animationDelay: "0.45s" }}>
         <div className="flex justify-center gap-3">
           {chestSlots.map((chest, i) => {
             const chestInfo = chest ? CRICKET_CHEST[chest.chest_tier] || CRICKET_CHEST.bronze : null;
@@ -704,7 +704,7 @@ export default function HomePage() {
       </div>
 
       {/* ═══ H: SECONDARY MODES ═══ */}
-      <div className="relative z-10 px-3 pb-4">
+      <div className="relative z-10 px-3 pb-4 v7-section-anim" style={{ animationDelay: "0.5s" }}>
         <div className="font-game-title text-[11px] font-semibold tracking-[3px] mb-2 px-1" style={{ color: "#475569" }}>MORE MODES</div>
         <div className="flex flex-col gap-2">
           {SECONDARY_MODES.map((mode) => (
