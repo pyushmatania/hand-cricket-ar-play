@@ -10,68 +10,91 @@
 @layer base {
   :root {
     /* ═══════════════════════════════════════════════════
-       DOC 1 — V1 PUNCHY COLORS + 3D CHROME DEPTH
-       Complete Design Token System
+       V7 NEON CRICKET CARNIVAL — Design Tokens
+       Supersedes V6 wood/metal system
        ═══════════════════════════════════════════════════ */
 
-    /* ── Core Backgrounds ── */
-    --background: 222 47% 4%;       /* #020617 → deep dark */
-    --bg-deep: 222 47% 4%;
-    --bg-card: 222 40% 10%;         /* Card surface */
+    /* ── V7 Background Layers ── */
+    --bg-abyss: 230 57% 6%;          /* #070B1A */
+    --bg-deep: 232 58% 10%;          /* #0A0E27 */
+    --bg-surface: 232 51% 14%;       /* #111633 */
+    --bg-raised: 232 37% 18%;        /* #1A2042 */
+
+    /* ── V7 Neon Accents ── */
+    --neon-green: 153 100% 50%;      /* #00FF88 */
+    --neon-cyan: 195 100% 50%;       /* #00D4FF */
+    --neon-pink: 343 100% 59%;       /* #FF2D7B */
+    --neon-gold: 51 100% 50%;        /* #FFD700 */
+    --neon-orange: 19 100% 60%;      /* #FF6B35 */
+    --neon-purple: 258 90% 66%;      /* #A855F7 */
+
+    /* ── Core Backgrounds (mapped to V7) ── */
+    --background: 230 57% 6%;
+    --bg-deep-val: 232 58% 10%;
+    --bg-card: 232 51% 14%;
     --foreground: 210 40% 96%;
 
-    --card: 222 40% 10%;
+    --card: 232 51% 14%;
     --card-foreground: 210 40% 96%;
-    --popover: 222 40% 10%;
+    --popover: 232 51% 14%;
     --popover-foreground: 210 40% 96%;
 
+    /* ── Text Hierarchy ── */
+    --text-primary: 0 0% 100%;
+    --text-secondary: 215 16% 62%;   /* #94A3B8 */
+    --text-muted: 215 19% 35%;      /* #475569 */
+
+    /* ── Borders ── */
+    --border-subtle: 215 16% 62% / 0.12;
+    --border-glow: 153 100% 50% / 0.3;
+
     /* ── Global Game Colors (Fixed — Never Change) ── */
-    --green-play: 134 61% 58%;       /* #4ADE50 */
-    --green-play-light: 130 100% 71%; /* #6AFF6A */
-    --green-play-dark: 130 50% 36%;  /* #2D8B2D */
-    --green-play-shadow: 130 57% 23%; /* #1A5E1A */
-    --blue-info: 217 91% 60%;       /* #3B82F6 */
-    --blue-info-light: 217 93% 68%; /* #60A5FA */
-    --blue-info-dark: 224 76% 48%;  /* #1D4ED8 */
-    --red-hot: 0 84% 60%;           /* #EF4444 */
-    --red-hot-light: 0 91% 71%;     /* #FCA5A5 */
-    --red-hot-dark: 0 63% 31%;      /* #991B1B */
-    --gold-accent: 45 93% 58%;      /* #EAB308-ish */
-    --gold-light: 48 96% 89%;       /* #FDE047 */
+    --green-play: 153 100% 50%;      /* #00FF88 — V7 neon green */
+    --green-play-light: 153 100% 60%;
+    --green-play-dark: 153 100% 30%;
+    --green-play-shadow: 153 100% 20%;
+    --blue-info: 195 100% 50%;       /* #00D4FF — V7 neon cyan */
+    --blue-info-light: 195 100% 60%;
+    --blue-info-dark: 195 100% 35%;
+    --red-hot: 343 100% 59%;         /* #FF2D7B — V7 neon pink */
+    --red-hot-light: 343 100% 70%;
+    --red-hot-dark: 343 100% 40%;
+    --gold-accent: 51 100% 50%;      /* #FFD700 */
+    --gold-light: 48 96% 89%;
 
     /* ── Dynamic Team Colors (CSK Default) ── */
-    --team-primary: 57 100% 66%;     /* #FFF44F */
+    --team-primary: 57 100% 66%;
     --team-primary-rgb: 255, 244, 79;
-    --team-secondary: 216 57% 26%;   /* #1C3A6B */
-    --team-accent: 51 100% 50%;      /* #FFD700 */
-    --team-dark: 60 100% 27%;        /* #8B8B00 */
-    --team-light: 60 100% 97%;       /* #FFFFF0 */
-    --team-text: 216 57% 26%;        /* #1C3A6B — text ON team bg */
+    --team-secondary: 216 57% 26%;
+    --team-accent: 51 100% 50%;
+    --team-dark: 60 100% 27%;
+    --team-light: 60 100% 97%;
+    --team-text: 216 57% 26%;
     --team-gradient-start: 60 100% 97%;
     --team-gradient-mid: 57 100% 66%;
     --team-gradient-end: 60 100% 40%;
 
     /* ── Rarity Colors ── */
-    --rarity-common-border: 215 14% 64%;   /* #9CA3AF */
-    --rarity-rare-border: 217 91% 60%;     /* #3B82F6 */
-    --rarity-epic-border: 258 90% 66%;     /* #8B5CF6 */
-    --rarity-legendary-border: 51 100% 50%; /* #FFD700 */
+    --rarity-common-border: 215 14% 64%;
+    --rarity-rare-border: 195 100% 50%;    /* neon-cyan */
+    --rarity-epic-border: 258 90% 66%;     /* neon-purple */
+    --rarity-legendary-border: 51 100% 50%; /* neon-gold */
 
     /* ── UI Component Colors ── */
-    --primary: 217 91% 60%;          /* Blue info */
+    --primary: 195 100% 50%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 215 25% 27%;        /* #334155 */
-    --secondary-foreground: 214 32% 91%; /* #E2E8F0 */
-    --muted: 222 30% 14%;
-    --muted-foreground: 215 16% 47%; /* #64748B */
-    --accent: 51 100% 50%;           /* Team accent gold */
+    --secondary: 232 37% 18%;
+    --secondary-foreground: 214 32% 91%;
+    --muted: 232 51% 14%;
+    --muted-foreground: 215 19% 35%;
+    --accent: 51 100% 50%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%;        /* #EF4444 */
+    --destructive: 343 100% 59%;
     --destructive-foreground: 210 40% 96%;
 
-    --border: 217 19% 27%;           /* #334155 */
-    --input: 217 19% 27%;
-    --ring: 217 91% 60%;
+    --border: 232 37% 18%;
+    --input: 232 37% 18%;
+    --ring: 195 100% 50%;
     --radius: 0.75rem;
 
     /* ── Spacing & Layout ── */
@@ -94,34 +117,32 @@
     --radius-full: 9999px;
 
     /* ── Legacy tokens for shadcn ── */
-    --sidebar-background: 222 40% 10%;
+    --sidebar-background: 232 51% 14%;
     --sidebar-foreground: 210 40% 96%;
-    --sidebar-primary: 217 91% 60%;
+    --sidebar-primary: 195 100% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 30% 14%;
+    --sidebar-accent: 232 51% 14%;
     --sidebar-accent-foreground: 210 40% 96%;
-    --sidebar-border: 217 19% 27%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-border: 232 37% 18%;
+    --sidebar-ring: 195 100% 50%;
 
-    /* ── Glass (kept for shadcn compat) ── */
-    --glass-border: 222 25% 28% / 0.5;
+    /* ── Glass ── */
+    --glass-border: 232 25% 28% / 0.5;
 
-    /* Supercell palette aliases */
-    --game-green: 134 61% 58%;
+    /* Supercell palette aliases (mapped to V7) */
+    --game-green: 153 100% 50%;
     --game-gold: 51 100% 50%;
-    --game-blue: 217 91% 60%;
-    --game-red: 0 84% 60%;
-    --game-orange: 36 100% 50%;
+    --game-blue: 195 100% 50%;
+    --game-red: 343 100% 59%;
+    --game-orange: 19 100% 60%;
     --game-purple: 258 90% 66%;
-    --game-dark: 222 47% 4%;
-    --game-medium: 222 40% 10%;
+    --game-dark: 230 57% 6%;
+    --game-medium: 232 51% 14%;
     --game-teal: 174 72% 46%;
 
     /* Score/flash tokens */
     --score-gold: 51 100% 50%;
-    --out-red: 0 84% 60%;
-    --neon-green: 134 61% 58%;
-    --neon-cyan: 195 100% 60%;
+    --out-red: 343 100% 59%;
     --floodlight: 60 80% 95%;
   }
 }
