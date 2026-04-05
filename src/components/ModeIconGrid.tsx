@@ -313,52 +313,168 @@ function ModeIcon({ id }: { id: string }) {
   }
 }
 
+/* ── Quick Match with stump shatter ── */
+const STUMP_OFFSETS = [-6, 0, 6];
+const SHATTER_STUMPS = [
+  { x: -18, y: 12, rotate: -35 },
+  { x: 0, y: -22, rotate: -10 },
+  { x: 18, y: 12, rotate: 35 },
+];
+const SHATTER_BAILS = [
+  { x: -10, y: -18, rotate: -200 },
+  { x: 10, y: -22, rotate: 220 },
+];
+const SPARK_DIRS = [
+  { x: -12, y: -14 }, { x: 14, y: -10 },
+  { x: -8, y: -20 }, { x: 10, y: -18 },
+];
+
+function QuickMatchIcon({ onShatter }: { onShatter: () => void }) {
+  const [shattered, setShattered] = useState(false);
+
+  useEffect(() => {
+    if (!shattered) return;
+    const t = setTimeout(() => {
+      onShatter();
+      setShattered(false);
+    }, 700);
+    return () => clearTimeout(t);
+  }, [shattered, onShatter]);
+
+  const trigger = () => {
+    if (shattered) return;
+    try { SFX.tap(); Haptics.medium(); } catch {}
+    setShattered(true);
+  };
+
+  return (
+    <motion.button
+      onClick={trigger}
+      whileTap={shattered ? undefined : { scale: 0.8, y: 4 }}
+      className="flex flex-col items-center gap-1 relative"
+    >
+      <motion.div
+        animate={{ y: [0, -3, 0] }}
+        transition={{ duration: 2.7, repeat: Infinity, ease: "easeInOut" }}
+        className="relative"
+      >
+        <div className="relative w-14 h-14 flex items-center justify-center">
+          {/* Stumps */}
+          {STUMP_OFFSETS.map((x, i) => (
+            <motion.div
+              key={`s${i}`}
+              animate={shattered ? { x: SHATTER_STUMPS[i].x, y: SHATTER_STUMPS[i].y, rotate: SHATTER_STUMPS[i].rotate, opacity: 0 } : {}}
+              transition={{ duration: 0.45, ease: "easeOut" }}
+              className="absolute"
+              style={{ bottom: 6, left: `calc(50% + ${x}px - 1.5px)`, width: 3, height: 20, borderRadius: 2, background: "linear-gradient(180deg, hsl(43 70% 65%), hsl(35 50% 35%))", boxShadow: "0 0 4px hsl(43 70% 50% / 0.3)" }}
+            />
+          ))}
+          {/* Bails */}
+          {[-3, 3].map((x, i) => (
+            <motion.div
+              key={`b${i}`}
+              animate={shattered ? { x: SHATTER_BAILS[i].x, y: SHATTER_BAILS[i].y, rotate: SHATTER_BAILS[i].rotate, opacity: 0 } : {}}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="absolute"
+              style={{ bottom: 26, left: `calc(50% + ${x}px - 4px)`, width: 8, height: 2, borderRadius: 1, background: "hsl(43 80% 60%)" }}
+            />
+          ))}
+          {/* Ball */}
+          <motion.div
+            animate={shattered
+              ? { y: 6, scale: 1, opacity: 1 }
+              : { y: [-18, 6], scale: [0.7, 1], opacity: [0.5, 1] }
+            }
+            transition={shattered
+              ? { duration: 0.15 }
+              : { duration: 0.8, repeat: Infinity, repeatDelay: 1.5 }
+            }
+            className="absolute w-4 h-4 rounded-full"
+            style={{ background: "radial-gradient(circle at 30% 30%, hsl(0 65% 55%), hsl(0 50% 30%))", boxShadow: "0 0 8px hsl(0 60% 50% / 0.5)", top: 4 }}
+          />
+          {/* Sparks */}
+          {shattered && SPARK_DIRS.map((d, i) => (
+            <motion.div
+              key={`sp${i}`}
+              initial={{ x: 0, y: 0, opacity: 1, scale: 1 }}
+              animate={{ x: d.x, y: d.y, opacity: 0, scale: 0.3 }}
+              transition={{ duration: 0.4, delay: 0.05 + i * 0.04 }}
+              className="absolute w-1.5 h-1.5 rounded-full"
+              style={{ background: "hsl(43 100% 60%)", boxShadow: "0 0 6px hsl(43 100% 60%)", top: "50%", left: "50%" }}
+            />
+          ))}
+          {/* Flash */}
+          {shattered && (
+            <motion.div
+              initial={{ scale: 0, opacity: 0.9 }}
+              animate={{ scale: 1.5, opacity: 0 }}
+              transition={{ duration: 0.35 }}
+              className="absolute w-10 h-10 rounded-full"
+              style={{ background: "radial-gradient(circle, white, transparent 70%)", top: "50%", left: "50%", transform: "translate(-50%,-50%)" }}
+            />
+          )}
+        </div>
+      </motion.div>
+      <span className="font-game-display text-[8px] tracking-wider text-foreground/80 text-center leading-tight">Quick Match</span>
+    </motion.button>
+  );
+}
+
 export default function ModeIconGrid({ onSelect }: ModeIconGridProps) {
   return (
     <div className="grid grid-cols-4 gap-x-2 gap-y-4">
-      {MODES.map((mode, i) => (
-        <motion.button
-          key={mode.id}
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.08 + i * 0.04, type: "spring", damping: 20 }}
-          whileTap={{ scale: 0.8, y: 4 }}
-          onClick={() => {
-            try { SFX.tap(); Haptics.medium(); } catch {}
-            onSelect(mode.id);
-          }}
-          className="flex flex-col items-center gap-1 relative"
-        >
-          {/* HOT badge */}
-          {mode.hot && (
+      {MODES.map((mode, i) => {
+        if (mode.id === "quick") {
+          return (
             <motion.div
-              animate={{ scale: [1, 1.15, 1] }}
-              transition={{ duration: 0.8, repeat: Infinity }}
-              className="absolute -top-1.5 -right-0.5 z-20 px-1.5 py-0.5 rounded-full font-game-display text-[6px] tracking-wider"
-              style={{
-                background: "linear-gradient(135deg, hsl(0 84% 55%), hsl(25 90% 50%))",
-                color: "white",
-                boxShadow: "0 2px 6px hsl(0 84% 55% / 0.4)",
-                border: "1px solid hsl(0 70% 65% / 0.5)",
-              }}
-            >HOT</motion.div>
-          )}
-
-          {/* Floating icon — no background/border */}
-          <motion.div
-            animate={{ y: [0, -3, 0] }}
-            transition={{ duration: 2.5 + i * 0.2, repeat: Infinity, ease: "easeInOut" }}
-            className="relative"
+              key="quick"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.08 + i * 0.04, type: "spring", damping: 20 }}
+            >
+              <QuickMatchIcon onShatter={() => onSelect("quick")} />
+            </motion.div>
+          );
+        }
+        return (
+          <motion.button
+            key={mode.id}
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.08 + i * 0.04, type: "spring", damping: 20 }}
+            whileTap={{ scale: 0.8, y: 4 }}
+            onClick={() => {
+              try { SFX.tap(); Haptics.medium(); } catch {}
+              onSelect(mode.id);
+            }}
+            className="flex flex-col items-center gap-1 relative"
           >
-            <ModeIcon id={mode.id} />
-          </motion.div>
-
-          {/* Label */}
-          <span className="font-game-display text-[8px] tracking-wider text-foreground/80 text-center leading-tight">
-            {mode.label}
-          </span>
-        </motion.button>
-      ))}
+            {mode.hot && (
+              <motion.div
+                animate={{ scale: [1, 1.15, 1] }}
+                transition={{ duration: 0.8, repeat: Infinity }}
+                className="absolute -top-1.5 -right-0.5 z-20 px-1.5 py-0.5 rounded-full font-game-display text-[6px] tracking-wider"
+                style={{
+                  background: "linear-gradient(135deg, hsl(0 84% 55%), hsl(25 90% 50%))",
+                  color: "white",
+                  boxShadow: "0 2px 6px hsl(0 84% 55% / 0.4)",
+                  border: "1px solid hsl(0 70% 65% / 0.5)",
+                }}
+              >HOT</motion.div>
+            )}
+            <motion.div
+              animate={{ y: [0, -3, 0] }}
+              transition={{ duration: 2.5 + i * 0.2, repeat: Infinity, ease: "easeInOut" }}
+              className="relative"
+            >
+              <ModeIcon id={mode.id} />
+            </motion.div>
+            <span className="font-game-display text-[8px] tracking-wider text-foreground/80 text-center leading-tight">
+              {mode.label}
+            </span>
+          </motion.button>
+        );
+      })}
     </div>
   );
 }
