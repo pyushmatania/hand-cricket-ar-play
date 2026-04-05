@@ -10,7 +10,12 @@ import { getChestTier } from "@/lib/chests";
 import ChestReveal from "@/components/shop/ChestReveal";
 import StumpHitAnimation from "@/components/StumpHitAnimation";
 import { toast } from "sonner";
-import neonIsland from "@/assets/neon-island.png";
+import gullyIsland from "@/assets/islands/gully-grounds.png";
+
+const ISLAND_IMAGES: Record<string, string> = {
+  "Gully Grounds": gullyIsland,
+};
+const getIslandImage = (name: string) => ISLAND_IMAGES[name] || gullyIsland;
 
 /* ═══════════════════════════════════════
    TYPES & CONSTANTS
@@ -441,7 +446,7 @@ export default function HomePage() {
 
                     {/* Island image */}
                     <img
-                      src={neonIsland}
+                      src={getIslandImage(arena.name)}
                       alt={arena.name}
                       className="w-[300px] h-[240px] object-contain relative z-10 mx-auto"
                       width={640}
