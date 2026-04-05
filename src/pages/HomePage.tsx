@@ -11,9 +11,24 @@ import ChestReveal from "@/components/shop/ChestReveal";
 import StumpHitAnimation from "@/components/StumpHitAnimation";
 import { toast } from "sonner";
 import gullyIsland from "@/assets/islands/gully-grounds.png";
+import schoolIsland from "@/assets/islands/school-ground.png";
+import districtIsland from "@/assets/islands/district-stadium.png";
+import ranjiIsland from "@/assets/islands/ranji-trophy.png";
+import iplIsland from "@/assets/islands/ipl-stadium.png";
+import internationalIsland from "@/assets/islands/international.png";
+import worldCupIsland from "@/assets/islands/world-cup.png";
 
 const ISLAND_IMAGES: Record<string, string> = {
   "Gully Grounds": gullyIsland,
+  "School Ground": schoolIsland,
+  "Rooftop": schoolIsland,
+  "Beach Cricket": gullyIsland,
+  "Village Maidan": districtIsland,
+  "District Stadium": districtIsland,
+  "Ranji Trophy": ranjiIsland,
+  "IPL Stadium": iplIsland,
+  "International": internationalIsland,
+  "World Cup": worldCupIsland,
 };
 const getIslandImage = (name: string) => ISLAND_IMAGES[name] || gullyIsland;
 
@@ -34,14 +49,13 @@ interface ProfileData {
 }
 
 const ARENA_LEVELS = [
-  { name: "Gully Grounds", trophies: 0, unlock: "Free", emoji: "🏏" },
-  { name: "School Ground", trophies: 100, unlock: "Level 3", emoji: "🏫" },
-  { name: "Rooftop", trophies: 200, unlock: "Level 5", emoji: "🏢" },
-  { name: "Beach Cricket", trophies: 300, unlock: "Level 7", emoji: "🏖️" },
-  { name: "Village Maidan", trophies: 500, unlock: "Level 10", emoji: "🌳" },
-  { name: "District Stadium", trophies: 800, unlock: "Level 15", emoji: "🏟️" },
-  { name: "IPL Stadium", trophies: 1500, unlock: "Level 22", emoji: "✨" },
-  { name: "International", trophies: 3000, unlock: "Level 25", emoji: "🌍" },
+  { name: "Gully Grounds", trophies: 0, unlock: "Free", emoji: "🏏", accent: "#00FF88" },
+  { name: "School Ground", trophies: 100, unlock: "Level 3", emoji: "🏫", accent: "#4ADE80" },
+  { name: "District Stadium", trophies: 300, unlock: "Level 7", emoji: "🏟️", accent: "#00D4FF" },
+  { name: "Ranji Trophy", trophies: 600, unlock: "Level 12", emoji: "🏆", accent: "#FFD700" },
+  { name: "IPL Stadium", trophies: 1200, unlock: "Level 18", emoji: "✨", accent: "#A855F7" },
+  { name: "International", trophies: 2000, unlock: "Level 22", emoji: "🌍", accent: "#00D4FF" },
+  { name: "World Cup", trophies: 3000, unlock: "Level 25", emoji: "🏆", accent: "#FFD700" },
 ];
 
 function formatTime(seconds: number): string {
@@ -399,7 +413,7 @@ export default function HomePage() {
           </motion.span>
           {/* Swipe dots */}
           <div className="flex justify-center gap-1 mt-1">
-            {ARENA_LEVELS.slice(0, 5).map((_, i) => (
+            {ARENA_LEVELS.map((_, i) => (
               <div key={i} className="rounded-full transition-all" style={{
                 width: i === currentArenaIdx ? 14 : 4,
                 height: 4,
@@ -487,50 +501,103 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ═══ D: BATTLE BUTTON ═══ */}
-      <div className="relative z-10 flex justify-center -mt-1 mb-4 v7-section-anim" style={{ animationDelay: "0.3s" }}>
+      {/* ═══ D: V8 BATTLE BUTTON — Supercell-style ═══ */}
+      <div className="relative z-10 flex flex-col items-center -mt-1 mb-4 v7-section-anim" style={{ animationDelay: "0.3s" }}>
+        {/* Stats bar above button */}
+        <div className="flex items-center gap-3 mb-2 px-4">
+          <div className="flex items-center gap-1">
+            <span className="text-[9px]" style={{ color: "#94A3B8" }}>W/L</span>
+            <span className="font-game-title text-[11px] font-bold" style={{ color: "#00FF88" }}>{profile?.wins ?? 0}</span>
+            <span className="text-[9px]" style={{ color: "#475569" }}>/</span>
+            <span className="font-game-title text-[11px] font-bold" style={{ color: "#FF2D7B" }}>{profile?.losses ?? 0}</span>
+          </div>
+          <div className="w-px h-3" style={{ background: "rgba(148,163,184,0.15)" }} />
+          <div className="flex items-center gap-1">
+            <span className="text-[9px]" style={{ color: "#94A3B8" }}>STREAK</span>
+            <span className="font-game-title text-[11px] font-bold" style={{ color: "#FFD700" }}>🔥{profile?.current_streak ?? 0}</span>
+          </div>
+          <div className="w-px h-3" style={{ background: "rgba(148,163,184,0.15)" }} />
+          <div className="flex items-center gap-1">
+            <span className="text-[9px]" style={{ color: "#94A3B8" }}>BEST</span>
+            <span className="font-game-title text-[11px] font-bold text-white">{profile?.high_score ?? 0}</span>
+          </div>
+        </div>
+
         <motion.button
-          animate={{ scale: [1, 1.015, 1] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-          whileTap={{ scale: 0.95, y: 3 }}
+          animate={{ scale: [1, 1.02, 1] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          whileTap={{ scale: 0.94, y: 4 }}
           onClick={() => {
             try { SFX.tap(); Haptics.heavy(); } catch {}
             setShowStumpAnim(true);
           }}
-          className="relative overflow-hidden"
+          className="relative overflow-hidden group"
           style={{
-            width: 260,
-            height: 64,
-            borderRadius: 18,
-            background: "linear-gradient(180deg, #00FF88 0%, #00CC6A 60%, #009950 100%)",
+            width: 280,
+            height: 68,
+            borderRadius: 20,
+            background: "linear-gradient(180deg, #22FF99 0%, #00E676 30%, #00CC6A 70%, #00A854 100%)",
             border: "none",
-            borderBottom: "5px solid #006633",
-            boxShadow: "0 5px 0 #006633, 0 8px 20px rgba(0,255,136,0.3), 0 0 40px rgba(0,255,136,0.15), inset 0 2px 0 rgba(255,255,255,0.25)",
+            borderBottom: "6px solid #006633",
+            boxShadow: `
+              0 6px 0 #005528,
+              0 10px 30px rgba(0,255,136,0.35),
+              0 0 60px rgba(0,255,136,0.15),
+              inset 0 2px 0 rgba(255,255,255,0.35),
+              inset 0 -2px 4px rgba(0,0,0,0.15)
+            `,
             cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
           }}
         >
-          {/* Pulsing glow */}
-          <motion.div
-            animate={{ boxShadow: ["0 0 15px rgba(0,255,136,0.3)", "0 0 40px rgba(0,255,136,0.5)", "0 0 15px rgba(0,255,136,0.3)"] }}
-            transition={{ duration: 2.5, repeat: Infinity }}
-            className="absolute inset-0 rounded-[18px] pointer-events-none"
-          />
+          {/* Inner highlight bar */}
+          <div className="absolute top-[3px] left-[8%] right-[8%] h-[6px] rounded-full" style={{
+            background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)",
+          }} />
+
+          {/* Sparkle particles */}
+          {[0, 1, 2, 3, 4].map(s => (
+            <motion.div
+              key={s}
+              animate={{
+                y: [-10, -30],
+                x: [0, (s - 2) * 8],
+                opacity: [0, 1, 0],
+                scale: [0.3, 1, 0.3],
+              }}
+              transition={{ duration: 1.5, repeat: Infinity, delay: s * 0.3, ease: "easeOut" }}
+              className="absolute w-1.5 h-1.5 rounded-full pointer-events-none"
+              style={{
+                background: "#FFD700",
+                left: `${20 + s * 15}%`,
+                top: "20%",
+                boxShadow: "0 0 6px #FFD700, 0 0 12px rgba(255,215,0,0.3)",
+              }}
+            />
+          ))}
+
           {/* Shimmer sweep */}
           <motion.div
-            animate={{ left: ["-60%", "200%"] }}
-            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", repeatDelay: 1.5 }}
-            className="absolute top-0 h-full w-1/3 pointer-events-none"
-            style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent)" }}
+            animate={{ left: ["-40%", "140%"] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
+            className="absolute top-0 h-full w-1/4 pointer-events-none"
+            style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)", transform: "skewX(-15deg)" }}
           />
-          <span className="relative z-10 font-display text-[22px] tracking-[4px]" style={{
-            color: "#0A0E27",
-            textShadow: "0 1px 0 rgba(255,255,255,0.3)",
-          }}>
-            ⚔️ BATTLE
-          </span>
+
+          {/* Button text */}
+          <div className="relative z-10 flex items-center justify-center h-full gap-2">
+            <span className="text-2xl">⚔️</span>
+            <span className="font-display text-[24px] tracking-[5px]" style={{
+              color: "#0A0E27",
+              textShadow: "0 1px 0 rgba(255,255,255,0.4), 0 2px 4px rgba(0,0,0,0.1)",
+            }}>
+              BATTLE
+            </span>
+          </div>
+
+          {/* Bottom edge reflection */}
+          <div className="absolute bottom-0 left-[10%] right-[10%] h-[2px] rounded-full" style={{
+            background: "linear-gradient(90deg, transparent, rgba(0,255,136,0.6), transparent)",
+          }} />
         </motion.button>
       </div>
 
@@ -620,93 +687,147 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ═══ G: CHEST SLOT ROW ═══ */}
-      <div className="relative z-10 mx-3 mb-4 p-3 rounded-xl neon-glass v7-section-anim" style={{ borderRadius: 14, animationDelay: "0.45s" }}>
-        <div className="flex justify-center gap-3">
+      {/* ═══ G: V8 CHEST SLOT ROW ═══ */}
+      <div className="relative z-10 mx-3 mb-4 v7-section-anim" style={{ animationDelay: "0.45s" }}>
+        <div className="flex items-center gap-2 mb-2 px-1">
+          <span className="text-xs">🎁</span>
+          <span className="font-game-title text-[10px] tracking-[2px]" style={{ color: "#94A3B8" }}>CHEST SLOTS</span>
+        </div>
+        <div className="flex justify-center gap-2.5">
           {chestSlots.map((chest, i) => {
             const chestInfo = chest ? CRICKET_CHEST[chest.chest_tier] || CRICKET_CHEST.bronze : null;
             const isReady = chest && (chest.status === "ready" || (chest.status === "unlocking" && chestTimeRemaining(chest) <= 0));
             const isUnlocking = chest?.status === "unlocking" && chestTimeRemaining(chest) > 0;
+            const remaining = isUnlocking ? chestTimeRemaining(chest) : 0;
+            const totalDur = chest?.unlock_duration_seconds || 1;
+            const progressPct = isUnlocking ? Math.max(0, Math.min(100, ((totalDur - remaining) / totalDur) * 100)) : 0;
+
+            // Empty slot
+            if (!chest) {
+              return (
+                <div key={i} className="flex flex-col items-center justify-center" style={{
+                  width: 78,
+                  height: 96,
+                  borderRadius: 16,
+                  background: "linear-gradient(180deg, rgba(17,22,51,0.5), rgba(10,14,39,0.6))",
+                  border: "2px dashed rgba(148,163,184,0.08)",
+                }}>
+                  <span className="text-lg" style={{ color: "rgba(148,163,184,0.12)" }}>+</span>
+                  <span className="text-[7px] mt-0.5" style={{ color: "rgba(148,163,184,0.15)", fontFamily: "Rajdhani, sans-serif" }}>EMPTY</span>
+                </div>
+              );
+            }
 
             return (
               <motion.button
                 key={i}
-                whileTap={{ scale: 0.92 }}
+                whileTap={{ scale: 0.9, y: 2 }}
                 onClick={() => handleChestTap(chest)}
-                className="relative flex flex-col items-center justify-center"
+                className="relative flex flex-col items-center justify-center overflow-hidden"
                 style={{
-                  width: 72,
-                  height: 88,
-                  borderRadius: 14,
-                  background: "linear-gradient(180deg, #111633, #0A0E27)",
+                  width: 78,
+                  height: 96,
+                  borderRadius: 16,
+                  background: "linear-gradient(180deg, #111633 0%, #0A0E27 100%)",
                   border: isReady
                     ? `2px solid ${chestInfo?.color}`
-                    : chest ? "1px solid rgba(148,163,184,0.12)" : "1px dashed rgba(148,163,184,0.1)",
+                    : "1.5px solid rgba(148,163,184,0.1)",
                   boxShadow: isReady
-                    ? `0 0 20px ${chestInfo?.color}30, inset 0 2px 8px rgba(0,0,0,0.4)`
-                    : "inset 0 2px 8px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.3)",
-                  cursor: chest ? "pointer" : "default",
+                    ? `0 0 24px ${chestInfo?.color}40, 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)`
+                    : "0 4px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03)",
+                  cursor: "pointer",
                 }}
               >
-                {chest ? (
-                  <>
-                    <motion.span
-                      animate={isReady ? { y: [-4, 4, -4] } : {}}
-                      transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                      className="text-2xl relative z-10"
-                      style={{ filter: isUnlocking ? "blur(1px) brightness(0.6) saturate(0.3)" : "none" }}
-                    >
-                      {chestInfo?.icon}
-                    </motion.span>
-
-                    {/* Sparkles for ready */}
-                    {isReady && (
-                      <>
-                        {[0, 1, 2].map(s => (
-                          <motion.div
-                            key={s}
-                            animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
-                            transition={{ duration: 1.5, repeat: Infinity, delay: s * 0.4 }}
-                            className="absolute w-1 h-1 rounded-full"
-                            style={{
-                              background: chestInfo?.color,
-                              top: `${15 + s * 15}%`,
-                              left: `${20 + s * 25}%`,
-                              boxShadow: `0 0 6px ${chestInfo?.color}`,
-                            }}
-                          />
-                        ))}
-                        {/* Conic gradient light rays */}
-                        <motion.div
-                          animate={{ rotate: [0, 360] }}
-                          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                          className="absolute inset-2 pointer-events-none rounded-xl overflow-hidden opacity-20"
-                          style={{
-                            background: `conic-gradient(from 0deg, transparent, ${chestInfo?.color}40, transparent, ${chestInfo?.color}40, transparent)`,
-                          }}
-                        />
-                      </>
-                    )}
-
-                    {isUnlocking && <span className="absolute text-xs opacity-50">🔒</span>}
-
-                    <span className="mt-1 text-[8px] font-bold relative z-10" style={{
-                      fontFamily: "Rajdhani, sans-serif",
-                      fontWeight: 700,
-                      color: isReady ? "#FFD700" : "#475569",
-                      textShadow: isReady ? "0 0 8px rgba(255,215,0,0.4)" : "none",
-                    }}>
-                      {isReady ? "OPEN!" : isUnlocking ? formatTime(chestTimeRemaining(chest)) : chestInfo?.label}
-                    </span>
-                  </>
-                ) : (
-                  <span className="text-lg" style={{ color: "rgba(148,163,184,0.15)" }}>+</span>
+                {/* Ready state: conic light rays */}
+                {isReady && (
+                  <motion.div
+                    animate={{ rotate: [0, 360] }}
+                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-0 pointer-events-none overflow-hidden rounded-[14px]"
+                    style={{
+                      background: `conic-gradient(from 0deg, transparent 0%, ${chestInfo?.color}15 10%, transparent 20%, ${chestInfo?.color}15 30%, transparent 40%, ${chestInfo?.color}15 50%, transparent 60%, ${chestInfo?.color}15 70%, transparent 80%, ${chestInfo?.color}15 90%, transparent 100%)`,
+                    }}
+                  />
                 )}
+
+                {/* Unlocking: SVG arc timer */}
+                {isUnlocking && (
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none -rotate-90" viewBox="0 0 78 96">
+                    <rect x="2" y="2" width="74" height="92" rx="14" ry="14" fill="none"
+                      stroke={chestInfo?.color || "#475569"}
+                      strokeWidth="2"
+                      strokeDasharray={`${progressPct * 3.32} 332`}
+                      strokeLinecap="round"
+                      opacity="0.5"
+                      style={{ filter: `drop-shadow(0 0 4px ${chestInfo?.color}40)` }}
+                    />
+                  </svg>
+                )}
+
+                {/* Chest icon */}
+                <motion.span
+                  animate={isReady ? { y: [-3, 3, -3], scale: [1, 1.08, 1] } : isUnlocking ? { rotateZ: [-2, 2, -2] } : {}}
+                  transition={{ duration: isReady ? 1.5 : 2, repeat: Infinity, ease: "easeInOut" }}
+                  className="text-[28px] relative z-10"
+                  style={{
+                    filter: isUnlocking
+                      ? `brightness(0.5) saturate(0.3) drop-shadow(0 2px 4px rgba(0,0,0,0.5))`
+                      : isReady
+                        ? `drop-shadow(0 0 12px ${chestInfo?.color}80)`
+                        : `drop-shadow(0 2px 6px rgba(0,0,0,0.5))`,
+                  }}
+                >
+                  {chestInfo?.icon}
+                </motion.span>
+
+                {/* Sparkles for ready */}
+                {isReady && [0, 1, 2, 3].map(s => (
+                  <motion.div
+                    key={s}
+                    animate={{ opacity: [0, 1, 0], scale: [0.3, 1, 0.3], y: [-5, -15] }}
+                    transition={{ duration: 1.2, repeat: Infinity, delay: s * 0.3 }}
+                    className="absolute w-1 h-1 rounded-full pointer-events-none"
+                    style={{
+                      background: s % 2 === 0 ? "#FFD700" : (chestInfo?.color || "#fff"),
+                      left: `${18 + s * 18}%`,
+                      top: "25%",
+                      boxShadow: `0 0 6px ${chestInfo?.color}`,
+                    }}
+                  />
+                ))}
+
+                {/* Lock icon for unlocking */}
+                {isUnlocking && (
+                  <motion.div
+                    animate={{ rotateZ: [-5, 5, -5] }}
+                    transition={{ duration: 0.8, repeat: Infinity }}
+                    className="absolute top-1.5 right-1.5 z-20"
+                  >
+                    <span className="text-[10px]">🔒</span>
+                  </motion.div>
+                )}
+
+                {/* Bottom label */}
+                <div className="absolute bottom-0 inset-x-0 py-1 text-center z-10" style={{
+                  background: "linear-gradient(0deg, rgba(0,0,0,0.7), transparent)",
+                  borderRadius: "0 0 14px 14px",
+                }}>
+                  <span className="text-[8px] font-bold block" style={{
+                    fontFamily: "Rajdhani, sans-serif",
+                    fontWeight: 700,
+                    color: isReady ? "#FFD700" : isUnlocking ? (chestInfo?.color || "#475569") : "#94A3B8",
+                    textShadow: isReady ? "0 0 8px rgba(255,215,0,0.5)" : "none",
+                  }}>
+                    {isReady ? "OPEN!" : isUnlocking ? formatTime(remaining) : chestInfo?.label}
+                  </span>
+                </div>
               </motion.button>
             );
           })}
         </div>
       </div>
+
+
 
       {/* ═══ H: SECONDARY MODES ═══ */}
       <div className="relative z-10 px-3 pb-4 v7-section-anim" style={{ animationDelay: "0.5s" }}>
