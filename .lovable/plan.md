@@ -31,5 +31,5 @@ When the player taps the Quick Match icon, a dramatic shatter animation plays be
 - All other 13 mode icons remain completely unchanged
 
 ### File changed
-- `src/components/ModeIconGrid.tsx` — replace the static `case "quick"` with the new stateful `QuickMatchIcon` component, add shatter state + special click handling in the grid
+- `src/components/ModeIconGrid.tsx`
 
