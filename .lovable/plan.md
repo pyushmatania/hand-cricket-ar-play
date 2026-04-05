@@ -22,7 +22,7 @@ When the player taps the Quick Match icon, a dramatic shatter animation plays be
   - Ball snaps to impact position instantly
   - 3 stumps each get unique framer-motion `animate` — left flies left with -35deg rotation, right flies right with +35deg, center launches upward — all fade to opacity 0
   - 2 bails spin upward (~200deg rotation) and fade out
-  - 4 golden spark particles burst outward from the impact center in different directions
+  - 4 golden spark particles burst outward from the impact center
   - White radial gradient flash div scales from 0 to 1.5x and fades
 
 **Parent grid integration:**
