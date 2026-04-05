@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { SFX, Haptics } from "@/lib/sounds";
 
@@ -93,25 +94,7 @@ function ModeIcon({ id }: { id: string }) {
       );
 
     case "quick":
-      return (
-        <div className="relative w-14 h-14 flex items-center justify-center">
-          {/* 3 stumps */}
-          {[-6, 0, 6].map((x, i) => (
-            <div key={i} className="absolute" style={{ bottom: 6, left: `calc(50% + ${x}px - 1.5px)`, width: 3, height: 20, borderRadius: 2, background: "linear-gradient(180deg, hsl(43 70% 65%), hsl(35 50% 35%))", boxShadow: "0 0 4px hsl(43 70% 50% / 0.3)" }} />
-          ))}
-          {/* Bails */}
-          {[-3, 3].map((x, i) => (
-            <div key={i} className="absolute" style={{ bottom: 26, left: `calc(50% + ${x}px - 4px)`, width: 8, height: 2, borderRadius: 1, background: "hsl(43 80% 60%)" }} />
-          ))}
-          {/* Ball animating down */}
-          <motion.div
-            animate={{ y: [-18, 6], scale: [0.7, 1], opacity: [0.5, 1] }}
-            transition={{ duration: 0.8, repeat: Infinity, repeatDelay: 1.5 }}
-            className="absolute w-4 h-4 rounded-full"
-            style={{ background: "radial-gradient(circle at 30% 30%, hsl(0 65% 55%), hsl(0 50% 30%))", boxShadow: "0 0 8px hsl(0 60% 50% / 0.5)", top: 4 }}
-          />
-        </div>
-      );
+      return null; // Handled by QuickMatchIcon sub-component
 
     case "chest":
       return (
