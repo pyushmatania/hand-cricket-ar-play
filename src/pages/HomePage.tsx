@@ -446,7 +446,7 @@ export default function HomePage() {
 
                     {/* Island image */}
                     <img
-                      src={neonIsland}
+                      src={getIslandImage(arena.name)}
                       alt={arena.name}
                       className="w-[300px] h-[240px] object-contain relative z-10 mx-auto"
                       width={640}
