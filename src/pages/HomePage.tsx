@@ -268,21 +268,34 @@ export default function HomePage() {
           transition={{ delay: 0.1, type: "spring", damping: 18 }}
           className="relative mb-2 flex flex-col items-center"
         >
-          {/* Stadium name */}
-          <div className="mb-1 px-4 py-1 rounded-full z-10"
+          {/* Stadium name with shimmer */}
+          <div className="mb-1 px-4 py-1 rounded-full z-10 relative overflow-hidden"
             style={{
               background: "linear-gradient(180deg, hsl(25 20% 16% / 0.9), hsl(25 15% 10% / 0.95))",
               border: "1.5px solid hsl(43 50% 40%)",
               boxShadow: "0 2px 8px rgba(0,0,0,0.5)",
             }}
           >
-            <span className="font-game-display text-[10px] tracking-[0.2em]" style={{ color: "hsl(43 90% 55%)" }}>
+            {/* Text shimmer sweep */}
+            <motion.div
+              animate={{ x: ["-100%", "200%"] }}
+              transition={{ duration: 1.2, repeat: Infinity, repeatDelay: 3, ease: "easeInOut" }}
+              className="absolute inset-0 pointer-events-none"
+            >
+              <div style={{ width: 16, height: "100%", background: "linear-gradient(105deg, transparent 0%, rgba(255,255,255,0) 30%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 70%, transparent 100%)" }} />
+            </motion.div>
+            <span className="font-game-display text-[10px] tracking-[0.2em] relative" style={{ color: "hsl(43 90% 55%)" }}>
               {currentArena.name.toUpperCase()}
             </span>
           </div>
 
-          {/* Floating island */}
-          <div className="relative" style={{ height: 200 }}>
+          {/* Floating island with pulsing border glow */}
+          <motion.div
+            animate={{ boxShadow: ["0 0 10px rgba(200,170,100,0.1)", "0 0 20px rgba(200,170,100,0.25)", "0 0 10px rgba(200,170,100,0.1)"] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            className="relative rounded-2xl"
+            style={{ height: 200, border: "1.5px solid hsl(43 30% 25% / 0.3)", borderRadius: 16 }}
+          >
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
@@ -305,16 +318,16 @@ export default function HomePage() {
               className="absolute bottom-0 left-1/2 -translate-x-1/2"
               style={{ width: 160, height: 30, background: "radial-gradient(ellipse, rgba(0,0,0,0.5) 0%, transparent 70%)", borderRadius: "50%" }}
             />
-          </div>
+          </motion.div>
 
           {/* ═══ BIG PLAY BUTTON ═══ */}
           <motion.button
-            whileTap={{ scale: 0.93, y: 3 }}
+            whileTap={{ scale: 0.95, y: 4 }}
             whileHover={{ scale: 1.02 }}
             animate={{ y: [0, -3, 0] }}
             transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
             onClick={handlePlay}
-            className="relative w-[70%] py-4 rounded-2xl font-game-display text-lg tracking-[0.15em] text-white"
+            className="relative w-[70%] py-4 rounded-2xl font-game-display text-lg tracking-[0.15em] text-white overflow-hidden"
             style={{
               background: "linear-gradient(180deg, #6AFF6A, #4ADE50, #2D8B2D)",
               border: "3px solid hsl(130 50% 20%)",
@@ -323,7 +336,23 @@ export default function HomePage() {
               textShadow: "0 2px 4px rgba(0,0,0,0.4)",
             }}
           >
-            PLAY ▶
+            {/* White shimmer sweep */}
+            <motion.div
+              animate={{ x: ["-100%", "200%"] }}
+              transition={{ duration: 1, repeat: Infinity, repeatDelay: 4, ease: "easeInOut" }}
+              className="absolute inset-0 pointer-events-none"
+              style={{ zIndex: 1 }}
+            >
+              <div
+                className="h-full"
+                style={{
+                  width: "20px",
+                  background: "linear-gradient(105deg, transparent 0%, rgba(255,255,255,0) 40%, rgba(255,255,255,0.5) 50%, rgba(255,255,255,0) 60%, transparent 100%)",
+                  height: "100%",
+                }}
+              />
+            </motion.div>
+            <span className="relative" style={{ zIndex: 2, textShadow: "0 2px 4px rgba(0,0,0,0.4)" }}>PLAY ▶</span>
           </motion.button>
         </motion.div>
 
