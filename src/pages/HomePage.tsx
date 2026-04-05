@@ -377,7 +377,7 @@ export default function HomePage() {
       </div>
 
       {/* ═══ C: 3D FLOATING ISLAND ═══ */}
-      <div className="relative z-10 mt-3">
+      <div className="relative z-10 mt-3 v7-section-anim" style={{ animationDelay: "0.2s" }}>
         {/* Arena title with shimmer */}
         <div className="text-center mb-1">
           <motion.span
@@ -483,7 +483,7 @@ export default function HomePage() {
       </div>
 
       {/* ═══ D: BATTLE BUTTON ═══ */}
-      <div className="relative z-10 flex justify-center -mt-1 mb-4">
+      <div className="relative z-10 flex justify-center -mt-1 mb-4 v7-section-anim" style={{ animationDelay: "0.3s" }}>
         <motion.button
           animate={{ scale: [1, 1.015, 1] }}
           transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
@@ -530,7 +530,7 @@ export default function HomePage() {
       </div>
 
       {/* ═══ E: MAIN MODE CARDS ═══ */}
-      <div className="relative z-10 flex gap-2 px-3 mb-4">
+      <div className="relative z-10 flex gap-2 px-3 mb-4 v7-section-anim" style={{ animationDelay: "0.35s" }}>
         {MAIN_MODES.map((mode) => (
           <motion.button
             key={mode.id}
@@ -580,7 +580,7 @@ export default function HomePage() {
       </div>
 
       {/* ═══ F: ARENA PROGRESS BAR ═══ */}
-      <div className="relative z-10 mx-3 mb-3 p-3 rounded-xl neon-glass" style={{ borderRadius: 14 }}>
+      <div className="relative z-10 mx-3 mb-3 p-3 rounded-xl neon-glass v7-section-anim" style={{ borderRadius: 14, animationDelay: "0.4s" }}>
         <div className="flex justify-between items-center mb-1.5">
           <span className="font-game-title text-[11px] font-semibold tracking-wide text-white">
             🏏 {currentArena.name}
@@ -616,7 +616,7 @@ export default function HomePage() {
       </div>
 
       {/* ═══ G: CHEST SLOT ROW ═══ */}
-      <div className="relative z-10 mx-3 mb-4 p-3 rounded-xl neon-glass" style={{ borderRadius: 14 }}>
+      <div className="relative z-10 mx-3 mb-4 p-3 rounded-xl neon-glass v7-section-anim" style={{ borderRadius: 14, animationDelay: "0.45s" }}>
         <div className="flex justify-center gap-3">
           {chestSlots.map((chest, i) => {
             const chestInfo = chest ? CRICKET_CHEST[chest.chest_tier] || CRICKET_CHEST.bronze : null;
@@ -704,7 +704,7 @@ export default function HomePage() {
       </div>
 
       {/* ═══ H: SECONDARY MODES ═══ */}
-      <div className="relative z-10 px-3 pb-4">
+      <div className="relative z-10 px-3 pb-4 v7-section-anim" style={{ animationDelay: "0.5s" }}>
         <div className="font-game-title text-[11px] font-semibold tracking-[3px] mb-2 px-1" style={{ color: "#475569" }}>MORE MODES</div>
         <div className="flex flex-col gap-2">
           {SECONDARY_MODES.map((mode) => (
