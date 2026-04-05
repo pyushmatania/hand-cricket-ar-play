@@ -186,32 +186,32 @@ export default function HomePage() {
       {/* V7 Vignette */}
       <div className="v7-vignette" />
 
-      {/* Ambient particles */}
-      <div className="fixed inset-0 pointer-events-none z-[2]">
-        {Array.from({ length: 20 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              width: 2 + Math.random() * 2,
-              height: 2 + Math.random() * 2,
-              left: `${Math.random() * 100}%`,
-              top: `${60 + Math.random() * 40}%`,
-              background: `rgba(var(--team-primary-rgb), ${0.15 + Math.random() * 0.1})`,
-            }}
-            animate={{
-              y: [0, -(200 + Math.random() * 400)],
-              x: [0, Math.sin(i) * 30],
-              opacity: [0, 0.5, 0],
-            }}
-            transition={{
-              duration: 8 + Math.random() * 6,
-              repeat: Infinity,
-              delay: Math.random() * 8,
-              ease: "linear",
-            }}
-          />
-        ))}
+      {/* Ambient particles — CSS-only, GPU accelerated */}
+      <div className="fixed inset-0 pointer-events-none z-[2] overflow-hidden">
+        {Array.from({ length: 28 }).map((_, i) => {
+          const size = 1.5 + (i % 5) * 0.8;
+          const colors = ["rgba(0,255,136,", "rgba(0,212,255,", "rgba(255,215,0,", "rgba(168,85,247,"];
+          const color = colors[i % colors.length];
+          return (
+            <div
+              key={i}
+              className="v7-particle"
+              style={{
+                width: size,
+                height: size,
+                left: `${(i * 3.7 + 5) % 100}%`,
+                bottom: `${-5 - (i % 8) * 3}%`,
+                background: `${color}${0.4 + (i % 3) * 0.15})`,
+                boxShadow: `0 0 ${size * 2}px ${color}0.2)`,
+                ['--rise-dur' as string]: `${8 + (i % 7) * 2}s`,
+                ['--delay' as string]: `${(i * 0.6) % 10}s`,
+                ['--drift-x' as string]: `${Math.sin(i * 0.8) * 30}px`,
+                ['--sway-amount' as string]: `${8 + (i % 4) * 5}px`,
+                ['--sway-dur' as string]: `${4 + (i % 5) * 1.5}s`,
+              }}
+            />
+          );
+        })}
       </div>
 
       {/* ═══ A: TOP BAR — Neon Glass Scoreboard ═══ */}
