@@ -687,87 +687,145 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ═══ G: CHEST SLOT ROW ═══ */}
-      <div className="relative z-10 mx-3 mb-4 p-3 rounded-xl neon-glass v7-section-anim" style={{ borderRadius: 14, animationDelay: "0.45s" }}>
-        <div className="flex justify-center gap-3">
+      {/* ═══ G: V8 CHEST SLOT ROW ═══ */}
+      <div className="relative z-10 mx-3 mb-4 v7-section-anim" style={{ animationDelay: "0.45s" }}>
+        <div className="flex items-center gap-2 mb-2 px-1">
+          <span className="text-xs">🎁</span>
+          <span className="font-game-title text-[10px] tracking-[2px]" style={{ color: "#94A3B8" }}>CHEST SLOTS</span>
+        </div>
+        <div className="flex justify-center gap-2.5">
           {chestSlots.map((chest, i) => {
             const chestInfo = chest ? CRICKET_CHEST[chest.chest_tier] || CRICKET_CHEST.bronze : null;
             const isReady = chest && (chest.status === "ready" || (chest.status === "unlocking" && chestTimeRemaining(chest) <= 0));
             const isUnlocking = chest?.status === "unlocking" && chestTimeRemaining(chest) > 0;
+            const remaining = isUnlocking ? chestTimeRemaining(chest) : 0;
+            const totalDur = chest?.unlock_duration_seconds || 1;
+            const progressPct = isUnlocking ? Math.max(0, Math.min(100, ((totalDur - remaining) / totalDur) * 100)) : 0;
+
+            // Empty slot
+            if (!chest) {
+              return (
+                <div key={i} className="flex flex-col items-center justify-center" style={{
+                  width: 78,
+                  height: 96,
+                  borderRadius: 16,
+                  background: "linear-gradient(180deg, rgba(17,22,51,0.5), rgba(10,14,39,0.6))",
+                  border: "2px dashed rgba(148,163,184,0.08)",
+                }}>
+                  <span className="text-lg" style={{ color: "rgba(148,163,184,0.12)" }}>+</span>
+                  <span className="text-[7px] mt-0.5" style={{ color: "rgba(148,163,184,0.15)", fontFamily: "Rajdhani, sans-serif" }}>EMPTY</span>
+                </div>
+              );
+            }
 
             return (
               <motion.button
                 key={i}
-                whileTap={{ scale: 0.92 }}
+                whileTap={{ scale: 0.9, y: 2 }}
                 onClick={() => handleChestTap(chest)}
-                className="relative flex flex-col items-center justify-center"
+                className="relative flex flex-col items-center justify-center overflow-hidden"
                 style={{
-                  width: 72,
-                  height: 88,
-                  borderRadius: 14,
-                  background: "linear-gradient(180deg, #111633, #0A0E27)",
+                  width: 78,
+                  height: 96,
+                  borderRadius: 16,
+                  background: "linear-gradient(180deg, #111633 0%, #0A0E27 100%)",
                   border: isReady
                     ? `2px solid ${chestInfo?.color}`
-                    : chest ? "1px solid rgba(148,163,184,0.12)" : "1px dashed rgba(148,163,184,0.1)",
+                    : "1.5px solid rgba(148,163,184,0.1)",
                   boxShadow: isReady
-                    ? `0 0 20px ${chestInfo?.color}30, inset 0 2px 8px rgba(0,0,0,0.4)`
-                    : "inset 0 2px 8px rgba(0,0,0,0.4), 0 4px 12px rgba(0,0,0,0.3)",
-                  cursor: chest ? "pointer" : "default",
+                    ? `0 0 24px ${chestInfo?.color}40, 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)`
+                    : "0 4px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.03)",
+                  cursor: "pointer",
                 }}
               >
-                {chest ? (
-                  <>
-                    <motion.span
-                      animate={isReady ? { y: [-4, 4, -4] } : {}}
-                      transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-                      className="text-2xl relative z-10"
-                      style={{ filter: isUnlocking ? "blur(1px) brightness(0.6) saturate(0.3)" : "none" }}
-                    >
-                      {chestInfo?.icon}
-                    </motion.span>
+                {/* Ready state: conic light rays */}
+                {isReady && (
+                  <motion.div
+                    animate={{ rotate: [0, 360] }}
+                    transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                    className="absolute inset-0 pointer-events-none overflow-hidden rounded-[14px]"
+                    style={{
+                      background: `conic-gradient(from 0deg, transparent 0%, ${chestInfo?.color}15 10%, transparent 20%, ${chestInfo?.color}15 30%, transparent 40%, ${chestInfo?.color}15 50%, transparent 60%, ${chestInfo?.color}15 70%, transparent 80%, ${chestInfo?.color}15 90%, transparent 100%)`,
+                    }}
+                  />
+                )}
 
-                    {/* Sparkles for ready */}
-                    {isReady && (
-                      <>
-                        {[0, 1, 2].map(s => (
-                          <motion.div
-                            key={s}
-                            animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
-                            transition={{ duration: 1.5, repeat: Infinity, delay: s * 0.4 }}
-                            className="absolute w-1 h-1 rounded-full"
-                            style={{
-                              background: chestInfo?.color,
-                              top: `${15 + s * 15}%`,
-                              left: `${20 + s * 25}%`,
-                              boxShadow: `0 0 6px ${chestInfo?.color}`,
-                            }}
-                          />
-                        ))}
-                        {/* Conic gradient light rays */}
-                        <motion.div
-                          animate={{ rotate: [0, 360] }}
-                          transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                          className="absolute inset-2 pointer-events-none rounded-xl overflow-hidden opacity-20"
-                          style={{
-                            background: `conic-gradient(from 0deg, transparent, ${chestInfo?.color}40, transparent, ${chestInfo?.color}40, transparent)`,
-                          }}
-                        />
-                      </>
-                    )}
+                {/* Unlocking: SVG arc timer */}
+                {isUnlocking && (
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none -rotate-90" viewBox="0 0 78 96">
+                    <rect x="2" y="2" width="74" height="92" rx="14" ry="14" fill="none"
+                      stroke={chestInfo?.color || "#475569"}
+                      strokeWidth="2"
+                      strokeDasharray={`${progressPct * 3.32} 332`}
+                      strokeLinecap="round"
+                      opacity="0.5"
+                      style={{ filter: `drop-shadow(0 0 4px ${chestInfo?.color}40)` }}
+                    />
+                  </svg>
+                )}
 
-                    {isUnlocking && <span className="absolute text-xs opacity-50">🔒</span>}
+                {/* Chest icon */}
+                <motion.span
+                  animate={isReady ? { y: [-3, 3, -3], scale: [1, 1.08, 1] } : isUnlocking ? { rotateZ: [-2, 2, -2] } : {}}
+                  transition={{ duration: isReady ? 1.5 : 2, repeat: Infinity, ease: "easeInOut" }}
+                  className="text-[28px] relative z-10"
+                  style={{
+                    filter: isUnlocking
+                      ? `brightness(0.5) saturate(0.3) drop-shadow(0 2px 4px rgba(0,0,0,0.5))`
+                      : isReady
+                        ? `drop-shadow(0 0 12px ${chestInfo?.color}80)`
+                        : `drop-shadow(0 2px 6px rgba(0,0,0,0.5))`,
+                  }}
+                >
+                  {chestInfo?.icon}
+                </motion.span>
 
-                    <span className="mt-1 text-[8px] font-bold relative z-10" style={{
-                      fontFamily: "Rajdhani, sans-serif",
-                      fontWeight: 700,
-                      color: isReady ? "#FFD700" : "#475569",
-                      textShadow: isReady ? "0 0 8px rgba(255,215,0,0.4)" : "none",
-                    }}>
-                      {isReady ? "OPEN!" : isUnlocking ? formatTime(chestTimeRemaining(chest)) : chestInfo?.label}
-                    </span>
-                  </>
-                ) : (
-                  <span className="text-lg" style={{ color: "rgba(148,163,184,0.15)" }}>+</span>
+                {/* Sparkles for ready */}
+                {isReady && [0, 1, 2, 3].map(s => (
+                  <motion.div
+                    key={s}
+                    animate={{ opacity: [0, 1, 0], scale: [0.3, 1, 0.3], y: [-5, -15] }}
+                    transition={{ duration: 1.2, repeat: Infinity, delay: s * 0.3 }}
+                    className="absolute w-1 h-1 rounded-full pointer-events-none"
+                    style={{
+                      background: s % 2 === 0 ? "#FFD700" : (chestInfo?.color || "#fff"),
+                      left: `${18 + s * 18}%`,
+                      top: "25%",
+                      boxShadow: `0 0 6px ${chestInfo?.color}`,
+                    }}
+                  />
+                ))}
+
+                {/* Lock icon for unlocking */}
+                {isUnlocking && (
+                  <motion.div
+                    animate={{ rotateZ: [-5, 5, -5] }}
+                    transition={{ duration: 0.8, repeat: Infinity }}
+                    className="absolute top-1.5 right-1.5 z-20"
+                  >
+                    <span className="text-[10px]">🔒</span>
+                  </motion.div>
+                )}
+
+                {/* Bottom label */}
+                <div className="absolute bottom-0 inset-x-0 py-1 text-center z-10" style={{
+                  background: "linear-gradient(0deg, rgba(0,0,0,0.7), transparent)",
+                  borderRadius: "0 0 14px 14px",
+                }}>
+                  <span className="text-[8px] font-bold block" style={{
+                    fontFamily: "Rajdhani, sans-serif",
+                    fontWeight: 700,
+                    color: isReady ? "#FFD700" : isUnlocking ? (chestInfo?.color || "#475569") : "#94A3B8",
+                    textShadow: isReady ? "0 0 8px rgba(255,215,0,0.5)" : "none",
+                  }}>
+                    {isReady ? "OPEN!" : isUnlocking ? formatTime(remaining) : chestInfo?.label}
+                  </span>
+                </div>
+              </motion.button>
+            );
+          })}
+        </div>
+      </div>
                 )}
               </motion.button>
             );
