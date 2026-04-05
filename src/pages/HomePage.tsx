@@ -826,12 +826,8 @@ export default function HomePage() {
           })}
         </div>
       </div>
-                )}
-              </motion.button>
-            );
-          })}
-        </div>
-      </div>
+
+
 
       {/* ═══ H: SECONDARY MODES ═══ */}
       <div className="relative z-10 px-3 pb-4 v7-section-anim" style={{ animationDelay: "0.5s" }}>
