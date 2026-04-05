@@ -1,25 +1,24 @@
 
 
-## Plan: Interactive Quick Match Icon with Stump Shatter Animation
+## Plan: Interactive Quick Match Icon — Stump Shatter on Tap
 
-### What changes
-When the Quick Match icon is tapped, the stumps shatter apart with a dramatic animation before navigating — bails fly off with spin, stumps scatter outward, sparks burst from the impact point — then after ~700ms the game mode loads.
+### What it does
+When the player taps the Quick Match icon, instead of immediately navigating, a dramatic shatter animation plays: the ball smashes into the stumps, stumps fly apart, bails spin into the air, sparks burst out — then after ~700ms the game loads.
 
-### How it works
+### Shatter animation sequence
+1. **Ball impact** (~200ms) — ball accelerates downward into the stumps
+2. **Stumps scatter** — left stump rotates and flies left, right goes right, center launches upward — all fade out
+3. **Bails fly** — both bails spin upward with rotation and fade
+4. **Spark burst** — 3-4 golden particles explode from the impact point
+5. **Flash glow** — brief white radial flash at the collision center
+6. **Navigate** — after 700ms, the Quick Match game mode loads
 
-**Shatter sequence (triggered on tap):**
-1. Ball accelerates into the stumps (~200ms)
-2. 3 stumps fly outward with rotation — left goes left, right goes right, center flies up — all fade out
-3. 2 bails launch upward with random spin and fade
-4. 3-4 golden spark particles burst from impact center
-5. Brief white flash glow at collision point
-6. After ~700ms total, navigation fires to the game
+### Technical details
+- Create a small `QuickMatchIcon` sub-component inside `ModeIconGrid.tsx` with local `shattered` state
+- Use framer-motion `animate` props driven by the `shattered` boolean for stumps, bails, and sparks
+- The parent grid intercepts the Quick Match button's `onClick` to trigger shatter, then calls `onSelect("quick")` after a timeout
+- All other 13 mode icons remain completely unchanged
 
-**Implementation:**
-- Extract the Quick Match icon into a stateful `QuickMatchIcon` sub-component with a `shattered` boolean
-- Use framer-motion `animate` props driven by the shattered state for each stump/bail/spark element
-- Only the Quick Match button gets special tap handling; all other mode icons remain unchanged
-
-### Files modified
-- `src/components/ModeIconGrid.tsx` — add `QuickMatchIcon` component with shatter animation logic
+### File changed
+- `src/components/ModeIconGrid.tsx`
 
