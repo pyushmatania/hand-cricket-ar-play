@@ -11,7 +11,7 @@ When the player taps the Quick Match icon, a dramatic shatter animation plays be
 3. **Bails fly** — both bails spin upward with rotation and fade
 4. **Spark burst** — 3-4 golden particles explode from the impact point
 5. **Flash glow** — brief white radial flash at the collision center
-6. **Navigate** — after 700ms, the Quick Match game mode loads
+6. **Navigate** — after 700ms total, the Quick Match game mode loads
 
 ### Technical details
 - Create a `QuickMatchIcon` sub-component inside `ModeIconGrid.tsx` with local `shattered` state
