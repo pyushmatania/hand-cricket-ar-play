@@ -3,7 +3,7 @@
 ## Plan: Interactive Quick Match Icon — Stump Shatter on Tap
 
 ### What it does
-When the player taps the Quick Match icon, instead of immediately navigating, a dramatic shatter animation plays: the ball smashes into the stumps, stumps fly apart, bails spin into the air, sparks burst out — then after ~700ms the game loads.
+When the player taps the Quick Match icon, a dramatic shatter animation plays before navigating: the ball smashes into the stumps, stumps fly apart, bails spin into the air, sparks burst out — then after ~700ms the game loads.
 
 ### Shatter animation sequence
 1. **Ball impact** (~200ms) — ball accelerates downward into the stumps
