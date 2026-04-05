@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import { useHandCricket, type Move, type MatchConfig } from "@/hooks/useHandCricket";
-import { useMatchSaver } from "@/hooks/useMatchSaver";
+import { useMatchSaver, type MatchRewardsResult } from "@/hooks/useMatchSaver";
 import { SFX, Haptics } from "@/lib/sounds";
 import { playCrowdForResult } from "@/lib/voiceCommentary";
 import { useSettings } from "@/contexts/SettingsContext";

@@ -16,7 +16,7 @@ import CrowdWave from "./CrowdWave";
 import DRSReview from "./DRSReview";
 import { useHandCricket } from "@/hooks/useHandCricket";
 import { useHandDetection } from "@/hooks/useHandDetection";
-import { useMatchSaver } from "@/hooks/useMatchSaver";
+import { useMatchSaver, type MatchRewardsResult } from "@/hooks/useMatchSaver";
 import { startAmbientStadium, stopAmbientStadium, setAmbientVolume } from "@/lib/ambientStadium";
 import { getInningsChangeCommentary } from "@/lib/commentary";
 import { speakDuoCommentary, speakCommentary } from "@/lib/voiceCommentary";
