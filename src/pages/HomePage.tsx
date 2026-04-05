@@ -56,8 +56,10 @@ const CRICKET_CHEST: Record<string, { icon: string; label: string; color: string
   diamond: { icon: "💎", label: "Crystal Bat",  color: "hsl(200 80% 65%)", glow: "hsl(200 80% 65% / 0.5)", border: "hsl(210 50% 40%)" },
 };
 
-const GLASS = "rgba(15,23,42,0.6)";
-const GLASS_BORDER = "rgba(255,255,255,0.08)";
+/* Light direction constants — light from upper-left (fairy lights + dusk sky) */
+const SHADOW_DIR = { x: 6, y: 10 }; // consistent for all elements
+const WARM_LIGHT = "rgba(255,180,100,0.08)";
+const WARM_LIGHT_STRONG = "rgba(255,180,100,0.12)";
 
 /* ══════════════════════════════════════════════
    MAIN COMPONENT
@@ -174,70 +176,124 @@ export default function HomePage() {
           width={1080} height={1920}
           style={{ objectFit: "cover", objectPosition: "center 30%" }}
         />
-        {/* Subtle vignette — keep background vivid */}
+        {/* Depth fog — blends scene into bottom UI */}
         <div className="absolute inset-0 pointer-events-none" style={{
-          background: "linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0) 12%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.45) 80%, rgba(0,0,0,0.75) 100%)",
+          background: `linear-gradient(180deg, 
+            rgba(0,0,0,0.15) 0%, 
+            rgba(0,0,0,0) 10%, 
+            rgba(0,0,0,0) 45%, 
+            rgba(15,23,42,0.5) 65%, 
+            rgba(15,23,42,0.85) 80%, 
+            rgba(15,23,42,0.95) 100%)`,
         }} />
+        {/* Warm light leak overlay — ties scene lighting to UI */}
+        <motion.div
+          className="absolute inset-0 pointer-events-none"
+          animate={{ opacity: [0.6, 1, 0.6], x: [-3, 3, -3] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          style={{
+            background: `
+              radial-gradient(ellipse at 30% 55%, rgba(255,180,100,0.07) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 45%, rgba(255,150,200,0.04) 0%, transparent 40%),
+              radial-gradient(ellipse at 50% 30%, rgba(255,220,150,0.05) 0%, transparent 45%)
+            `,
+          }}
+        />
       </div>
 
-      {/* ═══ FLOATING GOLDEN PARTICLES (dust in the air) ═══ */}
-      {Array.from({ length: 18 }).map((_, i) => (
-        <motion.div
-          key={`p${i}`}
-          className="absolute rounded-full pointer-events-none"
-          style={{
-            width: 2 + Math.random() * 3,
-            height: 2 + Math.random() * 3,
-            left: `${10 + Math.random() * 80}%`,
-            top: `${10 + Math.random() * 60}%`,
-            background: "hsl(43 90% 70%)",
-            boxShadow: "0 0 6px hsl(43 90% 60% / 0.6)",
-            opacity: 0.3 + Math.random() * 0.4,
-          }}
-          animate={{
-            y: [0, -(20 + Math.random() * 30), 0],
-            x: [0, (Math.random() - 0.5) * 20, 0],
-            opacity: [0.2, 0.6, 0.2],
-          }}
-          transition={{ duration: 4 + Math.random() * 4, repeat: Infinity, delay: Math.random() * 3 }}
-        />
-      ))}
+      {/* ═══ ATMOSPHERIC PARTICLES — float OVER everything for 3D depth ═══ */}
+      <div className="absolute inset-0 pointer-events-none z-[60]">
+        {/* Golden dust motes */}
+        {Array.from({ length: 15 }).map((_, i) => {
+          const size = 1.5 + (i % 4) * 0.8;
+          return (
+            <motion.div
+              key={`dust-${i}`}
+              className="absolute rounded-full"
+              style={{
+                width: size,
+                height: size,
+                left: `${8 + (i * 6.2) % 84}%`,
+                top: `${12 + (i * 7.3) % 65}%`,
+                background: "hsl(43 90% 75%)",
+                boxShadow: "0 0 4px hsl(43 90% 65% / 0.5)",
+              }}
+              animate={{
+                y: [0, -(15 + (i % 5) * 6), 0],
+                x: [0, ((i % 2 === 0 ? 1 : -1) * (5 + (i % 3) * 3)), 0],
+                opacity: [0.15, 0.55, 0.15],
+              }}
+              transition={{ duration: 5 + (i % 3) * 2, repeat: Infinity, delay: (i * 0.7) % 4 }}
+            />
+          );
+        })}
+        {/* Fireflies — brighter, larger, slower */}
+        {Array.from({ length: 4 }).map((_, i) => (
+          <motion.div
+            key={`fly-${i}`}
+            className="absolute rounded-full"
+            style={{
+              width: 3,
+              height: 3,
+              left: `${15 + (i * 22) % 70}%`,
+              top: `${8 + (i * 18) % 50}%`,
+              background: "hsl(50 100% 80%)",
+              boxShadow: "0 0 8px hsl(50 100% 70% / 0.7), 0 0 16px hsl(43 90% 60% / 0.3)",
+            }}
+            animate={{
+              y: [0, -25, 5, -15, 0],
+              x: [0, 15, -10, 8, 0],
+              opacity: [0, 0.8, 0.3, 0.9, 0],
+            }}
+            transition={{ duration: 7 + i * 2, repeat: Infinity, delay: i * 3 }}
+          />
+        ))}
+      </div>
 
-      {/* ═══ LAYER 6: FLOATING COLLECTIBLES IN SKY ═══ */}
+      {/* ═══ FLOATING COLLECTIBLES IN SKY ═══ */}
       <motion.div
         className="absolute pointer-events-none z-[5]"
-        style={{ top: "8%", left: "12%" }}
+        style={{ top: "8%", left: "12%", filter: "drop-shadow(0 0 10px rgba(255,215,0,0.5))" }}
         animate={{ y: [-5, 5, -5], rotate: [0, 360] }}
         transition={{ y: { duration: 3, repeat: Infinity }, rotate: { duration: 6, repeat: Infinity, ease: "linear" } }}
       >
-        <span className="text-2xl" style={{ filter: "drop-shadow(0 0 8px rgba(255,215,0,0.6))" }}>🏏</span>
+        <span className="text-2xl">🏏</span>
       </motion.div>
       <motion.div
         className="absolute pointer-events-none z-[5]"
-        style={{ top: "12%", right: "15%" }}
+        style={{ top: "12%", right: "15%", filter: "drop-shadow(0 0 8px rgba(255,215,0,0.5))" }}
         animate={{ y: [-4, 6, -4], rotate: [0, -360] }}
         transition={{ y: { duration: 3.5, repeat: Infinity }, rotate: { duration: 8, repeat: Infinity, ease: "linear" } }}
       >
-        <span className="text-xl" style={{ filter: "drop-shadow(0 0 8px rgba(255,215,0,0.5))" }}>🪙</span>
+        <span className="text-xl">🪙</span>
       </motion.div>
       <motion.div
         className="absolute pointer-events-none z-[5]"
-        style={{ top: "5%", left: "55%" }}
+        style={{ top: "5%", left: "55%", filter: "drop-shadow(0 0 6px rgba(100,200,255,0.5))" }}
         animate={{ y: [-3, 7, -3] }}
         transition={{ duration: 4, repeat: Infinity }}
       >
-        <span className="text-lg" style={{ filter: "drop-shadow(0 0 6px rgba(100,200,255,0.5))" }}>💎</span>
+        <span className="text-lg">💎</span>
       </motion.div>
 
       {/* ═══ LAYER 3: TOP HUD ═══ */}
       <div className="absolute top-0 left-0 right-0 z-30 px-3 pt-[env(safe-area-inset-top,8px)]">
         <div className="max-w-[430px] mx-auto flex items-center gap-2 py-2 px-3 rounded-b-2xl"
-          style={{ background: "rgba(10,15,30,0.65)", backdropFilter: "blur(12px)", borderBottom: `1px solid ${GLASS_BORDER}` }}
+          style={{
+            background: "rgba(10,15,30,0.65)",
+            backdropFilter: "blur(12px)",
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
+            boxShadow: `0 ${SHADOW_DIR.y}px 20px rgba(0,0,0,0.3), inset 0 -1px 0 rgba(255,255,255,0.05)`,
+          }}
         >
           {/* Avatar + Level */}
           <button onClick={() => navigate(user ? "/profile" : "/auth")} className="relative flex-shrink-0 active:scale-95 transition-transform">
             <div className="w-11 h-11 rounded-full flex items-center justify-center"
-              style={{ border: "2.5px solid hsl(43 80% 50%)", background: "rgba(30,40,60,0.8)", boxShadow: "0 0 12px hsl(43 80% 50% / 0.3)" }}
+              style={{
+                border: "2.5px solid hsl(43 80% 50%)",
+                background: "rgba(30,40,60,0.8)",
+                boxShadow: `0 0 12px hsl(43 80% 50% / 0.3), ${SHADOW_DIR.x * 0.3}px ${SHADOW_DIR.y * 0.3}px 8px rgba(0,0,0,0.4)`,
+              }}
             >
               <span className="text-lg">{user ? "🏏" : "👤"}</span>
             </div>
@@ -250,7 +306,7 @@ export default function HomePage() {
 
           {/* Name + XP */}
           <div className="flex flex-col gap-1 min-w-0">
-            <span className="font-heading text-[11px] font-bold text-white truncate leading-none">{playerName}</span>
+            <span className="font-heading text-[11px] font-bold text-white truncate leading-none" style={{ textShadow: "1px 2px 4px rgba(0,0,0,0.5)" }}>{playerName}</span>
             <div className="w-16 h-[5px] rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.1)" }}>
               <motion.div initial={{ width: 0 }} animate={{ width: `${(xpInLevel / 500) * 100}%` }}
                 className="h-full rounded-full" style={{ background: "linear-gradient(90deg, hsl(134 61% 58%), hsl(51 100% 50%))" }}
@@ -272,7 +328,7 @@ export default function HomePage() {
                 style={{ background: "rgba(20,30,50,0.7)", border: `1px solid ${c.border}` }}
               >
                 <span className="text-[10px]">{c.icon}</span>
-                <span className="font-score text-[9px] text-white font-bold">{c.val >= 1000 ? `${(c.val / 1000).toFixed(1)}K` : c.val}</span>
+                <span className="font-score text-[9px] text-white font-bold" style={{ textShadow: "1px 2px 4px rgba(0,0,0,0.5)" }}>{c.val >= 1000 ? `${(c.val / 1000).toFixed(1)}K` : c.val}</span>
                 {c.plus && <span className="text-[8px] font-bold w-3 h-3 flex items-center justify-center rounded-full" style={{ background: "hsl(142 71% 45%)", color: "#000" }}>+</span>}
               </button>
             ))}
@@ -280,7 +336,7 @@ export default function HomePage() {
 
           {/* Bell */}
           <button onClick={() => navigate("/notifications")} className="relative w-8 h-8 rounded-full flex items-center justify-center"
-            style={{ background: "rgba(20,30,50,0.7)", border: `1px solid ${GLASS_BORDER}` }}
+            style={{ background: "rgba(20,30,50,0.7)", border: "1px solid rgba(255,255,255,0.08)" }}
           >
             <Bell className="w-4 h-4 text-white/70" />
             {unreadCount > 0 && (
@@ -294,99 +350,141 @@ export default function HomePage() {
 
           {/* Settings */}
           <button onClick={() => navigate("/settings")} className="w-8 h-8 rounded-full flex items-center justify-center"
-            style={{ background: "rgba(20,30,50,0.7)", border: `1px solid ${GLASS_BORDER}` }}
+            style={{ background: "rgba(20,30,50,0.7)", border: "1px solid rgba(255,255,255,0.08)" }}
           >
             <Settings className="w-4 h-4 text-white/60" />
           </button>
         </div>
       </div>
 
-      {/* ═══ LAYER 1: CHARACTER PEDESTAL ═══ */}
-      <div className="absolute left-1/2 -translate-x-1/2 z-10 flex flex-col items-center" style={{ top: "38%" }}>
-        {/* Character */}
+      {/* ═══ LAYER 1: CHARACTER + PEDESTAL (3D objects IN the scene) ═══ */}
+      <div className="absolute left-1/2 -translate-x-1/2 z-10 flex flex-col items-center" style={{ top: "36%" }}>
+        {/* Cricket bat — 3D perspective, casting shadow matching scene lighting */}
         <motion.div
-          animate={{ rotateY: [-2, 2, -2] }}
+          animate={{ rotateY: [-3, 3, -3] }}
           transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
           className="relative"
-          style={{ width: 140, height: 200 }}
+          style={{
+            width: 140,
+            height: 200,
+            transform: "perspective(600px) rotateY(-5deg) rotateX(3deg)",
+          }}
         >
-          {/* Glow aura behind character */}
+          {/* Glow aura — warm, matching scene fairy lights */}
           <motion.div
             className="absolute inset-0 rounded-full pointer-events-none"
             animate={{ opacity: [0.15, 0.35, 0.15], scale: [0.9, 1.1, 0.9] }}
             transition={{ duration: 3, repeat: Infinity }}
-            style={{ background: "radial-gradient(circle, hsl(43 90% 55% / 0.3), transparent 70%)" }}
+            style={{ background: "radial-gradient(circle, hsl(43 90% 55% / 0.25), transparent 65%)" }}
           />
           <div className="w-full h-full flex items-center justify-center">
-            <span className="text-8xl" style={{ filter: "drop-shadow(0 8px 20px rgba(0,0,0,0.6))" }}>🏏</span>
+            <span
+              className="text-8xl"
+              style={{
+                filter: `drop-shadow(${SHADOW_DIR.x}px ${SHADOW_DIR.y}px 16px rgba(0,0,0,0.6))`,
+                transform: "perspective(600px) rotateY(-8deg) rotateX(5deg)",
+              }}
+            >🏏</span>
           </div>
         </motion.div>
 
-        {/* Glowing platform */}
+        {/* Glowing platform — painted neon circle ON the concrete, not floating */}
         <motion.div
-          animate={{ boxShadow: ["0 0 20px hsl(43 90% 55% / 0.2)", "0 0 40px hsl(43 90% 55% / 0.45)", "0 0 20px hsl(43 90% 55% / 0.2)"] }}
+          animate={{
+            boxShadow: [
+              `0 0 20px hsl(43 90% 55% / 0.2), 0 0 40px hsl(43 90% 55% / 0.1)`,
+              `0 0 30px hsl(43 90% 55% / 0.4), 0 0 60px hsl(43 90% 55% / 0.2)`,
+              `0 0 20px hsl(43 90% 55% / 0.2), 0 0 40px hsl(43 90% 55% / 0.1)`,
+            ]
+          }}
           transition={{ repeat: Infinity, duration: 3 }}
-          className="-mt-4"
+          className="-mt-5"
           style={{
-            width: 160,
-            height: 28,
+            width: 170,
+            height: 30,
             borderRadius: "50%",
-            background: "linear-gradient(180deg, rgba(30,41,59,0.8), rgba(15,23,42,0.9))",
+            background: "radial-gradient(ellipse, hsl(43 90% 55% / 0.2) 0%, hsl(43 90% 55% / 0.1) 40%, hsl(43 90% 55% / 0.03) 70%, transparent 100%)",
             border: "2px solid hsl(43 80% 50% / 0.5)",
+            filter: "blur(0.5px)",
           }}
         />
 
-        {/* Arena name below pedestal */}
+        {/* Arena name — wooden signboard style */}
         <motion.div
-          animate={{ opacity: [0.7, 1, 0.7] }}
+          animate={{ opacity: [0.8, 1, 0.8] }}
           transition={{ duration: 3, repeat: Infinity }}
-          className="mt-2 px-4 py-1 rounded-full"
-          style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)" }}
+          className="mt-2 px-4 py-1.5 rounded-lg relative"
+          style={{
+            background: "linear-gradient(180deg, rgba(92,64,30,0.7), rgba(60,40,18,0.85))",
+            border: "1.5px solid rgba(139,115,85,0.5)",
+            borderBottom: "3px solid rgba(50,30,10,0.7)",
+            boxShadow: `${SHADOW_DIR.x * 0.5}px ${SHADOW_DIR.y * 0.5}px 12px rgba(0,0,0,0.4)`,
+          }}
         >
-          <span className="font-heading text-[10px] tracking-[0.2em] font-bold" style={{ color: "hsl(43 90% 60%)" }}>
+          {/* Warm light reflection on signboard */}
+          <div className="absolute top-0 left-0 right-0 h-[45%] rounded-t-lg pointer-events-none"
+            style={{ background: "linear-gradient(180deg, rgba(255,200,150,0.1), transparent)" }}
+          />
+          <span className="font-heading text-[10px] tracking-[0.2em] font-bold relative" style={{ color: "hsl(43 90% 60%)", textShadow: "0 1px 3px rgba(0,0,0,0.6)" }}>
             ⭐ {currentArena.name.toUpperCase()} ⭐
           </span>
         </motion.div>
       </div>
 
-      {/* ═══ LAYER 2: FLOATING GAME MODE RIBBONS — RIGHT ═══ */}
+      {/* ═══ LAYER 2: FLOATING 3D RIBBONS — RIGHT (TAP / PVP / AR) ═══ */}
       <div className="absolute right-1 z-20 flex flex-col gap-3" style={{ top: "30%" }}>
-        <FloatingRibbon
+        <FloatingRibbon3D
           label="⚡ TAP"
-          gradient="linear-gradient(135deg, hsl(142 70% 50%), hsl(142 60% 38%))"
+          lightColor="hsl(142 70% 50%)"
+          darkColor="hsl(142 55% 25%)"
+          glowRgb="74,222,80"
+          rotateY={-10}
+          rotateX={2}
           delay={0}
           onClick={() => handleModeSelect("tap")}
           size="lg"
         />
-        <FloatingRibbon
+        <FloatingRibbon3D
           label="⚔️ PVP"
-          gradient="linear-gradient(135deg, hsl(0 75% 55%), hsl(15 70% 45%))"
+          lightColor="hsl(0 75% 55%)"
+          darkColor="hsl(0 60% 22%)"
+          glowRgb="239,68,68"
+          rotateY={-8}
+          rotateX={3}
           delay={0.3}
           onClick={() => handleModeSelect("multiplayer")}
           size="md"
         />
-        <FloatingRibbon
+        <FloatingRibbon3D
           label="📷 AR"
-          gradient="linear-gradient(135deg, hsl(190 80% 50%), hsl(200 70% 40%))"
+          lightColor="hsl(190 80% 50%)"
+          darkColor="hsl(200 60% 25%)"
+          glowRgb="6,182,212"
+          rotateY={-6}
+          rotateX={4}
           delay={0.6}
           onClick={() => handleModeSelect("classic")}
           size="sm"
         />
       </div>
 
-      {/* ═══ LAYER 2: FLOATING BUTTONS — LEFT ═══ */}
+      {/* ═══ LAYER 2: FLOATING 3D PILLS — LEFT (Tournament / Practice) ═══ */}
       <div className="absolute left-3 z-20 flex flex-col gap-3" style={{ top: "40%" }}>
-        <FloatingPill
+        <FloatingPill3D
           icon="🏆"
           label="Tournament"
-          gradient="linear-gradient(135deg, hsl(270 60% 50%), hsl(43 80% 50%))"
+          lightColor="hsl(270 60% 50%)"
+          darkColor="hsl(270 50% 22%)"
+          glowRgb="168,85,247"
           onClick={() => handleModeSelect("tournament")}
           delay={0.2}
         />
-        <FloatingPill
+        <FloatingPill3D
           icon="🎯"
           label="Practice"
-          gradient="linear-gradient(135deg, hsl(142 55% 45%), hsl(142 45% 35%))"
+          lightColor="hsl(142 55% 45%)"
+          darkColor="hsl(142 45% 20%)"
+          glowRgb="34,197,94"
           onClick={() => handleModeSelect("practice")}
           delay={0.4}
         />
@@ -394,26 +492,41 @@ export default function HomePage() {
 
       {/* ═══ LAYER 4: SIDE ICON BUTTONS — LEFT ═══ */}
       <div className="absolute left-2 z-20 flex flex-col gap-2" style={{ top: "18%" }}>
-        <SideButton icon={<Trophy className="w-[18px] h-[18px]" />} label="Rank" onClick={() => navigate("/leaderboard")} />
-        <SideButton icon={<Target className="w-[18px] h-[18px]" />} label="Quests" badge={3} onClick={() => navigate("/game/daily")} />
-        <SideButton icon={<MessageCircle className="w-[18px] h-[18px]" />} label="Chat" onClick={() => navigate("/friends")} />
+        <SideButton3D icon={<Trophy className="w-[18px] h-[18px]" />} label="Rank" onClick={() => navigate("/leaderboard")} />
+        <SideButton3D icon={<Target className="w-[18px] h-[18px]" />} label="Quests" badge={3} onClick={() => navigate("/game/daily")} />
+        <SideButton3D icon={<MessageCircle className="w-[18px] h-[18px]" />} label="Chat" onClick={() => navigate("/friends")} />
       </div>
 
       {/* ═══ LAYER 4: SIDE ICON BUTTONS — RIGHT ═══ */}
       <div className="absolute right-2 z-20 flex flex-col gap-2" style={{ top: "18%" }}>
-        <SideButton icon={<Mail className="w-[18px] h-[18px]" />} label="Mail" badge={unreadCount} onClick={() => navigate("/notifications")} />
-        <SideButton icon={<Backpack className="w-[18px] h-[18px]" />} label="Cards" onClick={() => navigate("/collection")} />
-        <SideButton icon={<Lock className="w-[18px] h-[18px] opacity-40" />} label="Soon" />
+        <SideButton3D icon={<Mail className="w-[18px] h-[18px]" />} label="Mail" badge={unreadCount} onClick={() => navigate("/notifications")} />
+        <SideButton3D icon={<Backpack className="w-[18px] h-[18px]" />} label="Cards" onClick={() => navigate("/collection")} />
+        <SideButton3D icon={<Lock className="w-[18px] h-[18px] opacity-40" />} label="Soon" />
       </div>
 
       {/* ═══ LAYER 5: BOTTOM AREA (Chest Slots + Arena Progress) ═══ */}
       <div className="absolute bottom-0 left-0 right-0 z-20" style={{ paddingBottom: "calc(68px + env(safe-area-inset-bottom, 16px))" }}>
         <div className="max-w-[430px] mx-auto px-3">
 
-          {/* Chest slot row */}
-          <div className="flex gap-2 mb-2 px-1 py-2 rounded-xl"
-            style={{ background: "rgba(10,15,30,0.7)", backdropFilter: "blur(10px)", border: `1px solid ${GLASS_BORDER}` }}
+          {/* Chest slot row — wooden crate shelf */}
+          <div className="flex gap-2 mb-2 px-2 py-2.5 rounded-xl relative overflow-hidden"
+            style={{
+              background: "linear-gradient(180deg, rgba(92,64,30,0.55) 0%, rgba(50,32,12,0.75) 100%)",
+              borderTop: "2px solid rgba(139,115,85,0.4)",
+              borderBottom: "3px solid rgba(30,18,5,0.6)",
+              boxShadow: `inset 0 4px 12px rgba(0,0,0,0.35), 0 -${SHADOW_DIR.y * 0.3}px 8px rgba(0,0,0,0.2)`,
+            }}
           >
+            {/* Wood plank lines */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
+              style={{
+                backgroundImage: "repeating-linear-gradient(90deg, transparent, transparent 23%, rgba(0,0,0,1) 23.5%, transparent 24%)",
+              }}
+            />
+            {/* Warm light from above reflecting on shelf */}
+            <div className="absolute top-0 left-0 right-0 h-[40%] pointer-events-none"
+              style={{ background: `linear-gradient(180deg, ${WARM_LIGHT_STRONG}, transparent)` }}
+            />
             {chestSlots.map((chest, i) => (
               <MiniChestSlot key={i} chest={chest} tick={tick} onTap={handleChestTap} />
             ))}
@@ -421,11 +534,16 @@ export default function HomePage() {
 
           {/* Arena progress */}
           <div className="px-2 py-1.5 rounded-xl mb-1"
-            style={{ background: "rgba(10,15,30,0.6)", backdropFilter: "blur(8px)", border: `1px solid ${GLASS_BORDER}` }}
+            style={{
+              background: "rgba(10,15,30,0.7)",
+              backdropFilter: "blur(8px)",
+              border: "1px solid rgba(255,255,255,0.06)",
+              boxShadow: `${SHADOW_DIR.x * 0.2}px ${SHADOW_DIR.y * 0.2}px 8px rgba(0,0,0,0.25)`,
+            }}
           >
             <div className="flex justify-between items-center mb-1">
-              <span className="font-body text-[9px] font-semibold text-white/60">🏏 {currentArena.name}</span>
-              <span className="font-body text-[9px] font-semibold text-white/60">→ {nextArena.name}</span>
+              <span className="font-body text-[9px] font-semibold text-white/60" style={{ textShadow: "1px 2px 4px rgba(0,0,0,0.5)" }}>🏏 {currentArena.name}</span>
+              <span className="font-body text-[9px] font-semibold text-white/60" style={{ textShadow: "1px 2px 4px rgba(0,0,0,0.5)" }}>→ {nextArena.name}</span>
             </div>
             <div className="h-[5px] rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.1)" }}>
               <motion.div initial={{ width: 0 }} animate={{ width: `${arenaProgress}%` }}
@@ -440,14 +558,30 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ═══ MORE MODES LINK ═══ */}
+      {/* ═══ MORE MODES — 3D wooden signboard ═══ */}
       <motion.button
-        className="absolute z-20 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full"
-        style={{ bottom: "calc(68px + env(safe-area-inset-bottom, 16px) + 140px)", background: "rgba(10,15,30,0.6)", backdropFilter: "blur(8px)", border: `1px solid ${GLASS_BORDER}` }}
-        whileTap={{ scale: 0.95 }}
+        className="absolute z-20 left-1/2 -translate-x-1/2 px-4 py-1.5 relative overflow-hidden"
+        style={{
+          bottom: "calc(68px + env(safe-area-inset-bottom, 16px) + 140px)",
+          background: "linear-gradient(180deg, rgba(92,64,30,0.7), rgba(60,40,18,0.85))",
+          border: "1.5px solid rgba(139,115,85,0.4)",
+          borderBottom: "3px solid rgba(50,30,10,0.6)",
+          borderRadius: "8px",
+          boxShadow: `${SHADOW_DIR.x * 0.4}px ${SHADOW_DIR.y * 0.4}px 10px rgba(0,0,0,0.4)`,
+          transform: "perspective(600px) rotateX(3deg)",
+        }}
+        whileTap={{ scale: 0.95, y: 2 }}
         onClick={() => navigate("/play")}
       >
-        <span className="font-body text-[10px] text-white/60">More Modes ▾</span>
+        {/* Warm light reflection */}
+        <div className="absolute top-0 left-0 right-0 h-[50%] pointer-events-none rounded-t-md"
+          style={{ background: `linear-gradient(180deg, ${WARM_LIGHT}, transparent)` }}
+        />
+        {/* Wood grain */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.04]"
+          style={{ backgroundImage: "repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(0,0,0,1) 4px, rgba(0,0,0,1) 5px)" }}
+        />
+        <span className="font-body text-[10px] font-semibold relative" style={{ color: "hsl(30 30% 78%)", textShadow: "1px 2px 4px rgba(0,0,0,0.5)", letterSpacing: "0.05em" }}>More Modes ▾</span>
       </motion.button>
 
       {/* Stump animation overlay */}
@@ -469,58 +603,84 @@ export default function HomePage() {
 }
 
 /* ══════════════════════════════════════════════
-   FLOATING RIBBON BUTTON (TAP / PVP / AR)
+   3D FLOATING RIBBON (TAP / PVP / AR)
+   — perspective-tilted, thick bottom edge, warm light reflection, scene-matching shadow
    ══════════════════════════════════════════════ */
 
-function FloatingRibbon({ label, gradient, delay, onClick, size }: {
-  label: string; gradient: string; delay: number; onClick: () => void;
+function FloatingRibbon3D({ label, lightColor, darkColor, glowRgb, rotateY, rotateX, delay, onClick, size }: {
+  label: string; lightColor: string; darkColor: string; glowRgb: string;
+  rotateY: number; rotateX: number; delay: number; onClick: () => void;
   size: "lg" | "md" | "sm";
 }) {
   const fontSize = size === "lg" ? 18 : size === "md" ? 15 : 13;
-  const px = size === "lg" ? "20px 28px" : size === "md" ? "14px 22px" : "10px 18px";
+  const py = size === "lg" ? 14 : size === "md" ? 11 : 9;
+  const px = size === "lg" ? 26 : size === "md" ? 20 : 16;
 
   return (
     <motion.button
-      initial={{ opacity: 0, x: 40 }}
+      initial={{ opacity: 0, x: 50 }}
       animate={{ opacity: 1, x: 0, rotate: [-1.5, 1.5, -1.5], y: [-2, 2, -2] }}
       transition={{
         opacity: { delay, duration: 0.4 },
-        x: { delay, duration: 0.4 },
+        x: { delay, duration: 0.5, type: "spring" },
         rotate: { delay: delay + 0.5, duration: 3.5, repeat: Infinity, ease: "easeInOut" },
         y: { delay: delay + 0.5, duration: 3, repeat: Infinity, ease: "easeInOut" },
       }}
-      whileTap={{ scale: 1.08 }}
+      whileTap={{ scale: 1.05, y: 3 }}
       onClick={onClick}
       className="relative"
       style={{
-        background: gradient,
-        padding: px,
-        borderRadius: "12px 6px 6px 12px",
-        boxShadow: "0 6px 20px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.25)",
-        cursor: "pointer",
+        perspective: "800px",
       }}
     >
-      {/* 3D bottom edge */}
-      <div className="absolute inset-x-0 bottom-0 h-[3px] rounded-b-md" style={{ background: "rgba(0,0,0,0.3)" }} />
-      <span style={{
-        fontFamily: "'Bungee', cursive",
-        fontSize,
-        color: "white",
-        textShadow: "0 2px 4px rgba(0,0,0,0.5)",
-        letterSpacing: "0.05em",
-      }}>
-        {label}
-      </span>
+      <div
+        className="relative overflow-hidden"
+        style={{
+          padding: `${py}px ${px}px`,
+          borderRadius: "14px 6px 6px 14px",
+          background: `linear-gradient(135deg, ${lightColor}, color-mix(in srgb, ${lightColor} 70%, black))`,
+          /* 3D thickness — visible side edges */
+          borderBottom: `6px solid ${darkColor}`,
+          borderRight: `3px solid ${darkColor}`,
+          /* Scene-matching shadow (light from upper-left) */
+          boxShadow: `
+            ${SHADOW_DIR.x}px ${SHADOW_DIR.y}px 20px rgba(0,0,0,0.5),
+            inset 0 2px 0 rgba(255,255,255,0.2),
+            0 0 30px rgba(${glowRgb}, 0.15)
+          `,
+          /* Perspective tilt to match scene camera angle */
+          transform: `perspective(800px) rotateY(${rotateY}deg) rotateX(${rotateX}deg)`,
+        }}
+      >
+        {/* Warm fairy light reflection on button surface */}
+        <div className="absolute top-0 left-0 right-0 h-[50%] pointer-events-none rounded-t-xl"
+          style={{ background: `linear-gradient(180deg, ${WARM_LIGHT_STRONG}, transparent)` }}
+        />
+        {/* Jersey mesh texture */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.05]"
+          style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,1) 0.4px, transparent 0.4px)", backgroundSize: "3px 3px" }}
+        />
+        <span className="relative z-10" style={{
+          fontFamily: "'Bungee', cursive",
+          fontSize,
+          color: "white",
+          textShadow: "0 2px 4px rgba(0,0,0,0.5), 1px 2px 4px rgba(0,0,0,0.3)",
+          letterSpacing: "0.05em",
+        }}>
+          {label}
+        </span>
+      </div>
     </motion.button>
   );
 }
 
 /* ══════════════════════════════════════════════
-   FLOATING PILL BUTTON (Tournament / Practice)
+   3D FLOATING PILL (Tournament / Practice)
    ══════════════════════════════════════════════ */
 
-function FloatingPill({ icon, label, gradient, onClick, delay }: {
-  icon: string; label: string; gradient: string; onClick: () => void; delay: number;
+function FloatingPill3D({ icon, label, lightColor, darkColor, glowRgb, onClick, delay }: {
+  icon: string; label: string; lightColor: string; darkColor: string; glowRgb: string;
+  onClick: () => void; delay: number;
 }) {
   return (
     <motion.button
@@ -528,51 +688,78 @@ function FloatingPill({ icon, label, gradient, onClick, delay }: {
       animate={{ opacity: 1, x: 0, y: [-2, 3, -2] }}
       transition={{
         opacity: { delay, duration: 0.4 },
-        x: { delay, duration: 0.4 },
+        x: { delay, duration: 0.4, type: "spring" },
         y: { delay: delay + 0.5, duration: 3.5, repeat: Infinity, ease: "easeInOut" },
       }}
-      whileTap={{ scale: 1.08 }}
+      whileTap={{ scale: 1.05, y: 2 }}
       onClick={onClick}
-      className="flex items-center gap-1.5 px-3 py-2 rounded-xl"
+      className="flex items-center gap-1.5 px-3 py-2 rounded-xl relative overflow-hidden"
       style={{
-        background: gradient,
-        boxShadow: "0 4px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.2)",
+        background: `linear-gradient(135deg, ${lightColor}, color-mix(in srgb, ${lightColor} 65%, black))`,
+        borderBottom: `4px solid ${darkColor}`,
+        borderRight: `2px solid ${darkColor}`,
+        boxShadow: `
+          ${SHADOW_DIR.x * 0.7}px ${SHADOW_DIR.y * 0.7}px 14px rgba(0,0,0,0.4),
+          inset 0 1px 0 rgba(255,255,255,0.2),
+          0 0 20px rgba(${glowRgb}, 0.12)
+        `,
+        transform: "perspective(600px) rotateY(8deg) rotateX(2deg)",
       }}
     >
-      <span className="text-sm">{icon}</span>
-      <span className="font-body text-[11px] font-bold text-white" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}>{label}</span>
+      {/* Warm light reflection */}
+      <div className="absolute top-0 left-0 right-0 h-[45%] pointer-events-none rounded-t-xl"
+        style={{ background: `linear-gradient(180deg, ${WARM_LIGHT}, transparent)` }}
+      />
+      <span className="text-sm relative z-10">{icon}</span>
+      <span className="font-body text-[11px] font-bold text-white relative z-10" style={{ textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}>{label}</span>
     </motion.button>
   );
 }
 
 /* ══════════════════════════════════════════════
-   SIDE ICON BUTTON
+   3D SIDE ICON BUTTON
+   — Physical glass button with bezel, consistent shadow, warm reflection
    ══════════════════════════════════════════════ */
 
-function SideButton({ icon, label, badge, onClick }: {
+function SideButton3D({ icon, label, badge, onClick }: {
   icon: React.ReactNode; label: string; badge?: number; onClick?: () => void;
 }) {
   return (
     <motion.button
       initial={{ opacity: 0, scale: 0.8 }}
       animate={{ opacity: 1, scale: 1 }}
-      whileTap={{ scale: 1.1 }}
+      whileTap={{ scale: 0.92 }}
       onClick={onClick}
       className="flex flex-col items-center gap-0.5 relative"
     >
-      <div className="w-10 h-10 rounded-full flex items-center justify-center text-white/80"
-        style={{ background: GLASS, backdropFilter: "blur(8px)", border: `1px solid ${GLASS_BORDER}` }}
+      <div className="w-11 h-11 rounded-full flex items-center justify-center text-white/80 relative overflow-hidden"
+        style={{
+          background: "rgba(15,23,42,0.5)",
+          backdropFilter: "blur(12px)",
+          /* 3D bezel ring */
+          border: "2px solid rgba(255,255,255,0.12)",
+          boxShadow: `
+            ${SHADOW_DIR.x * 0.5}px ${SHADOW_DIR.y * 0.5}px 10px rgba(0,0,0,0.5),
+            inset 0 1px 0 rgba(255,255,255,0.12),
+            inset 0 -1px 0 rgba(0,0,0,0.2),
+            0 0 8px rgba(255,180,100,0.06)
+          `,
+        }}
       >
-        {icon}
+        {/* Warm ambient reflection */}
+        <div className="absolute top-0 left-0 right-0 h-[40%] pointer-events-none"
+          style={{ background: `linear-gradient(180deg, ${WARM_LIGHT}, transparent)`, borderRadius: "50%" }}
+        />
+        <span className="relative z-10">{icon}</span>
       </div>
-      {badge && badge > 0 && (
+      {badge != null && badge > 0 && (
         <div className="absolute -top-1 -right-1 min-w-[14px] h-[14px] px-0.5 rounded-full flex items-center justify-center"
-          style={{ background: "hsl(0 84% 55%)", border: "2px solid rgba(10,15,30,0.8)" }}
+          style={{ background: "hsl(0 84% 55%)", border: "2px solid rgba(10,15,30,0.8)", boxShadow: "0 2px 4px rgba(0,0,0,0.4)" }}
         >
           <span className="text-[7px] text-white font-bold">{badge > 9 ? "9+" : badge}</span>
         </div>
       )}
-      <span className="text-[7px] text-white/50 font-body">{label}</span>
+      <span className="text-[7px] text-white/50 font-body" style={{ textShadow: "1px 2px 4px rgba(0,0,0,0.5)" }}>{label}</span>
     </motion.button>
   );
 }
@@ -587,7 +774,7 @@ function MiniChestSlot({ chest, tick, onTap }: { chest: UserChest | null; tick: 
   if (!chest) {
     return (
       <div className="flex-1 flex flex-col items-center justify-center py-2 rounded-lg"
-        style={{ border: "1px dashed rgba(255,255,255,0.1)" }}
+        style={{ border: "1px dashed rgba(255,255,255,0.08)" }}
       >
         <span className="text-white/15 text-sm">+</span>
       </div>
@@ -609,13 +796,16 @@ function MiniChestSlot({ chest, tick, onTap }: { chest: UserChest | null; tick: 
       style={{
         background: isReady ? `radial-gradient(ellipse at bottom, ${cc.glow}, transparent 70%)` : "transparent",
         border: `1px solid ${isReady ? cc.color + "80" : "rgba(255,255,255,0.06)"}`,
+        boxShadow: isReady ? `0 0 12px ${cc.glow}` : "none",
       }}
     >
       <motion.span
         className="text-2xl"
         animate={isReady ? { y: [-2, 2, -2], scale: [1, 1.05, 1] } : {}}
         transition={isReady ? { duration: 2, repeat: Infinity } : {}}
-        style={{ filter: isLocked ? "grayscale(0.5) brightness(0.5)" : "none" }}
+        style={{
+          filter: isLocked ? "grayscale(0.5) brightness(0.5)" : `drop-shadow(${SHADOW_DIR.x * 0.2}px ${SHADOW_DIR.y * 0.2}px 4px rgba(0,0,0,0.4))`,
+        }}
       >
         {cc.icon}
       </motion.span>
