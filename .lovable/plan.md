@@ -1,25 +1,58 @@
 
+# V7 Neon Cricket Carnival — Phased Home Page Rebuild
 
-## Plan: Interactive Quick Match Icon with Stump Shatter Animation
+The V7 doc is massive (covers every screen). We'll focus on the **Home/Battle page** first, broken into 6 phases. Each phase is a standalone deliverable you can test before moving on.
 
-### What changes
-Modify the `ModeIcon` component's `"quick"` case in `ModeIconGrid.tsx` to support a "shatter" state. When tapped, instead of immediately navigating, the stumps scatter outward, bails fly off with rotation, sparks appear, and after ~600ms the navigation fires.
+---
 
-### Technical approach
+## Phase 1: Global Design System Foundation
+**What:** Set up V7's color tokens, typography (Bungee, Rajdhani, Outfit), and material classes (neon-glass, holo-chrome, scoreboard-metal, pitch-turf) in `index.css` and `tailwind.config.ts`. Add the layered background system (abyss bg + gradient mesh + grid pattern + vignette + ambient particles).
 
-**1. Add state to Quick Match icon** — Extract the `"quick"` case into a small sub-component (`QuickMatchIcon`) that accepts an `onShatter` callback and manages its own `shattered` boolean state.
+**Files:** `index.css`, `tailwind.config.ts`, `index.html` (Google Fonts)
 
-**2. Shatter animation sequence** (triggered on tap):
-- Ball accelerates into stumps (fast `y` tween, ~200ms)
-- 3 stumps fly outward: left stump rotates left + flies left/down, right stump rotates right + flies right/down, center stump flies straight back/up — all fade out
-- 2 bails launch upward with spin (random rotation), fade out
-- 3-4 golden spark particles burst from impact point
-- Flash glow at impact center
+---
 
-**3. Timing** — Total shatter animation ~700ms, then call `onSelect("quick")` to navigate.
+## Phase 2: Player Bar + Currency Pills (Section A)
+**What:** Rebuild the top bar as a neon-glass panel with hexagonal avatar frame, gradient text player name, trophy count with gold glow, scoreboard-metal currency chips with animated coin/gem icons, and the settings/notification icons. Fade-to-transparent bottom edge.
 
-**4. Integration** — In the `ModeIconGrid` grid rendering, intercept the `"quick"` mode's `onClick` to trigger the shatter state on `QuickMatchIcon` instead of immediately calling `onSelect`. All other modes remain unchanged.
+**Files:** `HomePage.tsx` (top bar section)
 
-### Files modified
-- `src/components/ModeIconGrid.tsx` — Replace static quick match icon with stateful `QuickMatchIcon` component, add shatter animation variants
+---
 
+## Phase 3: Chest Banners + Floating Island (Sections B + C)
+**What:** Two neon-glass banner cards (Free Chest with golden pulse, Wicket Chest with progress bar). The 3D floating island centerpiece with bob animation, shadow, character, stats overlay strip, arena title shimmer, and swipeable locked arenas. Generate a new V7 neon-lit island image.
+
+**Files:** `HomePage.tsx`, new island asset
+
+---
+
+## Phase 4: BATTLE Button + Mode Cards (Sections D + E)
+**What:** The big green BATTLE button with V7 styling (neon-green gradient, 5px border-bottom, pulsing glow, shimmer sweep, press animation). Three mode cards (TAP/PVP/AR) as neon-glass cards with team-colored borders, animated icons, and chrome brackets.
+
+**Files:** `HomePage.tsx`
+
+---
+
+## Phase 5: Arena Progress + Chest Slots + Secondary Modes (Sections F + G + H)
+**What:** Pitch-turf progress bar with crease markings. Four neon-glass chest display slots with proper states (empty/locked/unlocking/ready with golden glow + bouncing item + light rays). Secondary mode list with neon-glass cards and team-accent left borders.
+
+**Files:** `HomePage.tsx`
+
+---
+
+## Phase 6: Ambient Particles + Polish
+**What:** Add the floating dust-mote particle system (20-30 particles, team-colored, drifting upward). Fine-tune all animations, transitions, and responsive sizing. Ensure consistent neon glow language across all elements.
+
+**Files:** `HomePage.tsx`
+
+---
+
+### What's NOT in this plan (future phases for other screens):
+- VS/Pre-match screen redesign
+- Player Card visual system
+- Chest opening animations
+- Tab bar redesign
+- Settings, Profile, Shop, Collection screen redesigns
+- Match HUD redesign
+
+**Shall I start with Phase 1?**
