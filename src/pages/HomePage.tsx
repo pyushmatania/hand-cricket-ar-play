@@ -49,14 +49,13 @@ interface ProfileData {
 }
 
 const ARENA_LEVELS = [
-  { name: "Gully Grounds", trophies: 0, unlock: "Free", emoji: "🏏" },
-  { name: "School Ground", trophies: 100, unlock: "Level 3", emoji: "🏫" },
-  { name: "Rooftop", trophies: 200, unlock: "Level 5", emoji: "🏢" },
-  { name: "Beach Cricket", trophies: 300, unlock: "Level 7", emoji: "🏖️" },
-  { name: "Village Maidan", trophies: 500, unlock: "Level 10", emoji: "🌳" },
-  { name: "District Stadium", trophies: 800, unlock: "Level 15", emoji: "🏟️" },
-  { name: "IPL Stadium", trophies: 1500, unlock: "Level 22", emoji: "✨" },
-  { name: "International", trophies: 3000, unlock: "Level 25", emoji: "🌍" },
+  { name: "Gully Grounds", trophies: 0, unlock: "Free", emoji: "🏏", accent: "#00FF88" },
+  { name: "School Ground", trophies: 100, unlock: "Level 3", emoji: "🏫", accent: "#4ADE80" },
+  { name: "District Stadium", trophies: 300, unlock: "Level 7", emoji: "🏟️", accent: "#00D4FF" },
+  { name: "Ranji Trophy", trophies: 600, unlock: "Level 12", emoji: "🏆", accent: "#FFD700" },
+  { name: "IPL Stadium", trophies: 1200, unlock: "Level 18", emoji: "✨", accent: "#A855F7" },
+  { name: "International", trophies: 2000, unlock: "Level 22", emoji: "🌍", accent: "#00D4FF" },
+  { name: "World Cup", trophies: 3000, unlock: "Level 25", emoji: "🏆", accent: "#FFD700" },
 ];
 
 function formatTime(seconds: number): string {
