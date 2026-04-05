@@ -15,21 +15,21 @@ When the player taps the Quick Match icon, a dramatic shatter animation plays be
 
 ### Technical details
 
-**New sub-component: `QuickMatchIcon`** (inside `ModeIconGrid.tsx`)
+**New sub-component: `QuickMatchIcon`** inside `ModeIconGrid.tsx`
 - Local `shattered` state boolean, resets after animation completes
-- When `shattered=false`: existing idle animation (ball bouncing toward stumps on loop)
-- When `shattered=true`:
+- When idle: existing looping animation (ball bouncing toward stumps)
+- When shattered:
   - Ball snaps to impact position
-  - 3 stumps each get unique animate props — left flies left with rotation, right flies right, center launches upward
-  - 2 bails spin upward and fade
-  - 4 golden spark particles burst outward from center
-  - White radial flash scales up and fades
+  - 3 stumps each get unique framer-motion `animate` props — left flies left with negative rotation, right flies right with positive rotation, center launches upward
+  - 2 bails spin upward with 180°+ rotation and fade out
+  - 4 golden spark particles burst outward from the impact center
+  - White radial gradient flash div scales up and fades
 
 **Parent grid integration:**
-- Quick Match button's `onClick` triggers `shatter()` instead of navigating immediately
-- After 700ms timeout, calls `onSelect("quick")`
-- All other 13 mode icons remain unchanged
+- The Quick Match button's `onClick` triggers `setShattered(true)` instead of navigating immediately
+- A `useEffect` watching `shattered` fires `onSelect("quick")` after a 700ms `setTimeout`
+- All other 13 mode icons remain completely unchanged
 
 ### File changed
-- `src/components/ModeIconGrid.tsx`
+- `src/components/ModeIconGrid.tsx` — replace the static `case "quick"` with the new stateful `QuickMatchIcon` component and add special click handling for the quick mode in the grid
 
