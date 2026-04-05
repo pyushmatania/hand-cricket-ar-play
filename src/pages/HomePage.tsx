@@ -307,7 +307,7 @@ export default function HomePage() {
       </div>
 
       {/* ═══ B: CHEST BANNER ROW ═══ */}
-      <div className="relative z-10 flex gap-2 px-3 mt-3">
+      <div className="relative z-10 flex gap-2 px-3 mt-3 v7-section-anim" style={{ animationDelay: "0.1s" }}>
         {/* Free Chest */}
         <motion.button
           whileTap={{ scale: 0.96 }}
