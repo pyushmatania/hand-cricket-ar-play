@@ -153,10 +153,108 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Outfit', 'Nunito', sans-serif;
     overscroll-behavior: none;
     -webkit-tap-highlight-color: transparent;
   }
+}
+
+/* ═══════════════════════════════════════════════════
+   V7 MATERIAL SYSTEM
+   ═══════════════════════════════════════════════════ */
+
+/* Material 1: Neon Glass — Primary panels, cards, containers */
+.neon-glass {
+  background: linear-gradient(135deg, rgba(17,22,51,0.85) 0%, rgba(26,32,66,0.75) 50%, rgba(17,22,51,0.9) 100%);
+  backdrop-filter: blur(20px) saturate(1.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  border: 1px solid rgba(148,163,184,0.12);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.05) inset, 0 1px 0 rgba(255,255,255,0.08) inset;
+  position: relative;
+}
+
+/* Material 2: Holo Chrome — Premium/Legendary */
+.holo-chrome {
+  background: linear-gradient(135deg, rgba(30,35,70,0.9) 0%, rgba(40,50,90,0.85) 25%, rgba(50,40,80,0.85) 50%, rgba(30,45,85,0.9) 75%, rgba(25,30,65,0.9) 100%);
+  border: 1px solid transparent;
+  border-radius: 16px;
+  box-shadow: 0 0 15px rgba(168,85,247,0.2), 0 0 30px rgba(0,212,255,0.1), 0 8px 32px rgba(0,0,0,0.5);
+  animation: holo-shift 6s linear infinite;
+}
+@keyframes holo-shift {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+/* Material 3: Pitch Turf — Stadium/Ground surfaces */
+.pitch-turf {
+  background:
+    repeating-linear-gradient(90deg, rgba(34,139,34,0.15) 0px, rgba(34,139,34,0.15) 20px, rgba(46,160,46,0.15) 20px, rgba(46,160,46,0.15) 40px),
+    linear-gradient(180deg, #1B5E20 0%, #2E7D32 50%, #1B5E20 100%);
+  border: 2px solid rgba(76,175,80,0.3);
+  border-radius: 12px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.3);
+}
+
+/* Material 4: Scoreboard Metal — Stats/Numbers */
+.scoreboard-metal {
+  background: linear-gradient(180deg, #1E293B 0%, #0F172A 40%, #1E293B 60%, #0F172A 100%);
+  border: 1px solid rgba(148,163,184,0.15);
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.4);
+  background-image: repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, transparent 1px, transparent 3px);
+}
+
+/* V7 Layered Background */
+.v7-bg {
+  background: #070B1A;
+  position: relative;
+}
+.v7-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 80% 20%, rgba(var(--team-primary-rgb),0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 80%, rgba(var(--team-primary-rgb),0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(0,212,255,0.02) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+}
+.v7-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(45deg, transparent, transparent 39px, rgba(255,255,255,0.008) 39px, rgba(255,255,255,0.008) 40px);
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* V7 Vignette overlay */
+.v7-vignette {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.4) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* V7 Neon text glow helper */
+.neon-text-green {
+  text-shadow: 0 0 10px hsl(153 100% 50% / 0.6), 0 0 30px hsl(153 100% 50% / 0.3), 0 0 60px hsl(153 100% 50% / 0.15);
+}
+.neon-text-cyan {
+  text-shadow: 0 0 10px hsl(195 100% 50% / 0.6), 0 0 30px hsl(195 100% 50% / 0.3);
+}
+.neon-text-pink {
+  text-shadow: 0 0 10px hsl(343 100% 59% / 0.6), 0 0 30px hsl(343 100% 59% / 0.3);
+}
+.neon-text-gold {
+  text-shadow: 0 0 10px hsl(51 100% 50% / 0.6), 0 0 30px hsl(51 100% 50% / 0.3);
 }
 
 /* ═══════════════════════════════════════════════════
