@@ -381,7 +381,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
       );
     }, 1000);
     return () => { clearInterval(loadInterval); clearInterval(tickInterval); };
-  }, [phase, loadGames, loadLobbyFriends]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase]);
 
   // Subscribe to game changes
   useEffect(() => {
