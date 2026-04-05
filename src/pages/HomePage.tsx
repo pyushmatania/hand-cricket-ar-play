@@ -1,17 +1,16 @@
-import { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import OnboardingTutorial from "@/components/OnboardingTutorial";
 import { SFX, Haptics } from "@/lib/sounds";
-import gullyBg from "@/assets/gully-bg-immersive.jpg";
 import { useUserChests, useStartUnlock, useCollectChest, chestTimeRemaining, type UserChest } from "@/hooks/useUserChests";
 import { getChestTier } from "@/lib/chests";
 import ChestReveal from "@/components/shop/ChestReveal";
 import StumpHitAnimation from "@/components/StumpHitAnimation";
-import { Settings, Bell } from "lucide-react";
 import { toast } from "sonner";
+import gullyIsland from "@/assets/gully-island.png";
 
 /* ═══════════════════════════════════════
    TYPES & CONSTANTS
@@ -30,13 +29,14 @@ interface ProfileData {
 }
 
 const ARENA_LEVELS = [
-  { name: "Gully Grounds", trophies: 0 },
-  { name: "School Ground", trophies: 100 },
-  { name: "District Stadium", trophies: 300 },
-  { name: "Ranji Arena", trophies: 600 },
-  { name: "IPL Stadium", trophies: 1000 },
-  { name: "International", trophies: 2000 },
-  { name: "World Cup", trophies: 5000 },
+  { name: "Gully Grounds", trophies: 0, unlock: "Free", emoji: "🏏" },
+  { name: "School Ground", trophies: 100, unlock: "Level 3", emoji: "🏫" },
+  { name: "Rooftop", trophies: 200, unlock: "Level 5", emoji: "🏢" },
+  { name: "Beach Cricket", trophies: 300, unlock: "Level 7", emoji: "🏖️" },
+  { name: "Village Maidan", trophies: 500, unlock: "Level 10", emoji: "🌳" },
+  { name: "District Stadium", trophies: 800, unlock: "Level 15", emoji: "🏟️" },
+  { name: "IPL Stadium", trophies: 1500, unlock: "Level 22", emoji: "✨" },
+  { name: "International", trophies: 3000, unlock: "Level 25", emoji: "🌍" },
 ];
 
 function formatTime(seconds: number): string {
@@ -56,14 +56,24 @@ const CRICKET_CHEST: Record<string, { icon: string; label: string; color: string
   diamond: { icon: "💎", label: "Crystal Bat",  color: "hsl(200 80% 65%)" },
 };
 
-/* Mode button configs */
-const MODES = {
-  tap:        { icon: "⚡", label: "TAP",        bg: "#4ADE50", dark: "#1A5E1A", route: "tap" },
-  pvp:        { icon: "⚔️", label: "PVP",        bg: "#EF4444", dark: "#991B1B", route: "pvp" },
-  ar:         { icon: "📷", label: "AR",          bg: "#06B6D4", dark: "#0E7490", route: "ar" },
-  tournament: { icon: "🏆", label: "Tournament", bg: "#A855F7", dark: "#6B21A8", route: "tournament" },
-  practice:   { icon: "🎯", label: "Practice",   bg: "#22C55E", dark: "#166534", route: "practice" },
-};
+const MAIN_MODES = [
+  { id: "tap", icon: "⚡", label: "TAP", sub: "Quick Play", accent: "hsl(134 61% 58%)", border: "rgba(74,222,80,0.3)", dark: "#1A5E1A" },
+  { id: "pvp", icon: "⚔️", label: "PVP", sub: "Online Battle", accent: "hsl(0 84% 60%)", border: "rgba(239,68,68,0.3)", dark: "#991B1B" },
+  { id: "ar",  icon: "📷", label: "AR",  sub: "Camera Mode", accent: "hsl(192 91% 60%)", border: "rgba(6,182,212,0.3)", dark: "#0E7490" },
+];
+
+const SECONDARY_MODES = [
+  { id: "tournament", icon: "🏆", label: "Tournament", sub: "5-Round Bracket", accent: "hsl(258 90% 66%)" },
+  { id: "ipl", icon: "🏏", label: "IPL Season", sub: "Full Tournament", accent: "hsl(43 93% 50%)" },
+  { id: "worldcup", icon: "🌍", label: "World Cup", sub: "10 Nations", accent: "hsl(217 80% 55%)" },
+  { id: "ashes", icon: "🏺", label: "The Ashes", sub: "Best of 5", accent: "hsl(35 70% 50%)" },
+  { id: "knockout", icon: "🥊", label: "Knockout Cup", sub: "8-Team Bracket", accent: "hsl(0 70% 55%)" },
+  { id: "auction", icon: "💰", label: "Auction League", sub: "Bid & Battle", accent: "hsl(43 85% 50%)" },
+  { id: "royale", icon: "💀", label: "Cricket Royale", sub: "Battle Royale", accent: "hsl(280 70% 55%)" },
+  { id: "battlepass", icon: "⚔️", label: "Battle Pass", sub: "Season 3", accent: "hsl(258 80% 60%)" },
+  { id: "daily", icon: "📅", label: "Daily Challenge", sub: "New Target Daily", accent: "hsl(25 80% 55%)" },
+  { id: "practice", icon: "🎯", label: "Practice", sub: "Learn & Improve", accent: "hsl(134 71% 45%)" },
+];
 
 /* ═══════════════════════════════════════
    MAIN COMPONENT
@@ -79,26 +89,23 @@ export default function HomePage() {
   const [revealData, setRevealData] = useState<{ name: string; emoji: string; rarity: string } | null>(null);
   const [pendingMode, setPendingMode] = useState<string | null>(null);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [tiltX, setTiltX] = useState(0);
-  const [tiltY, setTiltY] = useState(0);
+  const [currentArenaIdx, setCurrentArenaIdx] = useState(0);
+  const arenaScrollRef = useRef<HTMLDivElement>(null);
 
   const { data: chests } = useUserChests();
   const startUnlock = useStartUnlock();
   const collectChest = useCollectChest();
 
-  // Tick for chest timers
   useEffect(() => {
     const interval = setInterval(() => setTick(t => t + 1), 1000);
     return () => clearInterval(interval);
   }, []);
 
-  // Onboarding
   useEffect(() => {
     const seen = localStorage.getItem("hc_onboarding_done");
     if (!seen) setShowOnboarding(true);
   }, []);
 
-  // Profile + notifications
   useEffect(() => {
     if (!user) return;
     supabase
@@ -115,18 +122,6 @@ export default function HomePage() {
       .eq("read", false)
       .then(({ count }) => setUnreadCount(count || 0));
   }, [user]);
-
-  // Device tilt for parallax
-  useEffect(() => {
-    const handleOrientation = (e: DeviceOrientationEvent) => {
-      if (e.gamma !== null && e.beta !== null) {
-        setTiltX(Math.max(-15, Math.min(15, e.gamma * 0.3)));
-        setTiltY(Math.max(-10, Math.min(10, (e.beta - 45) * 0.2)));
-      }
-    };
-    window.addEventListener("deviceorientation", handleOrientation);
-    return () => window.removeEventListener("deviceorientation", handleOrientation);
-  }, []);
 
   const completeOnboarding = () => {
     localStorage.setItem("hc_onboarding_done", "1");
@@ -183,505 +178,579 @@ export default function HomePage() {
   const playerName = profile?.display_name || user?.email?.split("@")[0]?.slice(0, 10) || "Player";
   const arenaProgress = ((currentTrophies - currentArena.trophies) / Math.max(nextArena.trophies - currentArena.trophies, 1)) * 100;
   const chestSlots = Array.from({ length: 4 }, (_, i) => chests?.find(c => c.slot_index === i) || null);
-
-  // Parallax multiplier based on Z-depth
-  const tiltStyle = (zDepth: number) => ({
-    transform: `translate(${tiltX * (zDepth / 100)}px, ${tiltY * (zDepth / 100)}px)`,
-  });
+  const winRate = profile && profile.total_matches > 0 ? Math.round((profile.wins / profile.total_matches) * 100) : 0;
 
   return (
-    <div
-      style={{
-        position: "relative",
-        width: "100%",
-        height: "100dvh",
-        overflow: "hidden",
-        background: "#080818",
-      }}
-    >
-      {/* ═══ THE 3D SCENE ═══ */}
-      <div style={{ position: "absolute", inset: 0 }}>
+    <div className="relative w-full h-full overflow-y-auto overflow-x-hidden no-scrollbar" style={{ background: "#080818" }}>
 
-        {/* ── LAYER 1: Background image with parallax tilt ── */}
-        <div
-          style={{
-            position: "absolute",
-            inset: "-5%",
-            transform: `translate(${tiltX * 2}px, ${tiltY * 2}px) scale(1.1)`,
-            transition: "transform 0.3s ease-out",
-          }}
-        >
-          <img
-            src={gullyBg}
-            alt="Gully Grounds"
-            className="w-full h-full"
-            style={{ objectFit: "cover", objectPosition: "center 30%" }}
-          />
+      {/* ═══ BACKGROUND TEXTURE ═══ */}
+      <div className="fixed inset-0 pointer-events-none" style={{
+        background: `
+          radial-gradient(ellipse at 50% 30%, rgba(74,222,80,0.03) 0%, transparent 60%),
+          repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.006) 20px, rgba(255,255,255,0.006) 21px),
+          linear-gradient(180deg, #0a0f1a 0%, #0F172A 30%, #0F172A 70%, #080818 100%)
+        `,
+      }} />
+
+      {/* ═══ A: PLAYER BAR — Scoreboard Style ═══ */}
+      <div className="relative z-20" style={{
+        background: "linear-gradient(180deg, #0F172A, #1E293B)",
+        borderBottom: "2px solid transparent",
+        borderImage: "linear-gradient(90deg, #475569, #94A3B8, #475569) 1",
+        boxShadow: "0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)",
+        padding: "max(env(safe-area-inset-top, 8px), 8px) 12px 8px",
+      }}>
+        {/* Leather stitch overlay */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{
+          backgroundImage: `repeating-linear-gradient(135deg, transparent, transparent 8px, rgba(255,255,255,0.15) 8px, rgba(255,255,255,0.15) 9px)`,
+        }} />
+
+        <div className="flex items-center gap-2 relative">
+          {/* Avatar frame */}
+          <button onClick={() => navigate(user ? "/profile" : "/auth")} className="relative flex-shrink-0 active:scale-95 transition-transform">
+            <div className="relative">
+              <div className="w-11 h-11 rounded-full flex items-center justify-center" style={{
+                background: "linear-gradient(135deg, #1E293B, #0F172A)",
+                border: "2.5px solid #64748B",
+                boxShadow: "0 0 12px rgba(74,222,80,0.15), 0 3px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)",
+              }}>
+                <span className="text-lg font-bold" style={{ color: "hsl(var(--green-play))" }}>
+                  {playerName[0]?.toUpperCase()}
+                </span>
+                {/* Engraved bat icons at 3 & 9 o'clock */}
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-0.5 text-[5px] opacity-30">🏏</span>
+                <span className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-0.5 text-[5px] opacity-30">🏏</span>
+              </div>
+              {/* Level shield */}
+              <div className="absolute -bottom-1 -right-1 px-1.5 py-0.5 rounded-full" style={{
+                background: "linear-gradient(180deg, hsl(var(--blue-info)), hsl(var(--blue-info-dark)))",
+                border: "2px solid #0F172A",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.5)",
+              }}>
+                <span className="font-game-display text-[7px] text-white leading-none">{playerLevel}</span>
+              </div>
+              {/* XP arc */}
+              <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 44 44">
+                <circle cx="22" cy="22" r="19" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="2" />
+                <circle cx="22" cy="22" r="19" fill="none" stroke="hsl(134,61%,58%)" strokeWidth="2"
+                  strokeDasharray={`${((profile?.xp ?? 0) % 500) / 500 * 119.4} 119.4`}
+                  strokeLinecap="round" />
+              </svg>
+            </div>
+          </button>
+
+          {/* Name */}
+          <div className="flex flex-col gap-0.5">
+            <span className="font-game-display text-[11px] tracking-wider text-foreground leading-none">{playerName}</span>
+            <span className="text-[8px] text-muted-foreground font-game-body">Level {playerLevel}</span>
+          </div>
+
+          <div className="flex-1" />
+
+          {/* Currency scoreboard digits */}
+          <div className="flex items-center gap-1.5">
+            <ScoreboardPill icon="🪙" value={profile?.coins ?? 0} plus onClick={() => navigate("/shop")} />
+            <ScoreboardPill icon="💎" value={45} plus onClick={() => navigate("/shop")} />
+          </div>
+
+          {/* Bell + Settings */}
+          <button onClick={() => navigate("/notifications")} className="relative w-9 h-9 rounded-lg flex items-center justify-center" style={{
+            background: "rgba(255,255,255,0.04)",
+            border: "1px solid rgba(255,255,255,0.06)",
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.04)",
+          }}>
+            <span className="text-sm" style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.4))" }}>🔔</span>
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 min-w-[14px] h-[14px] px-0.5 rounded-full flex items-center justify-center text-[7px] font-bold text-white" style={{
+                background: "hsl(var(--red-hot))",
+                border: "1.5px solid #0F172A",
+              }}>{unreadCount > 9 ? "9+" : unreadCount}</span>
+            )}
+          </button>
+          <button onClick={() => navigate("/settings")} className="w-9 h-9 rounded-lg flex items-center justify-center" style={{
+            background: "rgba(255,255,255,0.04)",
+            border: "1px solid rgba(255,255,255,0.06)",
+          }}>
+            <span className="text-sm opacity-60" style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.4))" }}>⚙️</span>
+          </button>
         </div>
+      </div>
 
-        {/* ── Atmospheric fog + depth gradient ── */}
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: `
-              linear-gradient(to top, rgba(8,8,24,0.97) 0%, rgba(8,8,24,0.6) 25%, transparent 50%),
-              radial-gradient(ellipse at 30% 55%, rgba(255,170,80,0.12) 0%, transparent 50%),
-              radial-gradient(ellipse at 70% 45%, rgba(200,100,255,0.06) 0%, transparent 40%)
-            `,
-            pointerEvents: "none",
-          }}
-        />
-
-        {/* Animated warm light leak */}
-        <motion.div
-          animate={{ opacity: [0.5, 1, 0.5], x: [-4, 4, -4] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          style={{
-            position: "absolute",
-            inset: 0,
-            background: `
-              radial-gradient(ellipse at 25% 60%, rgba(255,180,100,0.08) 0%, transparent 45%),
-              radial-gradient(ellipse at 75% 40%, rgba(255,150,200,0.05) 0%, transparent 35%)
-            `,
-            pointerEvents: "none",
-          }}
-        />
-
-        {/* ── LAYER 3: Atmospheric particles (crossing Z depths) ── */}
-        <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-          {Array.from({ length: 22 }).map((_, i) => {
-            const z = -80 + Math.random() * 200;
-            const size = 1.5 + Math.random() * 3;
-            const x = Math.random() * 100;
-            const y = Math.random() * 75 + 10;
-            const dur = 5 + Math.random() * 7;
-            const delay = Math.random() * 5;
-            const isFirefly = i > 17;
-            return (
-              <motion.div
-                key={`p-${i}`}
-                animate={{
-                  y: [0, -15 - Math.random() * 20, 0],
-                  x: [0, (Math.random() - 0.5) * 20, 0],
-                  opacity: isFirefly ? [0.1, 0.8, 0.1] : [0.15, 0.4, 0.15],
-                }}
-                transition={{ duration: dur, delay, repeat: Infinity, ease: "easeInOut" }}
-                style={{
-                  position: "absolute",
-                  left: `${x}%`,
-                  top: `${y}%`,
-                  width: size,
-                  height: size,
-                  borderRadius: "50%",
-                  background: isFirefly
-                    ? "radial-gradient(circle, rgba(255,220,100,0.9), rgba(255,200,50,0.3))"
-                    : "rgba(255,210,150,0.5)",
-                  boxShadow: isFirefly ? "0 0 8px rgba(255,200,50,0.6)" : "none",
-                  // no translateZ in flat mode
-                }}
-              />
-            );
-          })}
-        </div>
-
-        {/* ── LAYER 4: Character + Platform (at Z:0) ── */}
-        <div
-          style={{
-            position: "absolute",
-            left: "50%",
-            top: "50%",
-            transform: "translateX(-50%)",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            zIndex: 10,
-          }}
-        >
-          {/* Character (bat + ball) with idle sway */}
-          <motion.div
-            animate={{ rotateY: [-3, 3, -3], y: [-2, 2, -2] }}
-            transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-            style={{
-              fontSize: 72,
-              filter: "drop-shadow(6px 10px 16px rgba(0,0,0,0.6))",
-              marginBottom: -10,
-            }}
-          >
-            🏏
-          </motion.div>
-
-          {/* Glowing platform — painted on the concrete */}
-          <motion.div
-            animate={{
-              boxShadow: [
-                "0 0 25px rgba(74,222,80,0.2), 0 0 50px rgba(74,222,80,0.1), inset 0 0 15px rgba(74,222,80,0.15)",
-                "0 0 35px rgba(74,222,80,0.35), 0 0 70px rgba(74,222,80,0.15), inset 0 0 25px rgba(74,222,80,0.25)",
-                "0 0 25px rgba(74,222,80,0.2), 0 0 50px rgba(74,222,80,0.1), inset 0 0 15px rgba(74,222,80,0.15)",
-              ],
-            }}
-            transition={{ duration: 3, repeat: Infinity }}
-            style={{
-              width: 190,
-              height: 48,
-              borderRadius: "50%",
-              background: "radial-gradient(ellipse, rgba(74,222,80,0.2) 0%, rgba(74,222,80,0.05) 60%, transparent 100%)",
-              border: "2px solid rgba(74,222,80,0.4)",
-              filter: "blur(0.5px)",
-            }}
-          />
-
-          {/* Arena name */}
-          <span
-            style={{
-              fontFamily: "'Lilita One', sans-serif",
-              fontSize: 10,
-              letterSpacing: "0.15em",
-              color: "rgba(255,255,255,0.5)",
-              marginTop: 6,
-              textShadow: "0 1px 3px rgba(0,0,0,0.6)",
-            }}
-          >
-            ⭐ {currentArena.name.toUpperCase()} ⭐
-          </span>
-        </div>
-
-        {/* ── LAYER 5: Mode Buttons (pushed FORWARD in Z) ── */}
-
-        {/* TAP — Right side, upper */}
-        <ModeRibbon
-          icon={MODES.tap.icon}
-          label={MODES.tap.label}
-          bg={MODES.tap.bg}
-          dark={MODES.tap.dark}
-          side="right"
-          top="33%"
-          width={150}
-          fontSize={24}
-          rotateY={-12}
-          rotateX={2}
-          delay={0}
-          onClick={() => handleModeSelect(MODES.tap.route)}
-        />
-
-        {/* PVP — Right side, middle */}
-        <ModeRibbon
-          icon={MODES.pvp.icon}
-          label={MODES.pvp.label}
-          bg={MODES.pvp.bg}
-          dark={MODES.pvp.dark}
-          side="right"
-          top="43%"
-          width={140}
-          fontSize={22}
-          rotateY={-10}
-          rotateX={3}
-          delay={0.3}
-          onClick={() => handleModeSelect(MODES.pvp.route)}
-        />
-
-        {/* AR — Right side, lower */}
-        <ModeRibbon
-          icon={MODES.ar.icon}
-          label={MODES.ar.label}
-          bg={MODES.ar.bg}
-          dark={MODES.ar.dark}
-          side="right"
-          top="53%"
-          width={130}
-          fontSize={20}
-          rotateY={-8}
-          rotateX={4}
-          delay={0.6}
-          onClick={() => handleModeSelect(MODES.ar.route)}
-        />
-
-        {/* Tournament — Left side */}
-        <ModeRibbon
-          icon={MODES.tournament.icon}
-          label={MODES.tournament.label}
-          bg={MODES.tournament.bg}
-          dark={MODES.tournament.dark}
-          side="left"
-          top="42%"
-          width={135}
-          fontSize={13}
-          rotateY={12}
-          rotateX={2}
-          delay={0.4}
-          onClick={() => handleModeSelect(MODES.tournament.route)}
-        />
-
-        {/* Practice — Left side, below */}
-        <ModeRibbon
-          icon={MODES.practice.icon}
-          label={MODES.practice.label}
-          bg={MODES.practice.bg}
-          dark={MODES.practice.dark}
-          side="left"
-          top="52%"
-          width={125}
-          fontSize={13}
-          rotateY={10}
-          rotateX={3}
-          delay={0.7}
-          onClick={() => handleModeSelect(MODES.practice.route)}
-        />
-
-        {/* ── LAYER 6: Side icon buttons ── */}
-        {/* Left side */}
-        {[
-          { icon: "🏆", label: "Rank", top: "24%", action: () => navigate("/leaderboard") },
-          { icon: "🎯", label: "Quests", top: "32%", badge: "3", action: () => navigate("/daily-rewards") },
-          { icon: "💬", label: "Chat", top: "40%", action: () => navigate("/friends") },
-        ].map((item, i) => (
-          <SideIconButton key={`l-${i}`} {...item} side="left" />
-        ))}
-
-        {/* Right side */}
-        {[
-          { icon: "✉️", label: "Mail", top: "24%", action: () => navigate("/notifications") },
-          { icon: "🃏", label: "Cards", top: "32%", action: () => navigate("/collection") },
-        ].map((item, i) => (
-          <SideIconButton key={`r-${i}`} {...item} side="right" />
-        ))}
-
-        {/* Floating sky collectibles */}
-        {[
-          { emoji: "🏏", x: "20%", y: "12%", dur: 6 },
-          { emoji: "🪙", x: "75%", y: "8%", dur: 5 },
-          { emoji: "✨", x: "55%", y: "15%", dur: 7 },
-        ].map((c, i) => (
-          <motion.div
-            key={`sky-${i}`}
-            animate={{ y: [0, -10, 0], rotate: [0, 360] }}
-            transition={{ duration: c.dur, repeat: Infinity, ease: "linear" }}
-            style={{
-              position: "absolute",
-              left: c.x,
-              top: c.y,
-              fontSize: 22,
-              opacity: 0.5,
-              filter: "drop-shadow(0 0 6px rgba(255,200,50,0.5))",
-              // decorative floating
-              pointerEvents: "none",
-            }}
-          >
-            {c.emoji}
-          </motion.div>
-        ))}
-
-        {/* More Modes button */}
+      {/* ═══ B: PROMO BANNERS ═══ */}
+      <div className="relative z-10 flex gap-2 px-3 mt-3">
+        {/* Free Chest */}
         <motion.button
-          whileTap={{ scale: 0.95 }}
-          onClick={() => navigate("/play")}
+          whileTap={{ scale: 0.96 }}
+          onClick={() => navigate("/shop")}
+          className="flex-1 relative overflow-hidden rounded-xl"
           style={{
-            position: "absolute",
-            bottom: "22%",
-            left: "50%",
-            transform: "translateX(-50%) perspective(600px) rotateX(5deg)",
-            background: "linear-gradient(180deg, #8B7355, #6B5335)",
-            border: "2px solid #5A4225",
-            borderBottom: "4px solid #4A3215",
-            borderRadius: 8,
-            padding: "7px 18px",
-            color: "#F5DEB3",
-            fontFamily: "'Lilita One', sans-serif",
-            fontSize: 12,
-            letterSpacing: "0.05em",
-            boxShadow: "4px 6px 12px rgba(0,0,0,0.5)",
-            cursor: "pointer",
-            zIndex: 20,
+            background: "linear-gradient(145deg, #1E293B, #0F172A)",
+            border: "2px solid rgba(255,215,0,0.2)",
+            borderBottom: "4px solid rgba(0,0,0,0.3)",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)",
+            padding: "10px 12px",
           }}
         >
-          More Modes ▼
+          {/* Leather strap */}
+          <div className="absolute top-0 left-3 right-3 h-[6px] rounded-b-sm" style={{
+            background: "linear-gradient(90deg, #8B6914, #A07820, #8B6914)",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
+          }} />
+          <div className="flex items-center gap-2 mt-1">
+            <motion.span
+              animate={{ y: [-2, 2, -2], rotate: [-5, 5, -5] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="text-2xl"
+            >🎒</motion.span>
+            <div className="text-left">
+              <div className="font-game-title text-[11px] tracking-wide" style={{ color: "hsl(var(--gold-accent))" }}>FREE CHEST</div>
+              <motion.div
+                animate={{ opacity: [0.5, 1, 0.5] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="font-game-body text-[9px] text-muted-foreground"
+              >OPEN NOW!</motion.div>
+            </div>
+          </div>
+          {/* Glow ring */}
+          <motion.div
+            animate={{ boxShadow: ["0 0 0 0 rgba(255,215,0,0)", "0 0 0 4px rgba(255,215,0,0.15)", "0 0 0 0 rgba(255,215,0,0)"] }}
+            transition={{ duration: 3, repeat: Infinity }}
+            className="absolute inset-0 rounded-xl pointer-events-none"
+          />
+        </motion.button>
+
+        {/* Daily Challenge */}
+        <motion.button
+          whileTap={{ scale: 0.96 }}
+          onClick={() => handleModeSelect("daily")}
+          className="flex-1 relative overflow-hidden rounded-xl"
+          style={{
+            background: "linear-gradient(145deg, #1E293B, #0F172A)",
+            border: "2px solid rgba(59,130,246,0.15)",
+            borderBottom: "4px solid rgba(0,0,0,0.3)",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.05)",
+            padding: "10px 12px",
+          }}
+        >
+          <div className="absolute top-0 left-3 right-3 h-[6px] rounded-b-sm" style={{
+            background: "linear-gradient(90deg, #1E3A5F, #2563EB, #1E3A5F)",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
+          }} />
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-2xl">📅</span>
+            <div className="text-left">
+              <div className="font-game-title text-[11px] tracking-wide" style={{ color: "hsl(var(--blue-info))" }}>DAILY CHALLENGE</div>
+              <div className="font-game-body text-[9px] text-muted-foreground">New target today</div>
+            </div>
+          </div>
         </motion.button>
       </div>
 
-      {/* ═══ HUD OVERLAY (Flat HTML on top of 3D scene) ═══ */}
-      <div style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 50 }}>
-
-        {/* Top HUD — Player info + currencies */}
-        <div
-          style={{
-            pointerEvents: "auto",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "env(safe-area-inset-top, 8px) 12px 6px",
-            background: "rgba(8,8,24,0.5)",
-            backdropFilter: "blur(10px)",
-            WebkitBackdropFilter: "blur(10px)",
-            borderBottom: "1px solid rgba(255,255,255,0.06)",
-          }}
-        >
-          {/* Avatar + name */}
-          <div className="flex items-center gap-2">
-            <div
-              style={{
-                width: 40,
-                height: 40,
-                borderRadius: "50%",
-                background: "linear-gradient(135deg, #4ADE50, #22C55E)",
-                border: "2px solid rgba(74,222,80,0.6)",
-                boxShadow: "0 0 10px rgba(74,222,80,0.3)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                fontSize: 18,
-                fontWeight: 700,
-                color: "white",
-                position: "relative",
-              }}
-            >
-              {playerName[0]?.toUpperCase()}
-              <span
-                style={{
-                  position: "absolute",
-                  bottom: -3,
-                  right: -3,
-                  fontSize: 9,
-                  background: "#0F172A",
-                  border: "1.5px solid rgba(74,222,80,0.6)",
-                  borderRadius: "50%",
-                  width: 18,
-                  height: 18,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "#4ADE50",
-                  fontWeight: 700,
-                }}
-              >
-                {playerLevel}
-              </span>
-            </div>
-            <div>
-              <div style={{ fontFamily: "'Bungee', sans-serif", fontSize: 12, color: "white" }}>{playerName}</div>
-              <div style={{ width: 60, height: 3, borderRadius: 2, background: "rgba(255,255,255,0.1)", marginTop: 2 }}>
-                <div style={{ height: "100%", borderRadius: 2, background: "#4ADE50", width: `${((profile?.xp ?? 0) % 500) / 5}%` }} />
-              </div>
-            </div>
-          </div>
-
-          {/* Currencies */}
-          <div className="flex items-center gap-2">
-            <CurrencyPill icon="🏏" value={profile?.total_matches ?? 0} />
-            <CurrencyPill icon="🪙" value={profile?.coins ?? 0} plus />
-            <CurrencyPill icon="💎" value={45} plus />
-          </div>
-
-          {/* Utility icons */}
-          <div className="flex items-center gap-2">
-            <button onClick={() => navigate("/notifications")} className="relative" style={{ color: "rgba(255,255,255,0.7)" }}>
-              <Bell size={20} />
-              {unreadCount > 0 && (
-                <span style={{
-                  position: "absolute", top: -4, right: -4, width: 14, height: 14,
-                  borderRadius: "50%", background: "#EF4444", fontSize: 8,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  color: "white", fontWeight: 700,
-                }}>{unreadCount}</span>
-              )}
-            </button>
-            <button onClick={() => navigate("/settings")} style={{ color: "rgba(255,255,255,0.7)" }}>
-              <Settings size={20} />
-            </button>
+      {/* ═══ C: 3D GULLY CRICKET ISLAND ═══ */}
+      <div className="relative z-10 mt-4">
+        {/* Arena title with shimmer */}
+        <div className="text-center mb-2">
+          <motion.span
+            className="font-game-title text-sm tracking-widest inline-block relative"
+            style={{ color: "hsl(var(--gold-accent))", textShadow: "0 2px 8px rgba(234,179,8,0.3)" }}
+          >
+            ⭐ {ARENA_LEVELS[currentArenaIdx].name.toUpperCase()} ⭐
+            <motion.div
+              animate={{ left: ["-100%", "200%"] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", repeatDelay: 1 }}
+              className="absolute top-0 h-full w-1/3 pointer-events-none"
+              style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)" }}
+            />
+          </motion.span>
+          {/* Swipe dots */}
+          <div className="flex justify-center gap-1 mt-1">
+            {ARENA_LEVELS.slice(0, 5).map((_, i) => (
+              <div key={i} className="rounded-full transition-all" style={{
+                width: i === currentArenaIdx ? 12 : 4,
+                height: 4,
+                background: i === currentArenaIdx ? "hsl(var(--gold-accent))" : "rgba(255,255,255,0.15)",
+              }} />
+            ))}
           </div>
         </div>
 
-        {/* Bottom area — Chest slots + Arena progress */}
+        {/* Swipeable arena container */}
         <div
-          style={{
-            pointerEvents: "auto",
-            position: "absolute",
-            bottom: "calc(68px + env(safe-area-inset-bottom, 0px))",
-            left: 0,
-            right: 0,
-            background: "rgba(8,8,24,0.75)",
-            backdropFilter: "blur(10px)",
-            WebkitBackdropFilter: "blur(10px)",
-            borderTop: "1px solid rgba(255,255,255,0.06)",
-            padding: "8px 12px 6px",
+          ref={arenaScrollRef}
+          className="flex overflow-x-auto snap-x snap-mandatory no-scrollbar px-8"
+          onScroll={(e) => {
+            const el = e.currentTarget;
+            const idx = Math.round(el.scrollLeft / el.clientWidth);
+            setCurrentArenaIdx(Math.min(idx, ARENA_LEVELS.length - 1));
           }}
         >
-          {/* Chest slots */}
-          <div className="flex justify-center gap-3 mb-2">
-            {chestSlots.map((chest, i) => {
-              const chestInfo = chest ? CRICKET_CHEST[chest.chest_tier] || CRICKET_CHEST.bronze : null;
-              const isReady = chest && (chest.status === "ready" || (chest.status === "unlocking" && chestTimeRemaining(chest) <= 0));
-              const isUnlocking = chest?.status === "unlocking" && chestTimeRemaining(chest) > 0;
+          {ARENA_LEVELS.map((arena, idx) => {
+            const unlocked = currentTrophies >= arena.trophies;
+            return (
+              <div key={arena.name} className="snap-center flex-shrink-0 w-full flex justify-center">
+                <div className="relative" style={{ width: 280, height: 300 }}>
+                  {/* Island floating bob */}
+                  <motion.div
+                    animate={{ y: [-5, 5, -5] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                    className="relative"
+                  >
+                    {/* Shadow below island */}
+                    <motion.div
+                      animate={{ scale: [1, 0.9, 1], opacity: [0.3, 0.15, 0.3] }}
+                      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                      className="absolute -bottom-4 left-1/2 -translate-x-1/2"
+                      style={{
+                        width: 160,
+                        height: 20,
+                        borderRadius: "50%",
+                        background: "radial-gradient(ellipse, rgba(0,0,0,0.4), transparent)",
+                        filter: "blur(6px)",
+                      }}
+                    />
 
-              return (
-                <motion.button
-                  key={i}
-                  whileTap={{ scale: 0.92 }}
-                  onClick={() => handleChestTap(chest)}
-                  style={{
-                    width: 54,
-                    height: 54,
-                    borderRadius: 10,
-                    background: chest
-                      ? "linear-gradient(180deg, rgba(92,64,30,0.6), rgba(60,40,18,0.8))"
-                      : "rgba(255,255,255,0.05)",
-                    border: isReady
-                      ? `2px solid ${chestInfo?.color}`
-                      : "1.5px solid rgba(255,255,255,0.1)",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    boxShadow: isReady
-                      ? `0 0 12px ${chestInfo?.color}60, inset 0 2px 6px rgba(0,0,0,0.4)`
-                      : "inset 0 2px 6px rgba(0,0,0,0.4), 2px 4px 8px rgba(0,0,0,0.3)",
-                    cursor: "pointer",
-                    position: "relative",
-                  }}
-                >
-                  <span style={{ fontSize: chest ? 22 : 18, opacity: chest ? 1 : 0.3 }}>
-                    {chest ? chestInfo?.icon : "+"}
-                  </span>
-                  {isUnlocking && (
-                    <span style={{ fontSize: 7, color: "rgba(255,255,255,0.6)", marginTop: 1 }}>
-                      {formatTime(chestTimeRemaining(chest))}
-                    </span>
-                  )}
-                  {isReady && (
-                    <span style={{ fontSize: 7, color: "#4ADE50", fontWeight: 700, marginTop: 1 }}>OPEN!</span>
-                  )}
-                </motion.button>
-              );
-            })}
-          </div>
+                    {/* Island image */}
+                    <img
+                      src={gullyIsland}
+                      alt={arena.name}
+                      className="w-[280px] h-[240px] object-contain relative z-10 mx-auto"
+                      style={{
+                        filter: unlocked ? "none" : "grayscale(80%) brightness(0.4)",
+                        transition: "filter 0.3s",
+                      }}
+                    />
 
-          {/* Arena progress */}
-          <div>
-            <div className="flex justify-between items-center" style={{ fontSize: 9, marginBottom: 3 }}>
-              <span style={{ color: "rgba(255,255,255,0.6)", fontFamily: "'Lilita One', sans-serif" }}>
-                🏏 {currentArena.name}
-              </span>
-              <span style={{ color: "rgba(255,255,255,0.4)" }}>
-                → {nextArena.name}
-              </span>
-            </div>
-            <div style={{ height: 5, borderRadius: 3, background: "rgba(255,255,255,0.08)" }}>
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${Math.min(arenaProgress, 100)}%` }}
-                style={{ height: "100%", borderRadius: 3, background: "linear-gradient(90deg, #4ADE50, #22C55E)" }}
-              />
-            </div>
-            <div style={{ textAlign: "center", fontSize: 8, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>
-              🏆 {currentTrophies}/{nextArena.trophies}
-            </div>
-          </div>
+                    {/* Lock overlay for locked arenas */}
+                    {!unlocked && (
+                      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center">
+                        <span className="text-4xl">🔒</span>
+                        <span className="font-game-body text-[10px] text-muted-foreground mt-1">{arena.unlock}</span>
+                      </div>
+                    )}
+
+                    {/* Character on the island (only on unlocked/current) */}
+                    {unlocked && idx === currentArenaIdx && (
+                      <motion.div
+                        animate={{ rotateY: [-3, 3, -3] }}
+                        transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+                        className="absolute z-20"
+                        style={{ bottom: "38%", left: "50%", transform: "translateX(-50%)", fontSize: 48 }}
+                      >
+                        🏏
+                      </motion.div>
+                    )}
+                  </motion.div>
+
+                  {/* Stats overlay - frosted strip */}
+                  {unlocked && idx === currentArenaIdx && (
+                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-30 flex gap-4 px-4 py-2 rounded-xl" style={{
+                      background: "rgba(15,23,42,0.75)",
+                      backdropFilter: "blur(8px)",
+                      WebkitBackdropFilter: "blur(8px)",
+                      border: "1px solid rgba(255,255,255,0.06)",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.4)",
+                    }}>
+                      <StatCell value={profile?.total_matches ?? 0} label="MATCHES" />
+                      <div className="w-px bg-white/10" />
+                      <StatCell value={profile?.wins ?? 0} label="WINS" />
+                      <div className="w-px bg-white/10" />
+                      <StatCell value={`${winRate}%`} label="WIN RATE" />
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Stump shatter overlay */}
-      <StumpHitAnimation show={showStumpAnim} onComplete={handleStumpComplete} />
+      {/* ═══ D: PLAY BUTTON ═══ */}
+      <div className="relative z-10 flex justify-center -mt-2 mb-4">
+        <motion.button
+          animate={{ scale: [1, 1.012, 1] }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          whileTap={{ scale: 0.95, y: 4 }}
+          onClick={() => {
+            try { SFX.tap(); Haptics.heavy(); } catch {}
+            setShowStumpAnim(true);
+          }}
+          className="relative overflow-hidden"
+          style={{
+            width: 240,
+            height: 56,
+            borderRadius: 16,
+            background: "linear-gradient(180deg, #6AFF6A, #4ADE50, #2D8B2D)",
+            border: "3px solid #1A5E1A",
+            borderBottom: "8px solid #14532D",
+            boxShadow: "0 8px 0 rgba(0,0,0,0.15), 0 12px 24px rgba(0,0,0,0.35), inset 0 3px 0 rgba(255,255,255,0.25)",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {/* Shimmer sweep */}
+          <motion.div
+            animate={{ left: ["-60%", "160%"] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", repeatDelay: 2 }}
+            className="absolute top-0 h-full w-1/3 pointer-events-none"
+            style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)" }}
+          />
+          <span className="relative z-10 font-game-title text-xl tracking-[4px] text-white" style={{
+            textShadow: "0 2px 4px rgba(0,0,0,0.5), 0 0 10px rgba(74,222,80,0.3)",
+          }}>
+            ▶ PLAY
+          </span>
+        </motion.button>
+      </div>
 
-      {/* Chest reveal overlay */}
+      {/* ═══ E: MAIN MODE SELECTOR — 3 Cricket Equipment Cards ═══ */}
+      <div className="relative z-10 flex gap-2 px-3 mb-4">
+        {MAIN_MODES.map((mode) => (
+          <motion.button
+            key={mode.id}
+            whileTap={{ scale: 0.94, y: 3 }}
+            onClick={() => handleModeSelect(mode.id)}
+            className="flex-1 relative overflow-hidden"
+            style={{
+              height: 120,
+              borderRadius: 14,
+              background: "linear-gradient(180deg, #1E293B, #0F172A)",
+              border: `2px solid ${mode.border}`,
+              borderBottom: `5px solid rgba(0,0,0,0.4)`,
+              boxShadow: `0 6px 16px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.06)`,
+              cursor: "pointer",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 6,
+            }}
+          >
+            {/* Chrome corner brackets */}
+            <div className="absolute top-1.5 left-1.5 w-3 h-3 border-t border-l" style={{ borderColor: "#64748B" }} />
+            <div className="absolute top-1.5 right-1.5 w-3 h-3 border-t border-r" style={{ borderColor: "#64748B" }} />
+
+            {/* Icon with animation */}
+            <motion.div
+              animate={
+                mode.id === "tap" ? { rotate: [-3, 3, -3] } :
+                mode.id === "pvp" ? { scale: [1, 1.08, 1] } :
+                { y: [-1, 1, -1] }
+              }
+              transition={{ duration: mode.id === "pvp" ? 2 : 3, repeat: Infinity, ease: "easeInOut" }}
+              className="text-3xl"
+              style={{ filter: `drop-shadow(0 0 8px ${mode.border})` }}
+            >
+              {mode.icon}
+            </motion.div>
+
+            <div className="text-center">
+              <div className="font-game-display text-base" style={{ color: mode.accent }}>{mode.label}</div>
+              <div className="font-game-body text-[9px] text-muted-foreground">{mode.sub}</div>
+            </div>
+
+            {/* Bottom accent line */}
+            <div className="absolute bottom-0 left-2 right-2 h-[2px] rounded-full" style={{ background: mode.accent, opacity: 0.3 }} />
+          </motion.button>
+        ))}
+      </div>
+
+      {/* ═══ F: ARENA PROGRESS BAR ═══ */}
+      <div className="relative z-10 mx-3 mb-3 p-3 rounded-xl" style={{
+        background: "linear-gradient(180deg, #1E293B, #0F172A)",
+        border: "1px solid rgba(255,255,255,0.06)",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+      }}>
+        <div className="flex justify-between items-center mb-1.5">
+          <span className="font-game-title text-[10px] tracking-wide text-foreground">
+            🏏 {currentArena.name}
+          </span>
+          <span className="font-game-body text-[9px] text-muted-foreground">
+            → {nextArena.name}
+          </span>
+        </div>
+        {/* Pitch-style progress bar */}
+        <div className="relative h-2 rounded overflow-hidden" style={{
+          background: "linear-gradient(90deg, #8B7D3C, #A89A4E, #8B7D3C)",
+          boxShadow: "inset 0 2px 4px rgba(0,0,0,0.3)",
+        }}>
+          {/* Crease markings */}
+          {[25, 50, 75].map(p => (
+            <div key={p} className="absolute top-0 bottom-0 w-px" style={{ left: `${p}%`, background: "rgba(255,255,255,0.15)" }} />
+          ))}
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: `${Math.min(arenaProgress, 100)}%` }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="h-full rounded"
+            style={{ background: "linear-gradient(90deg, #22C55E, #4ADE50)", boxShadow: "0 0 8px rgba(74,222,80,0.4)" }}
+          />
+        </div>
+        <div className="text-center mt-1">
+          <span className="font-game-body text-[9px] text-muted-foreground">🏆 {currentTrophies}/{nextArena.trophies}</span>
+        </div>
+      </div>
+
+      {/* ═══ G: CHEST SLOT ROW ═══ */}
+      <div className="relative z-10 mx-3 mb-4 p-3 rounded-xl" style={{
+        background: "linear-gradient(180deg, #1E293B, #0F172A)",
+        border: "1px solid rgba(255,255,255,0.06)",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
+      }}>
+        <div className="flex justify-center gap-3">
+          {chestSlots.map((chest, i) => {
+            const chestInfo = chest ? CRICKET_CHEST[chest.chest_tier] || CRICKET_CHEST.bronze : null;
+            const isReady = chest && (chest.status === "ready" || (chest.status === "unlocking" && chestTimeRemaining(chest) <= 0));
+            const isUnlocking = chest?.status === "unlocking" && chestTimeRemaining(chest) > 0;
+
+            return (
+              <motion.button
+                key={i}
+                whileTap={{ scale: 0.92 }}
+                onClick={() => handleChestTap(chest)}
+                className="relative flex flex-col items-center justify-center"
+                style={{
+                  width: 72,
+                  height: 88,
+                  borderRadius: 12,
+                  background: "linear-gradient(180deg, #0F172A, #0a0f1a)",
+                  border: isReady
+                    ? `2px solid ${chestInfo?.color}`
+                    : chest ? "2px solid rgba(148,163,184,0.15)" : "2px dashed rgba(255,255,255,0.08)",
+                  boxShadow: isReady
+                    ? `0 0 15px ${chestInfo?.color}40, inset 0 2px 8px rgba(0,0,0,0.4)`
+                    : "inset 0 2px 8px rgba(0,0,0,0.4), 0 4px 8px rgba(0,0,0,0.3)",
+                  cursor: chest ? "pointer" : "default",
+                }}
+              >
+                {/* Chrome frame edges */}
+                {chest && (
+                  <>
+                    <div className="absolute top-1 left-1 w-2 h-2 border-t border-l rounded-tl-sm" style={{ borderColor: "#64748B" }} />
+                    <div className="absolute top-1 right-1 w-2 h-2 border-t border-r rounded-tr-sm" style={{ borderColor: "#64748B" }} />
+                    <div className="absolute bottom-1 left-1 w-2 h-2 border-b border-l rounded-bl-sm" style={{ borderColor: "#475569" }} />
+                    <div className="absolute bottom-1 right-1 w-2 h-2 border-b border-r rounded-br-sm" style={{ borderColor: "#475569" }} />
+                  </>
+                )}
+
+                {/* Leather stitch pattern */}
+                <div className="absolute inset-0 rounded-xl pointer-events-none opacity-[0.03]" style={{
+                  backgroundImage: "repeating-linear-gradient(135deg, transparent, transparent 4px, rgba(255,255,255,0.2) 4px, rgba(255,255,255,0.2) 5px)",
+                }} />
+
+                {chest ? (
+                  <>
+                    {/* Item */}
+                    <motion.span
+                      animate={isReady ? { y: [-3, 3, -3] } : {}}
+                      transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                      className="text-2xl relative z-10"
+                      style={{ filter: isUnlocking ? "blur(1px) brightness(0.7)" : "none" }}
+                    >
+                      {chestInfo?.icon}
+                    </motion.span>
+
+                    {/* Sparkles for ready */}
+                    {isReady && (
+                      <>
+                        {[0, 1, 2].map(s => (
+                          <motion.div
+                            key={s}
+                            animate={{ opacity: [0, 1, 0], scale: [0.5, 1, 0.5] }}
+                            transition={{ duration: 1.5, repeat: Infinity, delay: s * 0.5 }}
+                            className="absolute w-1 h-1 rounded-full"
+                            style={{
+                              background: chestInfo?.color,
+                              top: `${20 + s * 15}%`,
+                              left: `${20 + s * 25}%`,
+                              boxShadow: `0 0 4px ${chestInfo?.color}`,
+                            }}
+                          />
+                        ))}
+                        {/* Light rays */}
+                        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-xl">
+                          {[0, 1, 2, 3].map(r => (
+                            <motion.div
+                              key={r}
+                              animate={{ opacity: [0.05, 0.15, 0.05] }}
+                              transition={{ duration: 2, repeat: Infinity, delay: r * 0.4 }}
+                              className="absolute"
+                              style={{
+                                width: 2,
+                                height: "80%",
+                                background: `linear-gradient(to top, transparent, ${chestInfo?.color}40, transparent)`,
+                                left: `${20 + r * 18}%`,
+                                top: "10%",
+                                transform: `rotate(${-15 + r * 10}deg)`,
+                              }}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
+
+                    {/* Lock icon for unlocking */}
+                    {isUnlocking && (
+                      <span className="absolute text-xs opacity-60">🔒</span>
+                    )}
+
+                    {/* Status text */}
+                    <span className="mt-1 text-[8px] font-bold relative z-10" style={{
+                      color: isReady ? "hsl(var(--green-play))" : "rgba(255,255,255,0.5)",
+                    }}>
+                      {isReady ? "OPEN!" : isUnlocking ? formatTime(chestTimeRemaining(chest)) : chestInfo?.label}
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-lg opacity-20">+</span>
+                )}
+              </motion.button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ═══ H: SECONDARY MODES ═══ */}
+      <div className="relative z-10 px-3 pb-4">
+        <div className="font-game-title text-[10px] tracking-widest text-muted-foreground mb-2 px-1">MORE MODES</div>
+        <div className="flex flex-col gap-2">
+          {SECONDARY_MODES.map((mode) => (
+            <motion.button
+              key={mode.id}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => handleModeSelect(mode.id)}
+              className="w-full flex items-center gap-3 p-3 rounded-xl relative overflow-hidden"
+              style={{
+                background: "linear-gradient(180deg, #1E293B, #0F172A)",
+                borderLeft: `3px solid ${mode.accent}`,
+                border: "1px solid rgba(255,255,255,0.04)",
+                borderLeftWidth: 3,
+                borderLeftColor: mode.accent,
+                boxShadow: "0 3px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03)",
+              }}
+            >
+              {/* Chrome brackets */}
+              <div className="absolute top-1 right-1 w-2.5 h-2.5 border-t border-r" style={{ borderColor: "#475569" }} />
+
+              <span className="text-2xl w-10 text-center flex-shrink-0" style={{ filter: `drop-shadow(0 0 6px ${mode.accent}40)` }}>
+                {mode.icon}
+              </span>
+              <div className="flex-1 text-left">
+                <div className="font-game-title text-xs tracking-wide text-foreground">{mode.label}</div>
+                <div className="font-game-body text-[10px]" style={{ color: mode.accent }}>{mode.sub}</div>
+              </div>
+              <span className="text-muted-foreground text-sm">→</span>
+            </motion.button>
+          ))}
+        </div>
+      </div>
+
+      {/* Bottom spacer for tab bar */}
+      <div style={{ height: "calc(var(--tab-bar-height, 68px) + env(safe-area-inset-bottom, 0px) + 16px)" }} />
+
+      {/* ═══ OVERLAYS ═══ */}
+      <StumpHitAnimation show={showStumpAnim} onComplete={handleStumpComplete} />
       {revealData && (
         <ChestReveal
           itemName={revealData.name}
@@ -690,8 +759,6 @@ export default function HomePage() {
           onComplete={() => setRevealData(null)}
         />
       )}
-
-      <style>{``}</style>
     </div>
   );
 }
@@ -700,167 +767,41 @@ export default function HomePage() {
    SUB-COMPONENTS
    ═══════════════════════════════════════ */
 
-function ModeRibbon({
-  icon, label, bg, dark, side, top, width, fontSize, rotateY, rotateX, delay, onClick,
-}: {
-  icon: string; label: string; bg: string; dark: string;
-  side: "left" | "right"; top: string; width: number;
-  fontSize: number; rotateY: number; rotateX: number; delay: number;
-  onClick: () => void;
-}) {
+function StatCell({ value, label }: { value: number | string; label: string }) {
   return (
-    <motion.button
-      initial={{ opacity: 0, x: side === "right" ? 60 : -60 }}
-      animate={{
-        opacity: 1,
-        x: 0,
-        rotate: [-1.5, 1.5, -1.5],
-        y: [-2, 3, -2],
-      }}
-      transition={{
-        opacity: { delay, duration: 0.4 },
-        x: { delay, duration: 0.5, type: "spring" },
-        rotate: { delay: delay + 0.5, duration: 3.5, repeat: Infinity, ease: "easeInOut" },
-        y: { delay: delay + 0.3, duration: 3, repeat: Infinity, ease: "easeInOut" },
-      }}
-      whileTap={{ scale: 0.93 }}
-      onClick={onClick}
-      style={{
-        position: "absolute",
-        [side]: 10,
-        top,
-        transform: `perspective(800px) rotateY(${rotateY}deg) rotateX(${rotateX}deg)`,
-        transformStyle: "preserve-3d",
-        cursor: "pointer",
-        zIndex: 20,
-        // No default button styles
-        background: "none",
-        border: "none",
-        padding: 0,
-      }}
-    >
-      {/* Front face */}
-      <div
-        style={{
-          width,
-          padding: "10px 14px",
-          background: `linear-gradient(145deg, ${bg}ee, ${bg}cc)`,
-          borderRadius: 12,
-          // 3D thickness
-          borderBottom: `5px solid ${dark}`,
-          borderRight: side === "right" ? `3px solid ${dark}` : "none",
-          borderLeft: side === "left" ? `3px solid ${dark}` : "none",
-          boxShadow: `
-            6px 10px 20px rgba(0,0,0,0.5),
-            0 0 20px ${bg}22,
-            inset 0 2px 0 rgba(255,255,255,0.25),
-            inset 0 -1px 0 rgba(0,0,0,0.2)
-          `,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 7,
-          // Warm scene light reflection
-          backgroundImage: "linear-gradient(180deg, rgba(255,200,150,0.1) 0%, transparent 40%)",
-          position: "relative",
-        }}
-      >
-        <span style={{ fontSize: fontSize * 0.8 }}>{icon}</span>
-        <span
-          style={{
-            fontFamily: "'Bungee', sans-serif",
-            fontSize,
-            color: "white",
-            textShadow: "0 2px 4px rgba(0,0,0,0.5)",
-            letterSpacing: "0.03em",
-          }}
-        >
-          {label}
-        </span>
-      </div>
-    </motion.button>
+    <div className="text-center">
+      <div className="font-game-display text-sm text-foreground leading-none">{value}</div>
+      <div className="font-game-body text-[7px] text-muted-foreground mt-0.5">{label}</div>
+    </div>
   );
 }
 
-function SideIconButton({
-  icon, label, top, side, badge, action,
-}: {
-  icon: string; label: string; top: string; side: "left" | "right";
-  badge?: string; action: () => void;
-}) {
+function ScoreboardPill({ icon, value, plus, onClick }: { icon: string; value: number; plus?: boolean; onClick?: () => void }) {
   return (
     <motion.button
-      whileTap={{ scale: 1.1 }}
-      onClick={action}
+      whileTap={{ scale: 0.9 }}
+      onClick={onClick}
+      className="flex items-center gap-1.5 px-2 py-1 rounded-lg"
       style={{
-        position: "absolute",
-        [side]: 8,
-        top,
-        width: 42,
-        height: 42,
-        borderRadius: "50%",
-        background: "rgba(10,15,30,0.5)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-        border: "1.5px solid rgba(255,255,255,0.1)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: 18,
-        color: "rgba(255,255,255,0.7)",
-        boxShadow: "4px 6px 14px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 8px rgba(255,180,100,0.05)",
-        cursor: "pointer",
-        // side icon button
-        zIndex: 15,
-        // Reset button defaults
-        padding: 0,
+        background: "#0a0f1a",
+        border: "1px solid rgba(255,255,255,0.06)",
+        boxShadow: "inset 0 1px 4px rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.3)",
       }}
     >
-      {icon}
-      {badge && (
-        <span
-          style={{
-            position: "absolute",
-            top: -3,
-            right: -3,
-            width: 16,
-            height: 16,
-            borderRadius: "50%",
-            background: "#EF4444",
-            fontSize: 9,
-            fontWeight: 700,
-            color: "white",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          {badge}
-        </span>
+      <motion.span
+        animate={{ rotateY: [0, 360] }}
+        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+        className="text-xs inline-block"
+      >{icon}</motion.span>
+      <span className="font-game-display text-[10px] text-foreground leading-none" style={{ fontVariantNumeric: "tabular-nums" }}>
+        {value >= 1000 ? `${(value / 1000).toFixed(1)}K` : value}
+      </span>
+      {plus && (
+        <span className="w-4 h-4 rounded-full flex items-center justify-center text-[9px] font-bold text-white" style={{
+          background: "linear-gradient(180deg, hsl(var(--green-play)), hsl(var(--green-play-dark)))",
+          boxShadow: "0 1px 0 hsl(var(--green-play-shadow))",
+        }}>+</span>
       )}
     </motion.button>
-  );
-}
-
-function CurrencyPill({ icon, value, plus }: { icon: string; value: number; plus?: boolean }) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 3,
-        padding: "3px 8px",
-        borderRadius: 20,
-        background: "rgba(15,23,42,0.6)",
-        backdropFilter: "blur(8px)",
-        border: "1px solid rgba(255,255,255,0.08)",
-        fontSize: 11,
-        color: "rgba(255,255,255,0.85)",
-      }}
-    >
-      <span style={{ fontSize: 12 }}>{icon}</span>
-      <span style={{ fontWeight: 600, fontFamily: "'Rubik', sans-serif" }}>{value}</span>
-      {plus && <span style={{ color: "#4ADE50", fontWeight: 700, fontSize: 10 }}>+</span>}
-    </div>
   );
 }
