@@ -156,6 +156,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const turnStartRef = useRef<number>(Date.now());
   const [myConsecutiveMisses, setMyConsecutiveMisses] = useState(0);
+  const myConsecutiveMissesRef = useRef(0);
   const [oppConsecutiveMisses, setOppConsecutiveMisses] = useState(0);
   
   // Tease messages
@@ -725,8 +726,10 @@ export default function MultiplayerScreen({ onHome }: Props) {
         // Auto-submit random move
         const randomMoves: Move[] = [1, 2, 3, 4, 6];
         const randomMove = randomMoves[Math.floor(Math.random() * randomMoves.length)];
-        setMyConsecutiveMisses(prev => prev + 1);
-        if (myConsecutiveMisses + 1 >= MAX_CONSECUTIVE_MISSES) {
+        const newMisses = myConsecutiveMissesRef.current + 1;
+        myConsecutiveMissesRef.current = newMisses;
+        setMyConsecutiveMisses(newMisses);
+        if (newMisses >= MAX_CONSECUTIVE_MISSES) {
           handleAbandon();
         } else {
           submitMove(randomMove);
@@ -1042,6 +1045,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
     stopTimer();
     // Reset consecutive misses on manual move (auto-submit sets misses before calling this)
     if (!autoSubmitRef.current) {
+      myConsecutiveMissesRef.current = 0;
       setMyConsecutiveMisses(0);
     }
     const moveStr = String(move);
@@ -2025,6 +2029,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
                               setLastResult(null);
                               setLastBallResult(null);
                               setPvpBallHistory([]);
+                              myConsecutiveMissesRef.current = 0;
                               setMyConsecutiveMisses(0);
                               setOppConsecutiveMisses(0);
                               pvpPostMatchShownRef.current = false;
@@ -2158,6 +2163,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
                   setLastResult(null);
                   setLastBallResult(null);
                   setPvpBallHistory([]);
+                  myConsecutiveMissesRef.current = 0;
                   setMyConsecutiveMisses(0);
                   setOppConsecutiveMisses(0);
                   pvpPostMatchShownRef.current = false;

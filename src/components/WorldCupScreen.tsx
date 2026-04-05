@@ -188,40 +188,38 @@ export default function WorldCupScreen({ onHome }: Props) {
       const nextIdx = groupMatchIdx + 1;
       setGroupMatchIdx(nextIdx);
 
-      setGroupTeams(prev => {
-        const updated = prev.map(t => {
-          if (t.name === myTeam.name) {
-            const newWins = t.wins + (matchResult === "win" ? 1 : 0);
-            const newLosses = t.losses + (matchResult === "loss" ? 1 : 0);
-            return { ...t, points: newWins * 2, wins: newWins, losses: newLosses };
-          }
-          if (t.name === matchOpponent.name) {
-            const newWins = t.wins + (matchResult === "loss" ? 1 : 0);
-            const newLosses = t.losses + (matchResult === "win" ? 1 : 0);
-            return { ...t, points: newWins * 2, wins: newWins, losses: newLosses };
-          }
-          const won = Math.random() > 0.5;
-          const newWins = t.wins + (won ? 1 : 0);
-          const newLosses = t.losses + (won ? 0 : 1);
+      const updatedTeams = groupTeams.map(t => {
+        if (t.name === myTeam.name) {
+          const newWins = t.wins + (matchResult === "win" ? 1 : 0);
+          const newLosses = t.losses + (matchResult === "loss" ? 1 : 0);
           return { ...t, points: newWins * 2, wins: newWins, losses: newLosses };
-        });
-
-        const opponents = updated.filter(t => t.name !== myTeam.name);
-        if (nextIdx >= opponents.length) {
-          const qualifiers = [...updated]
-            .sort((a, b) => b.points - a.points)
-            .slice(0, 4)
-            .filter(t => t.name !== myTeam.name);
-          setKnockoutOpponents(qualifiers.slice(0, 2));
-          setKnockoutIdx(0);
-          setKnockoutStage("super8");
-          setPhase("super8");
-        } else {
-          setPhase("group");
         }
-
-        return updated;
+        if (t.name === matchOpponent.name) {
+          const newWins = t.wins + (matchResult === "loss" ? 1 : 0);
+          const newLosses = t.losses + (matchResult === "win" ? 1 : 0);
+          return { ...t, points: newWins * 2, wins: newWins, losses: newLosses };
+        }
+        const won = Math.random() > 0.5;
+        const newWins = t.wins + (won ? 1 : 0);
+        const newLosses = t.losses + (won ? 0 : 1);
+        return { ...t, points: newWins * 2, wins: newWins, losses: newLosses };
       });
+      setGroupTeams(updatedTeams);
+
+      // Determine qualifiers from the freshly computed standings
+      const opponents = updatedTeams.filter(t => t.name !== myTeam.name);
+      if (nextIdx >= opponents.length) {
+        const qualifiers = [...updatedTeams]
+          .sort((a, b) => b.points - a.points)
+          .slice(0, 4)
+          .filter(t => t.name !== myTeam.name);
+        setKnockoutOpponents(qualifiers.slice(0, 2));
+        setKnockoutIdx(0);
+        setKnockoutStage("super8");
+        setPhase("super8");
+      } else {
+        setPhase("group");
+      }
     } else {
       const newAll = [...allResults, mr];
       setAllResults(newAll);

@@ -149,7 +149,7 @@ export default function TournamentScreen({ onHome }: Props) {
         if (tournamentCeremoniesEnabled) {
           setTimeout(() => setShowPostMatch(true), 1000);
         } else {
-          if (game.result !== "win") setEliminated(true);
+          if (game.result === "loss") setEliminated(true);
           setPhase("result");
         }
       }
@@ -400,7 +400,7 @@ export default function TournamentScreen({ onHome }: Props) {
           matchRewards={matchRewards}
           onComplete={() => {
             setShowPostMatch(false);
-            if (game.result !== "win") setEliminated(true);
+            if (game.result === "loss") setEliminated(true);
             setPhase("result");
           }}
         />
