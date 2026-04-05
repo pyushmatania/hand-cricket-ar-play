@@ -4,11 +4,11 @@ import { cn } from "@/lib/utils";
 import { SFX, Haptics } from "@/lib/sounds";
 
 const NAV_ITEMS = [
-  { path: "/collection", label: "Cards", icon: "🃏" },
-  { path: "/shop", label: "Shop", icon: "🛒" },
+  { path: "/shop", label: "Shop", icon: "🎁" },
+  { path: "/collection", label: "Collection", icon: "🏏" },
   { path: "/", label: "Battle", icon: "⚔️", center: true },
-  { path: "/clan", label: "Clan", icon: "🛡️" },
-  { path: "/profile", label: "Trophy", icon: "🏆" },
+  { path: "/clan", label: "Clan", icon: "👥" },
+  { path: "/leaderboard", label: "Rankings", icon: "🏆" },
 ];
 
 export default function BottomNav() {

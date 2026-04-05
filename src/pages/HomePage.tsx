@@ -10,10 +10,8 @@ import { useUserChests, useStartUnlock, useCollectChest, chestTimeRemaining, typ
 import { getChestTier } from "@/lib/chests";
 import ChestReveal from "@/components/shop/ChestReveal";
 import StumpHitAnimation from "@/components/StumpHitAnimation";
-import DailyQuestsWidget from "@/components/DailyQuestsWidget";
-import { Lock, Timer } from "lucide-react";
+import { Lock, Timer, Settings } from "lucide-react";
 import { toast } from "sonner";
-import ModeIconGrid from "@/components/ModeIconGrid";
 
 interface ProfileData {
   total_matches: number;
@@ -47,20 +45,24 @@ function formatTime(seconds: number): string {
   return `${s}s`;
 }
 
-// (modes moved to ModeIconGrid component)
-
 export default function HomePage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [showStumpAnim, setShowStumpAnim] = useState(false);
-  const [pendingMode, setPendingMode] = useState<string | null>(null);
+  const [tick, setTick] = useState(0);
   const [revealData, setRevealData] = useState<{ name: string; emoji: string; rarity: string } | null>(null);
 
   const { data: chests } = useUserChests();
   const startUnlock = useStartUnlock();
   const collectChest = useCollectChest();
+
+  // Tick timer for chest countdowns
+  useEffect(() => {
+    const interval = setInterval(() => setTick(t => t + 1), 1000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const seen = localStorage.getItem("hc_onboarding_done");
@@ -82,19 +84,15 @@ export default function HomePage() {
     setShowOnboarding(false);
   };
 
-  const handleBattle = useCallback((modeId: string) => {
+  const handlePlay = useCallback(() => {
     try { SFX.tap(); Haptics.heavy(); } catch { /* Intentionally ignored - non-critical */ }
-    setPendingMode(modeId);
     setShowStumpAnim(true);
   }, []);
 
   const handleStumpComplete = useCallback(() => {
     setShowStumpAnim(false);
-    if (pendingMode) {
-      navigate(`/game/${pendingMode}`);
-      setPendingMode(null);
-    }
-  }, [pendingMode, navigate]);
+    navigate("/play");
+  }, [navigate]);
 
   const hasUnlocking = chests?.some(c => c.status === "unlocking") ?? false;
 
@@ -116,7 +114,7 @@ export default function HomePage() {
       try {
         const result = await collectChest.mutateAsync(chest);
         toast.success(`Got ${result.cardCount} cards + ${result.coinReward} coins!`);
-      } catch (e: any) { toast.error(e.message); }
+      } catch (e: unknown) { toast.error(e instanceof Error ? e.message : "Failed to collect"); }
     }
   }, [hasUnlocking, startUnlock, collectChest]);
 
@@ -130,7 +128,6 @@ export default function HomePage() {
   const xpInLevel = (profile?.xp ?? 0) % 500;
   const playerName = profile?.display_name || user?.email?.split("@")[0]?.slice(0, 10) || "Player";
   const arenaProgress = ((currentTrophies - currentArena.trophies) / Math.max(nextArena.trophies - currentArena.trophies, 1)) * 100;
-
   const chestSlots = Array.from({ length: 4 }, (_, i) => chests?.find(c => c.slot_index === i) || null);
 
   return (
@@ -150,7 +147,7 @@ export default function HomePage() {
 
       <div className="relative z-10 max-w-[430px] mx-auto px-4 pt-4">
 
-        {/* ═══ PLAYER BAR ═══ */}
+        {/* ═══ A) TOP CURRENCY & PLAYER BAR ═══ */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -207,10 +204,131 @@ export default function HomePage() {
               <span className="text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{ background: "hsl(142 71% 45%)", color: "hsl(25 40% 8%)" }}>+</span>
             </div>
           </div>
+
+          {/* Settings gear */}
+          <button onClick={() => navigate("/settings")} className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg active:scale-90 transition-transform"
+            style={{ background: "hsl(25 15% 14%)", border: "1.5px solid hsl(25 18% 22%)" }}
+          >
+            <Settings className="w-4 h-4 text-muted-foreground" />
+          </button>
         </motion.div>
 
-        {/* ═══ ARENA PROGRESS ═══ */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }} className="mb-3 px-2">
+        {/* ═══ B) PROMOTIONAL BANNER ROW ═══ */}
+        <div className="grid grid-cols-2 gap-2 px-1 mb-3">
+          <motion.button
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => {
+              const freeChest = chestSlots.find(c => c?.status === "ready") || chestSlots.find(c => c !== null);
+              if (freeChest) handleChestTap(freeChest);
+              else navigate("/shop");
+            }}
+            className="rounded-xl px-3 py-3 flex items-center gap-2"
+            style={{
+              background: "linear-gradient(135deg, hsl(43 40% 16%), hsl(35 30% 10%))",
+              border: "2px solid hsl(43 50% 30%)",
+              borderBottom: "4px solid hsl(43 30% 15%)",
+              boxShadow: "0 4px 8px rgba(0,0,0,0.3)",
+            }}
+          >
+            <motion.span animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 1.5, repeat: Infinity }} className="text-xl">🎁</motion.span>
+            <div className="text-left">
+              <span className="font-game-display text-[9px] text-foreground tracking-wider block">FREE CHEST</span>
+              <span className="text-[8px] font-game-body" style={{ color: "hsl(43 90% 55%)" }}>OPEN NOW!</span>
+            </div>
+          </motion.button>
+          <motion.button
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => navigate("/game/daily")}
+            className="rounded-xl px-3 py-3 flex items-center gap-2"
+            style={{
+              background: "linear-gradient(135deg, hsl(210 30% 14%), hsl(210 25% 8%))",
+              border: "2px solid hsl(210 35% 25%)",
+              borderBottom: "4px solid hsl(210 25% 12%)",
+              boxShadow: "0 4px 8px rgba(0,0,0,0.3)",
+            }}
+          >
+            <span className="text-xl">🏏</span>
+            <div className="text-left">
+              <span className="font-game-display text-[9px] text-foreground tracking-wider block">DAILY CHALLENGE</span>
+              <span className="text-[8px] font-game-body text-muted-foreground">Win rewards!</span>
+            </div>
+          </motion.button>
+        </div>
+
+        {/* ═══ C) CENTRAL STADIUM STAGE + PLAY BUTTON ═══ */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, type: "spring", damping: 18 }}
+          className="relative mb-2 flex flex-col items-center"
+        >
+          {/* Stadium name */}
+          <div className="mb-1 px-4 py-1 rounded-full z-10"
+            style={{
+              background: "linear-gradient(180deg, hsl(25 20% 16% / 0.9), hsl(25 15% 10% / 0.95))",
+              border: "1.5px solid hsl(43 50% 40%)",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.5)",
+            }}
+          >
+            <span className="font-game-display text-[10px] tracking-[0.2em]" style={{ color: "hsl(43 90% 55%)" }}>
+              {currentArena.name.toUpperCase()}
+            </span>
+          </div>
+
+          {/* Floating island */}
+          <div className="relative" style={{ height: 200 }}>
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+              className="relative"
+              style={{ width: 220, height: 200 }}
+            >
+              <img
+                src={floatingIsland}
+                alt={`${currentArena.name} Island`}
+                className="w-full h-full object-contain"
+                style={{ filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.6))" }}
+                width={768}
+                height={768}
+              />
+            </motion.div>
+            {/* Shadow blob */}
+            <motion.div
+              animate={{ scale: [0.85, 1, 0.85], opacity: [0.2, 0.35, 0.2] }}
+              transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute bottom-0 left-1/2 -translate-x-1/2"
+              style={{ width: 160, height: 30, background: "radial-gradient(ellipse, rgba(0,0,0,0.5) 0%, transparent 70%)", borderRadius: "50%" }}
+            />
+          </div>
+
+          {/* ═══ BIG PLAY BUTTON ═══ */}
+          <motion.button
+            whileTap={{ scale: 0.93, y: 3 }}
+            whileHover={{ scale: 1.02 }}
+            animate={{ y: [0, -3, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            onClick={handlePlay}
+            className="relative w-[70%] py-4 rounded-2xl font-game-display text-lg tracking-[0.15em] text-white"
+            style={{
+              background: "linear-gradient(180deg, #6AFF6A, #4ADE50, #2D8B2D)",
+              border: "3px solid hsl(130 50% 20%)",
+              borderBottom: "7px solid hsl(130 57% 15%)",
+              boxShadow: "0 6px 0 hsl(130 57% 12%), 0 6px 24px rgba(74,222,80,0.4), 0 0 40px rgba(74,222,80,0.15), inset 0 2px 4px rgba(255,255,255,0.3)",
+              textShadow: "0 2px 4px rgba(0,0,0,0.4)",
+            }}
+          >
+            PLAY ▶
+          </motion.button>
+        </motion.div>
+
+        {/* ═══ D) ARENA / LEAGUE PROGRESS BAR ═══ */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="mb-3 px-2">
           <div className="flex justify-between items-center mb-1">
             <span className="font-game-body text-[10px] font-semibold text-muted-foreground">{currentArena.name}</span>
             <span className="font-game-body text-[10px] font-semibold text-muted-foreground">{nextArena.name}</span>
@@ -220,101 +338,19 @@ export default function HomePage() {
           </div>
         </motion.div>
 
-        {/* ═══ FLOATING ISLAND CENTERPIECE ═══ */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.12, type: "spring", damping: 18 }}
-          className="relative mb-2 flex items-center justify-center"
-          style={{ height: 220 }}
-        >
-          <motion.div
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-            className="relative"
-            style={{ width: 240, height: 220 }}
-          >
-            <img
-              src={floatingIsland}
-              alt={`${currentArena.name} Island`}
-              className="w-full h-full object-contain"
-              style={{ filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.6))" }}
-              width={768}
-              height={768}
-            />
-            {/* Arena name badge */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full"
-              style={{
-                background: "linear-gradient(180deg, hsl(25 20% 16% / 0.9), hsl(25 15% 10% / 0.95))",
-                border: "1.5px solid hsl(43 50% 40%)",
-                boxShadow: "0 2px 8px rgba(0,0,0,0.5)",
-              }}
-            >
-              <span className="font-game-display text-[8px] tracking-[0.2em]" style={{ color: "hsl(43 90% 55%)" }}>
-                {currentArena.name.toUpperCase()}
-              </span>
-            </div>
-          </motion.div>
-          {/* Shadow blob */}
-          <motion.div
-            animate={{ scale: [0.85, 1, 0.85], opacity: [0.2, 0.35, 0.2] }}
-            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute bottom-0 left-1/2 -translate-x-1/2"
-            style={{ width: 160, height: 30, background: "radial-gradient(ellipse, rgba(0,0,0,0.5) 0%, transparent 70%)", borderRadius: "50%" }}
-          />
-        </motion.div>
-
-        {/* ═══ MODE ICON GRID ═══ */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.15 }}
-          className="mb-4 px-1"
-        >
-          <div className="flex items-center gap-2 px-1 mb-3">
+        {/* ═══ E) CHEST SLOT ROW ═══ */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="mb-3 px-1">
+          <div className="flex items-center gap-2 px-1 mb-2">
             <div className="w-1 h-4 rounded-sm" style={{ background: "linear-gradient(180deg, hsl(43 90% 55%), hsl(35 60% 35%))" }} />
-            <span className="font-game-display text-[10px] tracking-[0.2em] text-foreground">GAME MODES</span>
+            <span className="font-game-display text-[10px] tracking-[0.2em] text-foreground">CHEST SLOTS</span>
           </div>
-          <ModeIconGrid onSelect={handleBattle} />
+          <div className="grid grid-cols-4 gap-2">
+            {chestSlots.map((chest, i) => (
+              <ChestSlot3D key={i} chest={chest} tick={tick} onTap={handleChestTap} />
+            ))}
+          </div>
         </motion.div>
 
-        {/* ═══ QUICK BANNERS ═══ */}
-        <div className="grid grid-cols-2 gap-2 px-1 mb-3">
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={() => navigate("/spin")}
-            className="rounded-xl px-3 py-3 flex items-center gap-2"
-            style={{
-              background: "linear-gradient(135deg, hsl(35 40% 16%), hsl(25 30% 10%))",
-              border: "2px solid hsl(35 50% 30%)",
-              borderBottom: "4px solid hsl(35 30% 15%)",
-            }}
-          >
-            <motion.span animate={{ rotate: [0, 15, -15, 0] }} transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }} className="text-xl">🎰</motion.span>
-            <div className="text-left">
-              <span className="font-game-display text-[9px] text-foreground tracking-wider block">LUCKY SPIN</span>
-              <span className="text-[8px] font-game-body text-muted-foreground">50 🪙</span>
-            </div>
-          </motion.button>
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            onClick={() => navigate("/team-builder")}
-            className="rounded-xl px-3 py-3 flex items-center gap-2"
-            style={{
-              background: "linear-gradient(135deg, hsl(142 30% 14%), hsl(142 25% 8%))",
-              border: "2px solid hsl(142 35% 25%)",
-              borderBottom: "4px solid hsl(142 25% 12%)",
-            }}
-          >
-            <span className="text-xl">⚔️</span>
-            <div className="text-left">
-              <span className="font-game-display text-[9px] text-foreground tracking-wider block">TEAM BUILD</span>
-              <span className="text-[8px] font-game-body text-muted-foreground">Dream XI</span>
-            </div>
-          </motion.button>
-        </div>
-
-        <DailyQuestsWidget />
       </div>
 
       {/* Stump animation overlay */}
@@ -373,7 +409,6 @@ function ChestSlot3D({ chest, tick, onTap }: { chest: UserChest | null; tick: nu
           : "0 4px 8px rgba(0,0,0,0.3)",
       }}
     >
-      {/* Ready glow pulse */}
       {isReady && (
         <motion.div
           animate={{ opacity: [0.1, 0.4, 0.1] }}
@@ -382,8 +417,6 @@ function ChestSlot3D({ chest, tick, onTap }: { chest: UserChest | null; tick: nu
           style={{ background: `radial-gradient(circle, ${tier.glowColor}, transparent 70%)` }}
         />
       )}
-
-      {/* Chest image with lid animation */}
       <motion.div
         animate={isReady ? { y: [0, -4, 0], rotate: [0, -2, 2, 0] } : isLocked ? {} : { y: [0, -2, 0] }}
         transition={{ duration: isReady ? 0.8 : 2, repeat: Infinity }}
@@ -400,7 +433,6 @@ function ChestSlot3D({ chest, tick, onTap }: { chest: UserChest | null; tick: nu
               : `drop-shadow(0 4px 8px ${tier.glowColor}) brightness(1.1)`,
           }}
         />
-        {/* Sparkle on ready chests */}
         {isReady && (
           <>
             {[0, 1, 2].map(i => (
@@ -420,8 +452,6 @@ function ChestSlot3D({ chest, tick, onTap }: { chest: UserChest | null; tick: nu
           </>
         )}
       </motion.div>
-
-      {/* Status label */}
       <div className="absolute bottom-0 inset-x-0 py-1 text-center rounded-b-lg"
         style={{ background: "linear-gradient(180deg, transparent, rgba(0,0,0,0.8))" }}
       >
