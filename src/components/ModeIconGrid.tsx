@@ -343,7 +343,7 @@ function QuickMatchIcon({ onShatter }: { onShatter: () => void }) {
 
   const trigger = () => {
     if (shattered) return;
-    try { SFX.tap(); Haptics.medium(); } catch {}
+    try { SFX.tap(); Haptics.medium(); } catch { /* Intentionally ignored - non-critical */ }
     setShattered(true);
   };
 
@@ -444,7 +444,7 @@ export default function ModeIconGrid({ onSelect }: ModeIconGridProps) {
             transition={{ delay: 0.08 + i * 0.04, type: "spring", damping: 20 }}
             whileTap={{ scale: 0.8, y: 4 }}
             onClick={() => {
-              try { SFX.tap(); Haptics.medium(); } catch {}
+              try { SFX.tap(); Haptics.medium(); } catch { /* Intentionally ignored - non-critical */ }
               onSelect(mode.id);
             }}
             className="flex flex-col items-center gap-1 relative"

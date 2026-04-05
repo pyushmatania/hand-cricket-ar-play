@@ -156,6 +156,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const turnStartRef = useRef<number>(Date.now());
   const [myConsecutiveMisses, setMyConsecutiveMisses] = useState(0);
+  const myConsecutiveMissesRef = useRef(0);
   const [oppConsecutiveMisses, setOppConsecutiveMisses] = useState(0);
   
   // Tease messages
@@ -342,7 +343,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
     };
 
     void hydrateGame();
-  }, [user, gameIdFromQuery]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, gameIdFromQuery, joinExistingGame]);
 
   useEffect(() => {
     if (!user || gameIdFromQuery || phase !== "lobby") return;
@@ -379,7 +381,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
       );
     }, 1000);
     return () => { clearInterval(loadInterval); clearInterval(tickInterval); };
-  }, [phase]);
+  }, [phase, loadGames, loadLobbyFriends]);
 
   // Subscribe to game changes
   useEffect(() => {
@@ -554,6 +556,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentGame?.id]);
 
   // Subscribe to rematch invites when game is finished
@@ -611,6 +614,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
       clearInterval(interval);
       supabase.removeChannel(channel);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id, currentGame?.id, currentGame?.status, opponentName]);
 
   // ─── Gaslighting messages when rematch expires ──────────────────
@@ -655,6 +659,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
       });
     }, 1000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rematchSent]);
 
   // Incoming rematch countdown — 45s for the receiver
@@ -677,7 +682,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
         osc.stop(ctx.currentTime + i * 0.15 + 0.4);
       });
       navigator.vibrate?.([100, 50, 150]);
-    } catch {}
+    } catch { /* Intentionally ignored - non-critical */ }
     setIncomingRematchCountdown(45);
     const interval = setInterval(() => {
       setIncomingRematchCountdown(prev => {
@@ -696,6 +701,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
       });
     }, 1000);
     return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [incomingRematch?.inviteId]);
 
   // Timer management — 5s synced countdown per turn
@@ -720,19 +726,19 @@ export default function MultiplayerScreen({ onHome }: Props) {
         // Auto-submit random move
         const randomMoves: Move[] = [1, 2, 3, 4, 6];
         const randomMove = randomMoves[Math.floor(Math.random() * randomMoves.length)];
-        setMyConsecutiveMisses(prev => {
-          const newMisses = prev + 1;
-          if (newMisses >= MAX_CONSECUTIVE_MISSES) {
-            // Forfeit after 3 consecutive misses
-            handleAbandon();
-          }
-          return newMisses;
-        });
-        submitMove(randomMove);
+        const newMisses = myConsecutiveMissesRef.current + 1;
+        myConsecutiveMissesRef.current = newMisses;
+        setMyConsecutiveMisses(newMisses);
+        if (newMisses >= MAX_CONSECUTIVE_MISSES) {
+          handleAbandon();
+        } else {
+          submitMove(randomMove);
+        }
         stopTimer();
       }
     }, 50);
     return () => stopTimer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentGame?.current_turn, waitingForOpponent, phase]);
 
   // Host-side phase transition (pre_round_countdown -> action_window)
@@ -766,6 +772,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
         }).eq("id", currentGame.id).eq("phase", "action_window");
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentGame?.id, currentGame?.phase, currentGame?.phase_started_at, currentGame?.turn_deadline_at, currentGame?.host_move, currentGame?.guest_move, user?.id]);
 
   const stopTimer = () => {
@@ -790,7 +797,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
     setPhase("finished");
   };
 
-  const loadGames = async () => {
+  const loadGames = useCallback(async () => {
     if (!user) {
       setGames([]);
       return;
@@ -855,9 +862,9 @@ export default function MultiplayerScreen({ onHome }: Props) {
     } else {
       setOwnHostedGame(null);
     }
-  };
+  }, [user, myName]);
 
-  const loadLobbyFriends = async () => {
+  const loadLobbyFriends = useCallback(async () => {
     if (!user) return;
     const { data: friendRows } = await supabase
       .from("friends")
@@ -870,7 +877,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
       .select("user_id, display_name, avatar_index, wins, total_matches")
       .in("user_id", friendIds);
     setLobbyFriends(profiles || []);
-  };
+  }, [user]);
 
   const loadOpponentName = async (game: MultiplayerGame) => {
     const oppId = user?.id === game.host_id ? game.guest_id : game.host_id;
@@ -1038,6 +1045,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
     stopTimer();
     // Reset consecutive misses on manual move (auto-submit sets misses before calling this)
     if (!autoSubmitRef.current) {
+      myConsecutiveMissesRef.current = 0;
       setMyConsecutiveMisses(0);
     }
     const moveStr = String(move);
@@ -1210,6 +1218,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
       });
     }, 1000);
     return () => { if (inningsBreakTimerRef.current) { clearInterval(inningsBreakTimerRef.current); inningsBreakTimerRef.current = null; } };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showInningsBreak, inningsBreakReady]);
 
   // Warning sound + haptic at 5s and below
@@ -2020,6 +2029,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
                               setLastResult(null);
                               setLastBallResult(null);
                               setPvpBallHistory([]);
+                              myConsecutiveMissesRef.current = 0;
                               setMyConsecutiveMisses(0);
                               setOppConsecutiveMisses(0);
                               pvpPostMatchShownRef.current = false;
@@ -2153,6 +2163,7 @@ export default function MultiplayerScreen({ onHome }: Props) {
                   setLastResult(null);
                   setLastBallResult(null);
                   setPvpBallHistory([]);
+                  myConsecutiveMissesRef.current = 0;
                   setMyConsecutiveMisses(0);
                   setOppConsecutiveMisses(0);
                   pvpPostMatchShownRef.current = false;

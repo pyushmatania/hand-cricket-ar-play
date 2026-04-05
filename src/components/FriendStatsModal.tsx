@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -170,25 +170,25 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
     setLoading(true);
     Promise.all([loadMyProfile(), loadH2H(), loadMatchStats(), loadRecords(), loadFullFriendProfile()])
       .finally(() => setLoading(false));
-  }, [friend?.user_id, user?.id]);
+  }, [friend, user, loadMyProfile, loadH2H, loadMatchStats, loadRecords, loadFullFriendProfile]);
 
-  const loadFullFriendProfile = async () => {
+  const loadFullFriendProfile = useCallback(async () => {
     if (!friend) return;
     const { data } = await supabase.from("profiles")
       .select("user_id, display_name, wins, losses, draws, total_matches, high_score, best_streak, current_streak, abandons, avatar_url, avatar_index, xp, coins, rank_tier, login_streak, best_login_streak, total_runs, total_sixes, total_fours")
       .eq("user_id", friend.user_id).single();
     if (data) setFullFriendProfile(data as unknown as FriendProfile);
-  };
+  }, [friend]);
 
-  const loadMyProfile = async () => {
+  const loadMyProfile = useCallback(async () => {
     if (!user) return;
     const { data } = await supabase.from("profiles")
       .select("wins, losses, draws, total_matches, high_score, best_streak, current_streak, abandons, display_name, xp, coins, rank_tier")
       .eq("user_id", user.id).single();
     if (data) setMyProfile(data as unknown as MyProfile);
-  };
+  }, [user]);
 
-  const loadH2H = async () => {
+  const loadH2H = useCallback(async () => {
     if (!user || !friend) return;
     const { data } = await supabase
       .from("multiplayer_games")
@@ -237,9 +237,9 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
       lastPlayed: data[0]?.created_at || null,
       matches: data as unknown as H2HMatch[],
     });
-  };
+  }, [user, friend]);
 
-  const loadMatchStats = async () => {
+  const loadMatchStats = useCallback(async () => {
     if (!user || !friend) return;
     const { data: friendMatches } = await supabase
       .from("matches").select("*").eq("user_id", friend.user_id).order("created_at", { ascending: false }).limit(1000);
@@ -251,7 +251,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
     setRecentFriendMatches((friendMatches || []).slice(0, 15));
     setFriendMatchStats(computeMatchStats(friendMatches || []));
     setMyMatchStats(computeMatchStats(myMatches || []));
-  };
+  }, [user, friend]);
 
   const computeMatchStats = (matches: any[]): FriendMatchStats => {
     let wins = 0, losses = 0, draws = 0, totalRuns = 0, sixes = 0, fours = 0;
@@ -275,7 +275,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
     };
   };
 
-  const loadRecords = async () => {
+  const loadRecords = useCallback(async () => {
     if (!user || !friend) return;
     const { data } = await supabase
       .from("record_breaks")
@@ -284,7 +284,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
       .order("broken_at", { ascending: false })
       .limit(20);
     setRecords((data as unknown as RecordBreak[]) || []);
-  };
+  }, [user, friend]);
 
   if (!friend) return null;
 

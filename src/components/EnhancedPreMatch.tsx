@@ -68,12 +68,12 @@ export default function EnhancedPreMatch({
     if (soundEnabled) SFX.ceremonyHorn();
     if (crowdEnabled) CrowdSFX.ambientMurmur(8);
     return () => { stopMusic(); };
-  }, []);
+  }, [soundEnabled, crowdEnabled]);
 
   useEffect(() => {
     if (!page || !voiceEnabled || !commentaryEnabled || !page.voiceEnabled) return;
     speakDuoCommentary(page.lines, duo, voiceEngine);
-  }, [currentPage]);
+  }, [currentPage, voiceEnabled, commentaryEnabled, duo, page, voiceEngine]);
 
   useEffect(() => {
     if (page?.id === "toss" && soundEnabled) SFX.tossReveal();
@@ -81,7 +81,7 @@ export default function EnhancedPreMatch({
       if (soundEnabled) SFX.gameStart();
       if (crowdEnabled) CrowdSFX.roar();
     }
-  }, [currentPage]);
+  }, [currentPage, soundEnabled, crowdEnabled, page?.id]);
 
   const handleTap = () => {
     if (currentPage < pages.length - 1) {

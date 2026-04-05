@@ -33,8 +33,9 @@ const DAILY_CONFIG: MatchConfig = { overs: 5, wickets: 3 };
 
 export default function DailyChallengeScreen({ onHome }: Props) {
   const location = useLocation();
-  const arenaImage = (location.state as any)?.arenaImage as string | undefined;
-  const arenaId = (location.state as any)?.arenaId as string | undefined;
+  const locState = location.state as Record<string, string> | null;
+  const arenaImage = locState?.arenaImage;
+  const arenaId = locState?.arenaId;
   const { soundEnabled, hapticsEnabled, crowdEnabled, commentaryVoice, dailyCeremoniesEnabled } = useSettings();
   const cosmetics = useEquippedCosmetics();
   const { game, startGame, playBall, resetGame } = useHandCricket();
@@ -122,7 +123,7 @@ export default function DailyChallengeScreen({ onHome }: Props) {
         }
       }
     }
-  }, [game.phase]);
+  }, [game.phase, saveMatch, game, todayKey, soundEnabled, hapticsEnabled, crowdEnabled, dailyCeremoniesEnabled]);
 
   const handleStartNew = () => {
     resetGame();
@@ -139,7 +140,7 @@ export default function DailyChallengeScreen({ onHome }: Props) {
 
   const shareResult = async () => {
     const text = `🏏 Hand Cricket Daily Challenge\n📅 ${todayKey}\n🎯 Target: ${dailyTarget}\n⭐ My Score: ${bestToday}\n${hitTarget ? "✅ TARGET SMASHED!" : "❌ Missed it"}\n\nPlay at handcricketgame.lovable.app`;
-    if (navigator.share) { try { await navigator.share({ text }); } catch {} }
+    if (navigator.share) { try { await navigator.share({ text }); } catch { /* Intentionally ignored - non-critical */ } }
     else { await navigator.clipboard.writeText(text); }
   };
 

@@ -61,9 +61,10 @@ const GLOVE_OPTIONS: { key: GloveStyle; label: string }[] = [
 
 export default function GameScreen({ onHome }: GameScreenProps) {
   const location = useLocation();
-  const arenaImage = (location.state as any)?.arenaImage as string | undefined;
-  const arenaId = (location.state as any)?.arenaId as string | undefined;
-  const themeId = (location.state as any)?.themeId as string | undefined;
+  const locState = location.state as Record<string, string> | null;
+  const arenaImage = locState?.arenaImage;
+  const arenaId = locState?.arenaId;
+  const themeId = locState?.themeId;
   const matchTheme = getThemeById(themeId || localStorage.getItem("selectedTheme") || "gully");
   const cameraRef = useRef<CameraFeedHandle>(null);
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
@@ -91,7 +92,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   // ── Big result animation ──
   const [bigResult, setBigResult] = useState<BallResult | null>(null);
   const [playerXP, setPlayerXP] = useState(0);
-  const [matchRewards, setMatchRewards] = useState<any>(null);
+  const [matchRewards, setMatchRewards] = useState<Record<string, unknown> | null>(null);
   const [stadiumMode, setStadiumMode] = useState(true);
   const [filter, setFilter] = useState<CameraFilter>("broadcast");
   const [gloveStyle, setGloveStyle] = useState<GloveStyle>("cricket");
@@ -132,7 +133,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       preferredLanguage: matchTheme.commentary.preferredLanguage,
     });
     engines.commentary.setTheme(matchTheme.id);
-  }, [matchTheme]);
+  }, [matchTheme, engines.commentary]);
 
   // Apply theme's crowd config
   useEffect(() => {
@@ -144,7 +145,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       reactionSpeed: matchTheme.crowd.reactionSpeed,
       peakEvents: matchTheme.crowd.peakEvents,
     });
-  }, [matchTheme]);
+  }, [matchTheme, engines.crowd]);
 
   // Apply weather modifiers to gameplay engine
   useEffect(() => {
@@ -154,7 +155,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       gameplay: engines.gameplay,
       innings: game.currentInnings,
     });
-  }, [matchWeather, game.currentInnings]);
+  }, [matchWeather, game.currentInnings, engines]);
 
   // Tension vignette — intensifies in tight/critical situations
   useEffect(() => {
@@ -177,7 +178,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     } else {
       engines.lighting.setVignette(0);
     }
-  }, [game.innings1Balls, game.innings2Balls, game.userScore, game.aiScore, game.userWickets, game.aiWickets, game.target, game.phase]);
+  }, [game.innings1Balls, game.innings2Balls, game.userScore, game.aiScore, game.userWickets, game.aiWickets, game.target, game.phase, engines.lighting, game.currentInnings, game.isBatting, matchConfig]);
   useEffect(() => {
     if (soundEnabled && musicEnabled && !game.result) {
       startAmbientStadium(ambientVolume, arenaId);
@@ -185,7 +186,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       stopAmbientStadium();
     }
     return () => { stopAmbientStadium(); };
-  }, [soundEnabled, musicEnabled, game.result, arenaId]);
+  }, [soundEnabled, musicEnabled, game.result, arenaId, ambientVolume]);
 
   useEffect(() => {
     if (soundEnabled && musicEnabled) setAmbientVolume(ambientVolume);
@@ -219,10 +220,11 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data }) => {
-        if (data?.display_name) setPlayerName(data.display_name);
-        if ((data as any)?.xp) setPlayerXP((data as any).xp);
-        if (data?.avatar_index != null) setPlayerAvatarIndex(data.avatar_index);
-        if ((data as any)?.avatar_url) setPlayerAvatarUrl((data as any).avatar_url);
+        const profile = data as Record<string, unknown> | null;
+        if (profile?.display_name) setPlayerName(profile.display_name as string);
+        if (profile?.xp) setPlayerXP(profile.xp as number);
+        if (profile?.avatar_index != null) setPlayerAvatarIndex(profile.avatar_index as number);
+        if (profile?.avatar_url) setPlayerAvatarUrl(profile.avatar_url as string);
       });
   }, [user]);
 
@@ -255,19 +257,14 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     // staggered reveal
     setTimeout(() => setTossReveal(1), 600);
     setTimeout(() => setTossReveal(2), 1200);
-    setTimeout(() => {
-      setTossReveal(3);
-      setTossWon((prev) => {
-        // need tossPlayerOE at this point — read from closure
-        return prev; // computed below via functional update
-      });
-    }, 1800);
+    setTimeout(() => setTossReveal(3), 1800);
     // compute winner outside the staggered chain so we have tossPlayerOE in scope
     setTossPlayerOE((oe) => {
       const won = oe === "even" ? sumEven : !sumEven;
       setTossWon(won);
       if (!won) {
         const aiBats = Math.random() > 0.5;
+        setTossInfo({ winner: opponentName, battingFirst: aiBats ? opponentName : playerName });
         setTimeout(() => startMatchWithCountdown(aiBats), 3500);
       }
       return oe;
@@ -334,7 +331,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         }
       }
     }
-  }, [game.phase, game, saveMatch]);
+  }, [game.phase, game, saveMatch, engines.event, arCeremoniesEnabled]);
 
   // Clear fireworks after duration
   useEffect(() => {
@@ -365,7 +362,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         setTimeout(() => setCommentary(null), 3000);
       }
     }
-  }, [game.phase]);
+  }, [game.phase, commentaryEnabled, matchCommentators, voiceEnabled, voiceEngine, engines, game]);
 
   // Ball result sounds, commentary & fireworks
   useEffect(() => {
@@ -445,7 +442,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
       }
       setTimeout(() => setCommentary(null), 2500);
     }
-  }, [game.lastResult]);
+  }, [game.lastResult, commentaryEnabled, commentaryLanguage, engines, game, matchCommentators, playerName, opponentName, shake, voiceEnabled, voiceEngine]);
 
   const handleVideoReady = useCallback(
     (video: HTMLVideoElement) => {
@@ -464,7 +461,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
     } else {
       detection.setOnAutoCapture(null);
     }
-  }, [tossStep, game.phase, detection.setOnAutoCapture, playBall, handleTossGesture]);
+  }, [tossStep, game.phase, detection.setOnAutoCapture, playBall, handleTossGesture, detection]);
 
   // Reset tracking on innings change
   useEffect(() => {
@@ -517,7 +514,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
 
   return (
     <div className="fixed inset-0 bg-black overflow-hidden">
-      <CelebrationEffects lastResult={game.lastResult} gameResult={game.result} phase={game.phase} />
+      <CelebrationEffects lastResult={game.lastResult} gameResult={game.result} phase={game.phase} batSkin={cosmetics.batSkin} />
       <CanvasFireworks type={fireworkType} duration={fireworkType === "win" ? 5000 : 3000} />
       <WeatherParticles weather={matchWeather} />
       <BallPitchAnimation lastResult={game.lastResult} triggerKey={game.innings1Balls + game.innings2Balls} />
@@ -584,6 +581,8 @@ export default function GameScreen({ onHome }: GameScreenProps) {
           result={game.result}
           playerScore={game.userScore}
           opponentScore={game.aiScore}
+          playerWickets={game.userWickets}
+          opponentWickets={game.aiWickets}
           ballHistory={game.ballHistory}
           commentators={matchCommentators}
           matchRewards={matchRewards}
@@ -976,11 +975,11 @@ export default function GameScreen({ onHome }: GameScreenProps) {
                   )}
                   {tossReveal >= 3 && tossWon && (
                     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="flex gap-3">
-                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => startMatchWithCountdown(true)}
+                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setTossInfo({ winner: playerName, battingFirst: playerName }); startMatchWithCountdown(true); }}
                         className="flex-1 py-4 bg-primary/20 border border-primary/40 text-primary font-display font-black rounded-2xl text-sm tracking-wider">
                         🏏 BAT FIRST
                       </motion.button>
-                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => startMatchWithCountdown(false)}
+                      <motion.button whileTap={{ scale: 0.9 }} onClick={() => { setTossInfo({ winner: playerName, battingFirst: opponentName }); startMatchWithCountdown(false); }}
                         className="flex-1 py-4 bg-accent/20 border border-accent/40 text-accent font-display font-black rounded-2xl text-sm tracking-wider">
                         🎯 BOWL FIRST
                       </motion.button>

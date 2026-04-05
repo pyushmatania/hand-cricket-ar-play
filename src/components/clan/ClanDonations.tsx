@@ -95,7 +95,7 @@ export default function ClanDonations({ clanId }: { clanId: string }) {
             created_at: msg.created_at,
           });
           userIds.add(msg.user_id);
-        } catch { }
+        } catch { /* Intentionally ignored - skip malformed messages */ }
       }
       // Fetch names
       if (userIds.size > 0) {

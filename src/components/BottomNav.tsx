@@ -29,7 +29,7 @@ export default function BottomNav() {
             <motion.button
               key={item.path}
               onClick={() => {
-                try { SFX.navTap(); Haptics.navTap(); } catch {}
+                try { SFX.navTap(); Haptics.navTap(); } catch { /* Intentionally ignored - non-critical */ }
                 navigate(item.path);
               }}
               whileTap={{ scale: 0.85 }}

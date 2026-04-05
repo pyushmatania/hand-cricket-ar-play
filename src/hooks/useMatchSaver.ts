@@ -42,25 +42,34 @@ export function useMatchSaver() {
         innings_data: game.ballHistory as any,
       };
 
-      await supabase.from("matches").insert(matchData);
+      const { error: insertError } = await supabase.from("matches").insert(matchData);
+      if (insertError) {
+        console.error("Failed to save match:", insertError);
+        return null;
+      }
 
-      const { data: profile } = await supabase
+      const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("*")
         .eq("user_id", user.id)
         .single();
 
-      if (profile) {
+      if (profileError || !profile) {
+        console.error("Failed to fetch profile:", profileError);
+        return null;
+      }
         const newStreak =
           game.result === "win" ? profile.current_streak + 1 : 0;
 
         const oldXp = (profile as any).xp || 0;
         const oldLevel = Math.floor(oldXp / 100) + 1;
 
-        // Calculate XP/coins earned
+        // Calculate XP/coins earned (challenge bonuses added later)
         const resultKey = game.result as "win" | "loss" | "draw";
         let xpEarned = XP_REWARDS[resultKey] || 10;
         let coinsEarned = COIN_REWARDS[resultKey] || 10;
+        let challengeXpTotal = 0;
+        let challengeCoinsTotal = 0;
 
         // Streak bonus
         const hasStreakBonus = newStreak >= 3;
@@ -329,6 +338,8 @@ export function useMatchSaver() {
 
             // Single profile update for all completed challenges combined
             if (totalChallengeXp > 0) {
+              challengeXpTotal = totalChallengeXp;
+              challengeCoinsTotal = totalChallengeCoins;
               await supabase.from("profiles").update({
                 xp: updatedStats.xp + totalChallengeXp,
                 coins: updatedStats.coins + totalChallengeCoins,
@@ -517,17 +528,14 @@ export function useMatchSaver() {
         const newLevel = Math.floor(newXp / 100) + 1;
 
         return {
-          xpEarned,
-          coinsEarned,
+          xpEarned: xpEarned + challengeXpTotal,
+          coinsEarned: coinsEarned + challengeCoinsTotal,
           oldLevel,
           newLevel,
           oldRankName: oldTier.name,
           newRankName: newTier.name,
           streakBonus: hasStreakBonus,
         } as MatchRewardsResult;
-      }
-
-      return null;
     },
     [user]
   );

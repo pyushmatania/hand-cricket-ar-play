@@ -43,6 +43,8 @@ export class CrowdEngine {
   };
 
   start(): void {
+    // Prevent double-start creating duplicate intervals
+    if (this.decayInterval) this.stop();
     // Set initial mood based on theme's base noise
     this.mood = this.themeConfig.baseNoise * 0.4;
     // Mood decays naturally — crowd loses interest over time
@@ -86,12 +88,14 @@ export class CrowdEngine {
       case 'WICKET_RUN_OUT':
       case 'WICKET_STUMPED':
       case 'WICKET_CAUGHT_BEHIND':
+      case 'WICKET_HIT_WICKET':
         this.mood = isPeakEvent ? 100 : Math.max(85 * speed, this.mood);
         break;
       case 'MILESTONE_50':
         this.mood = Math.min(100, this.mood + 30 * speed);
         break;
       case 'MILESTONE_100':
+      case 'MILESTONE_5_WICKETS':
       case 'HATTRICK':
         this.mood = 100;
         break;
@@ -130,6 +134,9 @@ export class CrowdEngine {
     } else if (this.mood < 50) {
       this.soundEngine.setAmbient('/sounds/ambient/crowd_moderate_loop.mp3');
     } else if (this.mood < 80) {
+      this.soundEngine.setAmbient('/sounds/ambient/crowd_loud_loop.mp3');
+    } else {
+      // Pandemonium (mood >= 80) — use loud loop at full volume
       this.soundEngine.setAmbient('/sounds/ambient/crowd_loud_loop.mp3');
     }
   }
@@ -174,5 +181,13 @@ export class CrowdEngine {
 
   destroy(): void {
     this.stop();
+    this.mood = 30;
+    this.lastMexicanWave = 0;
+    this.themeConfig = DEFAULT_CROWD_CONFIG;
+    this.mexicanWaveThreshold = 90;
+    this.onMoodChange = undefined;
+    this.onMexicanWave = undefined;
+    this.soundEngine = undefined;
+    this.eventEngine = undefined;
   }
 }

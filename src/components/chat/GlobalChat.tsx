@@ -96,7 +96,7 @@ export default function GlobalChat() {
             }
           }
           if (msg.user_id !== user.id) {
-            try { SFX.tap(); } catch {}
+            try { SFX.tap(); } catch { /* Intentionally ignored - non-critical */ }
             Haptics.light();
           }
         }

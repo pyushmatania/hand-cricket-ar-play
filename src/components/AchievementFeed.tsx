@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -41,12 +41,7 @@ export default function AchievementFeed() {
   const [reacting, setReacting] = useState<string | null>(null);
   const [trashTalk, setTrashTalk] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!user) return;
-    loadRecords();
-  }, [user]);
-
-  const loadRecords = async () => {
+  const loadRecords = useCallback(async () => {
     if (!user) return;
 
     const { data } = await supabase
@@ -100,7 +95,12 @@ export default function AchievementFeed() {
       });
       setReactions(grouped);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    loadRecords();
+  }, [user, loadRecords]);
 
   const addReaction = async (recordId: string, emoji: string, message?: string) => {
     if (!user) return;

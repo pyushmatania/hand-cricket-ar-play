@@ -59,8 +59,8 @@ export default function ChatNotificationListener() {
           }
 
           // Play sound + haptic
-          try { SFX.friendOnline(); } catch {}
-          try { Haptics.light(); } catch {}
+          try { SFX.friendOnline(); } catch { /* Intentionally ignored - non-critical */ }
+          try { Haptics.light(); } catch { /* Intentionally ignored - non-critical */ }
 
           // Show toast
           const preview = msg.message.length > 60 ? msg.message.slice(0, 57) + "…" : msg.message;

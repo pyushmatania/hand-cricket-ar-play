@@ -203,13 +203,13 @@ export default function ModeSelectDrawer({ open, onOpenChange }: ModeSelectDrawe
   }, [open]);
 
   const handlePlay = (formatId: string, overs?: number) => {
-    try { SFX.tap(); Haptics.heavy(); } catch {}
+    try { SFX.tap(); Haptics.heavy(); } catch { /* Intentionally ignored - non-critical */ }
     onOpenChange(false);
     navigate(`/game/tap`, { state: { format: formatId, overs } });
   };
 
   const handleNavigate = (id: string) => {
-    try { SFX.tap(); Haptics.medium(); } catch {}
+    try { SFX.tap(); Haptics.medium(); } catch { /* Intentionally ignored - non-critical */ }
     onOpenChange(false);
     const route = id === "tournament" ? "/game/tournament" : id === "ipl" ? "/game/ipl" : `/game/${id}`;
     navigate(route);
@@ -247,7 +247,7 @@ export default function ModeSelectDrawer({ open, onOpenChange }: ModeSelectDrawe
                     whileTap={{ scale: 0.95 }}
                     onClick={() => {
                       setSelectedFormat(mode.id);
-                      try { SFX.tap(); Haptics.medium(); } catch {}
+                      try { SFX.tap(); Haptics.medium(); } catch { /* Intentionally ignored - non-critical */ }
                     }}
                     className="text-left relative overflow-hidden"
                     style={{

@@ -56,10 +56,15 @@ export function useEngines() {
     engines.sound.setAmbientVolumeMaster(ambientVolume);
   }, [ambientVolume]);
 
+  // Sync commentary enabled (mute/unmute engine)
+  useEffect(() => {
+    engines.commentary.setMuted(!commentaryEnabled);
+  }, [commentaryEnabled]);
+
   // Sync commentary language (map 'both' → 'hinglish' for engine)
   useEffect(() => {
     const engineLang = commentaryLanguage === 'both' ? 'hinglish' : commentaryLanguage;
-    engines.commentary.setLanguage(engineLang as any);
+    engines.commentary.setLanguage(engineLang as 'english' | 'hindi' | 'hinglish');
   }, [commentaryLanguage]);
 
   // Sync crowd enabled (start/stop crowd engine)

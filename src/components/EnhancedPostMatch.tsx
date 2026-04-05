@@ -140,7 +140,7 @@ export default function EnhancedPostMatch({
     // Cascade rewards after delay
     const t = setTimeout(() => setShowRewards(true), 1200);
     return () => { stopMusic(); clearTimeout(t); };
-  }, []);
+  }, [isWin, isLoss, soundEnabled, crowdEnabled]);
 
   useEffect(() => {
     if (!voiceEnabled || !commentaryEnabled) return;
@@ -152,7 +152,7 @@ export default function EnhancedPostMatch({
       voiceId: (duo.find(c => c.name === l.commentatorId) || duo[0]).voiceId,
     }));
     speakDuoLines(ttsLines);
-  }, []);
+  }, [voiceEnabled, commentaryEnabled, duo, playerName, opponentName, result, playerScore, opponentScore]);
 
   const handleClose = () => {
     stopMusic();

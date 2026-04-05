@@ -498,7 +498,7 @@ export default function MatchHistoryPage() {
                                   <div className="flex items-center justify-between mb-2">
                                     <span className="text-[7px] text-muted-foreground font-game-display tracking-widest">BALL-BY-BALL</span>
                                     <motion.button whileTap={{ scale: 0.9, y: 1 }}
-                                      onClick={(e) => { e.stopPropagation(); isReplaying ? setReplayingMatch(null) : startReplay(m.id); }}
+                                      onClick={(e) => { e.stopPropagation(); if (isReplaying) { setReplayingMatch(null); } else { startReplay(m.id); } }}
                                       className="px-2.5 py-1 rounded-lg font-game-display text-[7px] tracking-wider flex items-center gap-1"
                                       style={{
                                         background: isReplaying ? "hsl(4 50% 20% / 0.3)" : "hsl(142 30% 18% / 0.3)",

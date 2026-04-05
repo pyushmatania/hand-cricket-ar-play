@@ -25,8 +25,9 @@ interface Props { onHome: () => void; }
 
 export default function IPLTournamentScreen({ onHome }: Props) {
   const location = useLocation();
-  const arenaImage = (location.state as any)?.arenaImage as string | undefined;
-  const arenaId = (location.state as any)?.arenaId as string | undefined;
+  const locState = location.state as Record<string, string> | null;
+  const arenaImage = locState?.arenaImage;
+  const arenaId = locState?.arenaId;
   const { soundEnabled, hapticsEnabled, commentaryVoice, tournamentCeremoniesEnabled } = useSettings();
   const cosmetics = useEquippedCosmetics();
   const { user } = useAuth();

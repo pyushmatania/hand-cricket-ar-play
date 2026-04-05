@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -61,60 +61,7 @@ export default function MatchInviteNotification() {
   const [, setTick] = useState(0);
   const prevInviteCountRef = useRef(0);
 
-  useEffect(() => {
-    if (!user) return;
-    loadPendingInvites();
-    const pollInterval = setInterval(() => loadPendingInvites(), 7000);
-
-    const channel = supabase
-      .channel("my-invites")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "match_invites", filter: `to_user_id=eq.${user.id}` },
-        () => loadPendingInvites()
-      )
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "match_invites", filter: `to_user_id=eq.${user.id}` },
-        () => loadPendingInvites()
-      )
-      .subscribe();
-
-    return () => { clearInterval(pollInterval); supabase.removeChannel(channel); };
-  }, [user]);
-
-  useEffect(() => {
-    if (invites.length > prevInviteCountRef.current && prevInviteCountRef.current >= 0) {
-      try { SFX.matchInvite(); } catch {}
-      try { Haptics.matchInvite(); } catch {}
-    }
-    prevInviteCountRef.current = invites.length;
-  }, [invites.length]);
-
-  useEffect(() => {
-    if (invites.length === 0) return;
-    const interval = setInterval(() => {
-      setTick((t) => t + 1);
-      setInvites((prev) => {
-        const alive = prev.filter((inv) => getTimeLeftFromInvite(inv) > 0);
-        const expired = prev.filter((inv) => getTimeLeftFromInvite(inv) <= 0);
-        expired.forEach((inv) => {
-          supabase
-            .from("match_invites")
-            .update({ status: "expired", cancelled_at: new Date().toISOString() } as any)
-            .eq("id", inv.id)
-            .eq("status", "pending")
-            .then(({ error }) => {
-              if (error) logPostgrestError("match invite auto-expire failed", error, { invite_id: inv.id });
-            });
-        });
-        return alive;
-      });
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [invites.length]);
-
-  const loadPendingInvites = async () => {
+  const loadPendingInvites = useCallback(async () => {
     if (!user) return;
     const { data, error } = await supabase
       .from("match_invites")
@@ -157,7 +104,60 @@ export default function MatchInviteNotification() {
       from_wins: profileMap[d.from_user_id]?.wins || 0,
       from_total_matches: profileMap[d.from_user_id]?.total_matches || 0,
     })));
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    loadPendingInvites();
+    const pollInterval = setInterval(() => loadPendingInvites(), 7000);
+
+    const channel = supabase
+      .channel("my-invites")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "match_invites", filter: `to_user_id=eq.${user.id}` },
+        () => loadPendingInvites()
+      )
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "match_invites", filter: `to_user_id=eq.${user.id}` },
+        () => loadPendingInvites()
+      )
+      .subscribe();
+
+    return () => { clearInterval(pollInterval); supabase.removeChannel(channel); };
+  }, [user, loadPendingInvites]);
+
+  useEffect(() => {
+    if (invites.length > prevInviteCountRef.current && prevInviteCountRef.current >= 0) {
+      try { SFX.matchInvite(); } catch { /* Intentionally ignored - non-critical */ }
+      try { Haptics.matchInvite(); } catch { /* Intentionally ignored - non-critical */ }
+    }
+    prevInviteCountRef.current = invites.length;
+  }, [invites.length]);
+
+  useEffect(() => {
+    if (invites.length === 0) return;
+    const interval = setInterval(() => {
+      setTick((t) => t + 1);
+      setInvites((prev) => {
+        const alive = prev.filter((inv) => getTimeLeftFromInvite(inv) > 0);
+        const expired = prev.filter((inv) => getTimeLeftFromInvite(inv) <= 0);
+        expired.forEach((inv) => {
+          supabase
+            .from("match_invites")
+            .update({ status: "expired", cancelled_at: new Date().toISOString() } as any)
+            .eq("id", inv.id)
+            .eq("status", "pending")
+            .then(({ error }) => {
+              if (error) logPostgrestError("match invite auto-expire failed", error, { invite_id: inv.id });
+            });
+        });
+        return alive;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [invites.length]);
 
   const acceptInvite = async (invite: Invite) => {
     if (!user) return;

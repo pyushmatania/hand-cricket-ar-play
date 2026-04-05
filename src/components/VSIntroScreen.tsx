@@ -29,9 +29,9 @@ export default function VSIntroScreen({
   const [stage, setStage] = useState<"enter" | "vs" | "flash" | "done">("enter");
 
   useEffect(() => {
-    try { SFX.ceremonyHorn(); } catch {}
+    try { SFX.ceremonyHorn(); } catch { /* Intentionally ignored - non-critical */ }
     const t1 = setTimeout(() => setStage("vs"), 800);
-    const t2 = setTimeout(() => { try { SFX.gameStart(); } catch {} setStage("flash"); }, 2400);
+    const t2 = setTimeout(() => { try { SFX.gameStart(); } catch { /* Intentionally ignored - non-critical */ } setStage("flash"); }, 2400);
     const t3 = setTimeout(() => { setStage("done"); onComplete(); }, 3400);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, [onComplete]);

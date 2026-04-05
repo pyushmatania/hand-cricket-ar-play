@@ -50,13 +50,19 @@ const initialMatchState = {
 export const useMatchStore = create<MatchState>((set) => ({
   ...initialMatchState,
   setMatch: (data) => set((s) => ({ ...s, ...data })),
-  addBallResult: (result) => set((s) => ({
-    ballHistory: [...s.ballHistory, result],
-    score: s.score + (result.isWicket ? 0 : result.runs),
-    wickets: s.wickets + (result.isWicket ? 1 : 0),
-    ball: (s.ball + 1) % 6,
-    over: (s.ball + 1) >= 6 ? s.over + 1 : s.over,
-  })),
+  addBallResult: (result) => set((s) => {
+    const isExtra = result.isWide || result.isNoBall;
+    // Wides and no-balls don't count as legal deliveries — don't advance ball/over
+    const nextBall = isExtra ? s.ball : (s.ball + 1) % 6;
+    const nextOver = isExtra ? s.over : ((s.ball + 1) >= 6 ? s.over + 1 : s.over);
+    return {
+      ballHistory: [...s.ballHistory, result],
+      score: s.score + (result.isWicket ? 0 : result.runs),
+      wickets: s.wickets + (result.isWicket ? 1 : 0),
+      ball: nextBall,
+      over: nextOver,
+    };
+  }),
   nextInnings: (target) => set((s) => ({
     innings: 2,
     over: 0,

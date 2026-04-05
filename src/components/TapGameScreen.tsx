@@ -28,9 +28,10 @@ interface TapGameScreenProps {
 
 export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const location = useLocation();
-  const arenaImage = (location.state as any)?.arenaImage as string | undefined;
-  const arenaId = (location.state as any)?.arenaId as string | undefined;
-  const themeId = (location.state as any)?.themeId as string | undefined;
+  const locState = location.state as Record<string, string> | null;
+  const arenaImage = locState?.arenaImage;
+  const arenaId = locState?.arenaId;
+  const themeId = locState?.themeId;
   const matchTheme = getThemeById(themeId || localStorage.getItem("selectedTheme") || "gully");
   const { game, startGame, playBall, resetGame } = useHandCricket();
   const { saveMatch } = useMatchSaver();
@@ -43,7 +44,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const [matchConfig, setMatchConfig] = useState<MatchConfig | null>(null);
   const [showOverSelector, setShowOverSelector] = useState(true);
   const [playerXP, setPlayerXP] = useState(0);
-  const [matchRewards, setMatchRewards] = useState<any>(null);
+  const [matchRewards, setMatchRewards] = useState<Record<string, unknown> | null>(null);
   const [matchWeather] = useState<Weather>(() => {
     const pool = matchTheme.weatherPool;
     const weatherId = pool.length ? pool[Math.floor(Math.random() * pool.length)] : 'clear';
@@ -96,7 +97,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
         }
       }
     }
-  }, [game.phase, game, saveMatch]);
+  }, [game.phase, game, saveMatch, soundEnabled, hapticsEnabled, crowdEnabled, tapCeremoniesEnabled]);
 
   const handleStart = (batFirst: boolean) => {
     setPendingBatFirst(batFirst);

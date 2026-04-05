@@ -40,8 +40,9 @@ interface Props { onHome: () => void; }
 
 export default function TournamentScreen({ onHome }: Props) {
   const location = useLocation();
-  const arenaImage = (location.state as any)?.arenaImage as string | undefined;
-  const arenaId = (location.state as any)?.arenaId as string | undefined;
+  const locState = location.state as Record<string, string> | null;
+  const arenaImage = locState?.arenaImage;
+  const arenaId = locState?.arenaId;
   const { soundEnabled, hapticsEnabled, commentaryVoice, tournamentCeremoniesEnabled } = useSettings();
   const cosmetics = useEquippedCosmetics();
   const { user } = useAuth();
@@ -82,7 +83,7 @@ export default function TournamentScreen({ onHome }: Props) {
     setPhase("bracket");
   };
 
-  useEffect(() => { startTournament(); }, []);
+  useEffect(() => { startTournament(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const startRound = () => {
     setPhase("config");
@@ -139,21 +140,21 @@ export default function TournamentScreen({ onHome }: Props) {
         if (rewards) setMatchRewards(rewards);
       });
       if (game.result === "win") { if (soundEnabled) SFX.win(); if (hapticsEnabled) Haptics.success(); }
-      else { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); }
+      else if (game.result === "loss") { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); }
       const newRounds = [...rounds];
-      newRounds[currentRound] = { ...newRounds[currentRound], result: game.result === "win" ? "win" : "loss", userScore: game.userScore, oppScore: game.aiScore };
+      newRounds[currentRound] = { ...newRounds[currentRound], result: game.result === "win" ? "win" : game.result === "draw" ? "draw" : "loss", userScore: game.userScore, oppScore: game.aiScore };
       setRounds(newRounds);
       if (!postMatchShownRef.current) {
         postMatchShownRef.current = true;
         if (tournamentCeremoniesEnabled) {
           setTimeout(() => setShowPostMatch(true), 1000);
         } else {
-          if (game.result !== "win") setEliminated(true);
+          if (game.result === "loss") setEliminated(true);
           setPhase("result");
         }
       }
     }
-  }, [game.phase]);
+  }, [game.phase, saveMatch, game, soundEnabled, hapticsEnabled, rounds, currentRound, tournamentCeremoniesEnabled]);
 
   const advanceRound = () => {
     if (currentRound < AI_OPPONENTS.length - 1) { setCurrentRound(currentRound + 1); setPhase("bracket"); }
@@ -399,7 +400,7 @@ export default function TournamentScreen({ onHome }: Props) {
           matchRewards={matchRewards}
           onComplete={() => {
             setShowPostMatch(false);
-            if (game.result !== "win") setEliminated(true);
+            if (game.result === "loss") setEliminated(true);
             setPhase("result");
           }}
         />

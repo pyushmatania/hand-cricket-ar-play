@@ -67,7 +67,7 @@ export default function KnockoutCupScreen({ onHome }: Props) {
         metadata: { bracketSize: 8 },
       }).then(id => setTournamentId(id));
     }
-  }, [user]);
+  }, [user, createTournament]);
 
   useEffect(() => {
     if (phase === "results" && finalPlacement && user && !rewardedRef.current) {
@@ -75,7 +75,7 @@ export default function KnockoutCupScreen({ onHome }: Props) {
       grantTournamentRewards(user.id, finalPlacement, "knockout").then(r => r && setReward(r));
       if (tournamentId) finishTournament(tournamentId, finalPlacement);
     }
-  }, [phase, finalPlacement, user, tournamentId]);
+  }, [phase, finalPlacement, user, tournamentId, finishTournament]);
 
   const ROUND_NAMES = ["⚔️ QUARTER-FINAL", "🔥 SEMI-FINAL", "🏆 FINAL"];
 
@@ -93,6 +93,27 @@ export default function KnockoutCupScreen({ onHome }: Props) {
     setTarget(0); setMatchResult(null); setLastBall(""); ballsRef.current = 0;
     setPhase("match");
   };
+
+  const finish = useCallback((result: "win" | "loss") => {
+    setMatchResult(result);
+    if (result === "win") { if (soundEnabled) SFX.win(); if (hapticsEnabled) Haptics.success(); }
+    else { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); }
+
+    // Persist fixture
+    if (tournamentId && user) {
+      saveFixture({
+        tournamentId,
+        roundNumber: round + 1,
+        matchIndex: round,
+        playerAId: user.id,
+        playerBId: null,
+        playerAScore: score,
+        playerBScore: oppScore,
+        winnerId: result === "win" ? user.id : null,
+        status: "completed",
+      });
+    }
+  }, [soundEnabled, hapticsEnabled, tournamentId, user, round, score, oppScore, saveFixture]);
 
   const playBall = useCallback((move: number) => {
     if (matchResult) return;
@@ -129,28 +150,7 @@ export default function KnockoutCupScreen({ onHome }: Props) {
       if (newOpp >= target) { finish("loss"); return; }
       if (newBalls >= MATCH_BALLS) finish("win");
     }
-  }, [innings, score, oppScore, target, matchResult, soundEnabled, hapticsEnabled]);
-
-  const finish = (result: "win" | "loss") => {
-    setMatchResult(result);
-    if (result === "win") { if (soundEnabled) SFX.win(); if (hapticsEnabled) Haptics.success(); }
-    else { if (soundEnabled) SFX.loss(); if (hapticsEnabled) Haptics.error(); }
-
-    // Persist fixture
-    if (tournamentId && user) {
-      saveFixture({
-        tournamentId,
-        roundNumber: round + 1,
-        matchIndex: round,
-        playerAId: user.id,
-        playerBId: null,
-        playerAScore: score,
-        playerBScore: oppScore,
-        winnerId: result === "win" ? user.id : null,
-        status: "completed",
-      });
-    }
-  };
+  }, [innings, score, oppScore, target, matchResult, soundEnabled, hapticsEnabled, finish]);
 
   const handleMatchDone = () => {
     if (!matchResult || !currentOpponent) return;
@@ -325,7 +325,7 @@ export default function KnockoutCupScreen({ onHome }: Props) {
             <motion.button whileTap={{ scale: 0.95 }} onClick={onHome}
               className="px-6 py-3 rounded-xl font-game-display text-[11px] tracking-wider"
               style={{ background: "hsl(25 15% 12%)", border: "1.5px solid hsl(25 15% 20%)", borderBottom: "4px solid hsl(25 12% 8%)", color: "hsl(25 30% 70%)" }}>HOME</motion.button>
-            <motion.button whileTap={{ scale: 0.95 }} onClick={() => window.location.reload()}
+            <motion.button whileTap={{ scale: 0.95 }} onClick={onHome}
               className="px-6 py-3 rounded-xl font-game-display text-[11px] tracking-wider"
               style={{ background: "linear-gradient(180deg, hsl(142 71% 50%) 0%, hsl(142 65% 38%) 100%)", border: "1.5px solid hsl(142 60% 55% / 0.4)", borderBottom: "4px solid hsl(142 55% 25%)", color: "hsl(142 80% 98%)" }}>PLAY AGAIN</motion.button>
           </div>
