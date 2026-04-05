@@ -18,6 +18,7 @@ import { getRankTier, getNextTier, calculateRankPoints } from "@/lib/rankTiers";
 import CosmeticsCarousel from "@/components/CosmeticsCarousel";
 import { useTournamentPersistence } from "@/hooks/useTournamentPersistence";
 import { getRewardForPlacement } from "@/lib/tournamentRewards";
+import { ACHIEVEMENTS, TIER_STYLES, type Achievement, type AchievementTier } from "@/lib/achievements";
 
 /* ─── Types ─── */
 interface BallRecord {
@@ -56,13 +57,11 @@ function parseMatchBalls(balls: BallRecord[] | null, _isBattingFirst: boolean) {
     } else if (r < 0) {
       if (absR === 6) aiSixes++;
       else if (absR === 4) aiFours++;
-      else if (absR === 0) aiDots++;
+      else aiDots++;
     } else { dots++; }
   });
   return { sixes, fours, threes, twos, singles, dots, wickets, aiSixes, aiFours, aiDots, totalBalls: balls.length };
 }
-
-import { ACHIEVEMENTS, TIER_STYLES, type Achievement, type AchievementTier } from "@/lib/achievements";
 
 interface ProfileData {
   display_name: string;

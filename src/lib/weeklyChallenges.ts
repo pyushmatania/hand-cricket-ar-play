@@ -28,10 +28,11 @@ export function getWeeklyChallenges(): WeeklyChallenge[] {
   
   // Pick 3 challenges based on week number (deterministic)
   const shuffled = [...CHALLENGE_TEMPLATES];
-  // Simple seed-based shuffle
-  const seed = weekNum * 7919;
+  // Deterministic seed-based shuffle (Fisher-Yates with seeded PRNG)
+  let s = weekNum * 7919;
+  const nextRand = () => { s = (s * 1103515245 + 12345) & 0x7fffffff; return s; };
   for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = ((seed * (i + 1)) % (i + 1));
+    const j = nextRand() % (i + 1);
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   

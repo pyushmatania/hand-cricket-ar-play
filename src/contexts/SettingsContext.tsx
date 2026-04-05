@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react";
 
 export type VoiceEngine = "auto" | "elevenlabs" | "system";
-export type CommentaryLanguage = "english" | "hindi" | "both";
+export type CommentaryLanguage = "english" | "hindi" | "both" | "hinglish";
 
 interface Settings {
   soundEnabled: boolean;

@@ -56,17 +56,11 @@ export default function HomePage() {
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [showStumpAnim, setShowStumpAnim] = useState(false);
   const [pendingMode, setPendingMode] = useState<string | null>(null);
-  const [tick, setTick] = useState(0);
   const [revealData, setRevealData] = useState<{ name: string; emoji: string; rarity: string } | null>(null);
 
   const { data: chests } = useUserChests();
   const startUnlock = useStartUnlock();
   const collectChest = useCollectChest();
-
-  useEffect(() => {
-    const interval = setInterval(() => setTick(t => t + 1), 1000);
-    return () => clearInterval(interval);
-  }, []);
 
   useEffect(() => {
     const seen = localStorage.getItem("hc_onboarding_done");
@@ -209,7 +203,7 @@ export default function HomePage() {
               style={{ background: "linear-gradient(180deg, hsl(25 18% 18%) 0%, hsl(25 15% 13%) 100%)", border: "1.5px solid hsl(280 40% 40%)", boxShadow: "0 2px 0 hsl(25 20% 8%)" }}
             >
               <span className="text-sm">💎</span>
-              <span className="font-game-score text-[11px] font-bold text-foreground">45</span>
+              <span className="font-game-score text-[11px] font-bold text-foreground">0</span>
               <span className="text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center" style={{ background: "hsl(142 71% 45%)", color: "hsl(25 40% 8%)" }}>+</span>
             </div>
           </div>
