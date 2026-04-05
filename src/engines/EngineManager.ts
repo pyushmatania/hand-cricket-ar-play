@@ -57,8 +57,10 @@ class EngineManager {
   initialize(): void {
     if (this._initialized) return;
     this._initialized = true;
+    // Clear any stale listeners before wiring to prevent duplicates
+    this.event.destroy();
     this.wireEngines();
-    this.crowd.start();
+    // Don't start crowd here — useEngines syncs crowdEnabled separately
 
     if (import.meta.env.DEV) {
       this.event.onAny((payload, event) => {
@@ -198,6 +200,7 @@ class EngineManager {
 
     // ── Crowd Engine listeners ──
     const crowdEvents: EventType[] = [
+      'MATCH_START',
       'DEFENSE_SCORED', 'RUNS_SCORED', 'BOUNDARY_FOUR', 'BOUNDARY_SIX',
       'WICKET_BOWLED', 'WICKET_DEFENSE', 'WICKET_CAUGHT', 'WICKET_LBW',
       'WICKET_RUN_OUT', 'WICKET_STUMPED', 'WICKET_CAUGHT_BEHIND',

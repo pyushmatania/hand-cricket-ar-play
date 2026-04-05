@@ -43,6 +43,8 @@ export class CrowdEngine {
   };
 
   start(): void {
+    // Prevent double-start creating duplicate intervals
+    if (this.decayInterval) this.stop();
     // Set initial mood based on theme's base noise
     this.mood = this.themeConfig.baseNoise * 0.4;
     // Mood decays naturally — crowd loses interest over time
@@ -132,6 +134,9 @@ export class CrowdEngine {
     } else if (this.mood < 50) {
       this.soundEngine.setAmbient('/sounds/ambient/crowd_moderate_loop.mp3');
     } else if (this.mood < 80) {
+      this.soundEngine.setAmbient('/sounds/ambient/crowd_loud_loop.mp3');
+    } else {
+      // Pandemonium (mood >= 80) — use loud loop at full volume
       this.soundEngine.setAmbient('/sounds/ambient/crowd_loud_loop.mp3');
     }
   }
