@@ -168,9 +168,10 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
     if (!friend || !user) return;
     setTab("overview");
     setLoading(true);
-    Promise.all([loadMyProfile(), loadH2H(), loadMatchStats(), loadRecords(), loadFullFriendProfile()])
+    Promise.all([loadMyProfileFn(), loadH2HFn(), loadMatchStatsFn(), loadRecordsFn(), loadFullFriendProfileFn()])
       .finally(() => setLoading(false));
-  }, [friend, user, loadMyProfile, loadH2H, loadMatchStats, loadRecords, loadFullFriendProfile]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [friend, user]);
 
   const loadFullFriendProfile = useCallback(async () => {
     if (!friend) return;

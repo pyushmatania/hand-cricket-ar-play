@@ -44,7 +44,7 @@ export default function TapGameScreen({ onHome }: TapGameScreenProps) {
   const [matchConfig, setMatchConfig] = useState<MatchConfig | null>(null);
   const [showOverSelector, setShowOverSelector] = useState(true);
   const [playerXP, setPlayerXP] = useState(0);
-  const [matchRewards, setMatchRewards] = useState<Record<string, unknown> | null>(null);
+  const [matchRewards, setMatchRewards] = useState<MatchRewardsResult | null>(null);
   const [matchWeather] = useState<Weather>(() => {
     const pool = matchTheme.weatherPool;
     const weatherId = pool.length ? pool[Math.floor(Math.random() * pool.length)] : 'clear';
