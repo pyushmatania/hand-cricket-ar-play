@@ -63,131 +63,129 @@ function CRIcon({ type, isActive, isCenter }: { type: string; isActive: boolean;
     position: "relative",
   };
 
-  /* Metallic gradient overlays for each icon type */
+  const glowColor: Record<string, string> = {
+    chest: "rgba(255,180,0,0.6)",
+    card: "rgba(168,85,247,0.6)",
+    swords: "rgba(255,100,30,0.6)",
+    shield: "rgba(59,130,246,0.6)",
+    trophy: "rgba(255,215,0,0.6)",
+  };
+
   const icons: Record<string, React.ReactNode> = {
     chest: (
       <div style={iconStyle}>
-        {/* Treasure chest body */}
         <div style={{
           width: size * 0.85,
           height: size * 0.65,
           borderRadius: "4px 4px 6px 6px",
-          background: "linear-gradient(180deg, #8B6914 0%, #6B4E0A 40%, #4A3508 100%)",
-          border: "2px solid #3A2805",
-          boxShadow: "inset 0 2px 0 rgba(255,220,100,0.3), inset 0 -2px 0 rgba(0,0,0,0.4), 0 2px 4px rgba(0,0,0,0.5)",
+          background: "linear-gradient(180deg, #F5A623 0%, #D4891A 30%, #A86B14 60%, #7A4E0C 100%)",
+          border: "2px solid #5A3A08",
+          boxShadow: `inset 0 3px 0 rgba(255,230,140,0.5), inset 0 -3px 0 rgba(0,0,0,0.4), 0 0 12px rgba(255,180,0,${isActive ? 0.5 : 0.15}), 0 3px 6px rgba(0,0,0,0.5)`,
           position: "relative",
           overflow: "hidden",
         }}>
-          {/* Chest lid */}
           <div style={{
-            position: "absolute",
-            top: 0, left: 0, right: 0,
-            height: "40%",
-            background: "linear-gradient(180deg, #A07818 0%, #7A5A10 100%)",
-            borderBottom: "2px solid #3A2805",
-            borderRadius: "3px 3px 0 0",
+            position: "absolute", top: 0, left: 0, right: 0, height: "40%",
+            background: "linear-gradient(180deg, #FFD04A 0%, #E8A020 100%)",
+            borderBottom: "2px solid #5A3A08", borderRadius: "3px 3px 0 0",
           }} />
-          {/* Metal clasp */}
           <div style={{
-            position: "absolute",
-            top: "32%", left: "50%", transform: "translateX(-50%)",
-            width: 10, height: 10,
-            borderRadius: "50%",
-            background: "radial-gradient(circle at 35% 35%, #CCC, #888 50%, #555)",
-            border: "1px solid #333",
-            boxShadow: "0 1px 2px rgba(0,0,0,0.5)",
-            zIndex: 1,
+            position: "absolute", top: "32%", left: "50%", transform: "translateX(-50%)",
+            width: 10, height: 10, borderRadius: "50%",
+            background: "radial-gradient(circle at 35% 35%, #FFF, #CCC 50%, #999)",
+            border: "1px solid #666", boxShadow: "0 1px 3px rgba(0,0,0,0.6)", zIndex: 1,
           }} />
-          {/* Gold coins peeking */}
+          {/* Gems spilling out */}
           <div style={{
-            position: "absolute",
-            bottom: 3, left: 5,
-            width: 8, height: 8,
-            borderRadius: "50%",
-            background: "radial-gradient(circle at 35% 35%, #FFD700, #B8860B)",
-            boxShadow: "0 0 3px rgba(255,215,0,0.5)",
+            position: "absolute", bottom: 2, left: 4,
+            width: 8, height: 8, borderRadius: "50%",
+            background: "radial-gradient(circle at 30% 30%, #FFE74A, #FFD700 60%, #DAA520)",
+            boxShadow: "0 0 6px rgba(255,215,0,0.8)",
+          }} />
+          <div style={{
+            position: "absolute", bottom: 4, left: 13,
+            width: 6, height: 6, borderRadius: "2px", transform: "rotate(45deg)",
+            background: "radial-gradient(circle at 30% 30%, #FF4444, #CC0000)",
+            boxShadow: "0 0 4px rgba(255,50,50,0.7)",
+          }} />
+          <div style={{
+            position: "absolute", bottom: 3, right: 5,
+            width: 7, height: 7, borderRadius: "2px", transform: "rotate(45deg)",
+            background: "radial-gradient(circle at 30% 30%, #44FF88, #00CC44)",
+            boxShadow: "0 0 4px rgba(50,255,100,0.6)",
           }} />
         </div>
       </div>
     ),
     card: (
       <div style={iconStyle}>
-        {/* Framed card */}
         <div style={{
           width: size * 0.65,
           height: size * 0.85,
-          borderRadius: "4px",
-          background: "linear-gradient(135deg, #7E22CE 0%, #5B21B6 50%, #4C1D95 100%)",
-          border: "3px solid #8B6914",
-          boxShadow: "inset 0 2px 0 rgba(255,255,255,0.2), inset 0 -2px 0 rgba(0,0,0,0.3), 0 3px 6px rgba(0,0,0,0.5)",
+          borderRadius: "5px",
+          background: "linear-gradient(135deg, #A855F7 0%, #8B5CF6 30%, #7C3AED 60%, #6D28D9 100%)",
+          border: "3px solid #F5A623",
+          boxShadow: `inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.3), 0 0 14px rgba(168,85,247,${isActive ? 0.5 : 0.15}), 0 3px 6px rgba(0,0,0,0.5)`,
           position: "relative",
           overflow: "hidden",
         }}>
-          {/* Gold frame inner */}
           <div style={{
-            position: "absolute",
-            inset: 3,
-            border: "1.5px solid rgba(255,215,0,0.5)",
-            borderRadius: "2px",
+            position: "absolute", inset: 3,
+            border: "1.5px solid rgba(255,215,0,0.6)", borderRadius: "2px",
           }} />
-          {/* Star/diamond center */}
+          {/* Glowing center diamond */}
           <div style={{
-            position: "absolute",
-            top: "50%", left: "50%",
+            position: "absolute", top: "50%", left: "50%",
             transform: "translate(-50%, -50%) rotate(45deg)",
-            width: 10, height: 10,
-            background: "linear-gradient(135deg, #FFD700, #FFA500)",
-            boxShadow: "0 0 6px rgba(255,215,0,0.6)",
+            width: 11, height: 11,
+            background: "linear-gradient(135deg, #FFD700, #FF8C00)",
+            boxShadow: "0 0 10px rgba(255,215,0,0.8), 0 0 20px rgba(255,140,0,0.4)",
+          }} />
+          {/* Top sparkle */}
+          <div style={{
+            position: "absolute", top: 4, right: 4,
+            width: 5, height: 5, borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(255,255,255,0.9), transparent)",
           }} />
         </div>
       </div>
     ),
     swords: (
       <div style={{ ...iconStyle, width: size, height: size }}>
-        {/* Crossed swords — metallic */}
-        <svg viewBox="0 0 48 48" width={size} height={size} style={{ filter: "drop-shadow(0 2px 3px rgba(0,0,0,0.6))" }}>
-          {/* Left sword */}
+        <svg viewBox="0 0 48 48" width={size} height={size} style={{ filter: `drop-shadow(0 0 ${isActive ? 8 : 3}px rgba(255,100,30,${isActive ? 0.7 : 0.3})) drop-shadow(0 2px 3px rgba(0,0,0,0.6))` }}>
           <g transform="rotate(-45, 24, 24)">
-            {/* Blade */}
-            <rect x="22" y="4" width="4" height="28" rx="1"
-              fill="url(#bladeGrad)" stroke="#555" strokeWidth="0.5" />
-            {/* Guard */}
-            <rect x="16" y="30" width="16" height="4" rx="2"
-              fill="url(#guardGrad)" stroke="#4A3508" strokeWidth="0.5" />
-            {/* Handle */}
-            <rect x="21" y="34" width="6" height="10" rx="1"
-              fill="#8B2500" stroke="#5A1800" strokeWidth="0.5" />
-            {/* Pommel */}
-            <circle cx="24" cy="46" r="3" fill="url(#pommelGrad)" stroke="#333" strokeWidth="0.5" />
+            <rect x="22" y="4" width="4" height="28" rx="1" fill="url(#bladeGradV2)" stroke="#AAA" strokeWidth="0.5" />
+            <rect x="16" y="30" width="16" height="4" rx="2" fill="url(#guardGradV2)" stroke="#5A3A08" strokeWidth="0.5" />
+            <rect x="21" y="34" width="6" height="10" rx="1" fill="#CC3300" stroke="#8B1A00" strokeWidth="0.5" />
+            <circle cx="24" cy="46" r="3" fill="url(#pommelGradV2)" stroke="#5A3A08" strokeWidth="0.5" />
           </g>
-          {/* Right sword (mirrored) */}
           <g transform="rotate(45, 24, 24)">
-            <rect x="22" y="4" width="4" height="28" rx="1"
-              fill="url(#bladeGrad2)" stroke="#555" strokeWidth="0.5" />
-            <rect x="16" y="30" width="16" height="4" rx="2"
-              fill="url(#guardGrad)" stroke="#4A3508" strokeWidth="0.5" />
-            <rect x="21" y="34" width="6" height="10" rx="1"
-              fill="#1A4A8B" stroke="#0A2A5A" strokeWidth="0.5" />
-            <circle cx="24" cy="46" r="3" fill="url(#pommelGrad)" stroke="#333" strokeWidth="0.5" />
+            <rect x="22" y="4" width="4" height="28" rx="1" fill="url(#bladeGrad2V2)" stroke="#AAA" strokeWidth="0.5" />
+            <rect x="16" y="30" width="16" height="4" rx="2" fill="url(#guardGradV2)" stroke="#5A3A08" strokeWidth="0.5" />
+            <rect x="21" y="34" width="6" height="10" rx="1" fill="#2563EB" stroke="#1E3A8A" strokeWidth="0.5" />
+            <circle cx="24" cy="46" r="3" fill="url(#pommelGradV2)" stroke="#5A3A08" strokeWidth="0.5" />
           </g>
+          {/* Center clash spark */}
+          <circle cx="24" cy="24" r="4" fill="rgba(255,200,50,0.9)" style={{ filter: "blur(1px)" }} />
+          <circle cx="24" cy="24" r="2" fill="white" opacity="0.8" />
           <defs>
-            <linearGradient id="bladeGrad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#E8E8EC" />
-              <stop offset="40%" stopColor="#C8C8D0" />
-              <stop offset="100%" stopColor="#A0A0AA" />
+            <linearGradient id="bladeGradV2" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#F8F8FF" />
+              <stop offset="40%" stopColor="#E0E0EA" />
+              <stop offset="100%" stopColor="#B8B8C8" />
             </linearGradient>
-            <linearGradient id="bladeGrad2" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#D8D8E0" />
-              <stop offset="50%" stopColor="#B8B8C4" />
-              <stop offset="100%" stopColor="#9898A4" />
+            <linearGradient id="bladeGrad2V2" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#E8E8F5" />
+              <stop offset="50%" stopColor="#D0D0E0" />
+              <stop offset="100%" stopColor="#A8A8BC" />
             </linearGradient>
-            <linearGradient id="guardGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#C8A020" />
-              <stop offset="100%" stopColor="#8B6914" />
-            </linearGradient>
-            <linearGradient id="pommelGrad" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient id="guardGradV2" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#FFD700" />
               <stop offset="100%" stopColor="#B8860B" />
+            </linearGradient>
+            <linearGradient id="pommelGradV2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#FFE44A" />
+              <stop offset="100%" stopColor="#DAA520" />
             </linearGradient>
           </defs>
         </svg>
@@ -195,103 +193,103 @@ function CRIcon({ type, isActive, isCenter }: { type: string; isActive: boolean;
     ),
     shield: (
       <div style={iconStyle}>
-        {/* Shield with clan emblem */}
         <div style={{
           width: size * 0.78,
           height: size * 0.9,
-          background: "linear-gradient(180deg, #2563EB 0%, #1D4ED8 40%, #1E3A8A 100%)",
+          background: "linear-gradient(180deg, #3B82F6 0%, #2563EB 35%, #1D4ED8 70%, #1E40AF 100%)",
           clipPath: "polygon(50% 0%, 95% 15%, 95% 60%, 50% 100%, 5% 60%, 5% 15%)",
-          boxShadow: "0 3px 6px rgba(0,0,0,0.5)",
+          boxShadow: `0 0 14px rgba(59,130,246,${isActive ? 0.5 : 0.15}), 0 3px 6px rgba(0,0,0,0.5)`,
           position: "relative",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          filter: `drop-shadow(0 0 ${isActive ? 8 : 2}px rgba(59,130,246,${isActive ? 0.5 : 0.2}))`,
         }}>
-          {/* Inner border */}
+          {/* Gold rim effect */}
           <div style={{
-            width: "80%",
-            height: "80%",
-            background: "linear-gradient(180deg, #3B82F6 0%, #2563EB 100%)",
+            position: "absolute", inset: 0,
+            background: "linear-gradient(180deg, rgba(255,215,0,0.25) 0%, transparent 30%)",
+            clipPath: "polygon(50% 0%, 95% 15%, 95% 60%, 50% 100%, 5% 60%, 5% 15%)",
+          }} />
+          <div style={{
+            width: "75%", height: "75%",
+            background: "linear-gradient(180deg, #60A5FA 0%, #3B82F6 50%, #2563EB 100%)",
             clipPath: "polygon(50% 5%, 90% 18%, 90% 58%, 50% 95%, 10% 58%, 10% 18%)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            boxShadow: "inset 0 2px 4px rgba(255,255,255,0.3)",
           }}>
-            {/* People silhouette */}
-            <span style={{ fontSize: size * 0.35, filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.3))" }}>👥</span>
+            {/* Crossed swords emblem */}
+            <span style={{ fontSize: size * 0.3, filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.5))" }}>⚔️</span>
           </div>
         </div>
       </div>
     ),
     trophy: (
       <div style={iconStyle}>
-        {/* Gold trophy */}
-        <div style={{ position: "relative", width: size * 0.8, height: size * 0.9, display: "flex", flexDirection: "column", alignItems: "center" }}>
+        <div style={{
+          position: "relative", width: size * 0.8, height: size * 0.9,
+          display: "flex", flexDirection: "column", alignItems: "center",
+          filter: `drop-shadow(0 0 ${isActive ? 8 : 2}px rgba(255,215,0,${isActive ? 0.5 : 0.15}))`,
+        }}>
           {/* Cup */}
           <div style={{
-            width: "100%",
-            height: "60%",
-            background: "linear-gradient(180deg, #FFD700 0%, #DAA520 30%, #B8860B 60%, #8B6914 100%)",
+            width: "100%", height: "60%",
+            background: "linear-gradient(180deg, #FFE44A 0%, #FFD700 20%, #DAA520 50%, #B8860B 80%, #8B6914 100%)",
             borderRadius: "4px 4px 30% 30%",
             border: "2px solid #8B6914",
-            boxShadow: "inset 0 3px 0 rgba(255,255,200,0.4), inset 0 -3px 0 rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.4)",
+            boxShadow: `inset 0 4px 0 rgba(255,255,200,0.5), inset 0 -3px 0 rgba(0,0,0,0.3), 0 0 12px rgba(255,215,0,${isActive ? 0.4 : 0.1}), 0 2px 4px rgba(0,0,0,0.4)`,
             position: "relative",
           }}>
+            {/* Star emblem */}
+            <div style={{
+              position: "absolute", top: "40%", left: "50%", transform: "translate(-50%, -50%)",
+              fontSize: 10, filter: "drop-shadow(0 0 3px rgba(255,100,0,0.6))",
+            }}>⭐</div>
             {/* Left handle */}
             <div style={{
-              position: "absolute",
-              left: -6, top: 4,
-              width: 8, height: 14,
-              borderRadius: "50%",
-              border: "2.5px solid #B8860B",
-              borderRight: "none",
-              background: "transparent",
+              position: "absolute", left: -6, top: 4, width: 8, height: 14,
+              borderRadius: "50%", border: "2.5px solid #DAA520", borderRight: "none",
             }} />
             {/* Right handle */}
             <div style={{
-              position: "absolute",
-              right: -6, top: 4,
-              width: 8, height: 14,
-              borderRadius: "50%",
-              border: "2.5px solid #B8860B",
-              borderLeft: "none",
-              background: "transparent",
+              position: "absolute", right: -6, top: 4, width: 8, height: 14,
+              borderRadius: "50%", border: "2.5px solid #DAA520", borderLeft: "none",
             }} />
           </div>
-          {/* Stem */}
           <div style={{
             width: 6, height: "15%",
-            background: "linear-gradient(180deg, #DAA520, #8B6914)",
+            background: "linear-gradient(180deg, #FFD700, #B8860B)",
           }} />
-          {/* Base */}
           <div style={{
             width: "70%", height: "15%",
-            background: "linear-gradient(180deg, #B8860B, #6B4E0A)",
-            borderRadius: "2px",
-            border: "1px solid #4A3508",
+            background: "linear-gradient(180deg, #DAA520, #8B6914)",
+            borderRadius: "2px", border: "1px solid #5A3A08",
           }} />
-          {/* Laurel leaf */}
-          <span style={{
-            position: "absolute",
-            bottom: 2,
-            left: -2,
-            fontSize: 10,
-            transform: "scaleX(-1)",
-          }}>🌿</span>
-          <span style={{
-            position: "absolute",
-            bottom: 2,
-            right: -2,
-            fontSize: 10,
-          }}>🌿</span>
+          {/* Laurels */}
+          <span style={{ position: "absolute", bottom: 1, left: -3, fontSize: 11, transform: "scaleX(-1)" }}>🌿</span>
+          <span style={{ position: "absolute", bottom: 1, right: -3, fontSize: 11 }}>🌿</span>
         </div>
       </div>
     ),
   };
 
   return (
-    <div className={cn("cr-tab-icon", !isActive && "inactive", isCenter && "center")}>
+    <div className={cn("cr-tab-icon", !isActive && "inactive", isCenter && "center")} style={{ position: "relative" }}>
       {icons[type] || <span>{type}</span>}
+      {/* Colored underglow */}
+      {isActive && (
+        <div style={{
+          position: "absolute",
+          bottom: -4,
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: isCenter ? 50 : 34,
+          height: 8,
+          background: `radial-gradient(ellipse, ${glowColor[type] || "rgba(255,200,80,0.5)"}, transparent)`,
+          filter: "blur(3px)",
+          pointerEvents: "none",
+        }} />
+      )}
     </div>
   );
 }
