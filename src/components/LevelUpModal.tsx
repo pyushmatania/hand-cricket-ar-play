@@ -118,7 +118,7 @@ export default function LevelUpModal({ rewards, onClose }: LevelUpModalProps) {
                 transition={{ delay: 0.2 }}
                 className="mb-4"
               >
-                <span className="font-game-display text-[8px] tracking-[0.3em] text-muted-foreground block mb-3">MATCH REWARDS</span>
+                <span className="font-display text-[8px] tracking-[0.3em] text-muted-foreground block mb-3">MATCH REWARDS</span>
                 <div className="flex items-center justify-center gap-6">
                   <motion.div
                     initial={{ scale: 0 }}
@@ -131,11 +131,11 @@ export default function LevelUpModal({ rewards, onClose }: LevelUpModalProps) {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.5 }}
-                      className="font-game-display text-xl font-black text-game-blue block"
+                      className="font-display text-xl font-black text-game-blue block"
                     >
                       +{rewards.xpEarned}
                     </motion.span>
-                    <span className="text-[7px] text-muted-foreground font-game-display tracking-wider">XP</span>
+                    <span className="text-[7px] text-muted-foreground font-display tracking-wider">XP</span>
                   </motion.div>
                   <motion.div
                     initial={{ scale: 0 }}
@@ -148,11 +148,11 @@ export default function LevelUpModal({ rewards, onClose }: LevelUpModalProps) {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.6 }}
-                      className="font-game-display text-xl font-black text-game-gold block"
+                      className="font-display text-xl font-black text-game-gold block"
                     >
                       +{rewards.coinsEarned}
                     </motion.span>
-                    <span className="text-[7px] text-muted-foreground font-game-display tracking-wider">COINS</span>
+                    <span className="text-[7px] text-muted-foreground font-display tracking-wider">COINS</span>
                   </motion.div>
                 </div>
                 {rewards.streakBonus && (
@@ -163,7 +163,7 @@ export default function LevelUpModal({ rewards, onClose }: LevelUpModalProps) {
                     className="mt-2 inline-flex items-center gap-1 px-3 py-1 rounded-full bg-game-orange/15 border border-game-orange/25"
                   >
                     <span className="text-xs">🔥</span>
-                    <span className="font-game-display text-[8px] text-game-orange tracking-wider">STREAK BONUS!</span>
+                    <span className="font-display text-[8px] text-game-orange tracking-wider">STREAK BONUS!</span>
                   </motion.div>
                 )}
               </motion.div>
@@ -184,9 +184,9 @@ export default function LevelUpModal({ rewards, onClose }: LevelUpModalProps) {
                       >
                         <span className="text-5xl block mb-2">🎖️</span>
                       </motion.div>
-                      <span className="font-game-display text-[8px] tracking-[0.3em] text-game-blue/60 block mb-1">LEVEL UP!</span>
+                      <span className="font-display text-[8px] tracking-[0.3em] text-game-blue/60 block mb-1">LEVEL UP!</span>
                       <div className="flex items-center justify-center gap-3">
-                        <span className="font-game-display text-lg text-muted-foreground">{rewards.oldLevel}</span>
+                        <span className="font-display text-lg text-muted-foreground">{rewards.oldLevel}</span>
                         <motion.span
                           animate={{ scale: [1, 1.3, 1] }}
                           transition={{ duration: 0.5, repeat: 2 }}
@@ -195,7 +195,7 @@ export default function LevelUpModal({ rewards, onClose }: LevelUpModalProps) {
                         <motion.span
                           animate={{ scale: [1, 1.15, 1] }}
                           transition={{ duration: 1.5, repeat: Infinity }}
-                          className="font-game-display text-3xl font-black text-game-blue"
+                          className="font-display text-3xl font-black text-game-blue"
                           style={{ textShadow: "0 0 20px hsl(207 90% 54% / 0.5)" }}
                         >
                           {rewards.newLevel}
@@ -225,21 +225,21 @@ export default function LevelUpModal({ rewards, onClose }: LevelUpModalProps) {
                       >
                         <span className="text-6xl block mb-2">{newRankTier.emoji}</span>
                       </motion.div>
-                      <span className="font-game-display text-[8px] tracking-[0.3em] text-game-gold/60 block mb-1">RANK UP!</span>
+                      <span className="font-display text-[8px] tracking-[0.3em] text-game-gold/60 block mb-1">RANK UP!</span>
                       <motion.span
                         animate={{ scale: [1, 1.08, 1] }}
                         transition={{ duration: 2, repeat: Infinity }}
-                        className={`font-game-display text-2xl font-black ${newRankTier.color} block`}
+                        className={`font-display text-2xl font-black ${newRankTier.color} block`}
                         style={{ textShadow: "0 0 25px currentColor" }}
                       >
                         {newRankTier.name.toUpperCase()}
                       </motion.span>
                       <div className="mt-2 flex items-center justify-center gap-1">
                         <span className="text-xs">🪙</span>
-                        <span className="font-game-display text-[10px] text-game-gold">+200 BONUS</span>
+                        <span className="font-display text-[10px] text-game-gold">+200 BONUS</span>
                         <span className="mx-1 text-muted-foreground">·</span>
                         <span className="text-xs">⚡</span>
-                        <span className="font-game-display text-[10px] text-game-blue">+100 XP</span>
+                        <span className="font-display text-[10px] text-game-blue">+100 XP</span>
                       </div>
                     </div>
                   </motion.div>

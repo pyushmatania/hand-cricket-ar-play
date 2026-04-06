@@ -45,7 +45,7 @@ export default function ChestReveal({ itemName, itemEmoji, rarity, onComplete }:
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[60] flex items-center justify-center"
-      style={{ background: "linear-gradient(180deg, hsl(25 30% 4% / 0.97) 0%, hsl(222 40% 3% / 0.98) 100%)" }}
+      style={{ background: "linear-gradient(180deg, hsl(220 18% 4% / 0.97) 0%, hsl(222 40% 3% / 0.98) 100%)" }}
     >
       {/* Radial burst */}
       {phase !== "shake" && (
@@ -162,12 +162,12 @@ export default function ChestReveal({ itemName, itemEmoji, rarity, onComplete }:
               transition={{ delay: 0.3 }}
               className="inline-block px-6 py-2 rounded-xl"
               style={{
-                background: "linear-gradient(180deg, hsl(28 25% 18%) 0%, hsl(25 20% 12%) 100%)",
+                background: "linear-gradient(180deg, hsl(220 15% 14%) 0%, hsl(220 12% 9%) 100%)",
                 border: `2px solid ${chest.borderColor}`,
-                boxShadow: `0 4px 0 hsl(25 20% 6%), 0 0 20px ${chest.glowColor}`,
+                boxShadow: `0 4px 0 hsl(220 15% 5%), 0 0 20px ${chest.glowColor}`,
               }}
             >
-              <p className="font-game-title text-2xl text-foreground" style={{ textShadow: "0 2px 0 hsl(25 30% 8%)" }}>
+              <p className="font-display text-2xl text-foreground" style={{ textShadow: "0 2px 0 hsl(220 18% 7%)" }}>
                 {itemName}
               </p>
             </motion.div>
@@ -176,7 +176,7 @@ export default function ChestReveal({ itemName, itemEmoji, rarity, onComplete }:
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="font-game-display text-xs tracking-[0.3em] mt-3"
+              className="font-display text-xs tracking-[0.3em] mt-3"
               style={{ color: chest.color, textShadow: `0 0 10px ${chest.glowColor}` }}
             >
               {rarity.toUpperCase()}

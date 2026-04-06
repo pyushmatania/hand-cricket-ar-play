@@ -208,7 +208,7 @@ function TierCard({
           background: reward.milestone
             ? "linear-gradient(180deg, hsl(43 60% 22%), hsl(43 50% 14%))"
             : "linear-gradient(180deg, hsl(220 12% 10%), hsl(220 12% 8%))",
-          borderRight: "1px solid hsl(25 18% 18%)",
+          borderRight: "1px solid hsl(220 15% 14%)",
         }}
       >
         <span className="font-score text-lg font-black" style={{
@@ -220,7 +220,7 @@ function TierCard({
       </div>
 
       {/* Free reward */}
-      <div className="flex-1 flex items-center gap-2 px-3 py-3" style={{ borderRight: "1px solid hsl(25 18% 18%)" }}>
+      <div className="flex-1 flex items-center gap-2 px-3 py-3" style={{ borderRight: "1px solid hsl(220 15% 14%)" }}>
         <span className="text-2xl">{reward.free.icon}</span>
         <div className="flex-1 min-w-0">
           <p className="font-body text-[11px] text-foreground truncate">{reward.free.label}</p>
@@ -253,7 +253,7 @@ function TierCard({
       <div className={`flex-1 flex items-center gap-2 px-3 py-3 relative ${!isPremium ? "opacity-50" : ""}`}>
         {!isPremium && (
           <div className="absolute inset-0 z-10 flex items-center justify-center" style={{
-            background: "hsl(25 20% 10% / 0.6)",
+            background: "hsl(220 12% 8% / 0.6)",
             backdropFilter: "blur(1px)",
           }}>
             <Lock className="w-4 h-4" style={{ color: "hsl(43 70% 50% / 0.6)" }} />
@@ -452,8 +452,8 @@ export default function BattlePassPage() {
             ].map((u) => (
               <div key={u.label} className="flex flex-col items-center rounded-lg px-2 py-1"
                 style={{
-                  background: "linear-gradient(180deg, hsl(25 20% 12%), hsl(25 15% 9%))",
-                  border: "1px solid hsl(25 15% 18%)",
+                  background: "linear-gradient(180deg, hsl(220 12% 9%), hsl(220 12% 7%))",
+                  border: "1px solid hsl(220 15% 14%)",
                 }}>
                 <span className="font-score text-sm font-black text-foreground leading-none">
                   {String(u.val).padStart(2, "0")}
@@ -481,7 +481,7 @@ export default function BattlePassPage() {
             </span>
           </div>
           <div className="h-3 rounded-full overflow-hidden" style={{
-            background: "linear-gradient(180deg, hsl(220 15% 8%), hsl(25 25% 14%))",
+            background: "linear-gradient(180deg, hsl(220 15% 8%), hsl(220 12% 10%))",
             border: "1px solid hsl(220 15% 6%)",
             boxShadow: "inset 0 1px 3px hsl(0 0% 0% / 0.5)",
           }}>

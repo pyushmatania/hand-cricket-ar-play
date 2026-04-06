@@ -57,13 +57,13 @@ export default function DRSReview({ active, dismissalType, outcome, onComplete }
           >
             <div className="flex items-center gap-3 px-6 py-2 rounded-full"
               style={{
-                background: 'linear-gradient(180deg, hsl(25 18% 16%), hsl(25 15% 11%))',
-                border: '2px solid hsl(25 20% 22%)',
-                boxShadow: '0 2px 0 hsl(25 20% 6%), 0 4px 20px rgba(0,0,0,0.6)',
+                background: 'linear-gradient(180deg, hsl(220 15% 12%), hsl(220 12% 8%))',
+                border: '2px solid hsl(220 15% 18%)',
+                boxShadow: '0 2px 0 hsl(220 15% 5%), 0 4px 20px rgba(0,0,0,0.6)',
               }}
             >
               <div className="w-2 h-2 rounded-full bg-out-red animate-pulse" />
-              <span className="font-game-display text-[10px] tracking-[0.3em] text-foreground font-bold">
+              <span className="font-display text-[10px] tracking-[0.3em] text-foreground font-bold">
                 DRS REVIEW
               </span>
             </div>
@@ -74,7 +74,7 @@ export default function DRSReview({ active, dismissalType, outcome, onComplete }
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="font-game-display text-[9px] tracking-[0.4em] text-muted-foreground mb-6"
+            className="font-display text-[9px] tracking-[0.4em] text-muted-foreground mb-6"
           >
             {label}
           </motion.p>
@@ -124,7 +124,7 @@ export default function DRSReview({ active, dismissalType, outcome, onComplete }
                 transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                 className="w-16 h-16 mx-auto rounded-full border-2 border-transparent border-t-primary"
               />
-              <p className="font-game-display text-[10px] tracking-[0.3em] text-muted-foreground">
+              <p className="font-display text-[10px] tracking-[0.3em] text-muted-foreground">
                 PROCESSING...
               </p>
               {/* Fake data readout */}
@@ -169,7 +169,7 @@ export default function DRSReview({ active, dismissalType, outcome, onComplete }
                   {outcome === 'out' ? 'OUT!' : 'NOT OUT'}
                 </p>
               </motion.div>
-              <p className="font-game-display text-[10px] tracking-[0.2em] text-muted-foreground">
+              <p className="font-display text-[10px] tracking-[0.2em] text-muted-foreground">
                 {outcome === 'out' ? 'DECISION STANDS' : 'OVERTURNED — BATSMAN SURVIVES'}
               </p>
             </motion.div>

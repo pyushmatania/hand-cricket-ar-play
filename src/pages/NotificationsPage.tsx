@@ -160,7 +160,7 @@ export default function NotificationsPage() {
           className="flex gap-1 mb-4 rounded-2xl p-1"
           style={{
             background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 10%) 100%)",
-            border: "1px solid hsl(25 20% 22% / 0.6)",
+            border: "1px solid hsl(220 15% 18% / 0.6)",
           }}>
           {TABS.map(tab => {
             const isActive = filter === tab.id;

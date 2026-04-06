@@ -164,7 +164,7 @@ export default function MatchHistoryPage() {
   return (
     <div className="min-h-screen relative overflow-hidden pb-24" style={{ background: "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 18% 5%) 100%)" }}>
       <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: LEATHER_GRAIN, backgroundRepeat: "repeat" }} />
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(220 18% 4% / 0.7) 100%)" }} />
       <TopStatusBar />
 
       <div className="relative z-10 max-w-lg mx-auto px-4 pt-3">
@@ -173,14 +173,14 @@ export default function MatchHistoryPage() {
           <motion.button whileTap={{ scale: 0.9 }} onClick={() => navigate(-1)}
             className="w-10 h-10 rounded-xl flex items-center justify-center font-body text-sm text-foreground"
             style={{
-              background: "linear-gradient(180deg, hsl(28 20% 22%) 0%, hsl(25 18% 15%) 100%)",
+              background: "linear-gradient(180deg, hsl(220 15% 16%) 0%, hsl(220 12% 10%) 100%)",
               border: "2px solid hsl(43 50% 35%)",
-              boxShadow: "0 3px 0 hsl(25 30% 10%), inset 0 1px 0 hsl(43 40% 45% / 0.3)",
+              boxShadow: "0 3px 0 hsl(220 15% 8%), inset 0 1px 0 hsl(43 40% 45% / 0.3)",
             }}>
             ←
           </motion.button>
           <div className="flex-1">
-            <h1 className="font-display text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(25 40% 8%)" }}>
+            <h1 className="font-display text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(220 18% 6%)" }}>
               Match History
             </h1>
             <span className="text-[9px] text-muted-foreground font-display tracking-[0.2em]">{matches.length} MATCHES PLAYED</span>
@@ -204,13 +204,13 @@ export default function MatchHistoryPage() {
           style={{
             background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
             border: "2px solid hsl(43 50% 35% / 0.3)",
-            borderBottom: "5px solid hsl(25 20% 10%)",
+            borderBottom: "5px solid hsl(220 15% 8%)",
             boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
           }}>
           <div className="flex items-center gap-4 mb-3">
             <div className="relative w-16 h-16 flex-shrink-0">
               <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-                <circle cx="18" cy="18" r="15.5" fill="none" stroke="hsl(25 15% 20%)" strokeWidth="3" />
+                <circle cx="18" cy="18" r="15.5" fill="none" stroke="hsl(220 15% 16%)" strokeWidth="3" />
                 <circle cx="18" cy="18" r="15.5" fill="none" stroke="hsl(122,39%,49%)" strokeWidth="3"
                   strokeDasharray={`${summary.winRate * 0.975} 97.5`} strokeLinecap="round" />
               </svg>
@@ -248,9 +248,9 @@ export default function MatchHistoryPage() {
             ].map(s => (
               <div key={s.label} className="text-center rounded-xl p-2"
                 style={{
-                  background: "linear-gradient(180deg, hsl(25 18% 14%), hsl(25 15% 10%))",
-                  border: "1.5px solid hsl(25 18% 20%)",
-                  borderBottom: "3px solid hsl(25 15% 8%)",
+                  background: "linear-gradient(180deg, hsl(220 12% 10%), hsl(220 12% 8%))",
+                  border: "1.5px solid hsl(220 15% 16%)",
+                  borderBottom: "3px solid hsl(220 12% 6%)",
                 }}>
                 <span className="text-xs block mb-0.5">{s.icon}</span>
                 <span className="font-display text-sm font-black text-foreground block leading-none">{s.val}</span>
@@ -264,8 +264,8 @@ export default function MatchHistoryPage() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.12 }} className="mb-4 space-y-2">
           <div className="flex gap-1 rounded-2xl p-1"
             style={{
-              background: "linear-gradient(180deg, hsl(25 15% 16%) 0%, hsl(25 12% 12%) 100%)",
-              border: "1px solid hsl(25 20% 22% / 0.6)",
+              background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 10%) 100%)",
+              border: "1px solid hsl(220 15% 18% / 0.6)",
             }}>
             {(["all", "win", "loss", "draw"] as FilterType[]).map(f => {
               const isActive = resultFilter === f;
@@ -279,7 +279,7 @@ export default function MatchHistoryPage() {
                     borderBottom: "3px solid " + (theme ? `${theme.bg}80` : "hsl(207 70% 28%)"),
                     boxShadow: `0 2px 8px ${theme ? theme.glow : "hsl(207 90% 50% / 0.3)"}`,
                   } : {
-                    color: "hsl(25 15% 45%)",
+                    color: "hsl(220 15% 45%)",
                     borderBottom: "3px solid transparent",
                   }}>
                   {isActive && (
@@ -302,10 +302,10 @@ export default function MatchHistoryPage() {
                     style={{
                       background: isActive
                         ? `linear-gradient(180deg, ${meta.accent}25, ${meta.accent}10)`
-                        : "linear-gradient(180deg, hsl(25 18% 14%), hsl(25 15% 10%))",
-                      border: isActive ? `2px solid ${meta.accent}50` : "2px solid hsl(25 18% 20%)",
-                      borderBottom: isActive ? `3px solid ${meta.accent}30` : "3px solid hsl(25 15% 8%)",
-                      color: isActive ? meta.accent : "hsl(25 15% 45%)",
+                        : "linear-gradient(180deg, hsl(220 12% 10%), hsl(220 12% 8%))",
+                      border: isActive ? `2px solid ${meta.accent}50` : "2px solid hsl(220 15% 16%)",
+                      borderBottom: isActive ? `3px solid ${meta.accent}30` : "3px solid hsl(220 12% 6%)",
+                      color: isActive ? meta.accent : "hsl(220 15% 45%)",
                     }}>
                     <span className="text-xs">{meta.icon}</span> {meta.label}
                   </motion.button>
@@ -326,8 +326,8 @@ export default function MatchHistoryPage() {
           <div className="rounded-2xl p-10 text-center"
             style={{
               background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
-              border: "2px solid hsl(25 18% 22%)",
-              borderBottom: "5px solid hsl(25 20% 10%)",
+              border: "2px solid hsl(220 15% 18%)",
+              borderBottom: "5px solid hsl(220 15% 8%)",
             }}>
             <span className="text-4xl block mb-3">📭</span>
             <span className="font-display text-xs text-muted-foreground tracking-wider">NO MATCHES FOUND</span>
@@ -427,7 +427,7 @@ export default function MatchHistoryPage() {
                             <span className="font-display text-lg font-black leading-none" style={{ color: m.result === "win" ? theme.text : "hsl(var(--foreground))" }}>{m.user_score}</span>
                             <span className="text-[5px] text-muted-foreground font-display tracking-widest block">YOU</span>
                           </div>
-                          <span className="text-[8px] font-display" style={{ color: "hsl(25 15% 35%)" }}>vs</span>
+                          <span className="text-[8px] font-display" style={{ color: "hsl(220 15% 35%)" }}>vs</span>
                           <div className="text-center">
                             <span className="font-display text-lg font-black leading-none" style={{ color: m.result === "loss" ? theme.text : "hsl(var(--foreground) / 0.6)" }}>{m.ai_score}</span>
                             <span className="text-[5px] text-muted-foreground font-display tracking-widest block">AI</span>
@@ -440,7 +440,7 @@ export default function MatchHistoryPage() {
                         {isExpanded && (
                           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
-                            <div className="px-3 pb-3 pt-1 space-y-2.5" style={{ borderTop: "1px solid hsl(25 18% 18%)" }}>
+                            <div className="px-3 pb-3 pt-1 space-y-2.5" style={{ borderTop: "1px solid hsl(220 15% 14%)" }}>
 
                               <div className="grid grid-cols-2 gap-2">
                                 {[
@@ -463,9 +463,9 @@ export default function MatchHistoryPage() {
                               {ballStats && (
                                 <div className="rounded-xl p-3"
                                   style={{
-                                    background: "linear-gradient(180deg, hsl(25 18% 14%), hsl(25 15% 10%))",
-                                    border: "1.5px solid hsl(25 18% 20%)",
-                                    borderBottom: "3px solid hsl(25 15% 8%)",
+                                    background: "linear-gradient(180deg, hsl(220 12% 10%), hsl(220 12% 8%))",
+                                    border: "1.5px solid hsl(220 15% 16%)",
+                                    borderBottom: "3px solid hsl(220 12% 6%)",
                                   }}>
                                   <span className="text-[7px] text-muted-foreground font-display tracking-widest block mb-2">SHOT BREAKDOWN</span>
                                   <div className="grid grid-cols-4 gap-1.5">
@@ -491,9 +491,9 @@ export default function MatchHistoryPage() {
                               {balls.length > 0 && (
                                 <div className="rounded-xl p-3"
                                   style={{
-                                    background: "linear-gradient(180deg, hsl(25 18% 14%), hsl(25 15% 10%))",
-                                    border: "1.5px solid hsl(25 18% 20%)",
-                                    borderBottom: "3px solid hsl(25 15% 8%)",
+                                    background: "linear-gradient(180deg, hsl(220 12% 10%), hsl(220 12% 8%))",
+                                    border: "1.5px solid hsl(220 15% 16%)",
+                                    borderBottom: "3px solid hsl(220 12% 6%)",
                                   }}>
                                   <div className="flex items-center justify-between mb-2">
                                     <span className="text-[7px] text-muted-foreground font-display tracking-widest">BALL-BY-BALL</span>
@@ -517,12 +517,12 @@ export default function MatchHistoryPage() {
                                       const isVisible = !isReplaying || bi <= replayBall;
                                       const isCurrentReplay = isReplaying && bi === replayBall;
                                       let color = "hsl(var(--muted-foreground))";
-                                      let bg = "hsl(25 15% 14%)";
+                                      let bg = "hsl(220 12% 10%)";
                                       if (isOut) { color = "hsl(4,90%,65%)"; bg = "hsl(4,90%,58%,0.2)"; }
                                       else if (r === 6) { color = "hsl(207,90%,60%)"; bg = "hsl(207,90%,54%,0.2)"; }
                                       else if (r === 4) { color = "hsl(122,70%,55%)"; bg = "hsl(122,39%,49%,0.2)"; }
                                       else if (r >= 2) { color = "hsl(51,100%,60%)"; bg = "hsl(51,100%,50%,0.2)"; }
-                                      else if (r === 1) { color = "hsl(var(--foreground) / 0.7)"; bg = "hsl(25 15% 18%)"; }
+                                      else if (r === 1) { color = "hsl(var(--foreground) / 0.7)"; bg = "hsl(220 15% 14%)"; }
 
                                       return (
                                         <motion.div key={bi}
@@ -532,7 +532,7 @@ export default function MatchHistoryPage() {
                                           style={{
                                             background: bg,
                                             color,
-                                            border: `1px solid ${isCurrentReplay ? color : "hsl(25 18% 20%)"}`,
+                                            border: `1px solid ${isCurrentReplay ? color : "hsl(220 15% 16%)"}`,
                                             boxShadow: isCurrentReplay ? `0 0 10px ${color}` : "none",
                                           }}>
                                           {isOut ? "W" : r}
@@ -544,7 +544,7 @@ export default function MatchHistoryPage() {
                                   {isReplaying && balls[replayBall] && (
                                     <motion.div key={replayBall} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}
                                       className="mt-2 rounded-lg p-2 text-center"
-                                      style={{ background: "hsl(25 18% 14%)", border: "1px solid hsl(25 18% 20%)" }}>
+                                      style={{ background: "hsl(220 12% 10%)", border: "1px solid hsl(220 15% 16%)" }}>
                                       <span className="text-[9px] text-foreground font-display">
                                         Ball {replayBall + 1}: {balls[replayBall].description || (balls[replayBall].runs === "OUT" ? "OUT! 🔴" : `${Math.abs(typeof balls[replayBall].runs === "number" ? balls[replayBall].runs as number : 0)} runs`)}
                                       </span>
@@ -555,9 +555,9 @@ export default function MatchHistoryPage() {
 
                               <div className="rounded-xl p-3 space-y-2"
                                 style={{
-                                  background: "linear-gradient(180deg, hsl(25 18% 14%), hsl(25 15% 10%))",
-                                  border: "1.5px solid hsl(25 18% 20%)",
-                                  borderBottom: "3px solid hsl(25 15% 8%)",
+                                  background: "linear-gradient(180deg, hsl(220 12% 10%), hsl(220 12% 8%))",
+                                  border: "1.5px solid hsl(220 15% 16%)",
+                                  borderBottom: "3px solid hsl(220 12% 6%)",
                                 }}>
                                 {[
                                   { label: "Result", value: m.result === "draw" ? "Match Tied" : `${m.result === "win" ? "Won" : "Lost"} by ${margin} runs`, color: theme.text },
@@ -565,8 +565,8 @@ export default function MatchHistoryPage() {
                                   { label: "Game Mode", value: modeMeta.label, color: modeMeta.accent },
                                   { label: "Played On", value: new Date(m.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }), color: "hsl(var(--foreground))" },
                                 ].map(d => (
-                                  <div key={d.label} className="flex justify-between items-center py-1" style={{ borderBottom: "1px solid hsl(25 18% 18%)" }}>
-                                    <span className="text-[8px] font-display tracking-wider" style={{ color: "hsl(25 15% 40%)" }}>{d.label}</span>
+                                  <div key={d.label} className="flex justify-between items-center py-1" style={{ borderBottom: "1px solid hsl(220 15% 14%)" }}>
+                                    <span className="text-[8px] font-display tracking-wider" style={{ color: "hsl(220 15% 40%)" }}>{d.label}</span>
                                     <span className="text-[9px] font-display font-bold" style={{ color: d.color }}>{d.value}</span>
                                   </div>
                                 ))}

@@ -592,28 +592,28 @@ export default function GameScreen({ onHome }: GameScreenProps) {
 
       {/* ── TOP BAR ── always visible as overlay */}
       <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-3 pt-3 pb-2 pointer-events-auto"
-        style={{ background: "linear-gradient(to bottom, hsl(25 15% 8% / 0.85) 0%, transparent 100%)" }}>
+        style={{ background: "linear-gradient(to bottom, hsl(220 12% 6% / 0.85) 0%, transparent 100%)" }}>
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={onHome}
           className="w-9 h-9 rounded-xl flex items-center justify-center text-sm text-white"
           style={{
-            background: "linear-gradient(180deg, hsl(25 18% 16%), hsl(25 15% 11%))",
-            border: "2px solid hsl(25 20% 22%)",
-            borderBottom: "3px solid hsl(25 20% 8%)",
-            boxShadow: "0 2px 0 hsl(25 20% 6%), 0 2px 8px rgba(0,0,0,0.5)",
+            background: "linear-gradient(180deg, hsl(220 15% 12%), hsl(220 12% 8%))",
+            border: "2px solid hsl(220 15% 18%)",
+            borderBottom: "3px solid hsl(220 15% 6%)",
+            boxShadow: "0 2px 0 hsl(220 15% 5%), 0 2px 8px rgba(0,0,0,0.5)",
           }}
         >
           ←
         </motion.button>
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-full"
           style={{
-            background: "linear-gradient(180deg, hsl(25 18% 16%), hsl(25 15% 11%))",
-            border: "2px solid hsl(25 20% 22%)",
-            boxShadow: "0 2px 0 hsl(25 20% 6%), 0 2px 8px rgba(0,0,0,0.4)",
+            background: "linear-gradient(180deg, hsl(220 15% 12%), hsl(220 12% 8%))",
+            border: "2px solid hsl(220 15% 18%)",
+            boxShadow: "0 2px 0 hsl(220 15% 5%), 0 2px 8px rgba(0,0,0,0.4)",
           }}>
           <div className="w-1.5 h-1.5 rounded-full bg-out-red animate-pulse" />
-          <span className="font-game-display text-[9px] tracking-[0.2em] text-foreground font-bold">AR CRICKET</span>
+          <span className="font-display text-[9px] tracking-[0.2em] text-foreground font-bold">AR CRICKET</span>
         </div>
         <div className="flex items-center gap-1.5">
           <button
@@ -654,12 +654,12 @@ export default function GameScreen({ onHome }: GameScreenProps) {
             exit={{ opacity: 0, y: -8 }}
             className="absolute top-14 right-3 z-40 rounded-xl p-2.5 space-y-2"
             style={{
-              background: "linear-gradient(180deg, hsl(25 18% 16%), hsl(25 15% 11%))",
-              border: "2px solid hsl(25 20% 22%)",
-              boxShadow: "0 4px 0 hsl(25 20% 6%), 0 6px 20px rgba(0,0,0,0.6)",
+              background: "linear-gradient(180deg, hsl(220 15% 12%), hsl(220 12% 8%))",
+              border: "2px solid hsl(220 15% 18%)",
+              boxShadow: "0 4px 0 hsl(220 15% 5%), 0 6px 20px rgba(0,0,0,0.6)",
             }}
           >
-            <p className="text-[7px] font-game-display font-bold text-muted-foreground tracking-widest px-1">FILTER</p>
+            <p className="text-[7px] font-display font-bold text-muted-foreground tracking-widest px-1">FILTER</p>
             <div className="flex gap-1">
               {FILTER_OPTIONS.map((f) => (
                 <button
@@ -845,8 +845,8 @@ export default function GameScreen({ onHome }: GameScreenProps) {
         <div className="absolute bottom-0 left-0 right-0 z-30 max-w-lg mx-auto w-full px-3 pb-4">
           <div className="rounded-t-3xl px-4 pt-4 pb-6"
             style={{
-              background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 10%) 100%)",
-              border: "2px solid hsl(25 20% 22%)",
+              background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
+              border: "2px solid hsl(220 15% 18%)",
               borderBottom: "none",
               boxShadow: "0 -4px 20px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
             }}>
@@ -867,8 +867,8 @@ export default function GameScreen({ onHome }: GameScreenProps) {
           >
             <div className="rounded-t-3xl px-5 pt-5 pb-6 space-y-4"
               style={{
-                background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 10%) 100%)",
-                border: "2px solid hsl(25 20% 22%)",
+                background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
+                border: "2px solid hsl(220 15% 18%)",
                 borderBottom: "none",
                 boxShadow: "0 -4px 20px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
               }}>
@@ -1043,10 +1043,10 @@ function ImmersiveScoreStrip({ game, playerName = "You", aiName = "Rohit AI", we
   return (
     <div className="rounded-2xl px-3 py-2"
       style={{
-        background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)",
-        border: "2px solid hsl(25 20% 22%)",
-        borderBottom: "4px solid hsl(25 20% 8%)",
-        boxShadow: "0 4px 0 hsl(25 20% 6%), 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+        background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
+        border: "2px solid hsl(220 15% 18%)",
+        borderBottom: "4px solid hsl(220 15% 6%)",
+        boxShadow: "0 4px 0 hsl(220 15% 5%), 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
       }}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">

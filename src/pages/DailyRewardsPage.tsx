@@ -241,7 +241,7 @@ export default function DailyRewardsPage() {
             </span>
           </div>
           <div className="relative h-3 rounded-full overflow-hidden" style={{
-            background: "linear-gradient(180deg, hsl(220 15% 8%), hsl(25 25% 14%))",
+            background: "linear-gradient(180deg, hsl(220 15% 8%), hsl(220 12% 10%))",
             border: "1px solid hsl(220 15% 6%)",
             boxShadow: "inset 0 1px 3px hsl(0 0% 0% / 0.5)",
           }}>
@@ -258,7 +258,7 @@ export default function DailyRewardsPage() {
             {[7, 14, 21, 28].map(m => (
               <div key={m} className="absolute top-0 bottom-0 w-[2px]" style={{
                 left: `${(m / 28) * 100}%`,
-                background: cycleDay >= m ? "hsl(43 90% 65%)" : "hsl(25 15% 20%)",
+                background: cycleDay >= m ? "hsl(43 90% 65%)" : "hsl(220 15% 16%)",
               }} />
             ))}
           </div>
@@ -277,7 +277,7 @@ export default function DailyRewardsPage() {
           className="flex gap-1 mb-4 rounded-2xl p-1"
           style={{
             background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 10%) 100%)",
-            border: "1px solid hsl(25 20% 22% / 0.6)",
+            border: "1px solid hsl(220 15% 18% / 0.6)",
           }}>
           {[
             { id: false, label: "FREE PASS", icon: "🎟️", hue: 207 },
@@ -459,7 +459,7 @@ export default function DailyRewardsPage() {
                         : "linear-gradient(180deg, hsl(220 12% 10%), hsl(220 12% 8%))",
                     border: isCurrent
                       ? "2px solid hsl(4 60% 40% / 0.4)"
-                      : "2px solid hsl(25 18% 18%)",
+                      : "2px solid hsl(220 15% 14%)",
                     borderBottom: isCurrent
                       ? "3px solid hsl(4 40% 22%)"
                       : "3px solid hsl(220 12% 6%)",

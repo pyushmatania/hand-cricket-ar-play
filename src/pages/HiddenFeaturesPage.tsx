@@ -92,7 +92,7 @@ export default function HiddenFeaturesPage() {
                   style={{
                     background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
                     border: "2px solid hsl(220 15% 18%)",
-                    borderBottom: "5px solid hsl(25 25% 10%)",
+                    borderBottom: "5px solid hsl(220 15% 8%)",
                   }}
                 >
                   {/* Category header */}
@@ -138,7 +138,7 @@ export default function HiddenFeaturesPage() {
             className="mt-8 text-center"
           >
             <div className="rounded-2xl p-6" style={{
-              background: "linear-gradient(135deg, hsl(43 80% 50% / 0.08), hsl(25 30% 12%))",
+              background: "linear-gradient(135deg, hsl(43 80% 50% / 0.08), hsl(220 15% 9%))",
               border: "2px solid hsl(43 60% 40% / 0.3)",
             }}>
               <p className="font-display text-[9px] tracking-[0.3em] text-muted-foreground mb-2">TOTAL SPECIFICATION</p>
@@ -166,7 +166,7 @@ export default function HiddenFeaturesPage() {
           <motion.button
             className="fixed bottom-24 right-4 z-20 px-4 py-2 rounded-xl font-display text-[8px] tracking-widest"
             style={{
-              background: "hsl(25 15% 12%)",
+              background: "hsl(220 12% 9%)",
               border: "1px solid hsl(220 15% 18%)",
               color: "hsl(220 15% 50%)",
             }}

@@ -65,7 +65,7 @@ export default function PlayPage() {
   return (
     <div className="min-h-screen relative overflow-hidden pb-24"
       style={{
-        background: "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)",
+        background: "linear-gradient(180deg, hsl(220 20% 10%) 0%, hsl(220 18% 7%) 40%, hsl(222 40% 6%) 100%)",
       }}
     >
       {/* Leather grain overlay */}
@@ -85,12 +85,12 @@ export default function PlayPage() {
               style={{ background: "linear-gradient(180deg, hsl(43 90% 55%) 0%, hsl(35 60% 35%) 100%)" }}
             />
             <div>
-              <h1 className="font-game-title text-xl text-foreground"
-                style={{ textShadow: "0 2px 0 hsl(25 40% 8%)" }}
+              <h1 className="font-display text-xl text-foreground"
+                style={{ textShadow: "0 2px 0 hsl(220 18% 6%)" }}
               >
                 Select Mode
               </h1>
-              <p className="text-[9px] text-muted-foreground font-game-display tracking-[0.2em]">
+              <p className="text-[9px] text-muted-foreground font-display tracking-[0.2em]">
                 CHOOSE YOUR ARENA & GAME TYPE
               </p>
             </div>

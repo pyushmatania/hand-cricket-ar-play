@@ -17,7 +17,7 @@ export default function StatDiamonds({
 }: StatDiamondsProps) {
   return (
     <div className={cn("flex items-center gap-2", className)}>
-      <span className="text-[10px] font-game-body font-bold text-muted-foreground uppercase tracking-wider w-12">
+      <span className="text-[10px] font-body font-bold text-muted-foreground uppercase tracking-wider w-12">
         {label}
       </span>
       <div className="flex gap-0.5">

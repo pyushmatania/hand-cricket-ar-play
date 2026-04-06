@@ -65,7 +65,7 @@ export default function V10Toggle({
         />
       </div>
       {label && (
-        <span className="font-game-title text-sm font-semibold text-foreground/80 uppercase tracking-wider">
+        <span className="font-display text-sm font-semibold text-foreground/80 uppercase tracking-wider">
           {label}
         </span>
       )}

@@ -79,7 +79,7 @@ export default function ChestSlotsWidget() {
       <div className="px-4 mb-4">
         <div className="flex items-center gap-2 mb-2">
           <Gift className="w-4 h-4 text-game-gold" />
-          <span className="font-game-display text-xs tracking-wider text-foreground">CHEST SLOTS</span>
+          <span className="font-display text-xs tracking-wider text-foreground">CHEST SLOTS</span>
         </div>
         
         <div className="grid grid-cols-4 gap-2">
@@ -140,7 +140,7 @@ function ChestSlot({
       onClick={() => onTap(chest, slotIndex)}
       className="relative aspect-square rounded-xl overflow-hidden"
       style={{
-        background: `linear-gradient(180deg, hsl(25 20% 12%), hsl(222 30% 8%))`,
+        background: `linear-gradient(180deg, hsl(220 12% 9%), hsl(222 30% 8%))`,
         border: `2px solid ${isReady ? tier.color : tier.borderColor}`,
         boxShadow: isReady ? `0 0 12px ${tier.glowColor}` : "none",
       }}
@@ -172,19 +172,19 @@ function ChestSlot({
         {isLocked && (
           <div className="flex items-center justify-center gap-0.5">
             <Lock className="w-2.5 h-2.5 text-muted-foreground" />
-            <span className="text-[7px] font-game-display text-muted-foreground">TAP</span>
+            <span className="text-[7px] font-display text-muted-foreground">TAP</span>
           </div>
         )}
         {isUnlocking && !isReady && (
           <div className="flex items-center justify-center gap-0.5">
             <Timer className="w-2.5 h-2.5" style={{ color: tier.color }} />
-            <span className="text-[7px] font-game-display" style={{ color: tier.color }}>
+            <span className="text-[7px] font-display" style={{ color: tier.color }}>
               {formatTime(remaining)}
             </span>
           </div>
         )}
         {isReady && (
-          <span className="text-[7px] font-game-display text-game-gold animate-pulse">OPEN!</span>
+          <span className="text-[7px] font-display text-game-gold animate-pulse">OPEN!</span>
         )}
       </div>
     </motion.button>

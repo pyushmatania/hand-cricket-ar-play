@@ -31,11 +31,11 @@ export default function GameProgressBar({
     <div className={cn("w-full", className)}>
       {label && (
         <div className="flex justify-between items-center mb-1">
-          <span className="text-[10px] font-game-body font-bold text-muted-foreground uppercase tracking-wider">
+          <span className="text-[10px] font-body font-bold text-muted-foreground uppercase tracking-wider">
             {label}
           </span>
           {showText && (
-            <span className="text-[10px] font-game-display text-foreground">
+            <span className="text-[10px] font-display text-foreground">
               {value}/{max}
             </span>
           )}

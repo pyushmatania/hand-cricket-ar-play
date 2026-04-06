@@ -100,14 +100,14 @@ export const INDIAN_LEGENDS: PlayerInfo[] = [
 /* ── Rarity frame styles ── */
 const RARITY_FRAME: Record<string, { border: string; glow: string; bg: string }> = {
   common: {
-    border: "hsl(28 30% 25%)",
+    border: "hsl(220 15% 18%)",
     glow: "none",
-    bg: "linear-gradient(180deg, hsl(28 35% 28%), hsl(25 40% 18%))",
+    bg: "linear-gradient(180deg, hsl(220 15% 20%), hsl(220 15% 14%))",
   },
   rare: {
     border: "hsl(210 60% 40%)",
     glow: "0 0 12px hsl(210 70% 50% / 0.3)",
-    bg: "linear-gradient(180deg, hsl(28 35% 28%), hsl(25 40% 18%))",
+    bg: "linear-gradient(180deg, hsl(220 15% 20%), hsl(220 15% 14%))",
   },
   epic: {
     border: "hsl(270 50% 45%)",
@@ -117,7 +117,7 @@ const RARITY_FRAME: Record<string, { border: string; glow: string; bg: string }>
   legendary: {
     border: "hsl(35 80% 45%)",
     glow: "0 0 20px hsl(35 90% 50% / 0.4)",
-    bg: "linear-gradient(180deg, hsl(28 40% 22%), hsl(25 45% 14%))",
+    bg: "linear-gradient(180deg, hsl(220 15% 16%), hsl(220 12% 10%))",
   },
   mythic: {
     border: "hsl(280 80% 60%)",
@@ -172,7 +172,7 @@ export default function PlayerCard({ player, size = "md", showStats = true, dela
     rarity === "epic" ? "hsl(270 60% 60%)" :
     rarity === "rare" ? "hsl(210 70% 55%)" :
     rarity === "mythic" ? "hsl(280 80% 65%)" :
-    "hsl(28 50% 55%)";
+    "hsl(19 80% 55%)";
 
   return (
     <motion.div
@@ -199,18 +199,18 @@ export default function PlayerCard({ player, size = "md", showStats = true, dela
           <div
             className="w-8 h-8 rounded-lg flex items-center justify-center"
             style={{
-              background: `linear-gradient(180deg, ${frame.border}, hsl(25 40% 15%))`,
+              background: `linear-gradient(180deg, ${frame.border}, hsl(220 12% 10%))`,
               border: "2px solid hsl(35 60% 45%)",
-              boxShadow: "0 2px 0 hsl(25 40% 10%)",
+              boxShadow: "0 2px 0 hsl(220 12% 8%)",
             }}
           >
-            <span className="font-game-display text-[10px] font-black text-game-gold">{player.rating}</span>
+            <span className="font-display text-[10px] font-black text-game-gold">{player.rating}</span>
           </div>
         </div>
 
         {/* Jersey number watermark */}
         <div className="absolute top-0 right-0 z-0 opacity-[0.06]">
-          <span className="font-game-display text-[60px] font-black leading-none">{player.number}</span>
+          <span className="font-display text-[60px] font-black leading-none">{player.number}</span>
         </div>
 
         {/* Character art — fills arch area */}
@@ -237,7 +237,7 @@ export default function PlayerCard({ player, size = "md", showStats = true, dela
               clipPath: "polygon(4% 0%, 96% 0%, 100% 50%, 96% 100%, 4% 100%, 0% 50%)",
             }}
           >
-            <span className="font-game-display text-[9px] font-black text-white tracking-wider whitespace-nowrap"
+            <span className="font-display text-[9px] font-black text-white tracking-wider whitespace-nowrap"
               style={{ textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}
             >
               {player.name.toUpperCase()}
@@ -247,7 +247,7 @@ export default function PlayerCard({ player, size = "md", showStats = true, dela
 
         {/* Role */}
         <div className="text-center mt-0.5 mb-1">
-          <span className="text-[7px] text-muted-foreground font-game-body tracking-widest">{player.role}</span>
+          <span className="text-[7px] text-muted-foreground font-body tracking-widest">{player.role}</span>
         </div>
 
         {/* ── Diamond Stats ── */}
@@ -255,9 +255,9 @@ export default function PlayerCard({ player, size = "md", showStats = true, dela
           <div className="px-2 pb-2 space-y-0.5">
             {player.stats.map((stat) => (
               <div key={stat.label} className="flex items-center justify-between">
-                <span className="text-[7px] text-muted-foreground font-game-body w-14 truncate">{stat.label}</span>
+                <span className="text-[7px] text-muted-foreground font-body w-14 truncate">{stat.label}</span>
                 <DiamondDots filled={stat.diamonds ?? 3} color={diamondColor} />
-                <span className="text-[7px] font-game-display text-foreground w-5 text-right">{stat.value}</span>
+                <span className="text-[7px] font-display text-foreground w-5 text-right">{stat.value}</span>
               </div>
             ))}
           </div>

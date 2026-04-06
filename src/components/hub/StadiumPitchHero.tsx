@@ -69,7 +69,7 @@ export default function StadiumPitchHero({
             <span className="font-display text-sm tracking-wider text-neon-gold neon-text-gold uppercase block leading-none">
               {arenaName}
             </span>
-            <span className="font-game-title text-[9px] text-muted-foreground tracking-wider block mt-0.5">
+            <span className="font-display text-[9px] text-muted-foreground tracking-wider block mt-0.5">
               🏆 {trophies}/{nextTrophies} → {nextArenaName}
             </span>
           </div>

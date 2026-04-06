@@ -199,8 +199,8 @@ function ModeIcon({ id }: { id: string }) {
           <motion.span
             animate={{ scale: [0.9, 1.1, 0.9] }}
             transition={{ duration: 1.2, repeat: Infinity }}
-            className="absolute text-[7px] font-game-display font-bold tracking-wider"
-            style={{ bottom: 4, color: "hsl(25 90% 55%)", textShadow: "0 0 6px hsl(25 90% 55% / 0.5)" }}
+            className="absolute text-[7px] font-display font-bold tracking-wider"
+            style={{ bottom: 4, color: "hsl(19 100% 60%)", textShadow: "0 0 6px hsl(25 90% 55% / 0.5)" }}
           >IPL</motion.span>
         </div>
       );
@@ -415,7 +415,7 @@ function QuickMatchIcon({ onShatter }: { onShatter: () => void }) {
           )}
         </div>
       </motion.div>
-      <span className="font-game-display text-[8px] tracking-wider text-foreground/80 text-center leading-tight">Quick Match</span>
+      <span className="font-display text-[8px] tracking-wider text-foreground/80 text-center leading-tight">Quick Match</span>
     </motion.button>
   );
 }
@@ -453,7 +453,7 @@ export default function ModeIconGrid({ onSelect }: ModeIconGridProps) {
               <motion.div
                 animate={{ scale: [1, 1.15, 1] }}
                 transition={{ duration: 0.8, repeat: Infinity }}
-                className="absolute -top-1.5 -right-0.5 z-20 px-1.5 py-0.5 rounded-full font-game-display text-[6px] tracking-wider"
+                className="absolute -top-1.5 -right-0.5 z-20 px-1.5 py-0.5 rounded-full font-display text-[6px] tracking-wider"
                 style={{
                   background: "linear-gradient(135deg, hsl(0 84% 55%), hsl(25 90% 50%))",
                   color: "white",
@@ -469,7 +469,7 @@ export default function ModeIconGrid({ onSelect }: ModeIconGridProps) {
             >
               <ModeIcon id={mode.id} />
             </motion.div>
-            <span className="font-game-display text-[8px] tracking-wider text-foreground/80 text-center leading-tight">
+            <span className="font-display text-[8px] tracking-wider text-foreground/80 text-center leading-tight">
               {mode.label}
             </span>
           </motion.button>

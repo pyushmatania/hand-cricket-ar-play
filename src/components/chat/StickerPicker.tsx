@@ -23,7 +23,7 @@ export default function StickerPicker({ onSelect }: StickerPickerProps) {
           <button
             key={p.id}
             onClick={() => setActivePack(p.id)}
-            className={`px-2.5 py-1 rounded-lg text-[8px] font-game-display tracking-wider transition-all flex items-center gap-1 ${
+            className={`px-2.5 py-1 rounded-lg text-[8px] font-display tracking-wider transition-all flex items-center gap-1 ${
               activePack === p.id
                 ? "bg-primary/20 border border-primary/40 text-foreground"
                 : "bg-muted/20 border border-border/20 text-muted-foreground"

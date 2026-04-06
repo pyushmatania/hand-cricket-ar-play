@@ -41,7 +41,7 @@ export default function JumbotronZoom({
       {/* Stadium background (blurred, out of focus) */}
       <div className="absolute inset-0"
         style={{
-          background: "linear-gradient(180deg, hsl(220 30% 8%) 0%, hsl(25 20% 6%) 60%, hsl(122 20% 8%) 100%)",
+          background: "linear-gradient(180deg, hsl(220 30% 8%) 0%, hsl(220 15% 5%) 60%, hsl(122 20% 8%) 100%)",
           filter: "blur(8px)",
         }} />
 
@@ -82,7 +82,7 @@ export default function JumbotronZoom({
             transition={{ delay: 0.3, duration: 0.5 }}
           >
             <span className="text-3xl mb-1">🏏</span>
-            <span className="font-game-display text-[10px] font-bold tracking-wider"
+            <span className="font-display text-[10px] font-bold tracking-wider"
               style={{ color: team1Color }}>{team1Name}</span>
           </motion.div>
 
@@ -93,7 +93,7 @@ export default function JumbotronZoom({
             animate={{ scale: 1, rotate: 0 }}
             transition={{ delay: 0.5, type: "spring", stiffness: 200, damping: 12 }}
           >
-            <span className="font-game-title text-2xl" style={{
+            <span className="font-display text-2xl" style={{
               background: "linear-gradient(180deg, hsl(43 90% 55%), hsl(25 80% 50%))",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
@@ -110,7 +110,7 @@ export default function JumbotronZoom({
             transition={{ delay: 0.3, duration: 0.5 }}
           >
             <span className="text-3xl mb-1">🏏</span>
-            <span className="font-game-display text-[10px] font-bold tracking-wider"
+            <span className="font-display text-[10px] font-bold tracking-wider"
               style={{ color: team2Color }}>{team2Name}</span>
           </motion.div>
         </div>
@@ -131,7 +131,7 @@ export default function JumbotronZoom({
         animate={{ opacity: 0.5 }}
         transition={{ delay: 0.5 }}
       >
-        <span className="text-[7px] font-game-display tracking-[0.3em] text-muted-foreground">🔊 STADIUM PA</span>
+        <span className="text-[7px] font-display tracking-[0.3em] text-muted-foreground">🔊 STADIUM PA</span>
       </motion.div>
     </motion.div>
   );

@@ -18,8 +18,8 @@ const RANK_ICONS: Record<string, string> = {
   Bronze: "🥉", Silver: "🥈", Gold: "🥇", Platinum: "💎", Diamond: "💠", Master: "👑", Legend: "🏅",
 };
 
-const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
-const CHROME_BORDER = "2px solid hsl(25 20% 22%)";
+const CONCRETE_CARD = "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)";
+const CHROME_BORDER = "2px solid hsl(220 15% 18%)";
 
 export default function TopStatusBar() {
   const navigate = useNavigate();
@@ -69,7 +69,7 @@ export default function TopStatusBar() {
               style={{
                 background: CONCRETE_CARD,
                 border: "2.5px solid hsl(35 40% 45%)",
-                boxShadow: "0 3px 0 hsl(25 20% 6%), 0 2px 8px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.15)",
+                boxShadow: "0 3px 0 hsl(220 15% 5%), 0 2px 8px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.15)",
               }}>
               <span className="text-lg">{user ? "🏏" : "👤"}</span>
             </div>
@@ -81,19 +81,19 @@ export default function TopStatusBar() {
                 borderBottom: "3px solid hsl(207,90%,25%)",
                 boxShadow: "0 2px 6px hsl(207 90% 54% / 0.4)",
               }}>
-              <span className="font-game-display text-[7px] text-white leading-none">{level}</span>
+              <span className="font-display text-[7px] text-white leading-none">{level}</span>
             </div>
           </div>
 
           {/* Name + XP bar */}
           <div className="flex flex-col gap-1">
-            <span className="font-game-display text-[10px] tracking-wider text-foreground leading-none">
+            <span className="font-display text-[10px] tracking-wider text-foreground leading-none">
               {stats?.display_name || "PLAYER"}
             </span>
             <div className="relative w-16 h-[6px] rounded-full overflow-hidden"
               style={{
-                background: "linear-gradient(to bottom, hsl(25 15% 10%), hsl(25 15% 14%))",
-                border: "1px solid hsl(25 20% 18%)",
+                background: "linear-gradient(to bottom, hsl(220 12% 8%), hsl(220 12% 10%))",
+                border: "1px solid hsl(220 15% 14%)",
                 boxShadow: "inset 0 1px 3px rgba(0,0,0,0.5)",
               }}>
               <motion.div
@@ -121,7 +121,7 @@ export default function TopStatusBar() {
             style={{
               background: CONCRETE_CARD,
               border: CHROME_BORDER,
-              borderBottom: "3px solid hsl(25 20% 8%)",
+              borderBottom: "3px solid hsl(220 15% 6%)",
               boxShadow: "0 2px 8px hsl(0 84% 60% / 0.15), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
             }}
           >
@@ -130,7 +130,7 @@ export default function TopStatusBar() {
               transition={{ repeat: Infinity, duration: 1.5 }}
               className="text-xs"
             >🔥</motion.span>
-            <span className="font-game-display text-[10px] leading-none" style={{ color: "hsl(0,84%,65%)" }}>{stats.current_streak}</span>
+            <span className="font-display text-[10px] leading-none" style={{ color: "hsl(0,84%,65%)" }}>{stats.current_streak}</span>
           </motion.div>
         )}
 
@@ -142,8 +142,8 @@ export default function TopStatusBar() {
           style={{
             background: CONCRETE_CARD,
             border: CHROME_BORDER,
-            borderBottom: "3px solid hsl(25 20% 8%)",
-            boxShadow: "0 3px 0 hsl(25 20% 6%), 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+            borderBottom: "3px solid hsl(220 15% 6%)",
+            boxShadow: "0 3px 0 hsl(220 15% 5%), 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
           }}
         >
           <motion.span
@@ -151,7 +151,7 @@ export default function TopStatusBar() {
             transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
             className="text-sm inline-block"
           >🪙</motion.span>
-          <span className="font-game-display text-[10px] leading-none" style={{ color: "hsl(51,100%,60%)" }}>
+          <span className="font-display text-[10px] leading-none" style={{ color: "hsl(51,100%,60%)" }}>
             {coins >= 1000 ? `${(coins / 1000).toFixed(1)}K` : coins}
           </span>
           <span className="text-[10px] opacity-40">+</span>
@@ -164,13 +164,13 @@ export default function TopStatusBar() {
           className="relative w-10 h-10 rounded-xl flex items-center justify-center"
           style={{
             background: unreadCount > 0
-              ? "linear-gradient(180deg, hsl(0 84% 60% / 0.12), hsl(25 18% 14%))"
+              ? "linear-gradient(180deg, hsl(0 84% 60% / 0.12), hsl(220 12% 10%))"
               : CONCRETE_CARD,
             border: CHROME_BORDER,
-            borderBottom: "3px solid hsl(25 20% 8%)",
+            borderBottom: "3px solid hsl(220 15% 6%)",
             boxShadow: unreadCount > 0
-              ? "0 3px 0 hsl(25 20% 6%), 0 2px 10px hsl(0 84% 60% / 0.15), inset 0 1px 0 hsl(35 40% 40% / 0.08)"
-              : "0 3px 0 hsl(25 20% 6%), 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+              ? "0 3px 0 hsl(220 15% 5%), 0 2px 10px hsl(0 84% 60% / 0.15), inset 0 1px 0 hsl(35 40% 40% / 0.08)"
+              : "0 3px 0 hsl(220 15% 5%), 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
           }}
         >
           <motion.span
@@ -185,12 +185,12 @@ export default function TopStatusBar() {
               className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center"
               style={{
                 background: "linear-gradient(to bottom, hsl(0,84%,58%), hsl(0,84%,45%))",
-                border: "2px solid hsl(25 15% 11%)",
+                border: "2px solid hsl(220 12% 8%)",
                 borderBottom: "2.5px solid hsl(0,84%,35%)",
                 boxShadow: "0 2px 6px hsl(0 84% 58% / 0.5)",
               }}
             >
-              <span className="font-game-display text-[7px] text-white leading-none">{unreadCount > 9 ? "9+" : unreadCount}</span>
+              <span className="font-display text-[7px] text-white leading-none">{unreadCount > 9 ? "9+" : unreadCount}</span>
             </motion.div>
           )}
         </motion.button>
@@ -203,8 +203,8 @@ export default function TopStatusBar() {
           style={{
             background: CONCRETE_CARD,
             border: CHROME_BORDER,
-            borderBottom: "3px solid hsl(25 20% 8%)",
-            boxShadow: "0 3px 0 hsl(25 20% 6%), 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+            borderBottom: "3px solid hsl(220 15% 6%)",
+            boxShadow: "0 3px 0 hsl(220 15% 5%), 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
           }}
         >
           <span className="text-base opacity-60">⚙️</span>

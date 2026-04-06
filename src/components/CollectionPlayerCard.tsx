@@ -124,13 +124,13 @@ export default function CollectionPlayerCard({ player, size = "sm", onTap, delay
               border: `1.5px solid ${frame.diamond}`,
             }}
           >
-            <span className="font-game-display text-[10px] font-black" style={{ color: frame.diamond }}>{rating}</span>
+            <span className="font-display text-[10px] font-black" style={{ color: frame.diamond }}>{rating}</span>
           </div>
         </div>
 
         {/* Role badge */}
         <div className="absolute top-1 right-1 z-20">
-          <div className="px-1.5 py-0.5 rounded text-[7px] font-game-display font-bold"
+          <div className="px-1.5 py-0.5 rounded text-[7px] font-display font-bold"
             style={{ background: `${frame.border}88`, color: "white" }}
           >
             {role}
@@ -167,7 +167,7 @@ export default function CollectionPlayerCard({ player, size = "sm", onTap, delay
           ) : (
             <>
               <div className="absolute inset-0 opacity-5 flex items-center justify-center">
-                <span className="font-game-display text-[48px] font-black">{player.short_name?.[0] || player.name[0]}</span>
+                <span className="font-display text-[48px] font-black">{player.short_name?.[0] || player.name[0]}</span>
               </div>
               <div className="text-4xl">
                 {player.role === "bowler" ? "🏏" : player.role === "wk_batsman" ? "🧤" : "🏏"}
@@ -178,12 +178,12 @@ export default function CollectionPlayerCard({ player, size = "sm", onTap, delay
 
         {/* Name ribbon */}
         <div className="px-2 py-1 text-center" style={{ background: `${frame.border}44` }}>
-          <p className="font-game-display text-[9px] font-black text-white truncate leading-tight"
+          <p className="font-display text-[9px] font-black text-white truncate leading-tight"
             style={{ textShadow: "0 1px 2px rgba(0,0,0,0.5)" }}
           >
             {(player.short_name || player.name).toUpperCase()}
           </p>
-          <p className="text-[7px] text-muted-foreground font-game-body">{player.ipl_team} • {player.country}</p>
+          <p className="text-[7px] text-muted-foreground font-body">{player.ipl_team} • {player.country}</p>
         </div>
 
         {/* Stats */}
@@ -191,9 +191,9 @@ export default function CollectionPlayerCard({ player, size = "sm", onTap, delay
           <div className="px-2 pb-2 pt-1 space-y-0.5">
             {stats.map((s) => (
               <div key={s.label} className="flex items-center justify-between">
-                <span className="text-[7px] text-muted-foreground font-game-body w-8">{s.label}</span>
+                <span className="text-[7px] text-muted-foreground font-body w-8">{s.label}</span>
                 <DiamondDots filled={statToDiamonds(s.value)} color={frame.diamond} />
-                <span className="text-[7px] font-game-display text-foreground w-5 text-right">{s.value}</span>
+                <span className="text-[7px] font-display text-foreground w-5 text-right">{s.value}</span>
               </div>
             ))}
           </div>
@@ -203,7 +203,7 @@ export default function CollectionPlayerCard({ player, size = "sm", onTap, delay
         {player.special_ability_name && isSm && (
           <div className="flex items-center justify-center pb-1.5 gap-0.5">
             <Zap className="w-2.5 h-2.5" style={{ color: frame.diamond }} />
-            <span className="text-[6px] font-game-body truncate max-w-[70px]" style={{ color: frame.diamond }}>
+            <span className="text-[6px] font-body truncate max-w-[70px]" style={{ color: frame.diamond }}>
               {player.special_ability_name}
             </span>
           </div>

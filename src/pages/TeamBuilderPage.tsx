@@ -190,15 +190,15 @@ export default function TeamBuilderPage() {
           <ChevronLeft className="w-5 h-5 text-foreground" />
         </button>
         <div className="flex-1">
-          <h1 className="font-game-display text-lg text-foreground tracking-wide">TEAM BUILDER</h1>
-          <span className="text-[9px] font-game-body text-muted-foreground">{filledCount}/11 players</span>
+          <h1 className="font-display text-lg text-foreground tracking-wide">TEAM BUILDER</h1>
+          <span className="text-[9px] font-body text-muted-foreground">{filledCount}/11 players</span>
         </div>
         <motion.button whileTap={{ scale: 0.9 }} onClick={handleSave}
           className="flex items-center gap-1 px-3 py-1.5 rounded-lg"
           style={{ background: "hsl(142 40% 25%)", border: "1px solid hsl(142 40% 35%)" }}
         >
           <Save className="w-3.5 h-3.5 text-green-400" />
-          <span className="font-game-display text-[10px] text-green-400">SAVE</span>
+          <span className="font-display text-[10px] text-green-400">SAVE</span>
         </motion.button>
       </div>
 
@@ -218,7 +218,7 @@ export default function TeamBuilderPage() {
                 setSlots(Array(11).fill(null));
               }
             }}
-            className="flex-1 py-1.5 rounded-lg text-[9px] font-game-display transition-all"
+            className="flex-1 py-1.5 rounded-lg text-[9px] font-display transition-all"
             style={{
               background: presetIndex === i ? "hsl(35 40% 20%)" : "hsl(222 25% 10%)",
               border: presetIndex === i ? "1px solid hsl(35 50% 35%)" : "1px solid hsl(222 20% 18%)",
@@ -236,7 +236,7 @@ export default function TeamBuilderPage() {
           type="text"
           value={teamName}
           onChange={e => setTeamName(e.target.value)}
-          className="flex-1 bg-transparent border-b border-border/30 text-sm font-game-display text-foreground py-1 focus:outline-none focus:border-game-gold/50"
+          className="flex-1 bg-transparent border-b border-border/30 text-sm font-display text-foreground py-1 focus:outline-none focus:border-game-gold/50"
           maxLength={20}
         />
         <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg"
@@ -246,7 +246,7 @@ export default function TeamBuilderPage() {
           }}
         >
           <Zap className="w-3 h-3" style={{ color: chemistry > 70 ? "hsl(142 60% 55%)" : chemistry > 40 ? "hsl(35 80% 55%)" : "hsl(0 60% 55%)" }} />
-          <span className="font-game-display text-[10px]"
+          <span className="font-display text-[10px]"
             style={{ color: chemistry > 70 ? "hsl(142 60% 55%)" : chemistry > 40 ? "hsl(35 80% 55%)" : "hsl(0 60% 55%)" }}
           >{chemistry}%</span>
         </div>
@@ -259,14 +259,14 @@ export default function TeamBuilderPage() {
           style={{ background: "hsl(210 30% 15%)", border: "1px solid hsl(210 30% 25%)" }}
         >
           <Users className="w-3.5 h-3.5 text-blue-400" />
-          <span className="font-game-display text-[9px] text-blue-400">AUTO-FILL</span>
+          <span className="font-display text-[9px] text-blue-400">AUTO-FILL</span>
         </motion.button>
         <motion.button whileTap={{ scale: 0.95 }} onClick={handleClear}
           className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg"
           style={{ background: "hsl(0 20% 14%)", border: "1px solid hsl(0 20% 22%)" }}
         >
           <RotateCcw className="w-3.5 h-3.5 text-red-400" />
-          <span className="font-game-display text-[9px] text-red-400">CLEAR</span>
+          <span className="font-display text-[9px] text-red-400">CLEAR</span>
         </motion.button>
       </div>
 
@@ -307,11 +307,11 @@ export default function TeamBuilderPage() {
                       boxShadow: `0 0 8px ${rarityColor}44`,
                     }}
                   >
-                    <span className="font-game-display text-[8px] font-black text-white">
+                    <span className="font-display text-[8px] font-black text-white">
                       {overallRating(player)}
                     </span>
                   </div>
-                  <span className="font-game-display text-[7px] text-white mt-0.5 max-w-[50px] truncate text-center"
+                  <span className="font-display text-[7px] text-white mt-0.5 max-w-[50px] truncate text-center"
                     style={{ textShadow: "0 1px 3px rgba(0,0,0,0.8)" }}
                   >
                     {(player.short_name || player.name.split(" ").pop() || "").toUpperCase()}
@@ -324,7 +324,7 @@ export default function TeamBuilderPage() {
                   >
                     <span className="text-white/40 text-xs">+</span>
                   </div>
-                  <span className="font-game-display text-[7px] text-white/40 mt-0.5">{pos.label}</span>
+                  <span className="font-display text-[7px] text-white/40 mt-0.5">{pos.label}</span>
                 </>
               )}
             </motion.button>
@@ -335,15 +335,15 @@ export default function TeamBuilderPage() {
       {/* Overall Rating */}
       <div className="px-4 mb-3 flex items-center justify-center gap-4">
         <div className="text-center">
-          <span className="font-game-display text-2xl text-game-gold">
+          <span className="font-display text-2xl text-game-gold">
             {filledCount > 0 ? Math.round(slotPlayers.filter(Boolean).reduce((s, p) => s + overallRating(p!), 0) / filledCount) : 0}
           </span>
-          <span className="block text-[8px] font-game-body text-muted-foreground tracking-wider">TEAM OVR</span>
+          <span className="block text-[8px] font-body text-muted-foreground tracking-wider">TEAM OVR</span>
         </div>
         <div className="w-px h-8 bg-border/30" />
         <div className="text-center">
-          <span className="font-game-display text-2xl text-foreground">{filledCount}</span>
-          <span className="block text-[8px] font-game-body text-muted-foreground tracking-wider">PLAYERS</span>
+          <span className="font-display text-2xl text-foreground">{filledCount}</span>
+          <span className="block text-[8px] font-body text-muted-foreground tracking-wider">PLAYERS</span>
         </div>
       </div>
 
@@ -371,8 +371,8 @@ export default function TeamBuilderPage() {
             >
               <div className="px-4 py-3 border-b border-border/30 flex items-center justify-between">
                 <div>
-                  <span className="font-game-display text-sm text-foreground">SELECT PLAYER</span>
-                  <span className="block text-[9px] text-muted-foreground font-game-body">
+                  <span className="font-display text-sm text-foreground">SELECT PLAYER</span>
+                  <span className="block text-[9px] text-muted-foreground font-body">
                     Slot: {FIELD_POSITIONS[pickerSlot].label} • {availablePlayers.length} available
                   </span>
                 </div>
@@ -384,8 +384,8 @@ export default function TeamBuilderPage() {
                   {availablePlayers.length === 0 ? (
                     <div className="text-center py-8">
                       <span className="text-2xl block mb-2">📭</span>
-                      <p className="text-sm text-muted-foreground font-game-body">No owned players available</p>
-                      <p className="text-[10px] text-muted-foreground font-game-body mt-1">Win matches to earn chests with player cards!</p>
+                      <p className="text-sm text-muted-foreground font-body">No owned players available</p>
+                      <p className="text-[10px] text-muted-foreground font-body mt-1">Win matches to earn chests with player cards!</p>
                     </div>
                   ) : (
                     availablePlayers.map(player => {
@@ -409,15 +409,15 @@ export default function TeamBuilderPage() {
                               border: `1.5px solid ${rarityColor}66`,
                             }}
                           >
-                            <span className="font-game-display text-sm font-black" style={{ color: rarityColor }}>
+                            <span className="font-display text-sm font-black" style={{ color: rarityColor }}>
                               {rating}
                             </span>
                           </div>
                           <div className="flex-1 text-left min-w-0">
-                            <span className="font-game-display text-[11px] text-foreground block truncate">
+                            <span className="font-display text-[11px] text-foreground block truncate">
                               {player.name}
                             </span>
-                            <span className="text-[8px] font-game-body text-muted-foreground">
+                            <span className="text-[8px] font-body text-muted-foreground">
                               {roleLabel(player.role)} • {player.ipl_team} • {(player.rarity || "common").toUpperCase()}
                             </span>
                           </div>

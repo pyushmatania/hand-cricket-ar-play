@@ -194,7 +194,7 @@ const MODE_COLORS: Record<string, string> = {
   daily: "hsl(35 90% 55%)",
   multiplayer: "hsl(0 84% 60%)",
   tournament: "hsl(280 70% 60%)",
-  ipl: "hsl(25 90% 55%)",
+  ipl: "hsl(19 100% 60%)",
   royale: "hsl(0 70% 55%)",
   auction: "hsl(43 90% 55%)",
   worldcup: "hsl(217 80% 60%)",
@@ -208,7 +208,7 @@ export default function GameModeCards({ onSelect }: GameModeCardsProps) {
     <div className="w-full">
       <div className="flex items-center gap-2 px-1 mb-2">
         <div className="w-1 h-4 rounded-sm" style={{ background: "linear-gradient(180deg, hsl(43 90% 55%), hsl(35 60% 35%))" }} />
-        <span className="font-game-display text-[10px] tracking-[0.2em] text-foreground">GAME MODES</span>
+        <span className="font-display text-[10px] tracking-[0.2em] text-foreground">GAME MODES</span>
       </div>
 
       <div className="space-y-2.5">

@@ -7,9 +7,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import handCricketLogo from "@/assets/hand-cricket-logo.png";
 
 /* ── Doc 1 Material Constants ── */
-const LEATHER_BG = "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)";
+const LEATHER_BG = "linear-gradient(180deg, hsl(220 20% 10%) 0%, hsl(220 18% 7%) 40%, hsl(222 40% 6%) 100%)";
 const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
-const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
+const CONCRETE_CARD = "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)";
 const CHALK_DIVIDER = "repeating-linear-gradient(90deg, hsl(45 30% 80%) 0px, hsl(45 30% 80%) 8px, transparent 8px, transparent 14px)";
 
 export default function AuthPage() {
@@ -58,9 +58,9 @@ export default function AuthPage() {
   };
 
   const inputStyle = {
-    background: "linear-gradient(180deg, hsl(25 20% 12%), hsl(25 15% 9%))",
-    border: "2px solid hsl(25 18% 22%)",
-    borderBottom: "4px solid hsl(25 15% 8%)",
+    background: "linear-gradient(180deg, hsl(220 12% 9%), hsl(220 12% 7%))",
+    border: "2px solid hsl(220 15% 18%)",
+    borderBottom: "4px solid hsl(220 12% 6%)",
     color: "hsl(var(--foreground))",
   };
 
@@ -70,7 +70,7 @@ export default function AuthPage() {
       {/* Leather grain */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: LEATHER_GRAIN, backgroundRepeat: "repeat" }} />
       {/* Vignette */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(220 18% 4% / 0.7) 100%)" }} />
       {/* Golden glow */}
       <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-80 h-80 pointer-events-none"
         style={{ background: "radial-gradient(circle, hsl(43 90% 55% / 0.06) 0%, transparent 70%)" }} />
@@ -97,7 +97,7 @@ export default function AuthPage() {
           </motion.div>
           <motion.p
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
-            className="text-[10px] font-game-display tracking-[0.3em] mt-2"
+            className="text-[10px] font-display tracking-[0.3em] mt-2"
             style={{ color: "hsl(43 70% 50% / 0.6)" }}
           >
             {isLogin ? "WELCOME BACK, CHAMPION" : "JOIN THE ARENA"}
@@ -110,8 +110,8 @@ export default function AuthPage() {
           className="rounded-2xl p-6 relative overflow-hidden"
           style={{
             background: CONCRETE_CARD,
-            border: "2px solid hsl(25 18% 22%)",
-            borderBottom: "5px solid hsl(25 20% 10%)",
+            border: "2px solid hsl(220 15% 18%)",
+            borderBottom: "5px solid hsl(220 15% 8%)",
             boxShadow: "0 8px 32px hsl(0 0% 0% / 0.5)",
           }}
         >
@@ -121,8 +121,8 @@ export default function AuthPage() {
           {/* Tab Switcher — Jersey Mesh */}
           <div className="flex gap-1 mb-6 rounded-xl p-1"
             style={{
-              background: "linear-gradient(180deg, hsl(25 15% 14%), hsl(25 12% 10%))",
-              border: "1px solid hsl(25 20% 18%)",
+              background: "linear-gradient(180deg, hsl(220 12% 10%), hsl(220 12% 8%))",
+              border: "1px solid hsl(220 15% 14%)",
             }}>
             {[
               { key: true, label: "SIGN IN", icon: "⚡" },
@@ -132,14 +132,14 @@ export default function AuthPage() {
                 key={String(tab.key)}
                 type="button"
                 onClick={() => { setIsLogin(tab.key); setError(""); setSuccess(""); }}
-                className="flex-1 py-2.5 rounded-lg font-game-display text-[9px] tracking-widest flex items-center justify-center gap-1.5 relative overflow-hidden"
+                className="flex-1 py-2.5 rounded-lg font-display text-[9px] tracking-widest flex items-center justify-center gap-1.5 relative overflow-hidden"
                 style={isLogin === tab.key ? {
                   background: "linear-gradient(180deg, hsl(207 90% 50%), hsl(207 85% 38%))",
                   color: "white",
                   borderBottom: "3px solid hsl(207 70% 28%)",
                   boxShadow: "0 2px 8px hsl(207 90% 50% / 0.3)",
                 } : {
-                  color: "hsl(25 15% 45%)",
+                  color: "hsl(220 15% 45%)",
                   borderBottom: "3px solid transparent",
                 }}
               >
@@ -159,14 +159,14 @@ export default function AuthPage() {
                 <motion.div key="name-field"
                   initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2 }}>
-                  <label className="text-[9px] font-game-display tracking-widest block mb-1.5" style={{ color: "hsl(25 15% 45%)" }}>
+                  <label className="text-[9px] font-display tracking-widest block mb-1.5" style={{ color: "hsl(220 15% 45%)" }}>
                     DISPLAY NAME
                   </label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm opacity-40">👤</span>
                     <input
                       type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)}
-                      className="w-full rounded-xl pl-9 pr-4 py-3 text-sm font-game-body placeholder:text-muted-foreground/30 focus:outline-none transition-all"
+                      className="w-full rounded-xl pl-9 pr-4 py-3 text-sm font-body placeholder:text-muted-foreground/30 focus:outline-none transition-all"
                       style={inputStyle} placeholder="Your player name"
                     />
                   </div>
@@ -175,28 +175,28 @@ export default function AuthPage() {
             </AnimatePresence>
 
             <div>
-              <label className="text-[9px] font-game-display tracking-widest block mb-1.5" style={{ color: "hsl(25 15% 45%)" }}>
+              <label className="text-[9px] font-display tracking-widest block mb-1.5" style={{ color: "hsl(220 15% 45%)" }}>
                 EMAIL
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm opacity-40">📧</span>
                 <input
                   type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
-                  className="w-full rounded-xl pl-9 pr-4 py-3 text-sm font-game-body placeholder:text-muted-foreground/30 focus:outline-none transition-all"
+                  className="w-full rounded-xl pl-9 pr-4 py-3 text-sm font-body placeholder:text-muted-foreground/30 focus:outline-none transition-all"
                   style={inputStyle} placeholder="player@email.com"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-[9px] font-game-display tracking-widest block mb-1.5" style={{ color: "hsl(25 15% 45%)" }}>
+              <label className="text-[9px] font-display tracking-widest block mb-1.5" style={{ color: "hsl(220 15% 45%)" }}>
                 PASSWORD
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm opacity-40">🔒</span>
                 <input
                   type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6}
-                  className="w-full rounded-xl pl-9 pr-4 py-3 text-sm font-game-body placeholder:text-muted-foreground/30 focus:outline-none transition-all"
+                  className="w-full rounded-xl pl-9 pr-4 py-3 text-sm font-body placeholder:text-muted-foreground/30 focus:outline-none transition-all"
                   style={inputStyle} placeholder="••••••••"
                 />
               </div>
@@ -209,7 +209,7 @@ export default function AuthPage() {
                   className="flex items-center gap-2 px-3 py-2.5 rounded-xl"
                   style={{ background: "hsl(4 50% 20% / 0.3)", border: "1.5px solid hsl(4 60% 40% / 0.3)" }}>
                   <span className="text-sm">⚠️</span>
-                  <span className="text-[10px] font-game-display" style={{ color: "hsl(4 90% 65%)" }}>{error}</span>
+                  <span className="text-[10px] font-display" style={{ color: "hsl(4 90% 65%)" }}>{error}</span>
                 </motion.div>
               )}
               {success && (
@@ -217,7 +217,7 @@ export default function AuthPage() {
                   className="flex items-center gap-2 px-3 py-2.5 rounded-xl"
                   style={{ background: "hsl(142 30% 18% / 0.3)", border: "1.5px solid hsl(142 50% 35% / 0.3)" }}>
                   <span className="text-sm">✅</span>
-                  <span className="text-[10px] font-game-display" style={{ color: "hsl(142 71% 55%)" }}>{success}</span>
+                  <span className="text-[10px] font-display" style={{ color: "hsl(142 71% 55%)" }}>{success}</span>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -226,7 +226,7 @@ export default function AuthPage() {
             <motion.button
               type="submit" disabled={loading}
               whileTap={{ scale: 0.95, y: 2 }}
-              className="w-full py-3.5 rounded-2xl font-game-display text-sm tracking-wider relative overflow-hidden disabled:opacity-50"
+              className="w-full py-3.5 rounded-2xl font-display text-sm tracking-wider relative overflow-hidden disabled:opacity-50"
               style={{
                 background: "linear-gradient(180deg, hsl(142 71% 50%) 0%, hsl(142 65% 38%) 100%)",
                 border: "2px solid hsl(142 60% 55% / 0.5)",
@@ -255,7 +255,7 @@ export default function AuthPage() {
             {/* Chalk divider */}
             <div className="flex items-center gap-3 py-1">
               <div className="flex-1 h-px opacity-20" style={{ background: CHALK_DIVIDER }} />
-              <span className="text-[8px] font-game-display tracking-widest" style={{ color: "hsl(25 15% 35%)" }}>OR CONTINUE WITH</span>
+              <span className="text-[8px] font-display tracking-widest" style={{ color: "hsl(220 15% 35%)" }}>OR CONTINUE WITH</span>
               <div className="flex-1 h-px opacity-20" style={{ background: CHALK_DIVIDER }} />
             </div>
 
@@ -272,11 +272,11 @@ export default function AuthPage() {
                   setError(result.error.message || "Google sign-in failed");
                 }
               }}
-              className="w-full py-3 rounded-2xl font-game-display text-xs tracking-wider flex items-center justify-center gap-2.5"
+              className="w-full py-3 rounded-2xl font-display text-xs tracking-wider flex items-center justify-center gap-2.5"
               style={{
                 background: CONCRETE_CARD,
-                border: "2px solid hsl(25 18% 22%)",
-                borderBottom: "5px solid hsl(25 20% 10%)",
+                border: "2px solid hsl(220 15% 18%)",
+                borderBottom: "5px solid hsl(220 15% 8%)",
                 color: "hsl(var(--foreground))",
               }}
             >
@@ -295,8 +295,8 @@ export default function AuthPage() {
         <motion.button
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
           onClick={() => navigate("/")}
-          className="w-full text-center text-[10px] font-game-display tracking-wider mt-5 flex items-center justify-center gap-1.5"
-          style={{ color: "hsl(25 15% 35%)" }}
+          className="w-full text-center text-[10px] font-display tracking-wider mt-5 flex items-center justify-center gap-1.5"
+          style={{ color: "hsl(220 15% 35%)" }}
         >
           <span className="text-xs">←</span> Back to Home
         </motion.button>

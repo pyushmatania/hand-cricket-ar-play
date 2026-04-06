@@ -22,13 +22,13 @@ export default function CurrencyPill({
         className
       )}
       style={{
-        background: "linear-gradient(180deg, hsl(28 40% 22%), hsl(25 45% 14%))",
-        border: "2px solid hsl(25 35% 10%)",
+        background: "linear-gradient(180deg, hsl(220 15% 16%), hsl(220 12% 10%))",
+        border: "2px solid hsl(220 12% 8%)",
         boxShadow: "0 2px 4px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 30% 35% / 0.25)",
       }}
     >
       <span className="text-base">{icon}</span>
-      <span className="text-xs font-game-display text-foreground min-w-[28px] text-right">
+      <span className="text-xs font-display text-foreground min-w-[28px] text-right">
         {typeof value === "number"
           ? value >= 1000
             ? `${(value / 1000).toFixed(1)}K`

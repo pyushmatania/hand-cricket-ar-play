@@ -64,8 +64,8 @@ export default function ShopItemCard({
       className="relative rounded-2xl overflow-hidden cursor-pointer active:scale-[0.96] transition-transform"
       style={{
         border: `2px solid ${r.border}`,
-        boxShadow: equipped ? r.glow : "0 4px 0 hsl(25 30% 8%), 0 6px 12px rgba(0,0,0,0.4)",
-        background: "linear-gradient(180deg, hsl(28 25% 16%) 0%, hsl(25 20% 10%) 100%)",
+        boxShadow: equipped ? r.glow : "0 4px 0 hsl(220 18% 7%), 0 6px 12px rgba(0,0,0,0.4)",
+        background: "linear-gradient(180deg, hsl(220 12% 12%) 0%, hsl(220 15% 8%) 100%)",
       }}
     >
       {/* Rarity stripe - chrome */}
@@ -83,11 +83,11 @@ export default function ShopItemCard({
         <div className="relative z-10">
           {/* Top badges */}
           <div className="flex items-center justify-between mb-1">
-            <span className="text-[7px] font-game-display tracking-wider" style={{ color: r.color }}>
+            <span className="text-[7px] font-display tracking-wider" style={{ color: r.color }}>
               {r.label}
             </span>
             {equipped && (
-              <span className="text-[7px] font-game-display tracking-wider px-1.5 py-0.5 rounded-full"
+              <span className="text-[7px] font-display tracking-wider px-1.5 py-0.5 rounded-full"
                 style={{
                   color: "hsl(142 70% 55%)",
                   background: "hsl(142 70% 55% / 0.1)",
@@ -98,7 +98,7 @@ export default function ShopItemCard({
               </span>
             )}
             {owned && !equipped && (
-              <span className="text-[7px] font-game-display tracking-wider px-1.5 py-0.5 rounded-full"
+              <span className="text-[7px] font-display tracking-wider px-1.5 py-0.5 rounded-full"
                 style={{
                   color: "hsl(207 80% 60%)",
                   background: "hsl(207 80% 60% / 0.1)",
@@ -123,8 +123,8 @@ export default function ShopItemCard({
           </div>
 
           {/* Name - scoreboard paint */}
-          <p className="font-game-card text-xs font-bold text-foreground truncate"
-            style={{ textShadow: "0 1px 0 hsl(25 30% 8%)" }}
+          <p className="font-display text-xs font-bold text-foreground truncate"
+            style={{ textShadow: "0 1px 0 hsl(220 18% 7%)" }}
           >
             {name}
           </p>
@@ -133,7 +133,7 @@ export default function ShopItemCard({
           <div className="flex items-center justify-between mt-1.5">
             <span className="text-[9px] text-muted-foreground line-clamp-1 flex-1">{description.slice(0, 22)}</span>
             {!owned && (
-              <span className="font-game-display text-[10px] flex items-center gap-0.5 shrink-0"
+              <span className="font-display text-[10px] flex items-center gap-0.5 shrink-0"
                 style={{ color: "hsl(43 100% 60%)" }}
               >
                 🪙 {price}
@@ -145,7 +145,7 @@ export default function ShopItemCard({
 
       {/* 3D bottom edge */}
       <div className="h-1" style={{
-        background: "linear-gradient(180deg, hsl(25 20% 8%), hsl(25 15% 5%))",
+        background: "linear-gradient(180deg, hsl(220 15% 6%), hsl(220 12% 4%))",
       }} />
     </motion.div>
   );

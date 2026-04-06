@@ -27,7 +27,7 @@ export default function StumpHitAnimation({ show, onComplete }: StumpHitAnimatio
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-[70] flex items-center justify-center"
-        style={{ background: "radial-gradient(circle, hsl(25 30% 6% / 0.95), hsl(222 40% 3% / 0.98))" }}
+        style={{ background: "radial-gradient(circle, hsl(220 12% 5% / 0.95), hsl(222 40% 3% / 0.98))" }}
       >
         {/* Stumps */}
         <div className="relative" style={{ width: 160, height: 200 }}>
@@ -157,10 +157,10 @@ export default function StumpHitAnimation({ show, onComplete }: StumpHitAnimatio
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
             className="absolute bottom-[30%] text-center"
           >
-            <span className="font-game-title text-4xl tracking-wider"
+            <span className="font-display text-4xl tracking-wider"
               style={{
                 color: "hsl(43 90% 55%)",
-                textShadow: "0 4px 0 hsl(25 40% 12%), 0 0 30px hsl(43 90% 55% / 0.5)",
+                textShadow: "0 4px 0 hsl(220 12% 9%), 0 0 30px hsl(43 90% 55% / 0.5)",
               }}
             >
               HOWZAT! 🏏

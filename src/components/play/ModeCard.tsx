@@ -51,10 +51,10 @@ export default function ModeCard({ mode, index, onSelect }: ModeCardProps) {
           borderRadius: "16px",
           border: `2px solid hsl(${mode.borderHue} 30% 30% / 0.5)`,
           borderBottom: `5px solid hsl(${mode.borderHue} 25% 18%)`,
-          background: "linear-gradient(135deg, hsl(28 22% 15% / 0.9) 0%, hsl(25 18% 11% / 0.95) 100%)",
+          background: "linear-gradient(135deg, hsl(220 12% 11% / 0.9) 0%, hsl(220 12% 8% / 0.95) 100%)",
           boxShadow: isPressed
-            ? `0 1px 0 hsl(25 30% 8%), 0 0 25px ${mode.glowHsl}`
-            : `0 4px 0 hsl(25 30% 8%), 0 6px 20px rgba(0,0,0,0.3)`,
+            ? `0 1px 0 hsl(220 18% 7%), 0 0 25px ${mode.glowHsl}`
+            : `0 4px 0 hsl(220 18% 7%), 0 6px 20px rgba(0,0,0,0.3)`,
           transformStyle: "preserve-3d",
         }}
       >
@@ -94,17 +94,17 @@ export default function ModeCard({ mode, index, onSelect }: ModeCardProps) {
 
         {/* Text */}
         <div className="flex-1 min-w-0" style={{ transform: "translateZ(8px)" }}>
-          <span className="font-game-display text-sm text-foreground tracking-wider block"
-            style={{ textShadow: "0 1px 0 hsl(25 30% 8%)" }}
+          <span className="font-display text-sm text-foreground tracking-wider block"
+            style={{ textShadow: "0 1px 0 hsl(220 18% 7%)" }}
           >
             {mode.title}
           </span>
-          <span className="text-[10px] font-game-display font-bold block mt-0.5"
+          <span className="text-[10px] font-display font-bold block mt-0.5"
             style={{ color: mode.accentHsl }}
           >
             {mode.subtitle}
           </span>
-          <span className="text-[10px] text-muted-foreground font-game-body block mt-1 leading-relaxed">
+          <span className="text-[10px] text-muted-foreground font-body block mt-1 leading-relaxed">
             {mode.description}
           </span>
         </div>
@@ -113,7 +113,7 @@ export default function ModeCard({ mode, index, onSelect }: ModeCardProps) {
         <motion.span
           animate={{ x: [0, 4, 0] }}
           transition={{ duration: 1.5, repeat: Infinity }}
-          className="mt-3 text-sm font-bold font-game-score"
+          className="mt-3 text-sm font-bold font-score"
           style={{ color: mode.accentHsl }}
         >
           →

@@ -25,7 +25,7 @@ const QUICK_PLAY = [
 
 const TOURNAMENTS = [
   { id: "tournament", label: "TOURNAMENT", desc: "5-Round Bracket", emoji: "🏆", color: "hsl(43 90% 55%)", badge: null, minRank: null },
-  { id: "ipl", label: "IPL SEASON", desc: "Full Franchise", emoji: "🏟️", color: "hsl(25 90% 55%)", badge: null, minRank: null },
+  { id: "ipl", label: "IPL SEASON", desc: "Full Franchise", emoji: "🏟️", color: "hsl(19 100% 60%)", badge: null, minRank: null },
   { id: "worldcup", label: "WORLD CUP", desc: "10 Nations", emoji: "🌍", color: "hsl(217 80% 55%)", badge: "NEW", minRank: null },
   { id: "ashes", label: "THE ASHES", desc: "Best of 5 Tests", emoji: "🏺", color: "hsl(35 70% 50%)", badge: "NEW", minRank: null },
   { id: "knockout", label: "KNOCKOUT CUP", desc: "8-Team Bracket", emoji: "🥊", color: "hsl(0 70% 55%)", badge: "NEW", minRank: "silver" },
@@ -48,7 +48,7 @@ function SectionHeader({ label, accentGradient }: { label: string; accentGradien
   return (
     <div className="flex items-center gap-2 mb-3">
       <div className="w-1.5 h-5 rounded-sm" style={{ background: accentGradient }} />
-      <h3 className="font-game-display text-[10px] tracking-[0.2em] text-foreground uppercase">{label}</h3>
+      <h3 className="font-display text-[10px] tracking-[0.2em] text-foreground uppercase">{label}</h3>
     </div>
   );
 }
@@ -62,7 +62,7 @@ function ModeBadge({ type }: { type: string }) {
   const s = styles[type] || styles.NEW;
   return (
     <motion.span
-      className="absolute -top-1.5 -right-1.5 font-game-display text-[7px] tracking-widest px-1.5 py-0.5 z-20"
+      className="absolute -top-1.5 -right-1.5 font-display text-[7px] tracking-widest px-1.5 py-0.5 z-20"
       style={{ borderRadius: "6px", background: s.bg, color: s.text, border: `1px solid ${s.border}` }}
       initial={{ scale: 0, opacity: 0 }}
       animate={{
@@ -91,7 +91,7 @@ function LockOverlay({ rank }: { rank: string }) {
       style={{ background: "hsl(0 0% 0% / 0.55)", backdropFilter: "blur(2px)" }}>
       <div className="flex flex-col items-center gap-0.5">
         <span className="text-base">🔒</span>
-        <span className="font-game-display text-[8px] tracking-wider text-muted-foreground uppercase">
+        <span className="font-display text-[8px] tracking-wider text-muted-foreground uppercase">
           {rank} rank
         </span>
       </div>
@@ -106,7 +106,7 @@ function LiveIndicator() {
     return () => clearInterval(t);
   }, []);
   return (
-    <span className="flex items-center gap-1 font-game-body text-[8px]" style={{ color: "hsl(142 60% 55%)" }}>
+    <span className="flex items-center gap-1 font-body text-[8px]" style={{ color: "hsl(142 60% 55%)" }}>
       <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "hsl(142 71% 50%)" }} />
       {count} playing now
     </span>
@@ -130,7 +130,7 @@ function DailyResetTimer() {
     return () => clearInterval(t);
   }, []);
   return (
-    <span className="flex items-center gap-1 font-game-body text-[8px]" style={{ color: "hsl(43 80% 55%)" }}>
+    <span className="flex items-center gap-1 font-body text-[8px]" style={{ color: "hsl(43 80% 55%)" }}>
       <span className="text-[8px]">⏱</span> Resets in {timeLeft}
     </span>
   );
@@ -152,9 +152,9 @@ function CompetitiveCard({ mode, index, onNavigate, userRank }: { mode: typeof T
       style={{
         borderRadius: "14px",
         padding: "10px 12px",
-        background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)",
-        border: "2px solid hsl(25 18% 22%)",
-        borderBottom: "4px solid hsl(25 20% 10%)",
+        background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
+        border: "2px solid hsl(220 15% 18%)",
+        borderBottom: "4px solid hsl(220 15% 8%)",
         opacity: isLocked ? 0.6 : 1,
       }}
     >
@@ -164,15 +164,15 @@ function CompetitiveCard({ mode, index, onNavigate, userRank }: { mode: typeof T
       <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl" style={{ background: mode.color, opacity: 0.6 }} />
       <span className="text-lg ml-1">{mode.emoji}</span>
       <div className="flex-1 text-left">
-        <span className="font-game-display text-[10px] text-foreground tracking-wider">{mode.label}</span>
+        <span className="font-display text-[10px] text-foreground tracking-wider">{mode.label}</span>
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-game-body text-[9px] text-muted-foreground">{mode.desc}</span>
+          <span className="font-body text-[9px] text-muted-foreground">{mode.desc}</span>
           {(mode as any).liveCount && <LiveIndicator />}
           {mode.id === "daily" && <DailyResetTimer />}
         </div>
       </div>
       {!isLocked && (
-        <span className="font-game-display text-[9px] tracking-wider px-2.5 py-1"
+        <span className="font-display text-[9px] tracking-wider px-2.5 py-1"
           style={{
             borderRadius: "8px",
             background: "linear-gradient(180deg, hsl(217 80% 55%) 0%, hsl(217 70% 42%) 100%)",
@@ -220,7 +220,7 @@ export default function ModeSelectDrawer({ open, onOpenChange }: ModeSelectDrawe
       <DrawerContent
         className="border-t-0 rounded-t-3xl max-h-[85vh] pb-6"
         style={{
-          background: "linear-gradient(180deg, hsl(28 30% 15%) 0%, hsl(25 25% 8%) 100%)",
+          background: "linear-gradient(180deg, hsl(220 12% 11%) 0%, hsl(220 15% 7%) 100%)",
           borderTop: "2px solid hsl(43 50% 35%)",
         }}
       >
@@ -253,9 +253,9 @@ export default function ModeSelectDrawer({ open, onOpenChange }: ModeSelectDrawe
                     style={{
                       borderRadius: "14px",
                       padding: "10px",
-                      background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)",
-                      border: isSelected ? `2px solid hsl(${mode.hue} 70% 50%)` : "2px solid hsl(25 18% 22%)",
-                      borderBottom: isSelected ? `5px solid hsl(${mode.hue} 50% 30%)` : "4px solid hsl(25 20% 10%)",
+                      background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
+                      border: isSelected ? `2px solid hsl(${mode.hue} 70% 50%)` : "2px solid hsl(220 15% 18%)",
+                      borderBottom: isSelected ? `5px solid hsl(${mode.hue} 50% 30%)` : "4px solid hsl(220 15% 8%)",
                       boxShadow: isSelected ? `0 0 16px hsl(${mode.hue} 70% 50% / 0.2)` : undefined,
                     }}
                   >
@@ -263,12 +263,12 @@ export default function ModeSelectDrawer({ open, onOpenChange }: ModeSelectDrawe
                       style={{ backgroundImage: "radial-gradient(circle, hsl(0 0% 100%) 0.5px, transparent 0.5px)", backgroundSize: "4px 4px" }} />
                     <div className="flex items-center gap-2 mb-1 relative z-10">
                       <span className="text-lg">{mode.emoji}</span>
-                      <span className="font-game-display text-[10px] text-foreground tracking-wider">{mode.label}</span>
+                      <span className="font-display text-[10px] text-foreground tracking-wider">{mode.label}</span>
                     </div>
-                    <span className="font-game-body text-[9px] text-muted-foreground relative z-10">{mode.time}</span>
+                    <span className="font-body text-[9px] text-muted-foreground relative z-10">{mode.time}</span>
                     <div className="mt-1.5 relative z-10">
                       <button onClick={(e) => { e.stopPropagation(); handlePlay(mode.id, mode.overs); }}
-                        className="w-full font-game-display text-[10px] tracking-wider"
+                        className="w-full font-display text-[10px] tracking-wider"
                         style={{
                           padding: "5px 0", borderRadius: "8px",
                           background: "linear-gradient(180deg, hsl(142 71% 50%) 0%, hsl(142 65% 38%) 100%)",
@@ -317,12 +317,12 @@ export default function ModeSelectDrawer({ open, onOpenChange }: ModeSelectDrawe
               className="w-full flex items-center justify-center gap-2 py-3"
               style={{
                 borderRadius: "14px",
-                background: "hsl(25 15% 12%)",
-                border: "1.5px solid hsl(25 15% 20%)",
-                borderBottom: "3px solid hsl(25 12% 8%)",
+                background: "hsl(220 12% 9%)",
+                border: "1.5px solid hsl(220 15% 16%)",
+                borderBottom: "3px solid hsl(220 12% 6%)",
               }}
             >
-              <span className="font-game-body text-xs text-muted-foreground">
+              <span className="font-body text-xs text-muted-foreground">
                 🎯 Practice Mode <span className="text-[10px]">(vs AI, no rewards)</span>
               </span>
             </motion.button>

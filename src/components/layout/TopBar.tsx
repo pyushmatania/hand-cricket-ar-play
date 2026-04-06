@@ -9,7 +9,7 @@ interface TopBarProps {
   runs?: number;
 }
 
-const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
+const CONCRETE_CARD = "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)";
 
 export default function TopBar({ coins = 1250, gems = 45, runs = 3800 }: TopBarProps) {
   const navigate = useNavigate();
@@ -20,9 +20,9 @@ export default function TopBar({ coins = 1250, gems = 45, runs = 3800 }: TopBarP
       <div className="max-w-lg mx-auto">
         <div className="flex items-center justify-between px-3 pt-[env(safe-area-inset-top,8px)] pb-2"
           style={{
-            background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 10%) 100%)",
-            borderBottom: "2px solid hsl(25 20% 22%)",
-            boxShadow: "0 4px 0 hsl(25 20% 6%), 0 4px 16px rgba(0,0,0,0.5), inset 0 -1px 0 rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+            background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
+            borderBottom: "2px solid hsl(220 15% 18%)",
+            boxShadow: "0 4px 0 hsl(220 15% 5%), 0 4px 16px rgba(0,0,0,0.5), inset 0 -1px 0 rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
           }}>
           {/* Player avatar + level */}
           <button
@@ -34,15 +34,15 @@ export default function TopBar({ coins = 1250, gems = 45, runs = 3800 }: TopBarP
                 background: CONCRETE_CARD,
                 border: "2px solid hsl(35 40% 45%)",
                 borderBottom: "3px solid hsl(35 30% 30%)",
-                boxShadow: "0 2px 0 hsl(25 20% 6%), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.15)",
+                boxShadow: "0 2px 0 hsl(220 15% 5%), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.15)",
               }}>
               🏏
             </div>
             <div className="flex flex-col items-start">
-              <span className="text-[10px] font-game-display text-foreground leading-tight">
+              <span className="text-[10px] font-display text-foreground leading-tight">
                 {user?.email?.split("@")[0]?.slice(0, 8) || "Player"}
               </span>
-              <span className="text-[8px] font-game-body" style={{ color: "hsl(51 100% 60%)" }}>Lvl 12</span>
+              <span className="text-[8px] font-body" style={{ color: "hsl(51 100% 60%)" }}>Lvl 12</span>
             </div>
           </button>
 
@@ -59,9 +59,9 @@ export default function TopBar({ coins = 1250, gems = 45, runs = 3800 }: TopBarP
             className="w-8 h-8 rounded-full flex items-center justify-center active:scale-90 transition-transform"
             style={{
               background: CONCRETE_CARD,
-              border: "2px solid hsl(25 20% 22%)",
-              borderBottom: "3px solid hsl(25 20% 8%)",
-              boxShadow: "0 2px 0 hsl(25 20% 6%), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+              border: "2px solid hsl(220 15% 18%)",
+              borderBottom: "3px solid hsl(220 15% 6%)",
+              boxShadow: "0 2px 0 hsl(220 15% 5%), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
             }}
           >
             <Settings className="w-4 h-4 text-muted-foreground" />

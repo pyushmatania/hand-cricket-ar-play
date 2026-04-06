@@ -27,7 +27,7 @@ export default function SeasonCountdown({ endDate, isLive = true }: SeasonCountd
   if (remaining.expired) {
     return (
       <div className="rounded-xl p-3 text-center border" style={{ background: style.bg, borderColor: style.border }}>
-        <span className="font-game-display text-[8px] tracking-[0.3em] text-game-gold">⏰ SEASON ENDED — RESULTS FINALIZING</span>
+        <span className="font-display text-[8px] tracking-[0.3em] text-game-gold">⏰ SEASON ENDED — RESULTS FINALIZING</span>
       </div>
     );
   }
@@ -48,12 +48,12 @@ export default function SeasonCountdown({ endDate, isLive = true }: SeasonCountd
               className="w-2 h-2 rounded-full bg-game-red"
             />
           )}
-          <span className="font-game-display text-[7px] tracking-[0.25em] text-muted-foreground">
+          <span className="font-display text-[7px] tracking-[0.25em] text-muted-foreground">
             {urgency === "critical" ? "⚠️ SEASON ENDING SOON" : "SEASON ENDS IN"}
           </span>
         </div>
         {urgency === "critical" && (
-          <span className="text-[7px] font-game-display text-game-red/70 tracking-wider animate-pulse">HURRY!</span>
+          <span className="text-[7px] font-display text-game-red/70 tracking-wider animate-pulse">HURRY!</span>
         )}
       </div>
 
@@ -77,11 +77,11 @@ export default function SeasonCountdown({ endDate, isLive = true }: SeasonCountd
                   borderColor: "hsl(222 25% 20%)",
                 }}
               >
-                <span className={`font-game-display text-lg font-black ${style.text}`}>
+                <span className={`font-display text-lg font-black ${style.text}`}>
                   {String(unit.value).padStart(2, "0")}
                 </span>
               </motion.div>
-              <span className="text-[5px] text-muted-foreground font-game-display tracking-[0.2em] mt-1">{unit.label}</span>
+              <span className="text-[5px] text-muted-foreground font-display tracking-[0.2em] mt-1">{unit.label}</span>
             </div>
             {i < 3 && <span className={`text-sm font-black ${style.text} opacity-40 mt-[-10px]`}>:</span>}
           </div>

@@ -69,7 +69,7 @@ export default function GameButton({
   return (
     <Wrapper
       className={cn(
-        "btn-wood font-game-display tracking-wide uppercase flex items-center justify-center gap-2",
+        "btn-wood font-display tracking-wide uppercase flex items-center justify-center gap-2",
         sizeStyles[size],
         className
       )}

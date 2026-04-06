@@ -39,7 +39,7 @@ const MatchShareCard = forwardRef<HTMLDivElement, MatchShareCardProps>(({
         className="h-2"
         style={{
           background: isWin
-            ? "linear-gradient(90deg, hsl(43 96% 56%), hsl(25 90% 55%))"
+            ? "linear-gradient(90deg, hsl(43 96% 56%), hsl(19 100% 60%))"
             : isLoss
             ? "linear-gradient(90deg, hsl(4 90% 58%), hsl(340 80% 50%))"
             : "linear-gradient(90deg, hsl(217 91% 60%), hsl(168 80% 50%))",

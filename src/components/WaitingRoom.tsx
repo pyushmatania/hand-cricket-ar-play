@@ -80,7 +80,7 @@ export default function WaitingRoom({ roomCode, playerName, playerAvatarIndex = 
         className="absolute top-8 left-1/2 -translate-x-1/2 z-20"
       >
         <div className="wood-panel px-5 py-1.5 rounded-xl">
-          <span className="font-game-display text-[9px] font-bold text-game-gold tracking-[0.25em]">{typeLabel}</span>
+          <span className="font-display text-[9px] font-bold text-game-gold tracking-[0.25em]">{typeLabel}</span>
         </div>
       </motion.div>
 
@@ -112,15 +112,15 @@ export default function WaitingRoom({ roomCode, playerName, playerAvatarIndex = 
             className="w-16 h-16 rounded-full flex items-center justify-center"
             style={{
               background: "linear-gradient(180deg, hsl(45 100% 60%), hsl(35 90% 40%))",
-              border: "3px solid hsl(25 50% 20%)",
-              boxShadow: "0 4px 0 hsl(25 50% 15%), 0 8px 20px rgba(0,0,0,0.5)",
+              border: "3px solid hsl(220 15% 16%)",
+              boxShadow: "0 4px 0 hsl(220 12% 11%), 0 8px 20px rgba(0,0,0,0.5)",
             }}
           >
             <span
-              className="font-game-display text-2xl font-black text-white"
+              className="font-display text-2xl font-black text-white"
               style={{
-                textShadow: "0 2px 0 hsl(25 50% 20%), 0 4px 8px rgba(0,0,0,0.4)",
-                WebkitTextStroke: "1.5px hsl(25 50% 15%)",
+                textShadow: "0 2px 0 hsl(220 15% 16%), 0 4px 8px rgba(0,0,0,0.4)",
+                WebkitTextStroke: "1.5px hsl(220 12% 11%)",
               }}
             >
               VS
@@ -140,7 +140,7 @@ export default function WaitingRoom({ roomCode, playerName, playerAvatarIndex = 
             }}
           >
             <span className="text-5xl opacity-40">❓</span>
-            <span className="absolute bottom-3 font-game-display text-[8px] text-muted-foreground/50 tracking-[0.2em]">SEARCHING...</span>
+            <span className="absolute bottom-3 font-display text-[8px] text-muted-foreground/50 tracking-[0.2em]">SEARCHING...</span>
           </motion.div>
         </motion.div>
       </div>
@@ -157,8 +157,8 @@ export default function WaitingRoom({ roomCode, playerName, playerAvatarIndex = 
           <div className="wood-panel-dark rounded-xl px-3 py-2 flex items-center gap-2">
             <PlayerAvatar avatarIndex={playerAvatarIndex} size="sm" className="border-primary/40" />
             <div className="flex flex-col min-w-0">
-              <span className="font-game-display text-xs text-foreground tracking-wider truncate">{playerName.toUpperCase()}</span>
-              <span className="text-[8px] font-game-body text-primary font-bold tracking-widest">HOST</span>
+              <span className="font-display text-xs text-foreground tracking-wider truncate">{playerName.toUpperCase()}</span>
+              <span className="text-[8px] font-body text-primary font-bold tracking-widest">HOST</span>
             </div>
           </div>
         </motion.div>
@@ -172,7 +172,7 @@ export default function WaitingRoom({ roomCode, playerName, playerAvatarIndex = 
         >
           <div className="wood-panel-dark rounded-xl px-3 py-2 flex items-center gap-2 justify-end opacity-60">
             <div className="flex flex-col items-end min-w-0">
-              <span className="font-game-display text-xs text-muted-foreground tracking-wider">SEARCHING...</span>
+              <span className="font-display text-xs text-muted-foreground tracking-wider">SEARCHING...</span>
               <div className="flex gap-1 mt-0.5">
                 {[0, 1, 2].map((i) => (
                   <motion.div
@@ -206,13 +206,13 @@ export default function WaitingRoom({ roomCode, playerName, playerAvatarIndex = 
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5">
             <div className="w-2 h-2 rounded-full bg-game-green animate-pulse" />
-            <span className="text-[8px] text-game-green font-game-display font-bold">LIVE</span>
+            <span className="text-[8px] text-game-green font-display font-bold">LIVE</span>
           </div>
           <span className="font-mono text-sm font-bold text-game-gold tracking-[0.15em]">{roomCode}</span>
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={copyCode}
-            className="wood-panel px-2.5 py-1 rounded-lg text-[8px] font-game-display font-bold text-game-gold tracking-wider"
+            className="wood-panel px-2.5 py-1 rounded-lg text-[8px] font-display font-bold text-game-gold tracking-wider"
           >
             {copied ? "✓" : "📋"}
           </motion.button>
@@ -223,7 +223,7 @@ export default function WaitingRoom({ roomCode, playerName, playerAvatarIndex = 
           key={tip}
           initial={{ opacity: 0, y: 4 }}
           animate={{ opacity: 0.5, y: 0 }}
-          className="text-[8px] text-muted-foreground font-game-body text-center"
+          className="text-[8px] text-muted-foreground font-body text-center"
         >
           💡 {TIPS[tip]}
         </motion.p>

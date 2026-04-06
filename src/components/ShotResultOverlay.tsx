@@ -43,23 +43,23 @@ function WoodenSignboard({ children }: { children: React.ReactNode }) {
     <div className="relative">
       {/* Rope hooks */}
       <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex gap-20">
-        <div className="w-1 h-10 rounded-full" style={{ background: "linear-gradient(180deg, hsl(35 40% 35%), hsl(30 35% 25%))" }} />
-        <div className="w-1 h-10 rounded-full" style={{ background: "linear-gradient(180deg, hsl(35 40% 35%), hsl(30 35% 25%))" }} />
+        <div className="w-1 h-10 rounded-full" style={{ background: "linear-gradient(180deg, hsl(35 40% 35%), hsl(220 15% 16%))" }} />
+        <div className="w-1 h-10 rounded-full" style={{ background: "linear-gradient(180deg, hsl(35 40% 35%), hsl(220 15% 16%))" }} />
       </div>
       {/* Board */}
       <div
         className="relative px-10 py-5 rounded-xl"
         style={{
-          background: "linear-gradient(180deg, hsl(30 50% 32%), hsl(25 45% 22%))",
-          border: "4px solid hsl(30 40% 18%)",
+          background: "linear-gradient(180deg, hsl(30 50% 32%), hsl(220 15% 14%))",
+          border: "4px solid hsl(220 12% 12%)",
           boxShadow:
-            "inset 0 2px 0 hsl(35 50% 42%), inset 0 -3px 0 hsl(25 40% 14%), 0 8px 30px hsl(0 0% 0% / 0.6), 0 0 60px hsl(43 96% 56% / 0.2)",
+            "inset 0 2px 0 hsl(35 50% 42%), inset 0 -3px 0 hsl(220 12% 10%), 0 8px 30px hsl(0 0% 0% / 0.6), 0 0 60px hsl(43 96% 56% / 0.2)",
         }}
       >
         {/* Wood grain lines */}
         <div className="absolute inset-0 rounded-xl overflow-hidden pointer-events-none opacity-10">
           {[20, 40, 60, 80].map((t) => (
-            <div key={t} className="absolute w-full h-px" style={{ top: `${t}%`, background: "hsl(30 30% 15%)" }} />
+            <div key={t} className="absolute w-full h-px" style={{ top: `${t}%`, background: "hsl(220 12% 10%)" }} />
           ))}
         </div>
         {/* Corner nails */}
@@ -259,7 +259,7 @@ export default function ShotResultOverlay({ lastResult, triggerKey }: ShotResult
             <div className="text-center relative z-10">
               {/* 3D extruded text */}
               <p
-                className="font-game-display text-5xl font-black tracking-[0.15em] relative"
+                className="font-display text-5xl font-black tracking-[0.15em] relative"
                 style={{
                   background: config.textGradient,
                   WebkitBackgroundClip: "text",
@@ -269,7 +269,7 @@ export default function ShotResultOverlay({ lastResult, triggerKey }: ShotResult
               >
                 {/* Shadow layers for 3D depth */}
                 <span
-                  className="absolute inset-0 font-game-display text-5xl font-black tracking-[0.15em]"
+                  className="absolute inset-0 font-display text-5xl font-black tracking-[0.15em]"
                   style={{
                     WebkitTextStroke: "2px hsl(0 0% 0% / 0.3)",
                     WebkitTextFillColor: "transparent",

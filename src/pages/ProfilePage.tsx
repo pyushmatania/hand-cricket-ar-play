@@ -269,13 +269,13 @@ export default function ProfilePage() {
 
   /* ── Rank tier color for chrome frame ── */
   const tierChrome = {
-    Bronze: { border: "hsl(25 60% 35%)", glow: "hsl(25 60% 40% / 0.3)", accent: "hsl(25 70% 55%)" },
+    Bronze: { border: "hsl(25 60% 35%)", glow: "hsl(25 60% 40% / 0.3)", accent: "hsl(19 100% 60%)" },
     Silver: { border: "hsl(210 10% 55%)", glow: "hsl(210 10% 60% / 0.3)", accent: "hsl(210 15% 70%)" },
     Gold: { border: "hsl(43 80% 45%)", glow: "hsl(43 90% 50% / 0.4)", accent: "hsl(43 100% 60%)" },
     Diamond: { border: "hsl(192 80% 50%)", glow: "hsl(192 90% 55% / 0.4)", accent: "hsl(192 90% 65%)" },
     Master: { border: "hsl(280 60% 55%)", glow: "hsl(280 70% 60% / 0.4)", accent: "hsl(280 80% 70%)" },
     Legend: { border: "hsl(4 70% 50%)", glow: "hsl(4 80% 55% / 0.4)", accent: "hsl(4 90% 65%)" },
-  }[tier.name] || { border: "hsl(25 60% 35%)", glow: "hsl(25 60% 40% / 0.3)", accent: "hsl(25 70% 55%)" };
+  }[tier.name] || { border: "hsl(25 60% 35%)", glow: "hsl(25 60% 40% / 0.3)", accent: "hsl(19 100% 60%)" };
 
   return (
     <div className="min-h-screen relative overflow-hidden pb-24" style={{
@@ -407,7 +407,7 @@ export default function ProfilePage() {
                   borderBottom: "3px solid hsl(43 60% 25%)",
                   boxShadow: "0 3px 8px hsl(43 90% 50% / 0.3)",
                 }}>
-                  <span className="font-display text-[10px] font-black" style={{ color: "hsl(25 40% 12%)" }}>{level}</span>
+                  <span className="font-display text-[10px] font-black" style={{ color: "hsl(220 12% 9%)" }}>{level}</span>
                 </div>
               </div>
 
@@ -423,8 +423,8 @@ export default function ProfilePage() {
                     <span className="text-[7px] font-display" style={{ color: "hsl(220 10% 55%)" }}>{xpInLevel}/100 XP</span>
                   </div>
                   <div className="w-full h-2 rounded-full overflow-hidden" style={{
-                    background: "linear-gradient(180deg, hsl(25 30% 10%), hsl(25 25% 14%))",
-                    border: "1px solid hsl(25 20% 8%)",
+                    background: "linear-gradient(180deg, hsl(220 15% 8%), hsl(220 12% 10%))",
+                    border: "1px solid hsl(220 15% 6%)",
                     boxShadow: "inset 0 1px 3px hsl(0 0% 0% / 0.5)",
                   }}>
                     <motion.div initial={{ width: 0 }} animate={{ width: `${xpInLevel}%` }}
@@ -836,7 +836,7 @@ export default function ProfilePage() {
                       style={{
                         background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
                         border: unlocked ? `2px solid ${a.tier === "legendary" ? "hsl(43 80% 45%)" : a.tier === "gold" ? "hsl(43 90% 55%)" : a.tier === "silver" ? "hsl(210 10% 50%)" : "hsl(25 50% 40%)"}` : "2px solid hsl(222 15% 12%)",
-                        borderBottom: unlocked ? `4px solid ${a.tier === "legendary" ? "hsl(43 60% 30%)" : a.tier === "gold" ? "hsl(43 70% 35%)" : a.tier === "silver" ? "hsl(210 10% 35%)" : "hsl(25 40% 25%)"}` : "4px solid hsl(222 12% 8%)",
+                        borderBottom: unlocked ? `4px solid ${a.tier === "legendary" ? "hsl(43 60% 30%)" : a.tier === "gold" ? "hsl(43 70% 35%)" : a.tier === "silver" ? "hsl(210 10% 35%)" : "hsl(220 15% 18%)"}` : "4px solid hsl(222 12% 8%)",
                         opacity: unlocked ? 1 : 0.5,
                         filter: unlocked ? "none" : "grayscale(0.5)",
                         boxShadow: unlocked ? `0 0 12px ${a.tier === "legendary" ? "hsl(43 80% 50% / 0.2)" : "transparent"}` : "none",
@@ -847,7 +847,7 @@ export default function ProfilePage() {
                           <span className="font-display text-[10px] font-bold text-foreground block truncate">{a.title}</span>
                           <span className="text-[7px] text-muted-foreground block">{a.desc}</span>
                           <span className="text-[6px] font-display font-bold tracking-widest mt-0.5 block" style={{
-                            color: a.tier === "legendary" ? "hsl(43 80% 55%)" : a.tier === "gold" ? "hsl(43 90% 60%)" : a.tier === "silver" ? "hsl(210 10% 60%)" : "hsl(25 60% 55%)",
+                            color: a.tier === "legendary" ? "hsl(43 80% 55%)" : a.tier === "gold" ? "hsl(43 90% 60%)" : a.tier === "silver" ? "hsl(210 10% 60%)" : "hsl(19 100% 60%)",
                           }}>{tierStyle.label}</span>
                         </div>
                       </div>
