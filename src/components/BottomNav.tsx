@@ -70,13 +70,17 @@ export default function BottomNav() {
                   <div
                     className="absolute inset-0 rounded-full"
                     style={{
-                      background: `url('/assets/ui/polished-wood-texture.png') repeat, linear-gradient(180deg, #7A5230, #5C3A1E)`,
-                      backgroundSize: "256px 256px, 100% 100%",
-                      border: "3px solid #3E2410",
+                      background: `
+                        repeating-linear-gradient(88deg, transparent 0px, transparent 10px, rgba(0,0,0,0.15) 11px, rgba(0,0,0,0.22) 12px, transparent 13px, transparent 24px),
+                        radial-gradient(ellipse 8px 5px at 35% 40%, rgba(0,0,0,0.30), transparent 70%),
+                        linear-gradient(180deg, #7A4A28, #5A2E12)
+                      `,
+                      border: "4px solid #3E1A08",
                       borderBottom: "6px solid #2E1A0E",
+                      borderTopColor: "#5A3018",
                       boxShadow: isActive
-                        ? `0 6px 0 #2E1A0E, 0 8px 16px rgba(0,0,0,0.4), 0 0 15px rgba(${item.glowColor},0.25), inset 0 2px 0 rgba(255,255,255,0.15)`
-                        : "0 6px 0 #2E1A0E, 0 8px 16px rgba(0,0,0,0.4), inset 0 2px 0 rgba(255,255,255,0.15)",
+                        ? `0 6px 0 #1A0A02, 0 8px 16px rgba(0,0,0,0.5), 0 0 15px rgba(${item.glowColor},0.25), inset 0 2px 0 rgba(255,200,130,0.15), inset 0 -3px 0 rgba(0,0,0,0.4)`
+                        : "0 6px 0 #1A0A02, 0 8px 16px rgba(0,0,0,0.5), inset 0 2px 0 rgba(255,200,130,0.15), inset 0 -3px 0 rgba(0,0,0,0.4)",
                     }}
                   />
                 )}
