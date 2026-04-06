@@ -5,12 +5,10 @@ interface BatsmanCharacterProps {
   lastRuns?: number | "OUT" | null;
 }
 
-const idleVariants = {
-  idle: {
-    y: [0, -3, 0],
-    rotate: [0, -0.5, 0],
-    transition: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-  },
+const idleAnim = {
+  y: [0, -3, 0],
+  rotate: [0, -0.5, 0],
+  transition: { duration: 4, repeat: Infinity, ease: "easeInOut" as const },
 };
 
 const shotAnimations: Record<string, object> = {
