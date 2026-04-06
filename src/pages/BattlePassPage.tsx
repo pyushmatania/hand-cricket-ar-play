@@ -174,20 +174,29 @@ function TierCard({
 
   return (
     <motion.div
-      className="relative flex items-stretch gap-0 rounded-2xl overflow-hidden"
+      className={`relative flex items-stretch gap-0 rounded-2xl overflow-hidden tier-card-v10 ${
+        reward.milestone ? "neon-glow-gold" : unlocked ? "neon-glow-green" : ""
+      }`}
       style={{
-        background: V10_CARD,
+        background: reward.milestone
+          ? "linear-gradient(135deg, rgba(13,18,41,0.88), rgba(19,24,54,0.82))"
+          : V10_CARD,
+        backdropFilter: reward.milestone ? "blur(24px) saturate(1.4)" : undefined,
         border: reward.milestone
-          ? "2px solid hsl(43 70% 45% / 0.5)"
+          ? "2px solid hsl(51 100% 50% / 0.35)"
           : unlocked
-            ? "2px solid hsl(142 50% 35% / 0.3)"
-            : "2px solid hsl(220 15% 18%)",
+            ? "2px solid hsl(130 74% 58% / 0.25)"
+            : "1px solid rgba(148,163,184,0.10)",
+        borderLeft: reward.milestone
+          ? "3px solid hsl(51 100% 50% / 0.6)"
+          : unlocked
+            ? "3px solid hsl(130 74% 58% / 0.4)"
+            : "3px solid hsl(var(--team-primary) / 0.3)",
         borderBottom: reward.milestone
-          ? "5px solid hsl(43 60% 28%)"
+          ? "5px solid hsl(51 80% 30%)"
           : unlocked
-            ? "5px solid hsl(142 40% 20%)"
+            ? "5px solid hsl(130 50% 20%)"
             : "5px solid hsl(220 15% 8%)",
-        boxShadow: `0 3px 8px hsl(0 0% 0% / 0.3), ${milestoneGlow}`,
       }}
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}

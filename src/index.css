@@ -290,7 +290,53 @@
   100% { transform: translateX(200%); }
 }
 
-/* MATERIAL 5: Cricket Leather — BATTLE button, warm tactile accent */
+/* ── V10 Neon Glow Animations ── */
+@keyframes neon-pulse-green {
+  0%, 100% { box-shadow: 0 0 8px hsl(130 74% 58% / 0.15), 0 4px 12px rgba(0,0,0,0.3); }
+  50% { box-shadow: 0 0 18px hsl(130 74% 58% / 0.3), 0 0 36px hsl(130 74% 58% / 0.1), 0 4px 12px rgba(0,0,0,0.3); }
+}
+@keyframes neon-pulse-gold {
+  0%, 100% { box-shadow: 0 0 8px hsl(51 100% 50% / 0.15), 0 4px 12px rgba(0,0,0,0.3); }
+  50% { box-shadow: 0 0 22px hsl(51 100% 50% / 0.35), 0 0 44px hsl(51 100% 50% / 0.12), 0 4px 12px rgba(0,0,0,0.3); }
+}
+@keyframes neon-pulse-cyan {
+  0%, 100% { box-shadow: 0 0 6px hsl(192 100% 50% / 0.1), 0 3px 8px rgba(0,0,0,0.2); }
+  50% { box-shadow: 0 0 14px hsl(192 100% 50% / 0.25), 0 0 28px hsl(192 100% 50% / 0.08), 0 3px 8px rgba(0,0,0,0.2); }
+}
+@keyframes neon-border-sweep {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+.neon-glow-green { animation: neon-pulse-green 2.5s ease-in-out infinite; }
+.neon-glow-gold { animation: neon-pulse-gold 3s ease-in-out infinite; }
+.neon-glow-cyan { animation: neon-pulse-cyan 2s ease-in-out infinite; }
+
+.tier-card-v10 {
+  transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.tier-card-v10:hover {
+  transform: translateY(-1px);
+  border-color: rgba(148,163,184,0.22) !important;
+}
+.tier-card-v10:active {
+  transform: scale(0.98) translateY(0);
+  transition: all 0.08s ease;
+}
+
+.day-card-v10 {
+  transition: transform 0.12s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.day-card-v10:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.04);
+  z-index: 5;
+}
+.day-card-v10:active:not(:disabled) {
+  transform: scale(0.92);
+  transition: all 0.06s ease;
+}
+
+
 .cricket-leather {
   background: linear-gradient(180deg, #8B4513 0%, #6B3410 50%, #5C2D0E 100%);
   border: none;

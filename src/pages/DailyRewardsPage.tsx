@@ -336,25 +336,27 @@ export default function DailyRewardsPage() {
                     key={day.day}
                     whileTap={!isLocked ? { scale: 0.9 } : {}}
                     onClick={() => handleDayClaim(day)}
-                    className="relative rounded-xl p-1.5 text-center"
+                    className={`relative rounded-xl p-1.5 text-center day-card-v10 ${
+                      isCurrent ? "neon-glow-cyan" : ""
+                    }`}
                     style={{
                       background: isCurrent
-                        ? `linear-gradient(135deg, ${color}25, ${color}08)`
+                        ? "linear-gradient(135deg, rgba(13,18,41,0.88), rgba(19,24,54,0.82))"
                         : isPast
-                          ? "hsl(142 40% 18% / 0.15)"
+                          ? "hsl(130 40% 18% / 0.12)"
                           : "linear-gradient(180deg, hsl(220 12% 10%), hsl(220 12% 8%))",
+                      backdropFilter: isCurrent ? "blur(16px) saturate(1.3)" : undefined,
                       border: isCurrent
-                        ? `2px solid ${color}50`
+                        ? `2px solid ${color}60`
                         : isPast
-                          ? "2px solid hsl(142 39% 49% / 0.2)"
-                          : "2px solid hsl(220 15% 16%)",
+                          ? "2px solid hsl(130 74% 58% / 0.15)"
+                          : "1px solid rgba(148,163,184,0.08)",
                       borderBottom: isCurrent
                         ? `4px solid ${color}30`
                         : isPast
-                          ? "4px solid hsl(142 30% 15%)"
+                          ? "4px solid hsl(130 30% 15%)"
                           : "4px solid hsl(220 12% 6%)",
-                      boxShadow: isCurrent ? `0 2px 12px ${color}25` : "0 2px 4px hsl(0 0% 0% / 0.2)",
-                      opacity: isLocked ? 0.4 : 1,
+                      opacity: isLocked ? 0.35 : 1,
                     }}
                   >
                     {isCurrent && (
