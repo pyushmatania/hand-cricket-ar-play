@@ -10,43 +10,38 @@ import { SFX, Haptics } from "@/lib/sounds";
 
 const TAB_ITEMS = [
   {
-    path: "/collection",
-    label: "Cards",
-    /* Treasure chest with coins — like CR "Cards" tab */
-    emoji: "🏆",
+    path: "/",
+    label: "Home",
+    emoji: "🏠",
     svgIcon: "chest",
     center: false,
   },
   {
-    path: "/shop",
-    label: "Shop",
-    /* Framed card — like CR second tab */
-    emoji: "🃏",
-    svgIcon: "card",
+    path: "/friends",
+    label: "Friends",
+    emoji: "👥",
+    svgIcon: "shield",
     center: false,
   },
   {
-    path: "/",
+    path: "/play",
     label: "Battle",
-    /* Crossed swords — center battle tab */
     emoji: "⚔️",
     svgIcon: "swords",
     center: true,
   },
   {
-    path: "/clan",
-    label: "Clan",
-    /* Shield with people — like CR social tab */
-    emoji: "🛡️",
-    svgIcon: "shield",
+    path: "/leaderboard",
+    label: "League",
+    emoji: "🏆",
+    svgIcon: "trophy",
     center: false,
   },
   {
-    path: "/leaderboard",
-    label: "Trophy",
-    /* Gold trophy with leaves */
-    emoji: "🏆",
-    svgIcon: "trophy",
+    path: "/profile",
+    label: "Profile",
+    emoji: "👤",
+    svgIcon: "card",
     center: false,
   },
 ];
