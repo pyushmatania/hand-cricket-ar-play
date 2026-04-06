@@ -528,9 +528,9 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* ═══ Tab Switcher — 3D Jersey Mesh ═══ */}
+        {/* ═══ Tab Switcher — Dark Wood Tabs ═══ */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="flex gap-1 mb-4 rounded-xl p-1 scoreboard-metal">
+          className="flex gap-1 mb-4 rounded-xl p-1" style={{ background: "linear-gradient(180deg, #3E2410, #2E1A0E)", border: "2px solid #2E1A0E", boxShadow: "0 3px 0 #1A0E05" }}>
           {tabs.map((tab) => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)}
               className="flex-1 py-2.5 rounded-lg font-display text-[8px] font-bold tracking-widest transition-all duration-200 flex items-center justify-center gap-1"
