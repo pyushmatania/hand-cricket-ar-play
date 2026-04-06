@@ -108,6 +108,63 @@ export default function ClanWars({ clan, myRole }: ClanWarsProps) {
     if (opp) setOpponentClan(opp as unknown as Clan);
   };
 
+  /* ─── Load war history stats ─── */
+  const loadWarHistory = useCallback(async () => {
+    setHistoryLoading(true);
+    setWarPhase("war_history");
+
+    // Fetch ALL ended wars for this clan (not just last 10)
+    const { data: allWars } = await supabase.from("clan_wars").select("*")
+      .or(`clan_a_id.eq.${clan.id},clan_b_id.eq.${clan.id}`)
+      .eq("status", "ended")
+      .order("created_at", { ascending: false });
+
+    const endedWars = (allWars as any[]) || [];
+    let wins = 0, losses = 0, draws = 0, totalStars = 0, bestWarStars = 0;
+
+    endedWars.forEach((w: any) => {
+      const wIsA = w.clan_a_id === clan.id;
+      const wMyStars = wIsA ? w.clan_a_stars : w.clan_b_stars;
+      totalStars += wMyStars || 0;
+      if (wMyStars > bestWarStars) bestWarStars = wMyStars;
+      if (w.winner_clan_id === clan.id) wins++;
+      else if (w.winner_clan_id === null) draws++;
+      else losses++;
+    });
+
+    // Calculate MVP count: wars where our user had highest stars in the clan
+    let mvpCount = 0;
+    let totalRuns = 0;
+    if (user && endedWars.length > 0) {
+      const warIds = endedWars.map(w => w.id);
+      const { data: allAtks } = await supabase.from("war_attacks").select("*")
+        .in("war_id", warIds).eq("clan_id", clan.id);
+      const atkList = (allAtks as any[]) || [];
+
+      totalRuns = atkList.filter(a => a.attacker_id === user.id).reduce((sum, a) => sum + (a.score || 0), 0);
+
+      // Group attacks by war_id and find MVP per war
+      const byWar = new Map<string, any[]>();
+      atkList.forEach(a => {
+        if (!byWar.has(a.war_id)) byWar.set(a.war_id, []);
+        byWar.get(a.war_id)!.push(a);
+      });
+      byWar.forEach((attacks) => {
+        const best = attacks.reduce((top: any, a: any) =>
+          (a.stars_earned > (top?.stars_earned || 0) || (a.stars_earned === (top?.stars_earned || 0) && a.score > (top?.score || 0))) ? a : top
+        , null);
+        if (best?.attacker_id === user.id) mvpCount++;
+      });
+    }
+
+    const totalWars = endedWars.length;
+    setHistoryStats({
+      totalWars, wins, losses, draws, totalStars, mvpCount, totalRuns, bestWarStars,
+      winRate: totalWars > 0 ? Math.round((wins / totalWars) * 100) : 0,
+    });
+    setHistoryLoading(false);
+  }, [clan.id, user]);
+
   /* ─── Search for war ─── */
   const handleSearchWar = useCallback(async () => {
     if (!user) return;
