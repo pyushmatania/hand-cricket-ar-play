@@ -127,7 +127,7 @@ export default function ClanLeaderboard() {
 
   const openDetail = useCallback(async (clan: ClanRanking) => {
     setDetailLoading(true);
-    setDetail({ clan, members: [], warHistory: [] });
+    setDetail({ clan, members: [], warHistory: [], trophies: [] });
 
     // Fetch members + profiles in parallel with war history
     const [membersRes, warsRes] = await Promise.all([
