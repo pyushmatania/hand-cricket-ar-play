@@ -10,6 +10,9 @@ import charFinisherMi from "../char-finisher-mi.png";
 import charLegspinnerRr from "../char-legspinner-rr.png";
 import charPowerhitterPbks from "../char-powerhitter-pbks.png";
 import charAnchorGt from "../char-anchor-gt.png";
+import charAllrounderLsg from "../char-allrounder-lsg.png";
+import charKeeperCsk from "../char-keeper-csk.png";
+import charOpenerRcb from "../char-opener-rcb.png";
 import vsBatsman from "../vs-batsman.png";
 import vsBowler from "../vs-bowler.png";
 
