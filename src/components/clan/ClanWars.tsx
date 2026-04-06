@@ -989,6 +989,99 @@ export default function ClanWars({ clan, myRole }: ClanWarsProps) {
             })()}
           </motion.div>
         )}
+
+        {/* ─── WAR HISTORY STATS ─── */}
+        {warPhase === "war_history" && (
+          <motion.div key="war_history" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-3">
+            {historyLoading ? (
+              <div className="flex items-center justify-center py-16">
+                <div className="w-6 h-6 border-2 border-neon-cyan border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : historyStats ? (
+              <>
+                {/* Header */}
+                <div className="scoreboard-metal rounded-2xl p-4 text-center">
+                  <span className="text-4xl block mb-2">📊</span>
+                  <h3 className="font-display text-sm font-black text-neon-cyan tracking-wider neon-text-cyan">WAR HISTORY</h3>
+                  <p className="text-[9px] font-body text-muted-foreground mt-1">{clan.name} — Lifetime Stats</p>
+                </div>
+
+                {/* Win/Loss/Draw */}
+                <div className="stadium-glass rounded-2xl p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-display text-[9px] tracking-widest text-muted-foreground">RECORD</span>
+                    <span className="font-display text-[9px] tabular-nums text-foreground">{historyStats.totalWars} wars</span>
+                  </div>
+                  <div className="flex items-center gap-2 justify-center">
+                    <div className="flex-1 text-center py-3 rounded-xl bg-neon-green/10 border border-neon-green/20">
+                      <p className="font-display text-2xl font-black text-neon-green tabular-nums">{historyStats.wins}</p>
+                      <p className="font-display text-[8px] tracking-widest text-neon-green/70">WINS</p>
+                    </div>
+                    <div className="flex-1 text-center py-3 rounded-xl bg-destructive/10 border border-destructive/20">
+                      <p className="font-display text-2xl font-black text-destructive tabular-nums">{historyStats.losses}</p>
+                      <p className="font-display text-[8px] tracking-widest text-destructive/70">LOSSES</p>
+                    </div>
+                    <div className="flex-1 text-center py-3 rounded-xl bg-white/[0.04] border border-white/10">
+                      <p className="font-display text-2xl font-black text-muted-foreground tabular-nums">{historyStats.draws}</p>
+                      <p className="font-display text-[8px] tracking-widest text-muted-foreground/70">DRAWS</p>
+                    </div>
+                  </div>
+
+                  {/* Win rate bar */}
+                  {historyStats.totalWars > 0 && (
+                    <div className="mt-3">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-[8px] font-display text-muted-foreground">WIN RATE</span>
+                        <span className="text-[8px] font-display text-neon-cyan tabular-nums">{historyStats.winRate}%</span>
+                      </div>
+                      <div className="h-2 rounded-full bg-white/5 overflow-hidden">
+                        <motion.div
+                          className="h-full rounded-full bg-gradient-to-r from-neon-green to-neon-cyan"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${historyStats.winRate}%` }}
+                          transition={{ duration: 1, ease: "easeOut" }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Key stats grid */}
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="stadium-glass rounded-xl p-3 text-center">
+                    <span className="text-2xl block mb-1">⭐</span>
+                    <p className="font-display text-xl font-black text-game-gold tabular-nums">{historyStats.totalStars}</p>
+                    <p className="font-display text-[7px] tracking-widest text-muted-foreground">TOTAL STARS</p>
+                  </div>
+                  <div className="stadium-glass rounded-xl p-3 text-center">
+                    <span className="text-2xl block mb-1">🏆</span>
+                    <p className="font-display text-xl font-black text-neon-cyan tabular-nums">{historyStats.mvpCount}</p>
+                    <p className="font-display text-[7px] tracking-widest text-muted-foreground">MVP AWARDS</p>
+                  </div>
+                  <div className="stadium-glass rounded-xl p-3 text-center">
+                    <span className="text-2xl block mb-1">🏏</span>
+                    <p className="font-display text-xl font-black text-foreground tabular-nums">{historyStats.totalRuns}</p>
+                    <p className="font-display text-[7px] tracking-widest text-muted-foreground">YOUR RUNS</p>
+                  </div>
+                  <div className="stadium-glass rounded-xl p-3 text-center">
+                    <span className="text-2xl block mb-1">🌟</span>
+                    <p className="font-display text-xl font-black text-game-gold tabular-nums">{historyStats.bestWarStars}</p>
+                    <p className="font-display text-[7px] tracking-widest text-muted-foreground">BEST WAR ⭐</p>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-12">
+                <span className="text-4xl block mb-2">🏰</span>
+                <p className="text-muted-foreground text-xs font-body">No war history yet</p>
+              </div>
+            )}
+
+            <V10Button variant="secondary" size="md" onClick={() => setWarPhase("overview")} className="w-full">
+              ← BACK TO WARS
+            </V10Button>
+          </motion.div>
+        )}
       </AnimatePresence>
     </div>
   );
