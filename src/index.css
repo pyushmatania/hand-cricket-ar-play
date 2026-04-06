@@ -1374,21 +1374,63 @@
   .surface-leather { @apply game-card; }
   /* ═══════════════════════════════════════════════════
      V11 WOODEN KINGDOM — Material System
-     6 tangible 3D materials. No flat surfaces.
+     Rough, cracked, battle-worn Clash Royale aesthetic.
      ═══════════════════════════════════════════════════ */
 
-  /* V11 MATERIAL 1: DARK WOOD PLANK — Universal Panel */
+  /* Wood & iron CSS custom properties */
+  :root {
+    --wood-warm: #6B3A1A;
+    --wood-mid: #5A2E12;
+    --wood-deep: #4A2410;
+    --wood-dark: #2A1408;
+    --wood-darkest: #0F0500;
+    --iron-light: rgba(180, 180, 190, 0.9);
+    --iron-mid: rgba(120, 120, 130, 0.8);
+    --iron-dark: rgba(30, 30, 40, 1);
+  }
+
+  /* V11 MATERIAL 1: ROUGH BATTLE-WORN WOOD PLANK */
   .wood-panel, .wood-panel-dark {
     background:
-      url('/assets/ui/wood-plank-texture.png') repeat,
-      linear-gradient(180deg, #5C3A1E 0%, #3E2410 100%);
-    background-size: 256px 256px, 100% 100%;
-    border: 4px solid #2E1A0E;
-    border-radius: 12px;
+      /* Crack overlay SVG */
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M10,20 L25,30 L40,25 L55,40 L70,35' stroke='rgba(0,0,0,0.2)' stroke-width='0.5' fill='none'/%3E%3Cpath d='M60,10 L65,25 L80,30 L85,50' stroke='rgba(0,0,0,0.15)' stroke-width='0.4' fill='none'/%3E%3C/svg%3E"),
+      /* Layer 1: Deep dark cracks/grooves */
+      repeating-linear-gradient(
+        88deg,
+        transparent 0px, transparent 18px,
+        rgba(0, 0, 0, 0.15) 19px, rgba(0, 0, 0, 0.25) 20px,
+        transparent 21px, transparent 42px,
+        rgba(0, 0, 0, 0.10) 43px, transparent 44px
+      ),
+      /* Layer 2: Fine wood grain noise */
+      repeating-linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.04) 0px, transparent 1px,
+        transparent 3px, rgba(0, 0, 0, 0.06) 4px, transparent 5px
+      ),
+      /* Layer 3: Random dark knots and stains */
+      radial-gradient(ellipse 12px 8px at 25% 30%, rgba(0,0,0,0.35), transparent 70%),
+      radial-gradient(ellipse 8px 6px at 75% 60%, rgba(0,0,0,0.30), transparent 70%),
+      radial-gradient(ellipse 10px 7px at 50% 80%, rgba(0,0,0,0.25), transparent 70%),
+      /* Layer 4: Base wood color gradient */
+      linear-gradient(180deg, 
+        #6B3A1A 0%, #5A2E12 30%, #4A2410 60%, #3E1A08 100%
+      );
+    border: 5px solid #2A1408;
+    border-top-color: #4A2810;
+    border-left-color: #3E2008;
+    border-right-color: #1A0A02;
+    border-bottom-color: #0F0500;
+    border-radius: 14px 12px 13px 14px;
     box-shadow:
-      0 4px 10px rgba(0, 0, 0, 0.50),
-      inset 0 2px 0 rgba(255, 255, 255, 0.12),
-      inset 0 -2px 0 rgba(0, 0, 0, 0.20);
+      0 8px 16px rgba(0, 0, 0, 0.65),
+      0 4px 8px rgba(0, 0, 0, 0.45),
+      inset 0 3px 0 rgba(255, 200, 130, 0.18),
+      inset 0 4px 8px rgba(255, 180, 100, 0.08),
+      inset 0 -4px 0 rgba(0, 0, 0, 0.45),
+      inset 0 -8px 12px rgba(0, 0, 0, 0.30),
+      inset 4px 0 8px rgba(0, 0, 0, 0.20),
+      inset -4px 0 8px rgba(0, 0, 0, 0.20);
     position: relative;
     overflow: visible;
     transition: all 0.15s ease;
@@ -1404,20 +1446,103 @@
     pointer-events: none;
   }
 
-  /* V11 METAL CORNER BRACKETS */
+  /* V11 PREMIUM WOOD — golden accent variant */
+  .wood-panel-premium {
+    background:
+      repeating-linear-gradient(
+        88deg,
+        transparent 0px, transparent 18px,
+        rgba(0, 0, 0, 0.15) 19px, rgba(0, 0, 0, 0.25) 20px,
+        transparent 21px, transparent 42px
+      ),
+      radial-gradient(ellipse 10px 7px at 30% 40%, rgba(0,0,0,0.30), transparent 70%),
+      radial-gradient(ellipse 8px 6px at 70% 70%, rgba(0,0,0,0.25), transparent 70%),
+      linear-gradient(180deg,
+        #7A4520 0%, #6A3818 30%, #5A2E12 60%, #4A2410 100%
+      );
+    border: 5px solid #2A1408;
+    border-top-color: #5A2810;
+    border-radius: 14px 12px 13px 14px;
+    box-shadow:
+      0 8px 16px rgba(0, 0, 0, 0.65),
+      0 0 20px rgba(255, 180, 80, 0.10),
+      inset 0 3px 0 rgba(255, 220, 150, 0.20),
+      inset 0 -4px 0 rgba(0, 0, 0, 0.45);
+    position: relative;
+    overflow: visible;
+  }
+
+  /* V11 IRON CORNER BRACKETS — auto on all wood panels */
+  .wood-panel::before, .wood-panel-dark::before,
+  .wood-panel::after, .wood-panel-dark::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+    z-index: 2;
+    background: linear-gradient(135deg,
+      rgba(180, 180, 190, 0.9) 0%,
+      rgba(120, 120, 130, 0.8) 30%,
+      rgba(60, 60, 70, 0.9) 70%,
+      rgba(30, 30, 40, 1) 100%
+    );
+    clip-path: polygon(0% 0%, 100% 0%, 100% 35%, 35% 35%, 35% 100%, 0% 100%);
+    box-shadow:
+      inset 2px 2px 0 rgba(255, 255, 255, 0.15),
+      inset -1px -1px 0 rgba(0, 0, 0, 0.5),
+      1px 1px 2px rgba(0, 0, 0, 0.6);
+    filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.7));
+  }
+  .wood-panel::before, .wood-panel-dark::before { top: -3px; left: -3px; }
+  .wood-panel::after, .wood-panel-dark::after { top: -3px; right: -3px; transform: scaleX(-1); }
+
+  /* V11 FULL 4-CORNER IRON BRACKETS */
+  .wood-panel-full { position: relative; }
+  .wood-panel-full > .corner-tl,
+  .wood-panel-full > .corner-tr,
+  .wood-panel-full > .corner-bl,
+  .wood-panel-full > .corner-br {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    pointer-events: none;
+    z-index: 3;
+    background: linear-gradient(135deg,
+      rgba(180, 180, 190, 0.9) 0%,
+      rgba(120, 120, 130, 0.8) 30%,
+      rgba(60, 60, 70, 0.9) 70%,
+      rgba(30, 30, 40, 1) 100%);
+    filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.7));
+    box-shadow:
+      inset 2px 2px 0 rgba(255, 255, 255, 0.15),
+      inset -1px -1px 0 rgba(0, 0, 0, 0.5);
+  }
+  .wood-panel-full > .corner-tl { top: -3px; left: -3px; clip-path: polygon(0% 0%, 100% 0%, 100% 35%, 35% 35%, 35% 100%, 0% 100%); }
+  .wood-panel-full > .corner-tr { top: -3px; right: -3px; clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 65% 100%, 65% 35%, 0% 35%); }
+  .wood-panel-full > .corner-bl { bottom: -3px; left: -3px; clip-path: polygon(0% 0%, 35% 0%, 35% 65%, 100% 65%, 100% 100%, 0% 100%); }
+  .wood-panel-full > .corner-br { bottom: -3px; right: -3px; clip-path: polygon(65% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 65%, 65% 65%); }
+
+  /* Legacy alias */
   .metal-corners { position: relative; overflow: visible; }
   .metal-corners::before,
   .metal-corners::after {
     content: '';
     position: absolute;
-    width: 14px;
-    height: 14px;
+    width: 18px;
+    height: 18px;
     z-index: 2;
     pointer-events: none;
-    background: url('/assets/ui/metal-corner-bracket.png') no-repeat center/contain;
+    background: linear-gradient(135deg,
+      rgba(180, 180, 190, 0.9) 0%,
+      rgba(120, 120, 130, 0.8) 30%,
+      rgba(60, 60, 70, 0.9) 70%,
+      rgba(30, 30, 40, 1) 100%);
+    clip-path: polygon(0% 0%, 100% 0%, 100% 35%, 35% 35%, 35% 100%, 0% 100%);
+    filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.7));
   }
-  .metal-corners::before { top: -2px; left: -2px; }
-  .metal-corners::after { top: -2px; right: -2px; transform: scaleX(-1); }
+  .metal-corners::before { top: -3px; left: -3px; }
+  .metal-corners::after { top: -3px; right: -3px; transform: scaleX(-1); }
 
   /* Glass aliases → wood panel for V11 */
   .glass, .glass-card, .glass-premium, .glass-score, .glass-nav {
