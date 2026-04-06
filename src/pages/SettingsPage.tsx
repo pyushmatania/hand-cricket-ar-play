@@ -216,7 +216,7 @@ export default function SettingsPage() {
   const cardStyle = {
     // V10: stadium-glass cards
   };
-  const cardClassName = "stadium-glass";
+  const cardClassName = "wood-panel";
 
   return (
     <div className="min-h-screen relative overflow-hidden pb-24" style={{

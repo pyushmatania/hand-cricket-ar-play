@@ -543,7 +543,7 @@ export default function LeaderboardPage() {
 
         {/* ── Tabs — Jersey Mesh ── */}
         <ScrollHint>
-          <div className="flex gap-1 mb-4 rounded-2xl p-1" style={{ background: "hsl(220 12% 8%)", border: "1px solid hsl(220 15% 14%)" }}>
+          <div className="flex gap-1 mb-4 rounded-2xl p-1" style={{ background: "linear-gradient(180deg, #3E2410, #2E1A0E)", border: "2px solid #5C3A1E", borderBottom: "4px solid #2E1A0E" }}>
             {mainTabs.map((t) => (
               <button
                 key={t.key}
