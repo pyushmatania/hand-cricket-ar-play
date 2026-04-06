@@ -3,6 +3,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { SFX, Haptics } from "@/lib/sounds";
 import { useSettings } from "@/contexts/SettingsContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { getTeamCharacter } from "@/lib/teamCharacters";
+import { CHARACTERS } from "@/assets/characters";
 
 interface AuctionPlayer {
   id: string;
@@ -26,7 +29,8 @@ interface AuctionLeagueScreenProps {
 
 const BUDGET = 1000;
 const TEAM_SIZE = 5;
-const KNOCKOUT_ROUNDS = 3; // Quarter, Semi, Final
+const KNOCKOUT_ROUNDS = 3;
+const MAX_BID_ROUNDS = 3;
 
 const RARITY_COLORS: Record<string, string> = {
   common: "hsl(210 10% 50%)",
@@ -37,11 +41,7 @@ const RARITY_COLORS: Record<string, string> = {
 };
 
 const RARITY_BASE_PRICE: Record<string, number> = {
-  common: 50,
-  rare: 100,
-  epic: 200,
-  legendary: 350,
-  mythic: 500,
+  common: 50, rare: 100, epic: 200, legendary: 350, mythic: 500,
 };
 
 function getOverall(p: AuctionPlayer) {
@@ -52,10 +52,19 @@ function getBasePrice(p: AuctionPlayer) {
   return RARITY_BASE_PRICE[p.rarity || "common"] || 50;
 }
 
+interface BidHistoryEntry {
+  playerName: string;
+  soldTo: "you" | "ai";
+  price: number;
+  rarity: string;
+}
+
 type Phase = "loading" | "auction" | "review" | "knockout" | "match" | "results";
+type BidPhase = "waiting" | "your_bid" | "ai_counter" | "your_counter" | "sold";
 
 export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps) {
   const { soundEnabled, hapticsEnabled } = useSettings();
+  const { user } = useAuth();
   const [phase, setPhase] = useState<Phase>("loading");
   const [pool, setPool] = useState<AuctionPlayer[]>([]);
   const [currentIdx, setCurrentIdx] = useState(0);
@@ -63,8 +72,10 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
   const [budget, setBudget] = useState(BUDGET);
   const [bidAmount, setBidAmount] = useState(0);
   const [aiBid, setAiBid] = useState(0);
-  const [bidPhase, setBidPhase] = useState<"waiting" | "bidding" | "sold">("waiting");
+  const [bidPhase, setBidPhase] = useState<BidPhase>("waiting");
+  const [bidRound, setBidRound] = useState(0);
   const [soldTo, setSoldTo] = useState<"you" | "ai" | null>(null);
+  const [bidHistory, setBidHistory] = useState<BidHistoryEntry[]>([]);
 
   // Knockout state
   const [knockoutRound, setKnockoutRound] = useState(0);
@@ -75,18 +86,17 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
   const [knockoutInnings, setKnockoutInnings] = useState(1);
   const [knockoutResult, setKnockoutResult] = useState<"win" | "loss" | null>(null);
   const [tournamentResults, setTournamentResults] = useState<("win" | "loss")[]>([]);
-  const [finalPlacement, setFinalPlacement] = useState<string>("");
+  const [finalPlacement, setFinalPlacement] = useState("");
   const knockoutBallsRef = useRef(0);
 
   const ROUND_NAMES = ["Quarter-Final", "Semi-Final", "🏆 GRAND FINAL"];
-  const MATCH_BALLS = 12; // 2 overs per knockout match
+  const MATCH_BALLS = 12;
 
   // Load player pool
   useEffect(() => {
     supabase.from("players").select("id, name, short_name, role, rarity, ipl_team, power, technique, pace_spin, accuracy, agility, clutch, special_ability_name")
       .then(({ data }) => {
         if (data && data.length > 0) {
-          // Shuffle and pick 15 for auction
           const shuffled = [...data].sort(() => Math.random() - 0.5).slice(0, 15) as AuctionPlayer[];
           setPool(shuffled);
           setBidAmount(getBasePrice(shuffled[0]));
@@ -97,40 +107,86 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
 
   const currentPlayer = pool[currentIdx];
 
+  // ── Multi-round bidding ──
   const handleBid = useCallback(() => {
     if (!currentPlayer || bidPhase !== "waiting") return;
     if (soundEnabled) SFX.tap();
     if (hapticsEnabled) Haptics.medium();
+    setBidPhase("your_bid");
+    setBidRound(1);
 
-    setBidPhase("bidding");
-
-    // AI decides: bid higher or fold based on rarity and randomness
-    const aiWillingness = getBasePrice(currentPlayer) * (1 + Math.random() * 0.8);
-    const aiCounterBid = Math.round(bidAmount * (1 + Math.random() * 0.3));
+    // AI decides counter
+    const aiWillingness = getBasePrice(currentPlayer) * (1 + Math.random() * 1.2);
+    const counter = Math.round(bidAmount * (1.1 + Math.random() * 0.25));
 
     setTimeout(() => {
-      if (aiCounterBid > bidAmount && aiCounterBid <= aiWillingness * 1.2) {
-        // AI outbids
-        setAiBid(aiCounterBid);
-        setBidPhase("sold");
-        setSoldTo("ai");
+      if (counter > bidAmount && counter <= aiWillingness && bidAmount < budget) {
+        setAiBid(counter);
+        setBidPhase("ai_counter");
+        if (soundEnabled) SFX.tap();
       } else {
-        // You win the bid
+        // AI folds - you win
         setAiBid(Math.round(bidAmount * 0.7));
         setBidPhase("sold");
         setSoldTo("you");
         setMyTeam(prev => [...prev, currentPlayer]);
         setBudget(prev => prev - bidAmount);
+        setBidHistory(prev => [...prev, { playerName: currentPlayer.short_name || currentPlayer.name, soldTo: "you", price: bidAmount, rarity: currentPlayer.rarity || "common" }]);
+        if (soundEnabled) SFX.win();
       }
     }, 1200);
-  }, [currentPlayer, bidAmount, bidPhase, soundEnabled, hapticsEnabled]);
+  }, [currentPlayer, bidAmount, bidPhase, budget, soundEnabled, hapticsEnabled]);
+
+  const handleRaise = useCallback(() => {
+    if (bidPhase !== "ai_counter" || !currentPlayer) return;
+    const raise = Math.round(aiBid * (1.1 + Math.random() * 0.15));
+    if (raise > budget) {
+      // Can't afford — AI wins
+      setBidPhase("sold");
+      setSoldTo("ai");
+      setBidHistory(prev => [...prev, { playerName: currentPlayer.short_name || currentPlayer.name, soldTo: "ai", price: aiBid, rarity: currentPlayer.rarity || "common" }]);
+      return;
+    }
+    setBidAmount(raise);
+    setBidRound(prev => prev + 1);
+    if (soundEnabled) SFX.tap();
+    if (hapticsEnabled) Haptics.medium();
+
+    const aiWillingness = getBasePrice(currentPlayer) * (1 + Math.random() * 1.5);
+    setBidPhase("your_bid");
+
+    setTimeout(() => {
+      if (bidRound + 1 >= MAX_BID_ROUNDS || raise > aiWillingness) {
+        // AI folds after max rounds or price too high
+        setBidPhase("sold");
+        setSoldTo("you");
+        setMyTeam(prev => [...prev, currentPlayer]);
+        setBudget(prev => prev - raise);
+        setBidHistory(prev => [...prev, { playerName: currentPlayer.short_name || currentPlayer.name, soldTo: "you", price: raise, rarity: currentPlayer.rarity || "common" }]);
+        if (soundEnabled) SFX.win();
+      } else {
+        const newCounter = Math.round(raise * (1.05 + Math.random() * 0.2));
+        setAiBid(newCounter);
+        setBidPhase("ai_counter");
+      }
+    }, 1000);
+  }, [bidPhase, aiBid, currentPlayer, budget, bidRound, soundEnabled, hapticsEnabled]);
+
+  const handleFold = useCallback(() => {
+    if (!currentPlayer) return;
+    setBidPhase("sold");
+    setSoldTo("ai");
+    setBidHistory(prev => [...prev, { playerName: currentPlayer.short_name || currentPlayer.name, soldTo: "ai", price: aiBid, rarity: currentPlayer.rarity || "common" }]);
+    if (soundEnabled) SFX.tap();
+  }, [currentPlayer, aiBid, soundEnabled]);
 
   const handleSkip = useCallback(() => {
-    if (bidPhase !== "waiting") return;
+    if (bidPhase !== "waiting" || !currentPlayer) return;
     if (soundEnabled) SFX.tap();
     setSoldTo("ai");
     setBidPhase("sold");
     setAiBid(getBasePrice(currentPlayer));
+    setBidHistory(prev => [...prev, { playerName: currentPlayer.short_name || currentPlayer.name, soldTo: "ai", price: getBasePrice(currentPlayer), rarity: currentPlayer.rarity || "common" }]);
   }, [currentPlayer, bidPhase, soundEnabled]);
 
   const handleNextPlayer = useCallback(() => {
@@ -144,9 +200,9 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
     setBidPhase("waiting");
     setSoldTo(null);
     setAiBid(0);
+    setBidRound(0);
   }, [currentIdx, pool, myTeam.length]);
 
-  // Fill remaining team slots with unsold players if needed
   const handleStartKnockout = useCallback(() => {
     if (myTeam.length < TEAM_SIZE) {
       const remaining = pool.filter(p => !myTeam.find(t => t.id === p.id));
@@ -158,7 +214,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
 
   const teamPower = myTeam.reduce((sum, p) => sum + getOverall(p), 0);
 
-  // Knockout match logic
+  // ── Knockout match logic ──
   const startMatch = useCallback(() => {
     setKnockoutScore(0);
     setKnockoutOpponentScore(0);
@@ -166,7 +222,6 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
     knockoutBallsRef.current = 0;
     setKnockoutInnings(1);
     setKnockoutResult(null);
-    // Generate a target based on round difficulty
     const baseDifficulty = 8 + knockoutRound * 4;
     const target = baseDifficulty + Math.floor(Math.random() * 8);
     setKnockoutTarget(target);
@@ -184,10 +239,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
     setKnockoutBalls(newBalls);
 
     if (knockoutInnings === 1) {
-      // Batting first
       if (move === aiMove) {
-        // OUT - switch innings
-        const myScore = knockoutScore + 0; // current score stays
         setKnockoutInnings(2);
         setKnockoutTarget(knockoutScore + 1);
         knockoutBallsRef.current = 0;
@@ -196,7 +248,6 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
       }
       const newScore = knockoutScore + move;
       setKnockoutScore(newScore);
-
       if (newBalls >= MATCH_BALLS) {
         setKnockoutInnings(2);
         setKnockoutTarget(newScore + 1);
@@ -204,9 +255,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
         setKnockoutBalls(0);
       }
     } else {
-      // Bowling (AI batting)
       if (move === aiMove) {
-        // AI is OUT - you win!
         setKnockoutResult("win");
         if (soundEnabled) SFX.win();
         if (hapticsEnabled) Haptics.success();
@@ -214,16 +263,13 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
       }
       const newOppScore = knockoutOpponentScore + aiMove;
       setKnockoutOpponentScore(newOppScore);
-
       if (newOppScore >= knockoutTarget) {
         setKnockoutResult("loss");
         if (soundEnabled) SFX.loss();
         if (hapticsEnabled) Haptics.error();
         return;
       }
-
       if (newBalls >= MATCH_BALLS) {
-        // Overs done, AI didn't reach target
         setKnockoutResult("win");
         if (soundEnabled) SFX.win();
         if (hapticsEnabled) Haptics.success();
@@ -242,18 +288,65 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
       setPhase("results");
       return;
     }
-
     if (knockoutRound >= KNOCKOUT_ROUNDS - 1) {
       setFinalPlacement("🏆 CHAMPION");
       setPhase("results");
       return;
     }
-
     setKnockoutRound(prev => prev + 1);
     setPhase("knockout");
   }, [knockoutResult, knockoutRound, tournamentResults]);
 
-  // LOADING
+  // ── Save results to DB ──
+  const saveResults = useCallback(async () => {
+    if (!user) return;
+    try {
+      await supabase.from("auction_sessions").insert({
+        created_by: user.id,
+        total_lots: pool.length,
+        current_lot_index: pool.length,
+        status: "completed",
+      } as any);
+    } catch { /* best effort */ }
+  }, [user, pool]);
+
+  // ── Play Again — full reset ──
+  const handlePlayAgain = useCallback(() => {
+    setPhase("loading");
+    setPool([]);
+    setCurrentIdx(0);
+    setMyTeam([]);
+    setBudget(BUDGET);
+    setBidAmount(0);
+    setAiBid(0);
+    setBidPhase("waiting");
+    setBidRound(0);
+    setSoldTo(null);
+    setBidHistory([]);
+    setKnockoutRound(0);
+    setKnockoutScore(0);
+    setKnockoutOpponentScore(0);
+    setKnockoutBalls(0);
+    setKnockoutTarget(0);
+    setKnockoutInnings(1);
+    setKnockoutResult(null);
+    setTournamentResults([]);
+    setFinalPlacement("");
+    knockoutBallsRef.current = 0;
+
+    // Re-fetch shuffled pool
+    supabase.from("players").select("id, name, short_name, role, rarity, ipl_team, power, technique, pace_spin, accuracy, agility, clutch, special_ability_name")
+      .then(({ data }) => {
+        if (data && data.length > 0) {
+          const shuffled = [...data].sort(() => Math.random() - 0.5).slice(0, 15) as AuctionPlayer[];
+          setPool(shuffled);
+          setBidAmount(getBasePrice(shuffled[0]));
+          setPhase("auction");
+        }
+      });
+  }, []);
+
+  // ── LOADING ──
   if (phase === "loading") {
     return (
       <div className="fixed inset-0 bg-background flex items-center justify-center">
@@ -266,16 +359,17 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
     );
   }
 
-  // AUCTION PHASE
+  // ── AUCTION PHASE ──
   if (phase === "auction" && currentPlayer) {
     const basePrice = getBasePrice(currentPlayer);
     const overall = getOverall(currentPlayer);
     const canAfford = budget >= bidAmount;
     const teamFull = myTeam.length >= TEAM_SIZE;
+    const charKey = getTeamCharacter(currentPlayer.ipl_team?.toLowerCase().replace(/\s+/g, "").slice(0, 3) === "che" ? "csk" : currentPlayer.ipl_team?.toLowerCase().replace(/\s+/g, "").slice(0, 3) === "mum" ? "mi" : currentPlayer.ipl_team?.toLowerCase().replace(/\s+/g, "").slice(0, 2) === "rc" ? "rcb" : currentPlayer.ipl_team?.toLowerCase().replace(/\s+/g, "").slice(0, 3) === "kol" ? "kkr" : currentPlayer.ipl_team?.toLowerCase().replace(/\s+/g, "").slice(0, 3) === "del" ? "dc" : currentPlayer.ipl_team?.toLowerCase().replace(/\s+/g, "").slice(0, 3) === "sun" ? "srh" : currentPlayer.ipl_team?.toLowerCase().replace(/\s+/g, "").slice(0, 3) === "raj" ? "rr" : currentPlayer.ipl_team?.toLowerCase().replace(/\s+/g, "").slice(0, 3) === "pun" ? "pbks" : currentPlayer.ipl_team?.toLowerCase().replace(/\s+/g, "").slice(0, 3) === "guj" ? "gt" : currentPlayer.ipl_team?.toLowerCase().replace(/\s+/g, "").slice(0, 3) === "luc" ? "lsg" : null);
+    const charImg = CHARACTERS[charKey] || CHARACTERS.batsman;
 
     return (
       <div className="fixed inset-0 bg-background flex flex-col overflow-hidden">
-        {/* Background */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 50% 20%, hsl(280 40% 12%) 0%, hsl(220 12% 5%) 70%)" }} />
         </div>
@@ -297,15 +391,33 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
           </div>
         </div>
 
+        {/* Bid History Ticker */}
+        {bidHistory.length > 0 && (
+          <div className="relative z-10 overflow-hidden mx-4 mb-1">
+            <motion.div
+              animate={{ x: [0, -bidHistory.length * 200] }}
+              transition={{ duration: bidHistory.length * 4, repeat: Infinity, ease: "linear" }}
+              className="flex gap-4 whitespace-nowrap"
+            >
+              {[...bidHistory, ...bidHistory].map((entry, i) => (
+                <span key={i} className="text-[8px] font-display tracking-wider inline-flex items-center gap-1"
+                  style={{ color: entry.soldTo === "you" ? "hsl(142 60% 55%)" : "hsl(0 50% 55%)" }}>
+                  {entry.playerName} → {entry.soldTo === "you" ? "YOU" : "AI"} 🪙{entry.price}
+                </span>
+              ))}
+            </motion.div>
+          </div>
+        )}
+
         {/* Header */}
-        <div className="relative z-10 text-center py-2">
+        <div className="relative z-10 text-center py-1">
           <h2 className="font-display text-lg tracking-wider text-foreground">AUCTION</h2>
           <p className="font-body text-[10px] text-muted-foreground">
             Player {currentIdx + 1} of {pool.length}
           </p>
         </div>
 
-        {/* Player card */}
+        {/* Player card with character */}
         <div className="relative z-10 flex-1 flex flex-col items-center px-6 overflow-y-auto">
           <motion.div
             key={currentPlayer.id}
@@ -322,8 +434,14 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
               boxShadow: `0 8px 30px ${RARITY_COLORS[currentPlayer.rarity || "common"]}30`,
             }}
           >
-            {/* Rarity badge */}
-            <div className="flex items-center justify-between mb-3">
+            {/* Character illustration */}
+            <div className="flex justify-center mb-2">
+              <img src={charImg} alt="" className="w-20 h-20 object-contain" loading="lazy"
+                style={{ filter: `drop-shadow(0 0 12px ${RARITY_COLORS[currentPlayer.rarity || "common"]}50)` }} />
+            </div>
+
+            {/* Rarity + role */}
+            <div className="flex items-center justify-between mb-2">
               <span className="font-display text-[9px] tracking-widest uppercase"
                 style={{ color: RARITY_COLORS[currentPlayer.rarity || "common"] }}>
                 {currentPlayer.rarity || "common"}
@@ -369,10 +487,9 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
           </motion.div>
 
           {/* Bid controls */}
-          <div className="w-full max-w-xs mt-4 space-y-3 pb-6">
+          <div className="w-full max-w-xs mt-3 space-y-3 pb-6">
             {bidPhase === "waiting" && !teamFull && (
               <>
-                {/* Bid slider */}
                 <div className="text-center mb-2">
                   <span className="font-display text-[9px] text-muted-foreground tracking-wider">BASE PRICE: </span>
                   <span className="font-display text-sm" style={{ color: "hsl(43 90% 55%)" }}>🪙 {basePrice}</span>
@@ -388,7 +505,6 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
                   <button onClick={() => setBidAmount(prev => Math.min(budget, prev + 25))}
                     className="w-10 h-10 rounded-xl glass-premium font-display text-lg text-foreground">+</button>
                 </div>
-
                 <div className="flex gap-2">
                   <motion.button whileTap={{ scale: 0.95 }} onClick={handleBid}
                     disabled={!canAfford}
@@ -428,13 +544,46 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
               </motion.button>
             )}
 
-            {bidPhase === "bidding" && (
-              <div className="text-center py-6">
+            {bidPhase === "your_bid" && (
+              <div className="text-center py-4">
                 <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 0.8 }}>
                   <p className="font-display text-lg text-accent tracking-wider">BIDDING...</p>
                 </motion.div>
-                <p className="font-body text-[10px] text-muted-foreground mt-2">AI is deciding...</p>
+                <p className="font-body text-[10px] text-muted-foreground mt-1">Round {bidRound}/{MAX_BID_ROUNDS} • AI deciding...</p>
               </div>
+            )}
+
+            {bidPhase === "ai_counter" && (
+              <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center py-3 space-y-3">
+                <div className="flex items-center justify-center gap-2">
+                  <span className="font-display text-[10px] text-muted-foreground">AI COUNTER:</span>
+                  <span className="font-display text-xl" style={{ color: "hsl(0 70% 55%)" }}>🪙 {aiBid}</span>
+                </div>
+                <p className="font-body text-[9px] text-muted-foreground">Round {bidRound}/{MAX_BID_ROUNDS}</p>
+                <div className="flex gap-2">
+                  <motion.button whileTap={{ scale: 0.95 }} onClick={handleRaise}
+                    disabled={budget < aiBid * 1.1}
+                    className="flex-1 py-3 rounded-xl font-display text-[11px] tracking-wider disabled:opacity-40"
+                    style={{
+                      background: "linear-gradient(180deg, hsl(43 90% 55%) 0%, hsl(35 80% 40%) 100%)",
+                      border: "1.5px solid hsl(43 80% 60% / 0.4)",
+                      borderBottom: "4px solid hsl(35 60% 25%)",
+                      color: "hsl(35 90% 10%)",
+                    }}>
+                    🔥 RAISE
+                  </motion.button>
+                  <motion.button whileTap={{ scale: 0.95 }} onClick={handleFold}
+                    className="flex-1 py-3 rounded-xl font-display text-[11px] tracking-wider"
+                    style={{
+                      background: "linear-gradient(180deg, hsl(0 50% 45%) 0%, hsl(0 45% 30%) 100%)",
+                      border: "1.5px solid hsl(0 40% 50% / 0.4)",
+                      borderBottom: "4px solid hsl(0 40% 20%)",
+                      color: "hsl(0 80% 95%)",
+                    }}>
+                    FOLD
+                  </motion.button>
+                </div>
+              </motion.div>
             )}
 
             {bidPhase === "sold" && (
@@ -445,14 +594,10 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
                   {soldTo === "you" ? "✅ SOLD TO YOU!" : "❌ SOLD TO AI"}
                 </p>
                 {soldTo === "you" && (
-                  <p className="font-display text-sm" style={{ color: "hsl(43 90% 55%)" }}>
-                    🪙 {bidAmount} spent
-                  </p>
+                  <p className="font-display text-sm" style={{ color: "hsl(43 90% 55%)" }}>🪙 {bidAmount} spent</p>
                 )}
                 {soldTo === "ai" && (
-                  <p className="font-body text-[10px] text-muted-foreground">
-                    AI bid 🪙 {aiBid}
-                  </p>
+                  <p className="font-body text-[10px] text-muted-foreground">AI bid 🪙 {aiBid}</p>
                 )}
                 <motion.button whileTap={{ scale: 0.95 }} onClick={handleNextPlayer}
                   className="mt-4 px-6 py-2.5 rounded-xl font-display text-[11px] tracking-wider"
@@ -472,7 +617,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
     );
   }
 
-  // REVIEW PHASE
+  // ── REVIEW PHASE ──
   if (phase === "review") {
     return (
       <div className="fixed inset-0 bg-background flex flex-col overflow-hidden">
@@ -515,6 +660,21 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
               </motion.div>
             ))}
           </div>
+
+          {/* Bid history summary */}
+          {bidHistory.length > 0 && (
+            <div className="mt-4 p-3 rounded-xl" style={{ background: "hsl(220 15% 8%)" }}>
+              <p className="font-display text-[9px] tracking-widest text-muted-foreground mb-2">AUCTION LOG</p>
+              {bidHistory.slice(-6).map((entry, i) => (
+                <div key={i} className="flex items-center justify-between text-[8px] py-0.5">
+                  <span className="font-body text-muted-foreground">{entry.playerName}</span>
+                  <span className="font-display" style={{ color: entry.soldTo === "you" ? "hsl(142 60% 55%)" : "hsl(0 50% 50%)" }}>
+                    {entry.soldTo === "you" ? "YOU" : "AI"} 🪙{entry.price}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="fixed bottom-0 inset-x-0 p-4 z-20" style={{ background: "linear-gradient(transparent, hsl(220 12% 5%))" }}>
@@ -534,7 +694,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
     );
   }
 
-  // KNOCKOUT PREVIEW
+  // ── KNOCKOUT PREVIEW ──
   if (phase === "knockout") {
     return (
       <div className="fixed inset-0 bg-background flex flex-col items-center justify-center">
@@ -546,23 +706,16 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
           <p className="font-display text-[10px] tracking-[0.3em] text-muted-foreground mb-2">
             ROUND {knockoutRound + 1} OF {KNOCKOUT_ROUNDS}
           </p>
-          <h2 className="font-display text-2xl text-foreground mb-2">
-            {ROUND_NAMES[knockoutRound]}
-          </h2>
+          <h2 className="font-display text-2xl text-foreground mb-2">{ROUND_NAMES[knockoutRound]}</h2>
           <p className="font-body text-[10px] text-muted-foreground mb-1">
             Your Team Power: <span style={{ color: "hsl(43 90% 55%)" }}>{teamPower}</span>
           </p>
-          <p className="font-body text-[10px] text-muted-foreground mb-6">
-            2 overs • Bat first, then bowl
-          </p>
+          <p className="font-body text-[10px] text-muted-foreground mb-6">2 overs • Bat first, then bowl</p>
 
-          {/* Previous results */}
           {tournamentResults.length > 0 && (
             <div className="flex items-center justify-center gap-2 mb-6">
               {tournamentResults.map((r, i) => (
-                <span key={i} className="font-display text-lg">
-                  {r === "win" ? "✅" : "❌"}
-                </span>
+                <span key={i} className="font-display text-lg">{r === "win" ? "✅" : "❌"}</span>
               ))}
             </div>
           )}
@@ -582,7 +735,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
     );
   }
 
-  // MATCH PHASE
+  // ── MATCH PHASE ──
   if (phase === "match") {
     const isBatting = knockoutInnings === 1;
     return (
@@ -590,11 +743,8 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: `radial-gradient(ellipse at 50% 20%, ${isBatting ? "hsl(217 30% 12%)" : "hsl(0 30% 12%)"} 0%, hsl(220 12% 5%) 70%)` }} />
 
-        {/* HUD */}
         <div className="relative z-10 flex items-center justify-between px-4 pt-4 pb-2">
-          <div className="font-display text-[9px] tracking-widest text-accent">
-            {ROUND_NAMES[knockoutRound]}
-          </div>
+          <div className="font-display text-[9px] tracking-widest text-accent">{ROUND_NAMES[knockoutRound]}</div>
           <div className="font-display text-[9px] tracking-wider px-3 py-1 rounded-full"
             style={{
               background: isBatting ? "hsl(217 70% 25%)" : "hsl(0 50% 25%)",
@@ -604,7 +754,6 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
           </div>
         </div>
 
-        {/* Scores */}
         <div className="relative z-10 text-center py-4">
           <div className="flex items-center justify-center gap-6">
             <div>
@@ -618,14 +767,9 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
             </div>
           </div>
           {knockoutInnings === 2 && (
-            <p className="font-display text-[10px] mt-1" style={{ color: "hsl(43 90% 55%)" }}>
-              Target: {knockoutTarget}
-            </p>
+            <p className="font-display text-[10px] mt-1" style={{ color: "hsl(43 90% 55%)" }}>Target: {knockoutTarget}</p>
           )}
-          <p className="font-body text-[10px] text-muted-foreground mt-1">
-            Ball {knockoutBalls}/{MATCH_BALLS}
-          </p>
-          {/* Progress bar */}
+          <p className="font-body text-[10px] text-muted-foreground mt-1">Ball {knockoutBalls}/{MATCH_BALLS}</p>
           <div className="mx-auto w-48 h-1.5 rounded-full mt-2" style={{ background: "hsl(220 15% 14%)" }}>
             <div className="h-full rounded-full transition-all duration-300"
               style={{
@@ -635,7 +779,6 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
           </div>
         </div>
 
-        {/* Number buttons or result */}
         <div className="relative z-10 flex-1 flex flex-col justify-end px-4 pb-6">
           {knockoutResult ? (
             <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
@@ -645,9 +788,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
               }}>
                 {knockoutResult === "win" ? "🏆 VICTORY!" : "💀 DEFEATED"}
               </p>
-              <p className="font-body text-xs text-muted-foreground mb-4">
-                {knockoutScore} vs {knockoutOpponentScore}
-              </p>
+              <p className="font-body text-xs text-muted-foreground mb-4">{knockoutScore} vs {knockoutOpponentScore}</p>
               <motion.button whileTap={{ scale: 0.95 }} onClick={handleMatchEnd}
                 className="px-8 py-3 rounded-xl font-display text-sm tracking-wider"
                 style={{
@@ -680,9 +821,12 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
     );
   }
 
-  // RESULTS
+  // ── RESULTS ──
   if (phase === "results") {
     const isChampion = finalPlacement.includes("CHAMPION");
+    // Save on mount
+    if (user) saveResults();
+
     return (
       <div className="fixed inset-0 bg-background flex flex-col items-center justify-center">
         <div className="absolute inset-0 pointer-events-none"
@@ -721,8 +865,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
               }}>
               HOME
             </motion.button>
-            <motion.button whileTap={{ scale: 0.95 }}
-              onClick={onHome}
+            <motion.button whileTap={{ scale: 0.95 }} onClick={handlePlayAgain}
               className="px-6 py-3 rounded-xl font-display text-[11px] tracking-wider"
               style={{
                 background: "linear-gradient(180deg, hsl(142 71% 50%) 0%, hsl(142 65% 38%) 100%)",
