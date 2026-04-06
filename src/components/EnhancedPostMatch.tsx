@@ -386,7 +386,12 @@ export default function EnhancedPostMatch({
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.7 }}
-              className="rounded-2xl p-3 mb-4 stadium-glass"
+              className="rounded-2xl p-3 mb-4"
+              style={{
+                background: "linear-gradient(180deg, #4A3A2A, #3A2A1A)",
+                border: "2px solid #2E1A0E",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 12px rgba(0,0,0,0.4)",
+              }}
             >
               <WagonWheel ballHistory={ballHistory} isBatting={true} compact />
             </motion.div>
