@@ -5,7 +5,7 @@
  * OUT: Exploding wooden frame with menacing red reveal
  */
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import type { BallResult } from "@/hooks/useHandCricket";
 import { SFX } from "@/lib/sounds";
 
