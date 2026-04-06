@@ -277,7 +277,7 @@ export default function SettingsPage() {
 
                     {/* Ambient Volume slider */}
                     {group.title === "AUDIO & SOUND" && settings.musicEnabled && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 " className="stadium-glass">
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 stadium-glass">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🏟️</span>
                           <span className="font-display text-[10px] tracking-wider text-foreground">STADIUM AMBIENCE</span>
@@ -289,7 +289,7 @@ export default function SettingsPage() {
 
                     {/* Voice Engine selector */}
                     {group.title === "COMMENTARY" && settings.voiceEnabled && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 " className="stadium-glass">
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 stadium-glass">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🔊</span>
                           <span className="font-display text-[10px] tracking-wider text-foreground">VOICE ENGINE</span>
@@ -323,7 +323,7 @@ export default function SettingsPage() {
 
                     {/* Commentary Language */}
                     {group.title === "COMMENTARY" && settings.commentaryEnabled && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 " className="stadium-glass">
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 stadium-glass">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🌐</span>
                           <span className="font-display text-[10px] tracking-wider text-foreground">LANGUAGE</span>
@@ -354,7 +354,7 @@ export default function SettingsPage() {
 
                     {/* ElevenLabs Voices */}
                     {group.title === "COMMENTARY" && settings.voiceEnabled && settings.voiceEngine !== "system" && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 " className="stadium-glass">
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 stadium-glass">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🗣️</span>
                           <span className="font-display text-[10px] tracking-wider text-foreground">ELEVENLABS VOICE</span>
@@ -400,7 +400,7 @@ export default function SettingsPage() {
 
                     {/* System Voices */}
                     {group.title === "COMMENTARY" && settings.voiceEnabled && settings.voiceEngine !== "elevenlabs" && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 " className="stadium-glass">
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 stadium-glass">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🎭</span>
                           <span className="font-display text-[10px] tracking-wider text-foreground">SYSTEM VOICES</span>
