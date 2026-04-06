@@ -259,8 +259,8 @@ export default function SettingsPage() {
                           initial={{ opacity: 0, x: -15 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: i * 0.03 }}
-                          className="rounded-xl p-3 flex items-center gap-3 border border-[hsl(var(--border)/0.3)]"
-                          style={cardStyle}
+                          className="rounded-xl p-3 flex items-center gap-3 "
+                          className="stadium-glass"
                         >
                           <div className="w-9 h-9 rounded-lg flex items-center justify-center"
                             style={{ background: `${group.accent}18`, border: `1px solid ${group.accent}30` }}>
@@ -277,7 +277,7 @@ export default function SettingsPage() {
 
                     {/* Ambient Volume slider */}
                     {group.title === "AUDIO & SOUND" && settings.musicEnabled && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 border border-[hsl(var(--border)/0.3)]" style={cardStyle}>
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 " className="stadium-glass">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🏟️</span>
                           <span className="font-display text-[10px] tracking-wider text-foreground">STADIUM AMBIENCE</span>
@@ -289,7 +289,7 @@ export default function SettingsPage() {
 
                     {/* Voice Engine selector */}
                     {group.title === "COMMENTARY" && settings.voiceEnabled && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 border border-[hsl(var(--border)/0.3)]" style={cardStyle}>
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 " className="stadium-glass">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🔊</span>
                           <span className="font-display text-[10px] tracking-wider text-foreground">VOICE ENGINE</span>
@@ -323,7 +323,7 @@ export default function SettingsPage() {
 
                     {/* Commentary Language */}
                     {group.title === "COMMENTARY" && settings.commentaryEnabled && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 border border-[hsl(var(--border)/0.3)]" style={cardStyle}>
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 " className="stadium-glass">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🌐</span>
                           <span className="font-display text-[10px] tracking-wider text-foreground">LANGUAGE</span>
@@ -354,7 +354,7 @@ export default function SettingsPage() {
 
                     {/* ElevenLabs Voices */}
                     {group.title === "COMMENTARY" && settings.voiceEnabled && settings.voiceEngine !== "system" && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 border border-[hsl(var(--border)/0.3)]" style={cardStyle}>
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 " className="stadium-glass">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🗣️</span>
                           <span className="font-display text-[10px] tracking-wider text-foreground">ELEVENLABS VOICE</span>
@@ -400,7 +400,7 @@ export default function SettingsPage() {
 
                     {/* System Voices */}
                     {group.title === "COMMENTARY" && settings.voiceEnabled && settings.voiceEngine !== "elevenlabs" && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 border border-[hsl(var(--border)/0.3)]" style={cardStyle}>
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 " className="stadium-glass">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🎭</span>
                           <span className="font-display text-[10px] tracking-wider text-foreground">SYSTEM VOICES</span>
@@ -502,7 +502,7 @@ export default function SettingsPage() {
                 <div className="space-y-1.5 pt-2 pb-1">
                   {user ? (
                     <>
-                      <div className="rounded-xl p-3.5 flex items-center gap-3 border border-[hsl(var(--border)/0.3)]" style={cardStyle}>
+                      <div className="rounded-xl p-3.5 flex items-center gap-3 " className="stadium-glass">
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "hsl(207 90% 54% / 0.15)", border: "1px solid hsl(207 90% 54% / 0.3)" }}>
                           <span className="text-lg">📧</span>
                         </div>
@@ -549,8 +549,8 @@ export default function SettingsPage() {
                   <motion.button
                     whileTap={{ scale: 0.97 }}
                     onClick={clearData}
-                    className="w-full rounded-xl p-3.5 flex items-center gap-3 text-left border border-[hsl(var(--border)/0.3)]"
-                    style={cardStyle}
+                    className="w-full rounded-xl p-3.5 flex items-center gap-3 text-left "
+                    className="stadium-glass"
                   >
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "hsl(var(--muted-foreground) / 0.1)" }}>
                       <span className="text-lg">🗑️</span>
