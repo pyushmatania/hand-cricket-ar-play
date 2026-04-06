@@ -191,30 +191,30 @@ export default function SpinWheelPage() {
   const sliceAngle = 360 / SLICES.length;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center">
+    <div className="min-h-screen flex flex-col items-center" style={{ background: "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 18% 5%) 100%)" }}>
       {/* Header */}
       <div className="w-full px-4 pt-3 pb-2 flex items-center gap-3">
         <button onClick={() => navigate(-1)} className="p-1">
           <ChevronLeft className="w-5 h-5 text-foreground" />
         </button>
-        <h1 className="font-game-display text-lg text-foreground tracking-wide">LUCKY SPIN</h1>
+        <h1 className="font-display text-lg text-foreground tracking-wide">LUCKY SPIN</h1>
         <div className="ml-auto flex items-center gap-1 px-2.5 py-1 rounded-full"
           style={{ background: "linear-gradient(135deg, hsl(35 40% 15%), hsl(35 30% 10%))", border: "1px solid hsl(35 30% 25%)" }}
         >
           <span className="text-xs">🪙</span>
-          <span className="font-game-display text-xs text-game-gold">{coins ?? "..."}</span>
+          <span className="font-display text-xs text-game-gold">{coins ?? "..."}</span>
         </div>
       </div>
 
       {/* Spin info */}
       <div className="text-center mb-4 space-y-1">
         {hasFreeSpinToday ? (
-          <span className="text-[10px] font-game-display text-game-gold tracking-wider animate-pulse">🎁 FREE SPIN AVAILABLE!</span>
+          <span className="text-[10px] font-display text-game-gold tracking-wider animate-pulse">🎁 FREE SPIN AVAILABLE!</span>
         ) : (
           <>
-            <span className="text-[10px] font-game-body text-muted-foreground">Cost per spin: {SPIN_COST} 🪙</span>
+            <span className="text-[10px] font-body text-muted-foreground">Cost per spin: {SPIN_COST} 🪙</span>
             {nextFreeIn && (
-              <p className="text-[9px] font-game-body text-muted-foreground/60">Next free spin in: {nextFreeIn}</p>
+              <p className="text-[9px] font-body text-muted-foreground/60">Next free spin in: {nextFreeIn}</p>
             )}
           </>
         )}
@@ -310,7 +310,7 @@ export default function SpinWheelPage() {
             whileTap={!spinning ? { scale: 0.92 } : undefined}
             onClick={() => handleSpin(true)}
             disabled={spinning}
-            className="relative px-10 py-3 rounded-2xl font-game-display text-sm tracking-wider overflow-hidden"
+            className="relative px-10 py-3 rounded-2xl font-display text-sm tracking-wider overflow-hidden"
             style={{
               background: spinning
                 ? "linear-gradient(180deg, hsl(220 15% 20%), hsl(220 15% 15%))"
@@ -328,7 +328,7 @@ export default function SpinWheelPage() {
           whileTap={!spinning ? { scale: 0.92 } : undefined}
           onClick={() => handleSpin(false)}
           disabled={spinning}
-          className="relative px-10 py-3 rounded-2xl font-game-display text-sm tracking-wider overflow-hidden"
+          className="relative px-10 py-3 rounded-2xl font-display text-sm tracking-wider overflow-hidden"
           style={{
             background: spinning
               ? "linear-gradient(180deg, hsl(220 15% 20%), hsl(220 15% 15%))"
@@ -352,28 +352,28 @@ export default function SpinWheelPage() {
             exit={{ opacity: 0, scale: 0.8 }}
             className="mt-6 text-center px-6 py-4 rounded-2xl"
             style={{
-              background: "linear-gradient(180deg, hsl(25 20% 14%), hsl(25 15% 8%))",
+              background: "linear-gradient(180deg, hsl(220 12% 10%), hsl(220 12% 6%))",
               border: `2px solid ${result.color}`,
               boxShadow: `0 0 20px ${result.color}44`,
             }}
           >
             <span className="text-4xl block mb-1">{result.icon}</span>
-            <p className="font-game-display text-lg text-foreground">{result.label}</p>
-            <p className="text-[10px] font-game-body text-muted-foreground mt-1">Added to your account!</p>
+            <p className="font-display text-lg text-foreground">{result.label}</p>
+            <p className="text-[10px] font-body text-muted-foreground mt-1">Added to your account!</p>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Odds list */}
       <div className="w-full px-6 mt-6 pb-24">
-        <p className="font-game-display text-[9px] text-muted-foreground tracking-wider mb-2">POSSIBLE REWARDS</p>
+        <p className="font-display text-[9px] text-muted-foreground tracking-wider mb-2">POSSIBLE REWARDS</p>
         <div className="grid grid-cols-2 gap-1.5">
           {SLICES.map((s, i) => (
             <div key={i} className="flex items-center gap-2 px-2 py-1.5 rounded-lg"
               style={{ background: "hsl(222 25% 10%)", border: "1px solid hsl(222 20% 16%)" }}
             >
               <span className="text-sm">{s.icon}</span>
-              <span className="text-[9px] font-game-body text-foreground">{s.label}</span>
+              <span className="text-[9px] font-body text-foreground">{s.label}</span>
             </div>
           ))}
         </div>

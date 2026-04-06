@@ -9,11 +9,10 @@ import { useToast } from "@/hooks/use-toast";
 import TopStatusBar from "@/components/TopStatusBar";
 import CurrencyPill from "@/components/shared/CurrencyPill";
 
-/* ── Doc 1 Material Constants ── */
-const LEATHER_BG = "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)";
-const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
-const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
-const CHALK_DIVIDER = "repeating-linear-gradient(90deg, hsl(45 30% 80%) 0px, hsl(45 30% 80%) 8px, transparent 8px, transparent 14px)";
+/* ── V10 Material Constants ── */
+const V10_BG = "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 18% 5%) 100%)";
+const V10_CARD = "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)";
+const CHALK_DIVIDER = "repeating-linear-gradient(90deg, hsl(220 15% 25%) 0px, hsl(220 15% 25%) 8px, transparent 8px, transparent 14px)";
 
 /* ── Season config ── */
 const SEASON_END = new Date("2026-05-01T00:00:00Z");
@@ -135,15 +134,15 @@ function ClaimOverlay({ reward, onClose }: { reward: PassReward["free"]; onClose
         >
           <span className="text-6xl">{reward.icon}</span>
         </motion.div>
-        <h2 className="font-game-display text-xl" style={{ color: "hsl(43 90% 55%)" }}>REWARD CLAIMED!</h2>
-        <p className="font-game-body text-foreground text-sm">
+        <h2 className="font-display text-xl" style={{ color: "hsl(43 90% 55%)" }}>REWARD CLAIMED!</h2>
+        <p className="font-body text-foreground text-sm">
           {reward.label} {reward.amount ? `× ${reward.amount}` : ""}
         </p>
         <motion.button
-          className="mt-4 px-8 py-3 rounded-xl font-game-display text-sm tracking-wider"
+          className="mt-4 px-8 py-3 rounded-xl font-display text-sm tracking-wider"
           style={{
             background: "linear-gradient(180deg, hsl(43 90% 55%), hsl(35 80% 42%))",
-            color: "hsl(25 40% 8%)",
+            color: "hsl(220 18% 6%)",
             border: "2px solid hsl(35 70% 35%)",
             borderBottom: "5px solid hsl(35 60% 28%)",
             boxShadow: "0 4px 16px hsl(43 90% 55% / 0.3)",
@@ -177,17 +176,17 @@ function TierCard({
     <motion.div
       className="relative flex items-stretch gap-0 rounded-2xl overflow-hidden"
       style={{
-        background: CONCRETE_CARD,
+        background: V10_CARD,
         border: reward.milestone
           ? "2px solid hsl(43 70% 45% / 0.5)"
           : unlocked
             ? "2px solid hsl(142 50% 35% / 0.3)"
-            : "2px solid hsl(25 18% 22%)",
+            : "2px solid hsl(220 15% 18%)",
         borderBottom: reward.milestone
           ? "5px solid hsl(43 60% 28%)"
           : unlocked
             ? "5px solid hsl(142 40% 20%)"
-            : "5px solid hsl(25 20% 10%)",
+            : "5px solid hsl(220 15% 8%)",
         boxShadow: `0 3px 8px hsl(0 0% 0% / 0.3), ${milestoneGlow}`,
       }}
       initial={{ opacity: 0, x: -20 }}
@@ -199,12 +198,12 @@ function TierCard({
         style={{
           background: reward.milestone
             ? "linear-gradient(180deg, hsl(43 60% 22%), hsl(43 50% 14%))"
-            : "linear-gradient(180deg, hsl(25 20% 14%), hsl(25 15% 10%))",
+            : "linear-gradient(180deg, hsl(220 12% 10%), hsl(220 12% 8%))",
           borderRight: "1px solid hsl(25 18% 18%)",
         }}
       >
-        <span className="font-game-score text-lg font-black" style={{
-          color: reward.milestone ? "hsl(43 90% 55%)" : unlocked ? "hsl(142 71% 55%)" : "hsl(25 15% 40%)",
+        <span className="font-score text-lg font-black" style={{
+          color: reward.milestone ? "hsl(43 90% 55%)" : unlocked ? "hsl(142 71% 55%)" : "hsl(220 15% 40%)",
         }}>
           {reward.tier}
         </span>
@@ -215,14 +214,14 @@ function TierCard({
       <div className="flex-1 flex items-center gap-2 px-3 py-3" style={{ borderRight: "1px solid hsl(25 18% 18%)" }}>
         <span className="text-2xl">{reward.free.icon}</span>
         <div className="flex-1 min-w-0">
-          <p className="font-game-body text-[11px] text-foreground truncate">{reward.free.label}</p>
+          <p className="font-body text-[11px] text-foreground truncate">{reward.free.label}</p>
           {reward.free.amount && (
-            <p className="font-game-score text-xs" style={{ color: "hsl(25 15% 45%)" }}>×{reward.free.amount}</p>
+            <p className="font-score text-xs" style={{ color: "hsl(220 15% 45%)" }}>×{reward.free.amount}</p>
           )}
         </div>
         {unlocked && !freeClaimed ? (
           <motion.button
-            className="px-2 py-1 rounded-lg text-[10px] font-game-display tracking-wider"
+            className="px-2 py-1 rounded-lg text-[10px] font-display tracking-wider"
             style={{
               background: "linear-gradient(180deg, hsl(142 71% 50%), hsl(142 65% 38%))",
               color: "white",
@@ -235,9 +234,9 @@ function TierCard({
             CLAIM
           </motion.button>
         ) : freeClaimed ? (
-          <span className="text-[10px] font-game-display font-bold" style={{ color: "hsl(142 71% 55%)" }}>✓</span>
+          <span className="text-[10px] font-display font-bold" style={{ color: "hsl(142 71% 55%)" }}>✓</span>
         ) : (
-          <Lock className="w-3.5 h-3.5" style={{ color: "hsl(25 15% 30%)" }} />
+          <Lock className="w-3.5 h-3.5" style={{ color: "hsl(220 15% 30%)" }} />
         )}
       </div>
 
@@ -253,17 +252,17 @@ function TierCard({
         )}
         <span className="text-2xl">{reward.premium.icon}</span>
         <div className="flex-1 min-w-0">
-          <p className="font-game-body text-[11px] truncate" style={{ color: "hsl(43 90% 60%)" }}>{reward.premium.label}</p>
+          <p className="font-body text-[11px] truncate" style={{ color: "hsl(43 90% 60%)" }}>{reward.premium.label}</p>
           {reward.premium.amount && (
-            <p className="font-game-score text-xs" style={{ color: "hsl(25 15% 45%)" }}>×{reward.premium.amount}</p>
+            <p className="font-score text-xs" style={{ color: "hsl(220 15% 45%)" }}>×{reward.premium.amount}</p>
           )}
         </div>
         {isPremium && unlocked && !premClaimed ? (
           <motion.button
-            className="px-2 py-1 rounded-lg text-[10px] font-game-display tracking-wider"
+            className="px-2 py-1 rounded-lg text-[10px] font-display tracking-wider"
             style={{
               background: "linear-gradient(180deg, hsl(43 90% 55%), hsl(35 80% 42%))",
-              color: "hsl(25 40% 8%)",
+              color: "hsl(220 18% 6%)",
               borderBottom: "3px solid hsl(35 60% 28%)",
               boxShadow: "0 2px 8px hsl(43 90% 55% / 0.3)",
             }}
@@ -273,7 +272,7 @@ function TierCard({
             CLAIM
           </motion.button>
         ) : isPremium && premClaimed ? (
-          <span className="text-[10px] font-game-display font-bold" style={{ color: "hsl(43 90% 55%)" }}>✓</span>
+          <span className="text-[10px] font-display font-bold" style={{ color: "hsl(43 90% 55%)" }}>✓</span>
         ) : null}
       </div>
     </motion.div>
@@ -389,11 +388,11 @@ export default function BattlePassPage() {
   }, [user, claimed, coins, currentXp, toast]);
 
   return (
-    <div className="min-h-screen relative overflow-hidden pb-28" style={{ background: LEATHER_BG }}>
+    <div className="min-h-screen relative overflow-hidden pb-28" style={{ background: V10_BG }}>
       {/* Leather grain */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: LEATHER_GRAIN, backgroundRepeat: "repeat" }} />
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ display: "none" }} />
       {/* Vignette */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(220 18% 4% / 0.7) 100%)" }} />
 
       <TopStatusBar />
 
@@ -403,19 +402,19 @@ export default function BattlePassPage() {
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
           className="flex items-center gap-3 mb-4">
           <motion.button whileTap={{ scale: 0.9 }} onClick={() => navigate(-1)}
-            className="w-10 h-10 rounded-xl flex items-center justify-center font-game-body text-sm text-foreground"
+            className="w-10 h-10 rounded-xl flex items-center justify-center font-body text-sm text-foreground"
             style={{
-              background: "linear-gradient(180deg, hsl(28 20% 22%) 0%, hsl(25 18% 15%) 100%)",
+              background: "linear-gradient(180deg, hsl(220 15% 16%) 0%, hsl(220 12% 10%) 100%)",
               border: "2px solid hsl(43 50% 35%)",
-              boxShadow: "0 3px 0 hsl(25 30% 10%), inset 0 1px 0 hsl(43 40% 45% / 0.3)",
+              boxShadow: "0 3px 0 hsl(220 15% 8%), inset 0 1px 0 hsl(43 40% 45% / 0.3)",
             }}>
             ←
           </motion.button>
           <div className="flex-1">
-            <h1 className="font-game-title text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(25 40% 8%)" }}>
+            <h1 className="font-display text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(220 18% 6%)" }}>
               Battle Pass
             </h1>
-            <span className="text-[9px] font-game-display tracking-[0.2em]" style={{ color: "hsl(43 90% 55%)" }}>
+            <span className="text-[9px] font-display tracking-[0.2em]" style={{ color: "hsl(43 90% 55%)" }}>
               {SEASON_LABEL}
             </span>
           </div>
@@ -426,14 +425,14 @@ export default function BattlePassPage() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
           className="rounded-2xl p-3 flex items-center justify-between mb-4"
           style={{
-            background: CONCRETE_CARD,
-            border: "2px solid hsl(25 18% 22%)",
-            borderBottom: "5px solid hsl(25 20% 10%)",
+            background: V10_CARD,
+            border: "2px solid hsl(220 15% 18%)",
+            borderBottom: "5px solid hsl(220 15% 8%)",
             boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
           }}>
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4" style={{ color: "hsl(207 90% 55%)" }} />
-            <span className="font-game-display text-[9px] tracking-wider text-muted-foreground">SEASON ENDS</span>
+            <span className="font-display text-[9px] tracking-wider text-muted-foreground">SEASON ENDS</span>
           </div>
           <div className="flex gap-1.5">
             {[
@@ -447,10 +446,10 @@ export default function BattlePassPage() {
                   background: "linear-gradient(180deg, hsl(25 20% 12%), hsl(25 15% 9%))",
                   border: "1px solid hsl(25 15% 18%)",
                 }}>
-                <span className="font-game-score text-sm font-black text-foreground leading-none">
+                <span className="font-score text-sm font-black text-foreground leading-none">
                   {String(u.val).padStart(2, "0")}
                 </span>
-                <span className="font-game-display text-[7px] text-muted-foreground">{u.label}</span>
+                <span className="font-display text-[7px] text-muted-foreground">{u.label}</span>
               </div>
             ))}
           </div>
@@ -460,21 +459,21 @@ export default function BattlePassPage() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="rounded-2xl p-3.5 mb-4"
           style={{
-            background: CONCRETE_CARD,
-            border: "2px solid hsl(25 18% 22%)",
-            borderBottom: "5px solid hsl(25 20% 10%)",
+            background: V10_CARD,
+            border: "2px solid hsl(220 15% 18%)",
+            borderBottom: "5px solid hsl(220 15% 8%)",
           }}>
           <div className="flex justify-between items-center mb-1.5">
-            <span className="font-game-display text-[9px] tracking-wider text-muted-foreground">
+            <span className="font-display text-[9px] tracking-wider text-muted-foreground">
               TIER {currentTier}/60 → {Math.min(currentTier + 1, 60)}
             </span>
-            <span className="font-game-score text-sm font-black" style={{ color: "hsl(207 90% 55%)" }}>
+            <span className="font-score text-sm font-black" style={{ color: "hsl(207 90% 55%)" }}>
               {currentXp} XP
             </span>
           </div>
           <div className="h-3 rounded-full overflow-hidden" style={{
-            background: "linear-gradient(180deg, hsl(25 30% 10%), hsl(25 25% 14%))",
-            border: "1px solid hsl(25 20% 8%)",
+            background: "linear-gradient(180deg, hsl(220 15% 8%), hsl(25 25% 14%))",
+            border: "1px solid hsl(220 15% 6%)",
             boxShadow: "inset 0 1px 3px hsl(0 0% 0% / 0.5)",
           }}>
             <motion.div
@@ -494,12 +493,12 @@ export default function BattlePassPage() {
         {!isPremium && (
           <motion.button
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
-            className="w-full mb-4 py-3.5 rounded-2xl font-game-display text-sm tracking-wider flex items-center justify-center gap-2 relative overflow-hidden"
+            className="w-full mb-4 py-3.5 rounded-2xl font-display text-sm tracking-wider flex items-center justify-center gap-2 relative overflow-hidden"
             style={{
               background: "linear-gradient(180deg, hsl(43 90% 55%) 0%, hsl(35 80% 42%) 100%)",
               border: "2px solid hsl(43 70% 45% / 0.5)",
               borderBottom: "6px solid hsl(35 60% 28%)",
-              color: "hsl(25 40% 8%)",
+              color: "hsl(220 18% 6%)",
               textShadow: "0 1px 0 hsl(43 80% 70% / 0.3)",
               boxShadow: "0 6px 24px hsl(43 90% 55% / 0.3), inset 0 1px 0 hsl(43 80% 70% / 0.4)",
             }}
@@ -524,7 +523,7 @@ export default function BattlePassPage() {
               border: "1px solid hsl(43 70% 45% / 0.3)",
             }}>
             <Crown className="w-4 h-4" style={{ color: "hsl(43 90% 55%)" }} />
-            <span className="font-game-display text-xs tracking-wider" style={{ color: "hsl(43 90% 55%)" }}>PREMIUM ACTIVE</span>
+            <span className="font-display text-xs tracking-wider" style={{ color: "hsl(43 90% 55%)" }}>PREMIUM ACTIVE</span>
           </motion.div>
         )}
 
@@ -534,11 +533,11 @@ export default function BattlePassPage() {
         <div className="flex items-center gap-4 px-2 mb-3">
           <div className="flex-1 flex items-center gap-1.5">
             <Gift className="w-3.5 h-3.5" style={{ color: "hsl(142 71% 55%)" }} />
-            <span className="font-game-display text-[8px] tracking-widest text-muted-foreground">FREE</span>
+            <span className="font-display text-[8px] tracking-widest text-muted-foreground">FREE</span>
           </div>
           <div className="flex-1 flex items-center gap-1.5 justify-end">
             <Crown className="w-3.5 h-3.5" style={{ color: "hsl(43 90% 55%)" }} />
-            <span className="font-game-display text-[8px] tracking-widest" style={{ color: "hsl(43 70% 50% / 0.7)" }}>PREMIUM</span>
+            <span className="font-display text-[8px] tracking-widest" style={{ color: "hsl(43 70% 50% / 0.7)" }}>PREMIUM</span>
           </div>
         </div>
 
@@ -550,8 +549,8 @@ export default function BattlePassPage() {
               {r.tier % 10 === 1 && (
                 <div className="flex items-center gap-2 py-2 mb-1">
                   <div className="flex-1 h-px opacity-20" style={{ background: CHALK_DIVIDER }} />
-                  <span className="font-game-display text-[8px] tracking-[0.3em] px-2" style={{
-                    color: r.tier <= currentTier + 1 ? "hsl(43 90% 55%)" : "hsl(25 15% 40%)",
+                  <span className="font-display text-[8px] tracking-[0.3em] px-2" style={{
+                    color: r.tier <= currentTier + 1 ? "hsl(43 90% 55%)" : "hsl(220 15% 40%)",
                   }}>
                     {r.tier === 1 ? "TIER 1–10" : r.tier === 11 ? "TIER 11–20" : r.tier === 21 ? "TIER 21–30" : r.tier === 31 ? "TIER 31–40" : r.tier === 41 ? "TIER 41–50" : "TIER 51–60"}
                   </span>
