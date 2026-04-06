@@ -20,7 +20,7 @@ import OverBreakScreen from "./OverBreakScreen";
 import WicketBreakdownCard, { type WicketBreakdownData } from "./WicketBreakdownCard";
 import pitch3d from "@/assets/pitch-3d.jpg";
 import { getBestArena } from "@/lib/arenas";
-import GameButton from "./shared/GameButton";
+import V10Button from "./shared/V10Button";
 import { getBatSkin, getButtonStyle } from "@/lib/cosmetics";
 import WeatherOverlay from "./WeatherOverlay";
 import MatchEmotes from "./MatchEmotes";
