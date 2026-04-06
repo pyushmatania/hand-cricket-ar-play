@@ -122,7 +122,7 @@ export default function NotificationsPage() {
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <motion.button whileTap={{ scale: 0.9 }} onClick={() => navigate(-1)}
-              className="w-10 h-10 rounded-xl flex items-center justify-center font-game-body text-sm text-foreground"
+              className="w-10 h-10 rounded-xl flex items-center justify-center font-body text-sm text-foreground"
               style={{
                 background: "linear-gradient(180deg, hsl(28 20% 22%) 0%, hsl(25 18% 15%) 100%)",
                 border: "2px solid hsl(43 50% 35%)",
@@ -131,17 +131,17 @@ export default function NotificationsPage() {
               ←
             </motion.button>
             <div>
-              <h1 className="font-game-title text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(25 40% 8%)" }}>
+              <h1 className="font-display text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(25 40% 8%)" }}>
                 Notifications
               </h1>
               {unreadCount > 0 && (
-                <span className="text-[9px] font-game-display tracking-[0.2em]" style={{ color: "hsl(207,90%,55%)" }}>{unreadCount} NEW ALERTS</span>
+                <span className="text-[9px] font-display tracking-[0.2em]" style={{ color: "hsl(207,90%,55%)" }}>{unreadCount} NEW ALERTS</span>
               )}
             </div>
           </div>
           {unreadCount > 0 && (
             <motion.button whileTap={{ scale: 0.9, y: 1 }} onClick={markAllRead}
-              className="px-3 py-2 rounded-xl font-game-display text-[8px] tracking-wider relative overflow-hidden"
+              className="px-3 py-2 rounded-xl font-display text-[8px] tracking-wider relative overflow-hidden"
               style={{
                 background: "linear-gradient(180deg, hsl(142 71% 50%), hsl(142 65% 38%))",
                 border: "2px solid hsl(142 60% 35% / 0.5)",
@@ -168,7 +168,7 @@ export default function NotificationsPage() {
             const count = tab.id === "unread" ? unreadCount : undefined;
             return (
               <motion.button key={tab.id} whileTap={{ scale: 0.95 }} onClick={() => setFilter(tab.id)}
-                className="flex-1 py-2 rounded-xl font-game-display text-[8px] tracking-widest flex items-center justify-center gap-1 relative overflow-hidden"
+                className="flex-1 py-2 rounded-xl font-display text-[8px] tracking-widest flex items-center justify-center gap-1 relative overflow-hidden"
                 style={isActive ? {
                   background: "linear-gradient(180deg, hsl(207 90% 50%) 0%, hsl(207 85% 38%) 100%)",
                   color: "white",
@@ -207,10 +207,10 @@ export default function NotificationsPage() {
               boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
             }}>
             <span className="text-4xl block mb-3">{filter === "unread" ? "✅" : "🔔"}</span>
-            <span className="font-game-display text-xs text-muted-foreground tracking-wider">
+            <span className="font-display text-xs text-muted-foreground tracking-wider">
               {filter === "unread" ? "ALL CAUGHT UP!" : "NO NOTIFICATIONS YET"}
             </span>
-            <p className="text-[9px] text-muted-foreground/60 mt-1 font-game-body">
+            <p className="text-[9px] text-muted-foreground/60 mt-1 font-body">
               {filter === "unread" ? "You've read everything!" : "Play matches and complete challenges"}
             </p>
           </motion.div>
@@ -220,7 +220,7 @@ export default function NotificationsPage() {
               <div key={group}>
                 <div className="flex items-center gap-2 mb-2">
                   <div className="h-px flex-1 opacity-20" style={{ background: CHALK_DIVIDER }} />
-                  <span className="font-game-display text-[8px] tracking-[0.3em]" style={{ color: "hsl(43 70% 50% / 0.5)" }}>{group.toUpperCase()}</span>
+                  <span className="font-display text-[8px] tracking-[0.3em]" style={{ color: "hsl(43 70% 50% / 0.5)" }}>{group.toUpperCase()}</span>
                   <div className="h-px flex-1 opacity-20" style={{ background: CHALK_DIVIDER }} />
                 </div>
                 <div className="space-y-1.5">
@@ -260,7 +260,7 @@ export default function NotificationsPage() {
 
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="font-game-display text-[10px] tracking-wider truncate" style={{ color: !n.read ? meta.accent : "hsl(var(--foreground))" }}>
+                              <span className="font-display text-[10px] tracking-wider truncate" style={{ color: !n.read ? meta.accent : "hsl(var(--foreground))" }}>
                                 {n.title}
                               </span>
                               {!n.read && (
@@ -272,8 +272,8 @@ export default function NotificationsPage() {
                                 />
                               )}
                             </div>
-                            <p className="text-[9px] text-muted-foreground mt-0.5 line-clamp-2 font-game-body">{n.message}</p>
-                            <span className="text-[7px] font-game-display tracking-wider mt-1 block" style={{ color: "hsl(25 15% 35%)" }}>{getTimeAgo(n.created_at)}</span>
+                            <p className="text-[9px] text-muted-foreground mt-0.5 line-clamp-2 font-body">{n.message}</p>
+                            <span className="text-[7px] font-display tracking-wider mt-1 block" style={{ color: "hsl(25 15% 35%)" }}>{getTimeAgo(n.created_at)}</span>
                           </div>
                         </motion.div>
                       );

@@ -96,10 +96,10 @@ function ChestOpenOverlay({ reward, onClose }: { reward: DayReward; onClose: () 
         </motion.span>
 
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-          <span className="font-game-display text-lg tracking-wider block mb-1" style={{ color }}>
+          <span className="font-display text-lg tracking-wider block mb-1" style={{ color }}>
             DAY {reward.day} REWARD!
           </span>
-          <span className="text-[10px] text-muted-foreground font-game-body block mb-4">
+          <span className="text-[10px] text-muted-foreground font-body block mb-4">
             {reward.type === "mega_chest" ? "MEGA CHEST UNLOCKED!" : reward.type === "chest" ? "CHEST UNLOCKED!" : "DAILY BONUS"}
           </span>
         </motion.div>
@@ -108,18 +108,18 @@ function ChestOpenOverlay({ reward, onClose }: { reward: DayReward; onClose: () 
           className="flex items-center justify-center gap-6 mb-6">
           <div className="text-center">
             <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: 2, duration: 0.3, delay: 0.8 }}
-              className="font-game-score text-2xl font-black block leading-none" style={{ color: "hsl(51,100%,60%)" }}>
+              className="font-score text-2xl font-black block leading-none" style={{ color: "hsl(51,100%,60%)" }}>
               +{reward.coins}
             </motion.span>
-            <span className="text-[8px] text-muted-foreground font-game-display tracking-widest">COINS</span>
+            <span className="text-[8px] text-muted-foreground font-display tracking-widest">COINS</span>
           </div>
           <div className="w-px h-8" style={{ background: `${color}30` }} />
           <div className="text-center">
             <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ repeat: 2, duration: 0.3, delay: 0.9 }}
-              className="font-game-score text-2xl font-black block leading-none" style={{ color: "hsl(207,90%,60%)" }}>
+              className="font-score text-2xl font-black block leading-none" style={{ color: "hsl(207,90%,60%)" }}>
               +{reward.xp}
             </motion.span>
-            <span className="text-[8px] text-muted-foreground font-game-display tracking-widest">XP</span>
+            <span className="text-[8px] text-muted-foreground font-display tracking-widest">XP</span>
           </div>
         </motion.div>
 
@@ -127,7 +127,7 @@ function ChestOpenOverlay({ reward, onClose }: { reward: DayReward; onClose: () 
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
           whileTap={{ scale: 0.95, y: 2 }}
           onClick={onClose}
-          className="px-8 py-3 rounded-2xl font-game-display text-sm tracking-wider relative overflow-hidden"
+          className="px-8 py-3 rounded-2xl font-display text-sm tracking-wider relative overflow-hidden"
           style={{
             background: `linear-gradient(180deg, ${color}, ${color}cc)`,
             border: `2px solid ${color}60`,
@@ -197,7 +197,7 @@ export default function DailyRewardsPage() {
         {/* ═══ Header — Floodlight Chrome ═══ */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 mb-4">
           <motion.button whileTap={{ scale: 0.9 }} onClick={() => navigate(-1)}
-            className="w-10 h-10 rounded-xl flex items-center justify-center font-game-body text-sm text-foreground"
+            className="w-10 h-10 rounded-xl flex items-center justify-center font-body text-sm text-foreground"
             style={{
               background: "linear-gradient(180deg, hsl(28 20% 22%) 0%, hsl(25 18% 15%) 100%)",
               border: "2px solid hsl(43 50% 35%)",
@@ -206,10 +206,10 @@ export default function DailyRewardsPage() {
             ←
           </motion.button>
           <div className="flex-1">
-            <h1 className="font-game-title text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(25 40% 8%)" }}>
+            <h1 className="font-display text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(25 40% 8%)" }}>
               Daily Rewards
             </h1>
-            <span className="text-[9px] text-muted-foreground font-game-display tracking-[0.2em]">
+            <span className="text-[9px] text-muted-foreground font-display tracking-[0.2em]">
               DAY {cycleDay} OF 28 • WEEK {currentWeek}
             </span>
           </div>
@@ -222,7 +222,7 @@ export default function DailyRewardsPage() {
               boxShadow: "0 3px 8px hsl(4 90% 58% / 0.2)",
             }}>
             <span className="text-sm">🔥</span>
-            <span className="font-game-score text-sm font-black" style={{ color: "hsl(4,90%,65%)" }}>{streak}</span>
+            <span className="font-score text-sm font-black" style={{ color: "hsl(4,90%,65%)" }}>{streak}</span>
           </div>
         </motion.div>
 
@@ -236,8 +236,8 @@ export default function DailyRewardsPage() {
             boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
           }}>
           <div className="flex items-center justify-between mb-2">
-            <span className="font-game-display text-[10px] tracking-wider text-foreground">MONTHLY PROGRESS</span>
-            <span className="font-game-score text-sm font-black" style={{ color: "hsl(43 90% 55%)" }}>
+            <span className="font-display text-[10px] tracking-wider text-foreground">MONTHLY PROGRESS</span>
+            <span className="font-score text-sm font-black" style={{ color: "hsl(43 90% 55%)" }}>
               {Math.round((cycleDay / 28) * 100)}%
             </span>
           </div>
@@ -265,7 +265,7 @@ export default function DailyRewardsPage() {
           </div>
           <div className="flex justify-between mt-1.5">
             {[7, 14, 21, 28].map(m => (
-              <span key={m} className="text-[7px] font-game-display tracking-wider"
+              <span key={m} className="text-[7px] font-display tracking-wider"
                 style={{ color: cycleDay >= m ? "hsl(43 90% 55%)" : "hsl(25 15% 35%)" }}>
                 {m === 7 ? "🎁" : m === 14 ? "👑" : m === 21 ? "🎁" : "🏆"} D{m}
               </span>
@@ -286,7 +286,7 @@ export default function DailyRewardsPage() {
           ].map(p => (
             <motion.button key={String(p.id)} whileTap={{ scale: 0.95 }}
               onClick={() => setShowPremium(p.id as boolean)}
-              className="flex-1 py-2.5 rounded-xl font-game-display text-[9px] tracking-widest flex items-center justify-center gap-1.5 relative overflow-hidden"
+              className="flex-1 py-2.5 rounded-xl font-display text-[9px] tracking-widest flex items-center justify-center gap-1.5 relative overflow-hidden"
               style={showPremium === p.id ? {
                 background: `linear-gradient(180deg, hsl(${p.hue} 70% 50%) 0%, hsl(${p.hue} 60% 38%) 100%)`,
                 color: "white",
@@ -315,7 +315,7 @@ export default function DailyRewardsPage() {
           <motion.div key={wi} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.12 + wi * 0.06 }} className="mb-3">
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="font-game-display text-[8px] tracking-[0.2em]"
+              <span className="font-display text-[8px] tracking-[0.2em]"
                 style={{ color: currentWeek === wi + 1 ? "hsl(43 90% 55%)" : "hsl(25 15% 35%)" }}>
                 WEEK {wi + 1}
               </span>
@@ -367,7 +367,7 @@ export default function DailyRewardsPage() {
                       />
                     )}
 
-                    <span className="text-[7px] font-game-display tracking-wider block mb-0.5"
+                    <span className="text-[7px] font-display tracking-wider block mb-0.5"
                       style={{ color: isCurrent ? color : isPast ? "hsl(142,70%,55%)" : "hsl(25 15% 35%)" }}>
                       D{day.day}
                     </span>
@@ -380,7 +380,7 @@ export default function DailyRewardsPage() {
                       {isPast ? "✅" : isLocked ? "🔒" : (showPremium ? reward.icon : day.icon)}
                     </motion.span>
 
-                    <span className="text-[6px] font-game-score font-black block mt-0.5"
+                    <span className="text-[6px] font-score font-black block mt-0.5"
                       style={{ color: isCurrent ? "hsl(43 90% 55%)" : "hsl(25 15% 35%)" }}>
                       +{reward.coins}
                     </span>
@@ -410,10 +410,10 @@ export default function DailyRewardsPage() {
             }}>
             <div className="absolute top-0 left-0 right-0 h-[2px]" style={{ background: "linear-gradient(90deg, transparent, hsl(43 90% 55% / 0.5), transparent)" }} />
             <span className="text-3xl block mb-2">👑</span>
-            <span className="font-game-display text-sm tracking-wider block mb-1" style={{ color: "hsl(43 90% 55%)" }}>PREMIUM PASS</span>
-            <span className="text-[9px] text-muted-foreground font-game-body block mb-3">2× rewards on every day • Exclusive cosmetics • Mega chests</span>
+            <span className="font-display text-sm tracking-wider block mb-1" style={{ color: "hsl(43 90% 55%)" }}>PREMIUM PASS</span>
+            <span className="text-[9px] text-muted-foreground font-body block mb-3">2× rewards on every day • Exclusive cosmetics • Mega chests</span>
             <motion.button whileTap={{ scale: 0.95, y: 2 }}
-              className="px-6 py-2.5 rounded-xl font-game-display text-[10px] tracking-wider relative overflow-hidden"
+              className="px-6 py-2.5 rounded-xl font-display text-[10px] tracking-wider relative overflow-hidden"
               style={{
                 background: "linear-gradient(180deg, hsl(43 90% 55%), hsl(35 80% 42%))",
                 border: "2px solid hsl(43 70% 45% / 0.5)",
@@ -439,7 +439,7 @@ export default function DailyRewardsPage() {
           }}>
           <div className="flex items-center gap-2 mb-3">
             <div className="w-1 h-4 rounded-full" style={{ background: "hsl(4 90% 58%)" }} />
-            <span className="font-game-display text-[10px] tracking-wider text-foreground">🔥 STREAK BONUSES</span>
+            <span className="font-display text-[10px] tracking-wider text-foreground">🔥 STREAK BONUSES</span>
           </div>
           <div className="flex gap-1.5">
             {STREAK_REWARDS.map((r, i) => {
@@ -464,11 +464,11 @@ export default function DailyRewardsPage() {
                       : "3px solid hsl(25 15% 8%)",
                   }}>
                   <span className="text-[10px] block">{isPast ? "✅" : isCurrent ? "🔥" : "🔒"}</span>
-                  <span className="text-[6px] font-game-display tracking-wider block mt-0.5"
+                  <span className="text-[6px] font-display tracking-wider block mt-0.5"
                     style={{ color: isCurrent ? "hsl(4,90%,65%)" : isPast ? "hsl(142,70%,55%)" : "hsl(25 15% 35%)" }}>
                     D{day}
                   </span>
-                  <span className="text-[5px] font-game-score font-black block" style={{ color: "hsl(25 15% 40%)" }}>
+                  <span className="text-[5px] font-score font-black block" style={{ color: "hsl(25 15% 40%)" }}>
                     +{r.coins}🪙
                   </span>
                 </div>
