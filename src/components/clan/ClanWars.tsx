@@ -434,6 +434,10 @@ export default function ClanWars({ clan, myRole }: ClanWarsProps) {
                   <p className="text-[9px] font-body text-muted-foreground italic">Only leaders can start wars</p>
                 ) : null}
 
+                <V10Button variant="secondary" size="md" onClick={loadWarHistory} className="w-full mt-2">
+                  📊 WAR HISTORY & STATS
+                </V10Button>
+
                 {/* Past wars */}
                 {wars.filter((w: any) => w.status === "ended").length > 0 && (
                   <div className="mt-4 space-y-2">
