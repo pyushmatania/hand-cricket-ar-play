@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import stoneTeamBuilderImg from "@/assets/ui/stone-teambuilder.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, Save, Users, Zap, RotateCcw } from "lucide-react";
