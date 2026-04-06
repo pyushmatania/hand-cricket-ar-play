@@ -279,22 +279,23 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden pb-24" style={{
-      background: "linear-gradient(180deg, hsl(222 47% 6%) 0%, hsl(222 47% 4%) 100%)",
+      background: "linear-gradient(180deg, #1A0E05 0%, #0D0704 100%)",
     }}>
       <TopStatusBar />
 
       <div className="relative z-10 max-w-lg mx-auto px-3 pt-3">
 
         {/* ═══════════════════════════════════════════════
-            DOC 1 PLAYER CARD — Floodlight Chrome Frame + Leather
+            V11 PLAYER CARD — Dark Wood Frame + Trophy Cabinet
             ═══════════════════════════════════════════════ */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative rounded-2xl overflow-hidden mb-4 stadium-glass"
+          className="relative rounded-2xl overflow-hidden mb-4"
           style={{
-            border: `2px solid ${tierChrome.border}`,
-            boxShadow: `0 8px 24px hsl(0 0% 0% / 0.5), 0 0 20px ${tierChrome.glow}`,
+            background: "linear-gradient(180deg, #5C3A1E 0%, #3E2410 100%)",
+            border: `3px solid #2E1A0E`,
+            boxShadow: `0 6px 12px rgba(0,0,0,0.5), 0 0 20px ${tierChrome.glow}, inset 0 2px 0 rgba(255,255,255,0.08), inset 0 -2px 0 rgba(0,0,0,0.3)`,
           }}
         >
 
