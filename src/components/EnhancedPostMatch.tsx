@@ -326,7 +326,12 @@ export default function EnhancedPostMatch({
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.55 + i * 0.06 }}
-                  className="rounded-xl p-2.5 text-center stadium-glass"
+                  className="rounded-xl p-2.5 text-center"
+                  style={{
+                    background: "linear-gradient(180deg, #4A3A2A, #3A2A1A)",
+                    border: "2px solid #2E1A0E",
+                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 3px 8px rgba(0,0,0,0.4)",
+                  }}
                 >
                   <span className="text-sm block">{s.icon}</span>
                   <span className="font-score text-lg font-black block leading-none" style={{ color: s.color }}>{s.value}</span>
