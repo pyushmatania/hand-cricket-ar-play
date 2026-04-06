@@ -33,7 +33,7 @@ export default function ClanPage() {
     </div>
   );
 
-  const allTabs = myClan ? (["info", "chat", "donate", "war", "browse"] as Tab[]) : (["browse"] as Tab[]);
+  const allTabs = myClan ? (["info", "chat", "donate", "war", "ranks", "browse"] as Tab[]) : (["ranks", "browse"] as Tab[]);
 
   return (
     <div className="min-h-screen bg-v10-base pb-24">
