@@ -376,11 +376,14 @@ export default function ClanWars({ clan, myRole }: ClanWarsProps) {
                 {/* Action buttons */}
                 <div className="flex gap-2">
                   <V10Button variant="secondary" size="md" onClick={() => setWarPhase("war_log")} className="flex-1">
-                    📋 WAR LOG
+                    📋 LOG
+                  </V10Button>
+                  <V10Button variant="secondary" size="md" onClick={loadWarHistory} className="flex-1">
+                    📊 STATS
                   </V10Button>
                   {attacksRemaining > 0 ? (
                     <V10Button variant="danger" size="md" glow onClick={() => setWarPhase("attack_select")} className="flex-1">
-                      ⚔️ ATTACK ({attacksRemaining} left)
+                      ⚔️ ATTACK ({attacksRemaining})
                     </V10Button>
                   ) : (
                     <div className="flex-1 py-3 rounded-xl bg-white/[0.03] border border-white/5 text-center">
