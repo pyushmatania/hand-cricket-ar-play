@@ -17,6 +17,7 @@ interface ClanProfile {
 }
 
 export default function ClanMatchmaking() {
+  const { user } = useAuth();
   const { myClan, myRole } = useClan();
   const [opponent, setOpponent] = useState<ClanProfile | null>(null);
   const [searching, setSearching] = useState(false);
