@@ -39,7 +39,7 @@ function getParScore(pitch: typeof PITCH_TYPES[0], field: typeof FIELD_PLACEMENT
 /* ─── Types ─── */
 interface ClanWarsProps { clan: Clan; myRole: string; }
 type WarPhase = "overview" | "search" | "defense" | "attack_select" | "attacking" | "attack_result" | "war_log";
-interface AttackRecord { id: string; attacker_id: string; score: number; stars_earned: number; target_score: number; pitch_type: string; field_placement: string; created_at: string; display_name?: string; }
+interface AttackRecord { id: string; attacker_id: string; clan_id: string; score: number; stars_earned: number; target_score: number; pitch_type: string; field_placement: string; created_at: string; display_name?: string; }
 
 export default function ClanWars({ clan, myRole }: ClanWarsProps) {
   const { user } = useAuth();
