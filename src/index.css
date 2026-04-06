@@ -1708,71 +1708,135 @@
     overflow: hidden;
   }
 
-  /* V11 TAB SHELF — Rough Battle-Worn Wooden Shelf Dock */
+  /* V11 TAB SHELF — Clash Royale Replica Bottom Bar */
   .tab-shelf {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    height: calc(72px + env(safe-area-inset-bottom, 0px));
+    height: calc(78px + env(safe-area-inset-bottom, 0px));
     padding-bottom: env(safe-area-inset-bottom, 0px);
     z-index: 100;
-    border-radius: 18px 16px 0 0;
-    border-top: 5px solid #4A2810;
-    border-left: 4px solid #3E2008;
-    border-right: 4px solid #1A0A02;
+    /* NO top border-radius — flat plank edge like CR */
+    border-radius: 0;
+    border-top: 3px solid #5A3818;
     background:
-      /* Crack overlay */
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40'%3E%3Cpath d='M15,8 L35,15 L55,10 L80,20 L100,14' stroke='rgba(0,0,0,0.18)' stroke-width='0.5' fill='none'/%3E%3Cpath d='M120,5 L140,18 L165,12 L185,22' stroke='rgba(0,0,0,0.14)' stroke-width='0.4' fill='none'/%3E%3C/svg%3E"),
+      /* Vertical plank separations */
+      repeating-linear-gradient(
+        90deg,
+        transparent 0px, transparent 76px,
+        rgba(0, 0, 0, 0.25) 77px, rgba(0, 0, 0, 0.35) 78px,
+        transparent 79px
+      ),
       /* Deep cracks/grooves */
       repeating-linear-gradient(
         88deg,
         transparent 0px, transparent 18px,
-        rgba(0, 0, 0, 0.15) 19px, rgba(0, 0, 0, 0.25) 20px,
+        rgba(0, 0, 0, 0.12) 19px, rgba(0, 0, 0, 0.22) 20px,
         transparent 21px, transparent 42px,
-        rgba(0, 0, 0, 0.10) 43px, transparent 44px
+        rgba(0, 0, 0, 0.08) 43px, transparent 44px
       ),
       /* Fine grain */
       repeating-linear-gradient(
         90deg,
-        rgba(0, 0, 0, 0.04) 0px, transparent 1px,
-        transparent 3px, rgba(0, 0, 0, 0.06) 4px, transparent 5px
+        rgba(0, 0, 0, 0.03) 0px, transparent 1px,
+        transparent 3px, rgba(0, 0, 0, 0.05) 4px, transparent 5px
       ),
       /* Knots */
-      radial-gradient(ellipse 14px 8px at 20% 50%, rgba(0,0,0,0.30), transparent 70%),
-      radial-gradient(ellipse 10px 6px at 65% 40%, rgba(0,0,0,0.25), transparent 70%),
-      radial-gradient(ellipse 12px 7px at 85% 60%, rgba(0,0,0,0.28), transparent 70%),
-      /* Base wood gradient */
+      radial-gradient(ellipse 14px 8px at 18% 55%, rgba(0,0,0,0.28), transparent 70%),
+      radial-gradient(ellipse 10px 6px at 55% 35%, rgba(0,0,0,0.22), transparent 70%),
+      radial-gradient(ellipse 12px 7px at 82% 60%, rgba(0,0,0,0.25), transparent 70%),
+      /* Base wood gradient — warm CR brown */
       linear-gradient(180deg,
-        #7A4A28 0%, #6B3A1A 30%, #5A2E12 60%, #4A2410 100%
+        #8B5E3C 0%, #7A4A28 20%, #6B3A1A 50%, #5A2E12 80%, #4A2410 100%
       );
     box-shadow:
-      0 -8px 16px rgba(0, 0, 0, 0.55),
-      0 -2px 0 rgba(0,0,0,0.30),
-      inset 0 3px 0 rgba(255, 200, 130, 0.12),
-      inset 0 4px 8px rgba(255, 180, 100, 0.06),
-      inset 0 -4px 0 rgba(0, 0, 0, 0.35),
-      inset 4px 0 6px rgba(0, 0, 0, 0.15),
-      inset -4px 0 6px rgba(0, 0, 0, 0.15);
+      0 -6px 20px rgba(0, 0, 0, 0.60),
+      0 -2px 0 rgba(0,0,0,0.40),
+      /* Top edge highlight — sun catch */
+      inset 0 3px 0 rgba(255, 210, 150, 0.18),
+      inset 0 5px 10px rgba(255, 190, 120, 0.06),
+      /* Bottom recess */
+      inset 0 -3px 0 rgba(0, 0, 0, 0.40),
+      inset 0 -6px 10px rgba(0, 0, 0, 0.25);
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-around;
-    padding-top: 6px;
+    padding-top: 0;
   }
 
-  /* V11 Tab Labels — Carved/Engraved */
+  /* Large L-shaped iron side brackets with rivets */
+  .tab-shelf::before,
+  .tab-shelf::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    width: 26px;
+    height: calc(100% + 4px);
+    z-index: 3;
+    pointer-events: none;
+    background:
+      /* Rivet dots */
+      radial-gradient(circle 3px at 13px 12px, #888, #555 40%, transparent 60%),
+      radial-gradient(circle 3px at 13px 50%, #888, #555 40%, transparent 60%),
+      radial-gradient(circle 2px at 13px 12px, rgba(255,255,255,0.3), transparent 50%),
+      radial-gradient(circle 2px at 13px 50%, rgba(255,255,255,0.3), transparent 50%),
+      /* Iron plate */
+      linear-gradient(135deg,
+        rgba(160, 165, 175, 0.95) 0%,
+        rgba(110, 115, 125, 0.9) 25%,
+        rgba(70, 75, 85, 0.95) 60%,
+        rgba(40, 42, 50, 1) 100%
+      );
+    box-shadow:
+      inset 1px 1px 0 rgba(255,255,255,0.15),
+      inset -1px -1px 0 rgba(0,0,0,0.4),
+      2px 0 4px rgba(0,0,0,0.5);
+  }
+  .tab-shelf::before {
+    left: 0;
+    clip-path: polygon(0% 0%, 80% 0%, 100% 5%, 100% 95%, 80% 100%, 0% 100%);
+    border-radius: 0;
+  }
+  .tab-shelf::after {
+    right: 0;
+    clip-path: polygon(20% 0%, 100% 0%, 100% 100%, 20% 100%, 0% 95%, 0% 5%);
+    box-shadow:
+      inset 1px 1px 0 rgba(255,255,255,0.15),
+      inset -1px -1px 0 rgba(0,0,0,0.4),
+      -2px 0 4px rgba(0,0,0,0.5);
+  }
+
+  /* V11 Tab Labels — Chunky CR Style */
   .tab-label-v11 {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 600;
-    font-size: 9px;
-    letter-spacing: 0.8px;
+    font-family: 'Bungee', 'Rajdhani', sans-serif;
+    font-weight: 400;
+    font-size: 10px;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
-    color: #8B7355;
-    text-shadow: 0 1px 0 rgba(255,255,255,0.08), 0 -1px 0 rgba(0,0,0,0.15);
+    color: #6B5540;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.25), 0 -1px 0 rgba(255,255,255,0.06);
   }
   .tab-label-v11.active {
-    color: #F5E6D3;
-    text-shadow: 0 1px 0 rgba(255,255,255,0.15), 0 -1px 0 rgba(0,0,0,0.25), 0 0 6px rgba(var(--team-primary-rgb), 0.20);
+    color: #FFE8C8;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.4), 0 -1px 0 rgba(255,255,255,0.1), 0 0 8px rgba(255,200,100,0.25);
+  }
+
+  /* CR-style tab icon container */
+  .cr-tab-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    line-height: 1;
+    filter: drop-shadow(0 3px 4px rgba(0,0,0,0.6)) drop-shadow(0 1px 1px rgba(0,0,0,0.4));
+    transition: transform 0.15s ease, filter 0.15s ease;
+  }
+  .cr-tab-icon.inactive {
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5)) saturate(0.4) brightness(0.65);
+  }
+  .cr-tab-icon.center {
+    font-size: 36px;
   }
 
   /* V11 Badge on tab objects */
