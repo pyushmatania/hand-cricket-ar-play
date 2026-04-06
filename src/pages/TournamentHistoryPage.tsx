@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import stoneTournamentHistoryImg from "@/assets/ui/stone-tournamenthistory.png";
+import StoneHeader from "@/components/shared/StoneHeader";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useTournamentPersistence } from "@/hooks/useTournamentPersistence";
