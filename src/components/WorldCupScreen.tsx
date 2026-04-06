@@ -349,7 +349,7 @@ export default function WorldCupScreen({ onHome }: Props) {
               setGroupResults([]); setMatchOpponent(null); setScore(0); setOppScore(0);
               setBalls(0); setInnings(1); setTarget(0); setMatchResult(null); setLastBall("");
               ballsRef.current = 0; setFixtureIndex(0); setFinalPlacement(""); setReward(null);
-              rewardedRef.current = false; tournamentCreated.current = false; setTournamentId(null);
+              rewardedRef.current = false; setTournamentId(null);
             }}>PLAY AGAIN</V10Button>
           </div>
         </motion.div>
