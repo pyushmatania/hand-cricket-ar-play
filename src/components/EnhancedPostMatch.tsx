@@ -465,8 +465,12 @@ export default function EnhancedPostMatch({
                   animate={{ y: 0, opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ type: "spring", damping: 12 }}
-                  className="rounded-2xl p-4 mb-6 stadium-glass"
-                  style={{ border: "2px solid hsl(43 50% 30% / 0.2)" }}
+                  className="rounded-2xl p-4 mb-6"
+                  style={{
+                    background: "linear-gradient(180deg, #4A3A2A, #3A2A1A)",
+                    border: "2px solid #2E1A0E",
+                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 12px rgba(0,0,0,0.4)",
+                  }}
                 >
                   <span className="font-display text-[8px] font-bold tracking-[0.3em] text-foreground/30 block text-center mb-3">MATCH REWARDS</span>
                   <div className="flex items-center justify-center gap-6">
