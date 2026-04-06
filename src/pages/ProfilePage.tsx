@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import TopStatusBar from "@/components/TopStatusBar";
-import PlayerAvatar from "@/components/PlayerAvatar";
+import V10PlayerAvatar from "@/components/shared/V10PlayerAvatar";
 import TrophyCase from "@/components/TrophyCase";
 import RankBadge from "@/components/RankBadge";
 import FriendStatsModal from "@/components/FriendStatsModal";
@@ -101,26 +101,15 @@ const getTimeAgo = (dateStr: string) => {
 const formatDate = (dateStr: string) =>
   new Date(dateStr).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
 
-/* ── 3D Stat Diamond ── */
-function StatDiamond({ icon, value, label, color }: { icon: string; value: string | number; label: string; color: string }) {
-  return (
-    <div className="text-center">
-      <span className="text-base block mb-0.5">{icon}</span>
-      <span className={`font-game-score text-xl font-black block leading-none ${color}`}>{value}</span>
-      <span className="text-[6px] text-muted-foreground font-game-display tracking-[0.15em] mt-0.5 block">{label}</span>
-    </div>
-  );
-}
-
-/* ── Stat Row with chalk divider ── */
+/* ── V10 Stat Row — Stadium Glass ── */
 function StatRow({ icon, label, value, color }: { icon: string; label: string; value: string | number; color?: string }) {
   return (
-    <div className="flex items-center justify-between py-2 border-b border-[hsl(35_30%_25%/0.2)] last:border-0">
+    <div className="flex items-center justify-between py-2 border-b border-white/[0.04] last:border-0">
       <div className="flex items-center gap-2">
         <span className="text-sm">{icon}</span>
-        <span className="text-[9px] text-muted-foreground font-game-display tracking-wider">{label}</span>
+        <span className="text-[9px] text-muted-foreground font-display tracking-wider">{label}</span>
       </div>
-      <span className={`font-game-score text-sm font-black ${color || "text-foreground"}`}>{value}</span>
+      <span className={`font-display text-sm font-black tabular-nums ${color || "text-foreground"}`}>{value}</span>
     </div>
   );
 }
@@ -289,15 +278,9 @@ export default function ProfilePage() {
   }[tier.name] || { border: "hsl(25 60% 35%)", glow: "hsl(25 60% 40% / 0.3)", accent: "hsl(25 70% 55%)" };
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden pb-24">
-      {/* Stadium concrete background */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        background: "linear-gradient(180deg, hsl(222 30% 8%) 0%, hsl(222 25% 6%) 100%)",
-      }} />
-      {/* Subtle pitch grass texture at top */}
-      <div className="absolute top-0 left-0 right-0 h-48 pointer-events-none opacity-[0.03]" style={{
-        backgroundImage: "repeating-linear-gradient(90deg, transparent, transparent 2px, hsl(120 40% 30%) 2px, hsl(120 40% 30%) 3px)",
-      }} />
+    <div className="min-h-screen relative overflow-hidden pb-24" style={{
+      background: "linear-gradient(180deg, hsl(222 47% 6%) 0%, hsl(222 47% 4%) 100%)",
+    }}>
       <TopStatusBar />
 
       <div className="relative z-10 max-w-lg mx-auto px-3 pt-3">
@@ -308,28 +291,15 @@ export default function ProfilePage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative rounded-2xl overflow-hidden mb-4"
+          className="relative rounded-2xl overflow-hidden mb-4 stadium-glass"
           style={{
-            border: `3px solid ${tierChrome.border}`,
-            boxShadow: `0 8px 24px hsl(0 0% 0% / 0.5), 0 0 20px ${tierChrome.glow}, inset 0 1px 0 hsl(35 40% 40% / 0.15)`,
+            border: `2px solid ${tierChrome.border}`,
+            boxShadow: `0 8px 24px hsl(0 0% 0% / 0.5), 0 0 20px ${tierChrome.glow}`,
           }}
         >
-          {/* Leather texture background */}
-          <div className="absolute inset-0" style={{
-            background: "linear-gradient(180deg, hsl(28 35% 18%) 0%, hsl(25 30% 12%) 50%, hsl(222 25% 10%) 100%)",
-          }} />
-          {/* Leather grain overlay */}
-          <div className="absolute inset-0 opacity-[0.04]" style={{
-            backgroundImage: "radial-gradient(circle at 30% 50%, hsl(30 20% 30%), transparent 2px), radial-gradient(circle at 70% 30%, hsl(30 20% 30%), transparent 1.5px)",
-            backgroundSize: "6px 6px, 4px 4px",
-          }} />
 
           {/* Top chrome rank banner */}
-          <div className="relative px-4 py-3" style={{
-            background: `linear-gradient(135deg, ${tierChrome.border}, hsl(220 15% 18%), ${tierChrome.border})`,
-            borderBottom: `2px solid hsl(220 10% 10%)`,
-            boxShadow: "inset 0 1px 0 hsl(220 15% 35% / 0.4), inset 0 -1px 0 hsl(220 10% 8%)",
-          }}>
+          <div className="relative px-4 py-3 scoreboard-metal">
             {/* Chrome rivet corners */}
             {["top-1.5 left-2", "top-1.5 right-2"].map(pos => (
               <div key={pos} className={`absolute ${pos} w-2 h-2 rounded-full`} style={{
@@ -419,12 +389,9 @@ export default function ProfilePage() {
               {/* Avatar with chrome ring */}
               <div className="relative">
                 <button onClick={() => user && fileInputRef.current?.click()} className="relative group" disabled={uploading}>
-                  <div className="rounded-2xl p-0.5" style={{
-                    background: `linear-gradient(135deg, ${tierChrome.border}, hsl(220 10% 20%), ${tierChrome.border})`,
-                    boxShadow: `0 4px 12px hsl(0 0% 0% / 0.5), 0 0 12px ${tierChrome.glow}`,
-                  }}>
-                    <PlayerAvatar avatarUrl={profile?.avatar_url} avatarIndex={profile?.avatar_index ?? 0} size="lg"
-                      frame={profile?.equipped_avatar_frame} />
+                  <div className="rounded-2xl p-0.5">
+                    <V10PlayerAvatar avatarUrl={profile?.avatar_url} avatarIndex={profile?.avatar_index ?? 0} size="lg"
+                      level={level} xpProgress={xpInLevel} frame={profile?.equipped_avatar_frame} />
                   </div>
                   {user && (
                     <div className="absolute inset-0 rounded-2xl bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -479,11 +446,7 @@ export default function ProfilePage() {
           </div>
 
           {/* 4-stat ribbon — scoreboard paint on concrete */}
-          <div className="grid grid-cols-4" style={{
-            background: "linear-gradient(180deg, hsl(222 20% 12%), hsl(222 18% 9%))",
-            borderTop: "2px solid hsl(222 15% 8%)",
-            boxShadow: "inset 0 1px 0 hsl(222 15% 18% / 0.3)",
-          }}>
+          <div className="grid grid-cols-4 scoreboard-metal">
             {[
               { value: totalWins, label: "WINS", color: "hsl(142 71% 55%)" },
               { value: totalLosses, label: "LOSSES", color: "hsl(4 90% 58%)" },
@@ -560,12 +523,7 @@ export default function ProfilePage() {
 
         {/* ═══ Tab Switcher — 3D Jersey Mesh ═══ */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="flex gap-1 mb-4 rounded-xl p-1"
-          style={{
-            background: "linear-gradient(180deg, hsl(222 20% 12%), hsl(222 18% 9%))",
-            border: "2px solid hsl(222 15% 8%)",
-            boxShadow: "inset 0 1px 0 hsl(222 15% 18% / 0.3), 0 4px 12px hsl(0 0% 0% / 0.3)",
-          }}>
+          className="flex gap-1 mb-4 rounded-xl p-1 scoreboard-metal">
           {tabs.map((tab) => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)}
               className="flex-1 py-2.5 rounded-lg font-game-display text-[8px] font-bold tracking-widest transition-all duration-200 flex items-center justify-center gap-1"
