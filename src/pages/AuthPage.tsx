@@ -57,9 +57,9 @@ export default function AuthPage() {
   };
 
   const inputStyle = {
-    background: "linear-gradient(180deg, hsl(220 12% 9%), hsl(220 12% 7%))",
-    border: "2px solid hsl(220 15% 18%)",
-    borderBottom: "4px solid hsl(220 12% 6%)",
+    background: "linear-gradient(180deg, #3E2410, #5C3A1E)",
+    border: "2px solid #4A2810",
+    boxShadow: "inset 0 2px 4px rgba(0,0,0,0.3)",
     color: "hsl(var(--foreground))",
   };
 
