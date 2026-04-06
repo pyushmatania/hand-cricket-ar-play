@@ -220,7 +220,7 @@ export default function ModeSelectDrawer({ open, onOpenChange }: ModeSelectDrawe
       <DrawerContent
         className="border-t-0 rounded-t-3xl max-h-[85vh] pb-6"
         style={{
-          background: "linear-gradient(180deg, hsl(28 30% 15%) 0%, hsl(220 15% 7%) 100%)",
+          background: "linear-gradient(180deg, hsl(220 12% 11%) 0%, hsl(220 15% 7%) 100%)",
           borderTop: "2px solid hsl(43 50% 35%)",
         }}
       >

@@ -22,7 +22,7 @@ const SLICES: WheelSlice[] = [
   { label: "25 Coins", icon: "🪙", color: "hsl(35 80% 45%)", reward: { type: "coins", amount: 25 }, weight: 25 },
   { label: "50 XP", icon: "⚡", color: "hsl(270 50% 40%)", reward: { type: "xp", amount: 50 }, weight: 20 },
   { label: "100 Coins", icon: "💰", color: "hsl(45 90% 50%)", reward: { type: "coins", amount: 100 }, weight: 15 },
-  { label: "Bronze Chest", icon: "📦", color: "hsl(28 50% 40%)", reward: { type: "chest", amount: 1, detail: "bronze" }, weight: 15 },
+  { label: "Bronze Chest", icon: "📦", color: "hsl(19 60% 40%)", reward: { type: "chest", amount: 1, detail: "bronze" }, weight: 15 },
   { label: "150 XP", icon: "🔥", color: "hsl(0 70% 50%)", reward: { type: "xp", amount: 150 }, weight: 10 },
   { label: "Gold Chest", icon: "✨", color: "hsl(45 100% 50%)", reward: { type: "chest", amount: 1, detail: "gold" }, weight: 5 },
   { label: "200 Coins", icon: "💎", color: "hsl(195 80% 50%)", reward: { type: "coins", amount: 200 }, weight: 7 },

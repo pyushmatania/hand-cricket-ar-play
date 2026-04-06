@@ -65,7 +65,7 @@ export default function ShopItemCard({
       style={{
         border: `2px solid ${r.border}`,
         boxShadow: equipped ? r.glow : "0 4px 0 hsl(220 18% 7%), 0 6px 12px rgba(0,0,0,0.4)",
-        background: "linear-gradient(180deg, hsl(28 25% 16%) 0%, hsl(220 15% 8%) 100%)",
+        background: "linear-gradient(180deg, hsl(220 12% 12%) 0%, hsl(220 15% 8%) 100%)",
       }}
     >
       {/* Rarity stripe - chrome */}

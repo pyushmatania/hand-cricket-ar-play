@@ -100,14 +100,14 @@ export const INDIAN_LEGENDS: PlayerInfo[] = [
 /* ── Rarity frame styles ── */
 const RARITY_FRAME: Record<string, { border: string; glow: string; bg: string }> = {
   common: {
-    border: "hsl(28 30% 25%)",
+    border: "hsl(220 15% 18%)",
     glow: "none",
-    bg: "linear-gradient(180deg, hsl(28 35% 28%), hsl(220 15% 14%))",
+    bg: "linear-gradient(180deg, hsl(220 15% 20%), hsl(220 15% 14%))",
   },
   rare: {
     border: "hsl(210 60% 40%)",
     glow: "0 0 12px hsl(210 70% 50% / 0.3)",
-    bg: "linear-gradient(180deg, hsl(28 35% 28%), hsl(220 15% 14%))",
+    bg: "linear-gradient(180deg, hsl(220 15% 20%), hsl(220 15% 14%))",
   },
   epic: {
     border: "hsl(270 50% 45%)",
@@ -117,7 +117,7 @@ const RARITY_FRAME: Record<string, { border: string; glow: string; bg: string }>
   legendary: {
     border: "hsl(35 80% 45%)",
     glow: "0 0 20px hsl(35 90% 50% / 0.4)",
-    bg: "linear-gradient(180deg, hsl(28 40% 22%), hsl(220 12% 10%))",
+    bg: "linear-gradient(180deg, hsl(220 15% 16%), hsl(220 12% 10%))",
   },
   mythic: {
     border: "hsl(280 80% 60%)",
@@ -172,7 +172,7 @@ export default function PlayerCard({ player, size = "md", showStats = true, dela
     rarity === "epic" ? "hsl(270 60% 60%)" :
     rarity === "rare" ? "hsl(210 70% 55%)" :
     rarity === "mythic" ? "hsl(280 80% 65%)" :
-    "hsl(28 50% 55%)";
+    "hsl(19 80% 55%)";
 
   return (
     <motion.div

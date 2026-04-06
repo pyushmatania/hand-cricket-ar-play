@@ -336,7 +336,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
           exit={{ opacity: 0, scale: 0.9, y: 30 }}
           className="w-full max-w-md max-h-[85vh] overflow-y-auto rounded-3xl"
           style={{
-            background: "linear-gradient(180deg, hsl(28 30% 16%) 0%, hsl(220 15% 8%) 100%)",
+            background: "linear-gradient(180deg, hsl(220 12% 12%) 0%, hsl(220 15% 8%) 100%)",
             border: CHROME_BORDER,
             boxShadow: "0 8px 0 hsl(220 15% 5%), 0 12px 40px rgba(0,0,0,0.6), inset 0 1px 0 hsl(35 40% 40% / 0.1)",
           }}
