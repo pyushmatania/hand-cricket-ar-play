@@ -455,7 +455,10 @@ export default function ProfilePage() {
           </div>
 
           {/* 4-stat ribbon — scoreboard paint on concrete */}
-          <div className="grid grid-cols-4 scoreboard-metal">
+          <div className="grid grid-cols-4" style={{
+            background: "linear-gradient(180deg, #3E2410, #2E1A0E)",
+            borderTop: "1px solid #5C3A1E",
+          }}>
             {[
               { value: totalWins, label: "WINS", color: "hsl(142 71% 55%)" },
               { value: totalLosses, label: "LOSSES", color: "hsl(4 90% 58%)" },
