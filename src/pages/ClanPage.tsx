@@ -6,6 +6,7 @@ import { useClan, type Clan } from "@/hooks/useClan";
 import { supabase } from "@/integrations/supabase/client";
 import TopBar from "@/components/layout/TopBar";
 import ClanDonations from "@/components/clan/ClanDonations";
+import ClanLeaderboard from "@/components/clan/ClanLeaderboard";
 import ClanWars from "@/components/clan/ClanWars";
 import V10PlayerAvatar from "@/components/shared/V10PlayerAvatar";
 import V10Button from "@/components/shared/V10Button";
@@ -16,7 +17,7 @@ const ROLE_COLORS: Record<string, string> = { leader: "text-neon-cyan", co_leade
 const CLAN_EMOJIS = ["🏏", "⚡", "🔥", "💎", "🦁", "🐯", "🦅", "🐉", "⭐", "🌟", "👑", "🛡️"];
 const LEVEL_XP = [0, 100, 300, 600, 1000, 1500, 2200, 3000, 4000, 5500];
 
-type Tab = "info" | "chat" | "donate" | "war" | "browse";
+type Tab = "info" | "chat" | "donate" | "war" | "ranks" | "browse";
 
 export default function ClanPage() {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ export default function ClanPage() {
     </div>
   );
 
-  const allTabs = myClan ? (["info", "chat", "donate", "war", "browse"] as Tab[]) : (["browse"] as Tab[]);
+  const allTabs = myClan ? (["info", "chat", "donate", "war", "ranks", "browse"] as Tab[]) : (["ranks", "browse"] as Tab[]);
 
   return (
     <div className="min-h-screen bg-v10-base pb-24">
@@ -69,6 +70,11 @@ export default function ClanPage() {
           {tab === "war" && myClan && myRole && (
             <motion.div key="war" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
               <ClanWars clan={myClan} myRole={myRole} />
+            </motion.div>
+          )}
+          {tab === "ranks" && (
+            <motion.div key="ranks" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
+              <ClanLeaderboard />
             </motion.div>
           )}
           {tab === "browse" && (

@@ -803,8 +803,9 @@ export default function ClanWars({ clan, myRole }: ClanWarsProps) {
 
               return (
                 <>
-                  {/* Victory confetti & trophy */}
+                  {/* Victory confetti & trophy + sounds */}
                   {won && <CanvasFireworks type="win" duration={4000} />}
+                  <WarResultSounds won={won} draw={draw} soundEnabled={soundEnabled} hapticsEnabled={hapticsEnabled} />
                   {won && (
                     <motion.div
                       initial={{ opacity: 0, y: 30 }}
@@ -1109,4 +1110,21 @@ function WarTimer({ endTime }: { endTime: string }) {
       ⏰ {remaining}
     </span>
   );
+}
+
+/* ─── War Result Sounds (fires once on mount) ─── */
+function WarResultSounds({ won, draw, soundEnabled, hapticsEnabled }: { won: boolean; draw: boolean; soundEnabled: boolean; hapticsEnabled: boolean }) {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (won) {
+        if (soundEnabled) { SFX.crowdEruption(); setTimeout(() => SFX.victoryAnthem(), 300); }
+        if (hapticsEnabled) { Haptics.success(); setTimeout(() => Haptics.victoryAnthem(), 500); }
+      } else if (!draw) {
+        if (soundEnabled) { SFX.crowdGroan(); setTimeout(() => SFX.loss(), 400); }
+        if (hapticsEnabled) Haptics.error();
+      }
+    }, 200);
+    return () => clearTimeout(timer);
+  }, []);
+  return null;
 }
