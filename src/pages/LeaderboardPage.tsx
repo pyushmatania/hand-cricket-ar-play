@@ -500,7 +500,7 @@ export default function LeaderboardPage() {
   const V10_BG = "linear-gradient(180deg, #1A0F06 0%, #12080A 100%)";
   const LEATHER_GRAIN = `url('/assets/ui/leather-texture.png')`;
   const CONCRETE_CARD = "linear-gradient(180deg, #3E2410, #2E1A0E)";
-  const CHALK_BORDER = "2px dashed hsl(43 30% 30% / 0.25)";
+  const CHALK_BORDER = "2px solid #5C3A1E";
 
   return (
     <div className="min-h-screen relative overflow-hidden"
