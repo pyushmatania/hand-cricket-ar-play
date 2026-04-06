@@ -53,8 +53,8 @@ export default function ModeCard({ mode, index, onSelect }: ModeCardProps) {
           borderBottom: `5px solid hsl(${mode.borderHue} 25% 18%)`,
           background: "linear-gradient(135deg, hsl(28 22% 15% / 0.9) 0%, hsl(25 18% 11% / 0.95) 100%)",
           boxShadow: isPressed
-            ? `0 1px 0 hsl(25 30% 8%), 0 0 25px ${mode.glowHsl}`
-            : `0 4px 0 hsl(25 30% 8%), 0 6px 20px rgba(0,0,0,0.3)`,
+            ? `0 1px 0 hsl(220 18% 7%), 0 0 25px ${mode.glowHsl}`
+            : `0 4px 0 hsl(220 18% 7%), 0 6px 20px rgba(0,0,0,0.3)`,
           transformStyle: "preserve-3d",
         }}
       >
@@ -95,7 +95,7 @@ export default function ModeCard({ mode, index, onSelect }: ModeCardProps) {
         {/* Text */}
         <div className="flex-1 min-w-0" style={{ transform: "translateZ(8px)" }}>
           <span className="font-display text-sm text-foreground tracking-wider block"
-            style={{ textShadow: "0 1px 0 hsl(25 30% 8%)" }}
+            style={{ textShadow: "0 1px 0 hsl(220 18% 7%)" }}
           >
             {mode.title}
           </span>

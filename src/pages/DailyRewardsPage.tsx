@@ -459,7 +459,7 @@ export default function DailyRewardsPage() {
                         : "linear-gradient(180deg, hsl(220 12% 10%), hsl(220 12% 8%))",
                     border: isCurrent
                       ? "2px solid hsl(4 60% 40% / 0.4)"
-                      : "2px solid hsl(25 18% 18%)",
+                      : "2px solid hsl(220 15% 14%)",
                     borderBottom: isCurrent
                       ? "3px solid hsl(4 40% 22%)"
                       : "3px solid hsl(220 12% 6%)",

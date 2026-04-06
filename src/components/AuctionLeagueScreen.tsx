@@ -316,7 +316,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
             style={{
               borderRadius: "20px",
               padding: "20px",
-              background: `linear-gradient(135deg, hsl(25 18% 14%) 0%, hsl(25 15% 9%) 100%)`,
+              background: `linear-gradient(135deg, hsl(220 12% 10%) 0%, hsl(25 15% 9%) 100%)`,
               border: `2px solid ${RARITY_COLORS[currentPlayer.rarity || "common"]}`,
               borderBottom: `5px solid ${RARITY_COLORS[currentPlayer.rarity || "common"]}80`,
               boxShadow: `0 8px 30px ${RARITY_COLORS[currentPlayer.rarity || "common"]}30`,
@@ -501,7 +501,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
                 transition={{ delay: i * 0.1 }}
                 className="flex items-center gap-3 p-3 rounded-xl"
                 style={{
-                  background: "linear-gradient(180deg, hsl(25 18% 14%) 0%, hsl(25 15% 10%) 100%)",
+                  background: "linear-gradient(180deg, hsl(220 12% 10%) 0%, hsl(220 12% 8%) 100%)",
                   border: `1.5px solid ${RARITY_COLORS[p.rarity || "common"]}40`,
                 }}>
                 <span className="font-display text-lg w-8 text-center text-muted-foreground">#{i + 1}</span>
@@ -714,9 +714,9 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
             <motion.button whileTap={{ scale: 0.95 }} onClick={onHome}
               className="px-6 py-3 rounded-xl font-display text-[11px] tracking-wider"
               style={{
-                background: "linear-gradient(180deg, hsl(25 18% 18%) 0%, hsl(25 15% 12%) 100%)",
+                background: "linear-gradient(180deg, hsl(220 15% 14%) 0%, hsl(25 15% 12%) 100%)",
                 border: "1.5px solid hsl(25 18% 25%)",
-                borderBottom: "4px solid hsl(25 15% 8%)",
+                borderBottom: "4px solid hsl(220 12% 6%)",
                 color: "hsl(25 30% 70%)",
               }}>
               HOME

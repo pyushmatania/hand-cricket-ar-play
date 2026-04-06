@@ -316,8 +316,8 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
   const formatDate = (d: string) => new Date(d).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
   const formatTime = (d: string) => new Date(d).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" });
 
-  const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
-  const CHROME_BORDER = "2px solid hsl(25 20% 22%)";
+  const CONCRETE_CARD = "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)";
+  const CHROME_BORDER = "2px solid hsl(220 15% 18%)";
   const CARD_SHADOW = "0 4px 0 hsl(25 20% 6%), 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)";
 
   return (
@@ -327,7 +327,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-50 flex items-center justify-center p-4"
-        style={{ background: "hsl(25 30% 4% / 0.88)", backdropFilter: "blur(12px)" }}
+        style={{ background: "hsl(220 18% 4% / 0.88)", backdropFilter: "blur(12px)" }}
         onClick={onClose}
       >
         <motion.div
@@ -347,7 +347,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
             <div className="flex items-center gap-3">
               <PlayerAvatar avatarUrl={fp.avatar_url} avatarIndex={fp.avatar_index ?? 0} size="md" />
               <div className="flex-1 min-w-0">
-                <h2 className="font-display text-lg text-foreground tracking-wider truncate" style={{ textShadow: "0 2px 0 hsl(25 30% 8%)" }}>{fp.display_name}</h2>
+                <h2 className="font-display text-lg text-foreground tracking-wider truncate" style={{ textShadow: "0 2px 0 hsl(220 18% 7%)" }}>{fp.display_name}</h2>
                 <div className="flex items-center gap-2 mt-0.5">
                   <span className={`text-[8px] font-display font-bold ${friendTier.color}`}>{friendTier.emoji} {friendTier.name}</span>
                   <span className="text-[7px] text-muted-foreground font-display">• {friendRP} RP</span>

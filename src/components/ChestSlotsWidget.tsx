@@ -140,7 +140,7 @@ function ChestSlot({
       onClick={() => onTap(chest, slotIndex)}
       className="relative aspect-square rounded-xl overflow-hidden"
       style={{
-        background: `linear-gradient(180deg, hsl(25 20% 12%), hsl(222 30% 8%))`,
+        background: `linear-gradient(180deg, hsl(220 12% 9%), hsl(222 30% 8%))`,
         border: `2px solid ${isReady ? tier.color : tier.borderColor}`,
         boxShadow: isReady ? `0 0 12px ${tier.glowColor}` : "none",
       }}

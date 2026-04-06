@@ -163,7 +163,7 @@ export default function TournamentChat({ tournamentId }: TournamentChatProps) {
             className="fixed bottom-20 right-3 left-3 z-50 rounded-2xl overflow-hidden flex flex-col"
             style={{
               maxHeight: "60vh",
-              background: "linear-gradient(180deg, hsl(25 18% 14%), hsl(25 15% 9%))",
+              background: "linear-gradient(180deg, hsl(220 12% 10%), hsl(25 15% 9%))",
               border: "2px solid hsl(43 50% 30% / 0.3)",
               boxShadow: "0 8px 32px hsl(0 0% 0% / 0.5)",
             }}
@@ -171,8 +171,8 @@ export default function TournamentChat({ tournamentId }: TournamentChatProps) {
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3"
               style={{
-                background: "linear-gradient(180deg, hsl(25 20% 18%), hsl(25 18% 14%))",
-                borderBottom: "1px solid hsl(25 18% 22%)",
+                background: "linear-gradient(180deg, hsl(25 20% 18%), hsl(220 12% 10%))",
+                borderBottom: "1px solid hsl(220 15% 18%)",
               }}
             >
               <div className="flex items-center gap-2">
@@ -189,7 +189,7 @@ export default function TournamentChat({ tournamentId }: TournamentChatProps) {
             {/* Messages */}
             <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-2 min-h-[200px]">
               {messages.length === 0 && (
-                <p className="text-center font-body text-xs" style={{ color: "hsl(25 15% 40%)" }}>
+                <p className="text-center font-body text-xs" style={{ color: "hsl(220 15% 40%)" }}>
                   No messages yet. Say hi! 👋
                 </p>
               )}
@@ -206,7 +206,7 @@ export default function TournamentChat({ tournamentId }: TournamentChatProps) {
                       style={{
                         background: isMe
                           ? "linear-gradient(135deg, hsl(217 80% 40% / 0.3), hsl(217 70% 30% / 0.3))"
-                          : "hsl(25 18% 18%)",
+                          : "hsl(220 15% 14%)",
                         border: isMe
                           ? "1px solid hsl(217 60% 45% / 0.3)"
                           : "1px solid hsl(25 18% 24%)",
@@ -218,7 +218,7 @@ export default function TournamentChat({ tournamentId }: TournamentChatProps) {
                         </p>
                       )}
                       <p className="font-body text-[11px] text-foreground/90">{msg.message}</p>
-                      <p className="text-[8px] mt-0.5" style={{ color: "hsl(25 15% 35%)" }}>
+                      <p className="text-[8px] mt-0.5" style={{ color: "hsl(220 15% 35%)" }}>
                         {new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                       </p>
                     </div>
@@ -231,7 +231,7 @@ export default function TournamentChat({ tournamentId }: TournamentChatProps) {
             <div className="flex items-center gap-2 px-3 py-2"
               style={{
                 background: "hsl(25 18% 12%)",
-                borderTop: "1px solid hsl(25 18% 20%)",
+                borderTop: "1px solid hsl(220 15% 16%)",
               }}
             >
               <input
@@ -250,11 +250,11 @@ export default function TournamentChat({ tournamentId }: TournamentChatProps) {
                 style={{
                   background: input.trim()
                     ? "linear-gradient(180deg, hsl(43 90% 55%), hsl(35 80% 42%))"
-                    : "hsl(25 18% 18%)",
+                    : "hsl(220 15% 14%)",
                   opacity: input.trim() ? 1 : 0.4,
                 }}
               >
-                <Send className="w-3.5 h-3.5" style={{ color: input.trim() ? "hsl(25 40% 8%)" : "hsl(25 15% 40%)" }} />
+                <Send className="w-3.5 h-3.5" style={{ color: input.trim() ? "hsl(220 18% 6%)" : "hsl(220 15% 40%)" }} />
               </motion.button>
             </div>
           </motion.div>

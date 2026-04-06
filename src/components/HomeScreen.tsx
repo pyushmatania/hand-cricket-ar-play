@@ -10,7 +10,7 @@ export default function HomeScreen({ onStart }: HomeScreenProps) {
     <div
       className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center px-4 py-8"
       style={{
-        background: "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)",
+        background: "linear-gradient(180deg, hsl(220 20% 10%) 0%, hsl(220 18% 7%) 40%, hsl(222 40% 6%) 100%)",
       }}
     >
       {/* Leather grain */}
@@ -30,7 +30,7 @@ export default function HomeScreen({ onStart }: HomeScreenProps) {
       {/* Vignette */}
       <div
         className="absolute inset-0 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }}
+        style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(220 18% 4% / 0.7) 100%)" }}
       />
 
       <motion.div
@@ -120,9 +120,9 @@ export default function HomeScreen({ onStart }: HomeScreenProps) {
               className="text-center p-3"
               style={{
                 borderRadius: "14px",
-                background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)",
-                border: "1.5px solid hsl(25 18% 22%)",
-                borderBottom: "4px solid hsl(25 20% 10%)",
+                background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
+                border: "1.5px solid hsl(220 15% 18%)",
+                borderBottom: "4px solid hsl(220 15% 8%)",
               }}
             >
               <div className="text-2xl mb-1">{f.icon}</div>

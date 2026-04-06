@@ -152,9 +152,9 @@ function CompetitiveCard({ mode, index, onNavigate, userRank }: { mode: typeof T
       style={{
         borderRadius: "14px",
         padding: "10px 12px",
-        background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)",
-        border: "2px solid hsl(25 18% 22%)",
-        borderBottom: "4px solid hsl(25 20% 10%)",
+        background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
+        border: "2px solid hsl(220 15% 18%)",
+        borderBottom: "4px solid hsl(220 15% 8%)",
         opacity: isLocked ? 0.6 : 1,
       }}
     >
@@ -253,9 +253,9 @@ export default function ModeSelectDrawer({ open, onOpenChange }: ModeSelectDrawe
                     style={{
                       borderRadius: "14px",
                       padding: "10px",
-                      background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)",
-                      border: isSelected ? `2px solid hsl(${mode.hue} 70% 50%)` : "2px solid hsl(25 18% 22%)",
-                      borderBottom: isSelected ? `5px solid hsl(${mode.hue} 50% 30%)` : "4px solid hsl(25 20% 10%)",
+                      background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
+                      border: isSelected ? `2px solid hsl(${mode.hue} 70% 50%)` : "2px solid hsl(220 15% 18%)",
+                      borderBottom: isSelected ? `5px solid hsl(${mode.hue} 50% 30%)` : "4px solid hsl(220 15% 8%)",
                       boxShadow: isSelected ? `0 0 16px hsl(${mode.hue} 70% 50% / 0.2)` : undefined,
                     }}
                   >

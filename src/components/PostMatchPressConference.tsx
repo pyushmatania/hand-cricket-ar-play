@@ -122,7 +122,7 @@ export default function PostMatchPressConference({
 
       <motion.div
         className="w-full max-w-[360px] rounded-2xl overflow-hidden"
-        style={{ background: config.bg, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}
+        style={{ background: config.bg, border: "2px solid hsl(220 15% 18%)", borderBottom: "5px solid hsl(25 25% 10%)" }}
         initial={{ scale: 0.8, y: 30 }}
         animate={{ scale: 1, y: 0 }}
         transition={{ type: "spring", damping: 20 }}
@@ -152,7 +152,7 @@ export default function PostMatchPressConference({
               </div>
               <motion.div
                 className="rounded-xl p-3"
-                style={{ background: "hsl(25 15% 10%)", border: "1px solid hsl(25 18% 20%)" }}
+                style={{ background: "hsl(220 12% 8%)", border: "1px solid hsl(220 15% 16%)" }}
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5 }}
@@ -164,7 +164,7 @@ export default function PostMatchPressConference({
 
           {/* Score summary */}
           <div className="flex items-center justify-center gap-6 py-3 rounded-xl mb-3"
-            style={{ background: "hsl(25 15% 10%)", border: "1px solid hsl(25 18% 20%)" }}>
+            style={{ background: "hsl(220 12% 8%)", border: "1px solid hsl(220 15% 16%)" }}>
             <div className="text-center">
               <span className="font-display text-lg font-black" style={{ color: "hsl(43 90% 55%)" }}>{winnerScore}</span>
               <span className="block text-[7px] text-muted-foreground font-display tracking-widest">WINNER</span>

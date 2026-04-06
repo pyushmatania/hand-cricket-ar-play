@@ -57,8 +57,8 @@ export default function DRSReview({ active, dismissalType, outcome, onComplete }
           >
             <div className="flex items-center gap-3 px-6 py-2 rounded-full"
               style={{
-                background: 'linear-gradient(180deg, hsl(25 18% 16%), hsl(25 15% 11%))',
-                border: '2px solid hsl(25 20% 22%)',
+                background: 'linear-gradient(180deg, hsl(220 15% 12%), hsl(220 12% 8%))',
+                border: '2px solid hsl(220 15% 18%)',
                 boxShadow: '0 2px 0 hsl(25 20% 6%), 0 4px 20px rgba(0,0,0,0.6)',
               }}
             >

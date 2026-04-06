@@ -208,7 +208,7 @@ function TierCard({
           background: reward.milestone
             ? "linear-gradient(180deg, hsl(43 60% 22%), hsl(43 50% 14%))"
             : "linear-gradient(180deg, hsl(220 12% 10%), hsl(220 12% 8%))",
-          borderRight: "1px solid hsl(25 18% 18%)",
+          borderRight: "1px solid hsl(220 15% 14%)",
         }}
       >
         <span className="font-score text-lg font-black" style={{
@@ -220,7 +220,7 @@ function TierCard({
       </div>
 
       {/* Free reward */}
-      <div className="flex-1 flex items-center gap-2 px-3 py-3" style={{ borderRight: "1px solid hsl(25 18% 18%)" }}>
+      <div className="flex-1 flex items-center gap-2 px-3 py-3" style={{ borderRight: "1px solid hsl(220 15% 14%)" }}>
         <span className="text-2xl">{reward.free.icon}</span>
         <div className="flex-1 min-w-0">
           <p className="font-body text-[11px] text-foreground truncate">{reward.free.label}</p>
@@ -452,7 +452,7 @@ export default function BattlePassPage() {
             ].map((u) => (
               <div key={u.label} className="flex flex-col items-center rounded-lg px-2 py-1"
                 style={{
-                  background: "linear-gradient(180deg, hsl(25 20% 12%), hsl(25 15% 9%))",
+                  background: "linear-gradient(180deg, hsl(220 12% 9%), hsl(25 15% 9%))",
                   border: "1px solid hsl(25 15% 18%)",
                 }}>
                 <span className="font-score text-sm font-black text-foreground leading-none">

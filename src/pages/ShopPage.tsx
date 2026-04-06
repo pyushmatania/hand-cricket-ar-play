@@ -125,7 +125,7 @@ export default function ShopPage() {
               ←
             </motion.button>
             <div>
-              <h1 className="font-display text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(25 40% 8%)" }}>
+              <h1 className="font-display text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(220 18% 6%)" }}>
                 Shop
               </h1>
               <span className="text-[9px] text-muted-foreground font-display tracking-[0.2em]">CUSTOMIZE YOUR STYLE</span>

@@ -138,7 +138,7 @@ export default function HiddenFeaturesPage() {
             className="mt-8 text-center"
           >
             <div className="rounded-2xl p-6" style={{
-              background: "linear-gradient(135deg, hsl(43 80% 50% / 0.08), hsl(25 30% 12%))",
+              background: "linear-gradient(135deg, hsl(43 80% 50% / 0.08), hsl(220 15% 9%))",
               border: "2px solid hsl(43 60% 40% / 0.3)",
             }}>
               <p className="font-display text-[9px] tracking-[0.3em] text-muted-foreground mb-2">TOTAL SPECIFICATION</p>

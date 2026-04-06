@@ -50,7 +50,7 @@ export default function ShopItemModal({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-50 flex items-end justify-center p-4"
-        style={{ background: "hsl(25 30% 4% / 0.88)", backdropFilter: "blur(12px)" }}
+        style={{ background: "hsl(220 18% 4% / 0.88)", backdropFilter: "blur(12px)" }}
         onClick={onClose}
       >
         <motion.div
@@ -94,7 +94,7 @@ export default function ShopItemModal({
 
           {/* Info */}
           <div className="text-center px-5 pb-4">
-            <h3 className="font-display text-xl text-foreground" style={{ textShadow: "0 2px 0 hsl(25 30% 8%)" }}>
+            <h3 className="font-display text-xl text-foreground" style={{ textShadow: "0 2px 0 hsl(220 18% 7%)" }}>
               {item.name}
             </h3>
             <p className="text-xs text-muted-foreground mt-1 font-body">{item.description}</p>

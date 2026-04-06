@@ -64,8 +64,8 @@ export default function ShopItemCard({
       className="relative rounded-2xl overflow-hidden cursor-pointer active:scale-[0.96] transition-transform"
       style={{
         border: `2px solid ${r.border}`,
-        boxShadow: equipped ? r.glow : "0 4px 0 hsl(25 30% 8%), 0 6px 12px rgba(0,0,0,0.4)",
-        background: "linear-gradient(180deg, hsl(28 25% 16%) 0%, hsl(25 20% 10%) 100%)",
+        boxShadow: equipped ? r.glow : "0 4px 0 hsl(220 18% 7%), 0 6px 12px rgba(0,0,0,0.4)",
+        background: "linear-gradient(180deg, hsl(28 25% 16%) 0%, hsl(220 15% 8%) 100%)",
       }}
     >
       {/* Rarity stripe - chrome */}
@@ -124,7 +124,7 @@ export default function ShopItemCard({
 
           {/* Name - scoreboard paint */}
           <p className="font-display text-xs font-bold text-foreground truncate"
-            style={{ textShadow: "0 1px 0 hsl(25 30% 8%)" }}
+            style={{ textShadow: "0 1px 0 hsl(220 18% 7%)" }}
           >
             {name}
           </p>
@@ -145,7 +145,7 @@ export default function ShopItemCard({
 
       {/* 3D bottom edge */}
       <div className="h-1" style={{
-        background: "linear-gradient(180deg, hsl(25 20% 8%), hsl(25 15% 5%))",
+        background: "linear-gradient(180deg, hsl(220 15% 6%), hsl(25 15% 5%))",
       }} />
     </motion.div>
   );

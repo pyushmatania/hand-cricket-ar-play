@@ -423,8 +423,8 @@ export default function ProfilePage() {
                     <span className="text-[7px] font-display" style={{ color: "hsl(220 10% 55%)" }}>{xpInLevel}/100 XP</span>
                   </div>
                   <div className="w-full h-2 rounded-full overflow-hidden" style={{
-                    background: "linear-gradient(180deg, hsl(25 30% 10%), hsl(25 25% 14%))",
-                    border: "1px solid hsl(25 20% 8%)",
+                    background: "linear-gradient(180deg, hsl(220 15% 8%), hsl(25 25% 14%))",
+                    border: "1px solid hsl(220 15% 6%)",
                     boxShadow: "inset 0 1px 3px hsl(0 0% 0% / 0.5)",
                   }}>
                     <motion.div initial={{ width: 0 }} animate={{ width: `${xpInLevel}%` }}

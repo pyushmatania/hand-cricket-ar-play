@@ -140,7 +140,7 @@ function WoodenShelf({ children }: { children: React.ReactNode }) {
           background: "linear-gradient(180deg, hsl(30 45% 28%), hsl(25 40% 18%))",
           border: "2px solid hsl(25 35% 14%)",
           boxShadow:
-            "inset 0 1px 0 hsl(35 45% 38%), inset 0 -1px 0 hsl(25 30% 10%), 0 4px 8px hsl(0 0% 0% / 0.4)",
+            "inset 0 1px 0 hsl(35 45% 38%), inset 0 -1px 0 hsl(220 15% 8%), 0 4px 8px hsl(0 0% 0% / 0.4)",
         }}
       >
         {/* Wood grain */}
@@ -404,8 +404,8 @@ export default function TrophyCase() {
       <div
         className="flex gap-1 rounded-xl p-1"
         style={{
-          background: "linear-gradient(180deg, hsl(30 40% 22%), hsl(25 35% 15%))",
-          border: "2px solid hsl(25 30% 12%)",
+          background: "linear-gradient(180deg, hsl(30 40% 22%), hsl(220 15% 10%))",
+          border: "2px solid hsl(220 15% 9%)",
           boxShadow: "inset 0 1px 0 hsl(35 40% 32%), 0 3px 8px hsl(0 0% 0% / 0.3)",
         }}
       >

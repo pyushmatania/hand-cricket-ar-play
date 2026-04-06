@@ -43,7 +43,7 @@ export default function DressingRoom({
   return (
     <div className="relative w-full h-full min-h-[300px] rounded-2xl overflow-hidden"
       style={{
-        background: "linear-gradient(180deg, hsl(25 30% 12%) 0%, hsl(25 25% 8%) 100%)",
+        background: "linear-gradient(180deg, hsl(220 15% 9%) 0%, hsl(25 25% 8%) 100%)",
         border: "2px solid hsl(25 20% 20%)",
       }}>
       {/* Locker background */}
@@ -123,8 +123,8 @@ export default function DressingRoom({
       {/* Player name plate */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-xl"
         style={{
-          background: "linear-gradient(180deg, hsl(25 20% 15%) 0%, hsl(25 15% 10%) 100%)",
-          border: "1px solid hsl(25 20% 22%)",
+          background: "linear-gradient(180deg, hsl(25 20% 15%) 0%, hsl(220 12% 8%) 100%)",
+          border: "1px solid hsl(220 15% 18%)",
         }}>
         <span className="font-display text-[10px] font-bold tracking-wider" style={{ color: teamColor }}>{playerName}</span>
       </div>

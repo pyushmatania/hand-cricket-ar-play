@@ -18,8 +18,8 @@ const RANK_ICONS: Record<string, string> = {
   Bronze: "🥉", Silver: "🥈", Gold: "🥇", Platinum: "💎", Diamond: "💠", Master: "👑", Legend: "🏅",
 };
 
-const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
-const CHROME_BORDER = "2px solid hsl(25 20% 22%)";
+const CONCRETE_CARD = "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)";
+const CHROME_BORDER = "2px solid hsl(220 15% 18%)";
 
 export default function TopStatusBar() {
   const navigate = useNavigate();
@@ -92,7 +92,7 @@ export default function TopStatusBar() {
             </span>
             <div className="relative w-16 h-[6px] rounded-full overflow-hidden"
               style={{
-                background: "linear-gradient(to bottom, hsl(25 15% 10%), hsl(25 15% 14%))",
+                background: "linear-gradient(to bottom, hsl(220 12% 8%), hsl(25 15% 14%))",
                 border: "1px solid hsl(25 20% 18%)",
                 boxShadow: "inset 0 1px 3px rgba(0,0,0,0.5)",
               }}>
@@ -121,7 +121,7 @@ export default function TopStatusBar() {
             style={{
               background: CONCRETE_CARD,
               border: CHROME_BORDER,
-              borderBottom: "3px solid hsl(25 20% 8%)",
+              borderBottom: "3px solid hsl(220 15% 6%)",
               boxShadow: "0 2px 8px hsl(0 84% 60% / 0.15), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
             }}
           >
@@ -142,7 +142,7 @@ export default function TopStatusBar() {
           style={{
             background: CONCRETE_CARD,
             border: CHROME_BORDER,
-            borderBottom: "3px solid hsl(25 20% 8%)",
+            borderBottom: "3px solid hsl(220 15% 6%)",
             boxShadow: "0 3px 0 hsl(25 20% 6%), 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
           }}
         >
@@ -164,10 +164,10 @@ export default function TopStatusBar() {
           className="relative w-10 h-10 rounded-xl flex items-center justify-center"
           style={{
             background: unreadCount > 0
-              ? "linear-gradient(180deg, hsl(0 84% 60% / 0.12), hsl(25 18% 14%))"
+              ? "linear-gradient(180deg, hsl(0 84% 60% / 0.12), hsl(220 12% 10%))"
               : CONCRETE_CARD,
             border: CHROME_BORDER,
-            borderBottom: "3px solid hsl(25 20% 8%)",
+            borderBottom: "3px solid hsl(220 15% 6%)",
             boxShadow: unreadCount > 0
               ? "0 3px 0 hsl(25 20% 6%), 0 2px 10px hsl(0 84% 60% / 0.15), inset 0 1px 0 hsl(35 40% 40% / 0.08)"
               : "0 3px 0 hsl(25 20% 6%), 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
@@ -185,7 +185,7 @@ export default function TopStatusBar() {
               className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center"
               style={{
                 background: "linear-gradient(to bottom, hsl(0,84%,58%), hsl(0,84%,45%))",
-                border: "2px solid hsl(25 15% 11%)",
+                border: "2px solid hsl(220 12% 8%)",
                 borderBottom: "2.5px solid hsl(0,84%,35%)",
                 boxShadow: "0 2px 6px hsl(0 84% 58% / 0.5)",
               }}
@@ -203,7 +203,7 @@ export default function TopStatusBar() {
           style={{
             background: CONCRETE_CARD,
             border: CHROME_BORDER,
-            borderBottom: "3px solid hsl(25 20% 8%)",
+            borderBottom: "3px solid hsl(220 15% 6%)",
             boxShadow: "0 3px 0 hsl(25 20% 6%), 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
           }}
         >

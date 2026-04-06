@@ -75,7 +75,7 @@ export default function ThemeSelector({ currentTierIndex, selectedThemeId, onSel
                       : "2px solid hsl(25 15% 18%)",
                   boxShadow: selected
                     ? "0 0 18px hsl(43 90% 50% / 0.35), 0 5px 0 hsl(25 40% 10%)"
-                    : "0 5px 0 hsl(25 40% 8%)",
+                    : "0 5px 0 hsl(220 18% 6%)",
                   opacity: isUnlocked ? 1 : 0.5,
                   cursor: isUnlocked ? "pointer" : "not-allowed",
                 }}
@@ -123,14 +123,14 @@ export default function ThemeSelector({ currentTierIndex, selectedThemeId, onSel
                         boxShadow: "0 2px 0 hsl(35 50% 25%)",
                       }}
                     >
-                      <span className="text-[10px] font-bold" style={{ color: "hsl(25 40% 8%)" }}>✓</span>
+                      <span className="text-[10px] font-bold" style={{ color: "hsl(220 18% 6%)" }}>✓</span>
                     </div>
                   )}
                 </div>
 
                 {/* Info section */}
                 <div className="px-2.5 py-2"
-                  style={{ background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 12%) 100%)" }}
+                  style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(25 15% 12%) 100%)" }}
                 >
                   {/* Theme name */}
                   <span className="text-[11px] font-display font-bold text-foreground block leading-tight truncate">

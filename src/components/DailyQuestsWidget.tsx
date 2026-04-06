@@ -48,7 +48,7 @@ export default function DailyQuestsWidget() {
               style={{
                 background: isComplete
                   ? "linear-gradient(135deg, hsl(142 30% 12%), hsl(142 25% 8%))"
-                  : "linear-gradient(135deg, hsl(25 18% 14%), hsl(25 15% 10%))",
+                  : "linear-gradient(135deg, hsl(220 12% 10%), hsl(220 12% 8%))",
                 border: isComplete
                   ? "1px solid hsl(142 40% 25%)"
                   : "1px solid hsl(25 15% 20%)",
