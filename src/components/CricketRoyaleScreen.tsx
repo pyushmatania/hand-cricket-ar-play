@@ -141,6 +141,9 @@ function RoundSummaryStrip({ scores }: { scores: number[] }) {
 
 export default function CricketRoyaleScreen({ onHome }: CricketRoyaleScreenProps) {
   const [phase, setPhase] = useState<Phase>("lobby");
+  const [lobbyTab, setLobbyTab] = useState<LobbyTab>("info");
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [lbLoading, setLbLoading] = useState(false);
   const [currentRound, setCurrentRound] = useState(0);
   const [totalScore, setTotalScore] = useState(0);
   const [roundScores, setRoundScores] = useState<number[]>([]);
@@ -152,6 +155,56 @@ export default function CricketRoyaleScreen({ onHome }: CricketRoyaleScreenProps
   const roundRef = useRef(currentRound);
   const savedRef = useRef(false);
   roundRef.current = currentRound;
+
+  // Fetch leaderboard
+  useEffect(() => {
+    if (lobbyTab !== "leaderboard" || leaderboard.length > 0) return;
+    setLbLoading(true);
+    (async () => {
+      // Get all royale games, join with profiles for display_name
+      const { data } = await supabase
+        .from("cricket_royale_games")
+        .select("user_id, placement, total_runs, status")
+        .order("created_at", { ascending: false })
+        .limit(500);
+
+      if (!data || data.length === 0) { setLbLoading(false); return; }
+
+      // Aggregate per user
+      const map = new Map<string, { best: number; runs: number; games: number; champs: number }>();
+      for (const g of data) {
+        const prev = map.get(g.user_id) || { best: 999, runs: 0, games: 0, champs: 0 };
+        map.set(g.user_id, {
+          best: Math.min(prev.best, g.placement ?? 999),
+          runs: prev.runs + g.total_runs,
+          games: prev.games + 1,
+          champs: prev.champs + (g.status === "champion" ? 1 : 0),
+        });
+      }
+
+      // Get display names
+      const userIds = [...map.keys()];
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("user_id, display_name")
+        .in("user_id", userIds);
+
+      const nameMap = new Map((profiles || []).map((p: any) => [p.user_id, p.display_name]));
+      const entries: LeaderboardEntry[] = [...map.entries()].map(([uid, s]) => ({
+        user_id: uid,
+        display_name: nameMap.get(uid) || "Player",
+        best_placement: s.best,
+        total_runs: s.runs,
+        games_played: s.games,
+        champions: s.champs,
+      }));
+
+      // Sort by champions desc, then best placement asc, then total runs desc
+      entries.sort((a, b) => b.champions - a.champions || a.best_placement - b.best_placement || b.total_runs - a.total_runs);
+      setLeaderboard(entries.slice(0, 50));
+      setLbLoading(false);
+    })();
+  }, [lobbyTab, leaderboard.length]);
 
   const round = ROUNDS[currentRound] || ROUNDS[0];
   const targetScore = Math.round(round.overs * 6 * round.targetMultiplier);
