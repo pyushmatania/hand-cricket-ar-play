@@ -82,7 +82,7 @@ function GameToggle({ enabled, onToggle, color = "green" }: { enabled: boolean; 
   );
 }
 
-/* ──── Section Header — Scoreboard Metal ──── */
+/* ──── Section Header — Carved Stone ──── */
 function SectionHeader({ icon, title, expanded, onToggle, accentColor }: {
   icon: string; title: string; expanded: boolean; onToggle: () => void; accentColor: string;
 }) {
@@ -90,11 +90,15 @@ function SectionHeader({ icon, title, expanded, onToggle, accentColor }: {
     <motion.button
       whileTap={{ scale: 0.98 }}
       onClick={onToggle}
-      className="w-full flex items-center gap-3 rounded-2xl p-3 wood-panel border-b-[4px] transition-all"
-      style={{ borderColor: "hsl(222 47% 8%)" }}
+      className="w-full flex items-center gap-3 rounded-2xl p-3 transition-all"
+      style={{
+        background: "linear-gradient(180deg, #4A4A5A, #2E2E3E)",
+        border: "3px solid #1E1E2E",
+        boxShadow: "0 3px 0 #1A1A2A, inset 0 1px 0 rgba(255,255,255,0.06)",
+      }}
     >
-      <div className="w-10 h-10 rounded-xl flex items-center justify-center wood-panel-dark"
-        style={{ border: `1px solid ${accentColor}40` }}>
+      <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+        style={{ background: "linear-gradient(180deg, #5C3A1E, #3E2410)", border: "2px solid #2E1A0E" }}>
         <span className="text-xl">{icon}</span>
       </div>
       <span className="flex-1 text-left font-display text-xs tracking-[0.2em]" style={{ color: accentColor }}>{title}</span>
