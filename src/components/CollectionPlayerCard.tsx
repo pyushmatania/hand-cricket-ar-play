@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { DBPlayer, statToDiamonds, overallRating, roleLabel } from "@/hooks/usePlayers";
 import { Zap } from "lucide-react";
-
+import { CARD_FRAMES } from "@/assets/cards";
 import { TEAM_STAR_ART, TEAM_BOWLER_ART } from "@/assets/players";
 
 /* ── Player image map for Mythic/Legendary cards ── */
@@ -82,6 +82,8 @@ interface CollectionPlayerCardProps {
 
 export default function CollectionPlayerCard({ player, size = "sm", onTap, delay = 0 }: CollectionPlayerCardProps) {
   const rarity = player.rarity || "common";
+  const frame = RARITY_FRAME[rarity];
+  const frameImg = CARD_FRAMES[rarity];
   const frame = RARITY_FRAME[rarity];
   const rating = overallRating(player);
   const role = roleLabel(player.role);
