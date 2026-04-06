@@ -9,11 +9,10 @@ import { useToast } from "@/hooks/use-toast";
 import TopStatusBar from "@/components/TopStatusBar";
 import CurrencyPill from "@/components/shared/CurrencyPill";
 
-/* ── Doc 1 Material Constants ── */
-const LEATHER_BG = "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)";
-const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
-const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
-const CHALK_DIVIDER = "repeating-linear-gradient(90deg, hsl(45 30% 80%) 0px, hsl(45 30% 80%) 8px, transparent 8px, transparent 14px)";
+/* ── V10 Material Constants ── */
+const V10_BG = "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 18% 5%) 100%)";
+const V10_CARD = "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)";
+const CHALK_DIVIDER = "repeating-linear-gradient(90deg, hsl(220 15% 25%) 0px, hsl(220 15% 25%) 8px, transparent 8px, transparent 14px)";
 
 /* ── Season config ── */
 const SEASON_END = new Date("2026-05-01T00:00:00Z");
