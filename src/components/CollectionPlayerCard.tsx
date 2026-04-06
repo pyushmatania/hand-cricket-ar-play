@@ -84,7 +84,6 @@ export default function CollectionPlayerCard({ player, size = "sm", onTap, delay
   const rarity = player.rarity || "common";
   const frame = RARITY_FRAME[rarity];
   const frameImg = CARD_FRAMES[rarity];
-  const frame = RARITY_FRAME[rarity];
   const rating = overallRating(player);
   const role = roleLabel(player.role);
 
