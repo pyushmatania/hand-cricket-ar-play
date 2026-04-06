@@ -58,15 +58,19 @@ export default function CollectionPage() {
   }, [players]);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{
+      background: "linear-gradient(180deg, hsl(222 47% 6%) 0%, hsl(222 47% 4%) 100%)",
+    }}>
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b border-border/50 px-4 pt-3 pb-2">
+      <div className="sticky top-0 z-30 backdrop-blur-xl border-b border-white/[0.06] px-4 pt-3 pb-2"
+        style={{ background: "rgba(13,18,41,0.85)" }}
+      >
         <div className="flex items-center gap-3 mb-2">
           <button onClick={() => navigate(-1)} className="p-1">
             <ChevronLeft className="w-5 h-5 text-foreground" />
           </button>
-          <h1 className="font-game-display text-lg text-foreground tracking-wide">PLAYER DATABASE</h1>
-          <span className="text-[10px] font-game-body text-muted-foreground ml-auto">
+          <h1 className="font-display text-lg text-foreground tracking-wide">PLAYER DATABASE</h1>
+          <span className="text-[10px] font-body text-muted-foreground ml-auto">
             {filtered.length} / {stats.total}
           </span>
         </div>
@@ -79,7 +83,7 @@ export default function CollectionPage() {
             placeholder="Search players..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-card/80 border border-border/50 rounded-lg pl-8 pr-8 py-2 text-xs font-game-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
+            className="w-full bg-card/80 border border-border/50 rounded-lg pl-8 pr-8 py-2 text-xs font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
           />
           {searchQuery && (
             <button onClick={() => setSearchQuery("")} className="absolute right-2.5 top-1/2 -translate-y-1/2">
@@ -92,7 +96,7 @@ export default function CollectionPage() {
         <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-1">
           <button
             onClick={() => setSelectedTeam(undefined)}
-            className={`shrink-0 px-2.5 py-1 rounded-full text-[9px] font-game-display transition-all ${
+            className={`shrink-0 px-2.5 py-1 rounded-full text-[9px] font-display transition-all ${
               !selectedTeam ? "bg-primary text-primary-foreground" : "bg-card/80 text-muted-foreground border border-border/30"
             }`}
           >
@@ -102,7 +106,7 @@ export default function CollectionPage() {
             <button
               key={key}
               onClick={() => setSelectedTeam(key === selectedTeam ? undefined : key)}
-              className="shrink-0 px-2.5 py-1 rounded-full text-[9px] font-game-display transition-all border"
+              className="shrink-0 px-2.5 py-1 rounded-full text-[9px] font-display transition-all border"
               style={{
                 background: key === selectedTeam ? team.color : "transparent",
                 color: key === selectedTeam ? team.textColor : "hsl(var(--muted-foreground))",
@@ -121,7 +125,7 @@ export default function CollectionPage() {
               <button
                 key={r}
                 onClick={() => setRoleFilter(r === roleFilter ? "all" : r)}
-                className={`px-2 py-0.5 rounded text-[8px] font-game-display transition-all ${
+                className={`px-2 py-0.5 rounded text-[8px] font-display transition-all ${
                   r === roleFilter ? "bg-accent text-accent-foreground" : "text-muted-foreground"
                 }`}
               >
@@ -155,7 +159,7 @@ export default function CollectionPage() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-muted-foreground font-game-body text-sm">No players found</p>
+            <p className="text-muted-foreground font-body text-sm">No players found</p>
           </div>
         ) : (
           <div className="grid grid-cols-3 gap-2">
@@ -231,9 +235,8 @@ function PlayerDetailOverlay({ player, onClose }: { player: DBPlayer; onClose: (
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.8, y: 40 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-sm rounded-2xl overflow-hidden"
+        className="w-full max-w-sm rounded-2xl overflow-hidden stadium-glass"
         style={{
-          background: "linear-gradient(180deg, hsl(222 30% 12%), hsl(222 35% 6%))",
           border: `2px solid ${rarityColor}`,
           boxShadow: `0 0 30px ${rarityColor}44`,
         }}
@@ -245,9 +248,9 @@ function PlayerDetailOverlay({ player, onClose }: { player: DBPlayer; onClose: (
             <div className="w-14 h-14 rounded-xl mx-auto flex items-center justify-center mb-1"
               style={{ background: `linear-gradient(135deg, ${rarityColor}, ${rarityColor}88)` }}
             >
-              <span className="font-game-display text-xl font-black text-white">{rating}</span>
+              <span className="font-display text-xl font-black text-white">{rating}</span>
             </div>
-            <span className="text-[8px] font-game-display uppercase tracking-widest"
+            <span className="text-[8px] font-display uppercase tracking-widest"
               style={{ color: rarityColor }}
             >{rarity}</span>
           </div>
@@ -258,24 +261,24 @@ function PlayerDetailOverlay({ player, onClose }: { player: DBPlayer; onClose: (
 
         {/* Name + Info */}
         <div className="px-4 py-3 text-center border-b border-border/30">
-          <h2 className="font-game-display text-lg text-foreground">{player.name.toUpperCase()}</h2>
+          <h2 className="font-display text-lg text-foreground">{player.name.toUpperCase()}</h2>
           <div className="flex items-center justify-center gap-2 mt-1">
-            <span className="text-[10px] font-game-body text-muted-foreground">{player.country}</span>
+            <span className="text-[10px] font-body text-muted-foreground">{player.country}</span>
             <span className="text-muted-foreground/30">•</span>
-            <span className="text-[10px] font-game-body text-muted-foreground">{player.ipl_team}</span>
+            <span className="text-[10px] font-body text-muted-foreground">{player.ipl_team}</span>
             <span className="text-muted-foreground/30">•</span>
-            <span className="text-[10px] font-game-display" style={{ color: rarityColor }}>
+            <span className="text-[10px] font-display" style={{ color: rarityColor }}>
               {roleLabel(player.role)}
             </span>
           </div>
           {/* Card ownership badge */}
           {userCard && (
             <div className="flex items-center justify-center gap-2 mt-2">
-              <span className="px-2 py-0.5 rounded-full text-[8px] font-game-display bg-game-gold/20 text-game-gold border border-game-gold/30">
+              <span className="px-2 py-0.5 rounded-full text-[8px] font-display bg-game-gold/20 text-game-gold border border-game-gold/30">
                 LVL {cardLevel} • {cardCount} cards
               </span>
               {statBoostTotal > 0 && (
-                <span className="text-[8px] font-game-display text-green-400">+{statBoostTotal} stats</span>
+                <span className="text-[8px] font-display text-green-400">+{statBoostTotal} stats</span>
               )}
             </div>
           )}
@@ -285,7 +288,7 @@ function PlayerDetailOverlay({ player, onClose }: { player: DBPlayer; onClose: (
         <div className="px-4 py-3 space-y-2">
           {stats.map((s) => (
             <div key={s.key} className="flex items-center gap-3">
-              <span className="text-[9px] font-game-body text-muted-foreground w-16">{s.label}</span>
+              <span className="text-[9px] font-body text-muted-foreground w-16">{s.label}</span>
               <div className="flex-1 h-1.5 bg-border/20 rounded-full overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
@@ -295,7 +298,7 @@ function PlayerDetailOverlay({ player, onClose }: { player: DBPlayer; onClose: (
                   style={{ background: rarityColor }}
                 />
               </div>
-              <span className="text-[10px] font-game-display text-foreground w-6 text-right">{s.value}</span>
+              <span className="text-[10px] font-display text-foreground w-6 text-right">{s.value}</span>
             </div>
           ))}
         </div>
@@ -305,14 +308,14 @@ function PlayerDetailOverlay({ player, onClose }: { player: DBPlayer; onClose: (
           <div className="px-4 pb-3">
             <div className="rounded-xl p-3" style={{ background: "hsl(222 25% 10%)", border: "1px solid hsl(222 20% 18%)" }}>
               <div className="flex items-center justify-between mb-2">
-                <span className="font-game-display text-[10px] text-foreground tracking-wider">
+                <span className="font-display text-[10px] text-foreground tracking-wider">
                   UPGRADE TO LVL {cardLevel + 1}
                 </span>
-                <span className="text-[8px] font-game-body text-green-400">+{nextCost.statBoost} all stats</span>
+                <span className="text-[8px] font-body text-green-400">+{nextCost.statBoost} all stats</span>
               </div>
               <div className="flex items-center gap-3 mb-2">
                 <div className="flex-1">
-                  <div className="flex justify-between text-[8px] font-game-body text-muted-foreground mb-0.5">
+                  <div className="flex justify-between text-[8px] font-body text-muted-foreground mb-0.5">
                     <span>Cards: {cardCount}/{nextCost.cards}</span>
                   </div>
                   <div className="h-1.5 bg-border/20 rounded-full overflow-hidden">
@@ -322,13 +325,13 @@ function PlayerDetailOverlay({ player, onClose }: { player: DBPlayer; onClose: (
                     }} />
                   </div>
                 </div>
-                <div className="text-[9px] font-game-display text-game-gold">{nextCost.coins} 🪙</div>
+                <div className="text-[9px] font-display text-game-gold">{nextCost.coins} 🪙</div>
               </div>
               <motion.button
                 whileTap={canUpgrade ? { scale: 0.95 } : undefined}
                 onClick={canUpgrade ? handleUpgrade : undefined}
                 disabled={!canUpgrade || upgradeCard.isPending}
-                className="w-full py-2 rounded-lg font-game-display text-[10px] tracking-wider flex items-center justify-center gap-1.5 transition-all"
+                className="w-full py-2 rounded-lg font-display text-[10px] tracking-wider flex items-center justify-center gap-1.5 transition-all"
                 style={{
                   background: canUpgrade ? `linear-gradient(135deg, hsl(142 60% 40%), hsl(142 60% 30%))` : "hsl(222 20% 15%)",
                   color: canUpgrade ? "white" : "hsl(220 10% 40%)",
@@ -348,11 +351,11 @@ function PlayerDetailOverlay({ player, onClose }: { player: DBPlayer; onClose: (
             <div className="rounded-lg p-2.5" style={{ background: `${rarityColor}10`, border: `1px solid ${rarityColor}30` }}>
               <div className="flex items-center gap-1.5 mb-1">
                 <Zap className="w-3 h-3" style={{ color: rarityColor }} />
-                <span className="font-game-display text-[10px]" style={{ color: rarityColor }}>
+                <span className="font-display text-[10px]" style={{ color: rarityColor }}>
                   {player.special_ability_name}
                 </span>
               </div>
-              <p className="text-[9px] font-game-body text-muted-foreground leading-relaxed">
+              <p className="text-[9px] font-body text-muted-foreground leading-relaxed">
                 {player.special_ability_desc}
               </p>
             </div>

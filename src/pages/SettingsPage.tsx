@@ -48,13 +48,13 @@ const PREVIEW_LINES_HI = [
   "Sachin wali cover drive! Master class!",
 ];
 
-/* ──── 3D Game Toggle ──── */
+/* ──── V10 Game Toggle ──── */
 function GameToggle({ enabled, onToggle, color = "green" }: { enabled: boolean; onToggle: () => void; color?: "green" | "blue" | "gold" | "red" }) {
   const colorMap = {
-    green: { bg: "hsl(122,39%,49%)", glow: "hsl(122,39%,49%,0.4)" },
-    blue: { bg: "hsl(207,90%,54%)", glow: "hsl(207,90%,54%,0.4)" },
-    gold: { bg: "hsl(51,100%,50%)", glow: "hsl(51,100%,50%,0.4)" },
-    red: { bg: "hsl(4,90%,58%)", glow: "hsl(4,90%,58%,0.4)" },
+    green: { bg: "hsl(142, 71%, 45%)", glow: "hsl(142, 71%, 45%, 0.4)" },
+    blue: { bg: "hsl(207, 90%, 54%)", glow: "hsl(207, 90%, 54%, 0.4)" },
+    gold: { bg: "hsl(43, 100%, 50%)", glow: "hsl(43, 100%, 50%, 0.4)" },
+    red: { bg: "hsl(4, 90%, 58%)", glow: "hsl(4, 90%, 58%, 0.4)" },
   };
   const c = colorMap[color];
   return (
@@ -77,7 +77,7 @@ function GameToggle({ enabled, onToggle, color = "green" }: { enabled: boolean; 
   );
 }
 
-/* ──── Section Header — Stadium Concrete ──── */
+/* ──── Section Header — Scoreboard Metal ──── */
 function SectionHeader({ icon, title, expanded, onToggle, accentColor }: {
   icon: string; title: string; expanded: boolean; onToggle: () => void; accentColor: string;
 }) {
@@ -85,23 +85,14 @@ function SectionHeader({ icon, title, expanded, onToggle, accentColor }: {
     <motion.button
       whileTap={{ scale: 0.98 }}
       onClick={onToggle}
-      className="w-full flex items-center gap-3 rounded-2xl p-3 border-b-[4px] transition-all"
-      style={{
-        background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)",
-        borderColor: "hsl(25 25% 10%)",
-        border: `2px solid hsl(25 20% 22%)`,
-        borderBottom: `4px solid hsl(25 25% 10%)`,
-        boxShadow: `0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)`,
-      }}
+      className="w-full flex items-center gap-3 rounded-2xl p-3 scoreboard-metal border-b-[4px] transition-all"
+      style={{ borderColor: "hsl(222 47% 8%)" }}
     >
-      <div className="w-10 h-10 rounded-xl flex items-center justify-center border-b-2"
-        style={{
-          background: `linear-gradient(135deg, ${accentColor}30, ${accentColor}10)`,
-          borderColor: `${accentColor}40`,
-        }}>
+      <div className="w-10 h-10 rounded-xl flex items-center justify-center stadium-glass"
+        style={{ border: `1px solid ${accentColor}40` }}>
         <span className="text-xl">{icon}</span>
       </div>
-      <span className="flex-1 text-left font-game-display text-xs tracking-[0.2em]" style={{ color: accentColor }}>{title}</span>
+      <span className="flex-1 text-left font-display text-xs tracking-[0.2em]" style={{ color: accentColor }}>{title}</span>
       <motion.span
         animate={{ rotate: expanded ? 180 : 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 20 }}
@@ -210,25 +201,15 @@ export default function SettingsPage() {
     },
   ];
 
-  const LEATHER_BG = "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)";
-  const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
-  const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
-
   const cardStyle = {
-    background: CONCRETE_CARD,
-    border: "2px solid hsl(25 20% 22%)",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+    // V10: stadium-glass cards
   };
+  const cardClassName = "stadium-glass";
 
   return (
-    <div className="min-h-screen relative overflow-hidden pb-24" style={{ background: LEATHER_BG }}>
-      {/* Leather grain overlay */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{ backgroundImage: LEATHER_GRAIN, backgroundRepeat: "repeat" }} />
-      {/* Vignette */}
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }} />
-
+    <div className="min-h-screen relative overflow-hidden pb-24" style={{
+      background: "linear-gradient(180deg, hsl(222 47% 6%) 0%, hsl(222 47% 4%) 100%)",
+    }}>
       <TopStatusBar />
 
       <div className="relative z-10 max-w-lg mx-auto px-4 pt-4 space-y-4">
@@ -244,8 +225,8 @@ export default function SettingsPage() {
             ⚙️
           </div>
           <div>
-            <h1 className="font-game-title text-lg text-foreground" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>Settings</h1>
-            <p className="text-[9px] text-muted-foreground font-game-display tracking-[0.2em]">CUSTOMIZE YOUR EXPERIENCE</p>
+            <h1 className="font-display text-lg text-foreground" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>Settings</h1>
+            <p className="text-[9px] text-muted-foreground font-display tracking-[0.2em]">CUSTOMIZE YOUR EXPERIENCE</p>
           </div>
         </motion.div>
 
@@ -278,16 +259,15 @@ export default function SettingsPage() {
                           initial={{ opacity: 0, x: -15 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: i * 0.03 }}
-                          className="rounded-xl p-3 flex items-center gap-3 border border-[hsl(var(--border)/0.3)]"
-                          style={cardStyle}
+                          className="rounded-xl p-3 flex items-center gap-3 stadium-glass"
                         >
                           <div className="w-9 h-9 rounded-lg flex items-center justify-center"
                             style={{ background: `${group.accent}18`, border: `1px solid ${group.accent}30` }}>
                             <span className="text-base">{item.icon}</span>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <span className="font-game-display text-[10px] tracking-wider text-foreground block">{item.label}</span>
-                            <span className="text-[8px] text-muted-foreground font-game-body">{item.desc}</span>
+                            <span className="font-display text-[10px] tracking-wider text-foreground block">{item.label}</span>
+                            <span className="text-[8px] text-muted-foreground font-body">{item.desc}</span>
                           </div>
                           <GameToggle enabled={isEnabled} onToggle={(settings as any)[item.toggle]} color={group.toggleColor} />
                         </motion.div>
@@ -296,11 +276,11 @@ export default function SettingsPage() {
 
                     {/* Ambient Volume slider */}
                     {group.title === "AUDIO & SOUND" && settings.musicEnabled && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 border border-[hsl(var(--border)/0.3)]" style={cardStyle}>
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 stadium-glass">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🏟️</span>
-                          <span className="font-game-display text-[10px] tracking-wider text-foreground">STADIUM AMBIENCE</span>
-                          <span className="text-[10px] text-game-gold font-game-display ml-auto">{Math.round(settings.ambientVolume * 100)}%</span>
+                          <span className="font-display text-[10px] tracking-wider text-foreground">STADIUM AMBIENCE</span>
+                          <span className="text-[10px] text-game-gold font-display ml-auto">{Math.round(settings.ambientVolume * 100)}%</span>
                         </div>
                         <Slider value={[settings.ambientVolume * 100]} onValueChange={([v]) => settings.setAmbientVolume(v / 100)} max={100} min={0} step={5} className="w-full" />
                       </motion.div>
@@ -308,10 +288,10 @@ export default function SettingsPage() {
 
                     {/* Voice Engine selector */}
                     {group.title === "COMMENTARY" && settings.voiceEnabled && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 border border-[hsl(var(--border)/0.3)]" style={cardStyle}>
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 stadium-glass">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🔊</span>
-                          <span className="font-game-display text-[10px] tracking-wider text-foreground">VOICE ENGINE</span>
+                          <span className="font-display text-[10px] tracking-wider text-foreground">VOICE ENGINE</span>
                         </div>
                         <div className="grid grid-cols-3 gap-1.5">
                           {VOICE_ENGINES.map((engine) => {
@@ -331,8 +311,8 @@ export default function SettingsPage() {
                                 }}
                               >
                                 <span className="text-lg block mb-1">{engine.emoji}</span>
-                                <span className="font-game-display text-[8px] block" style={{ color: isActive ? group.accent : "hsl(var(--foreground))" }}>{engine.name}</span>
-                                <span className="text-[6px] text-muted-foreground block mt-0.5 font-game-body">{engine.desc}</span>
+                                <span className="font-display text-[8px] block" style={{ color: isActive ? group.accent : "hsl(var(--foreground))" }}>{engine.name}</span>
+                                <span className="text-[6px] text-muted-foreground block mt-0.5 font-body">{engine.desc}</span>
                               </motion.button>
                             );
                           })}
@@ -342,10 +322,10 @@ export default function SettingsPage() {
 
                     {/* Commentary Language */}
                     {group.title === "COMMENTARY" && settings.commentaryEnabled && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 border border-[hsl(var(--border)/0.3)]" style={cardStyle}>
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 stadium-glass">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🌐</span>
-                          <span className="font-game-display text-[10px] tracking-wider text-foreground">LANGUAGE</span>
+                          <span className="font-display text-[10px] tracking-wider text-foreground">LANGUAGE</span>
                         </div>
                         <div className="grid grid-cols-3 gap-1.5">
                           {LANGUAGE_OPTIONS.map((lang) => {
@@ -362,8 +342,8 @@ export default function SettingsPage() {
                                 }}
                               >
                                 <span className="text-lg block mb-1">{lang.emoji}</span>
-                                <span className="font-game-display text-[8px] block" style={{ color: isActive ? group.accent : "hsl(var(--foreground))" }}>{lang.name}</span>
-                                <span className="text-[6px] text-muted-foreground block mt-0.5 font-game-body">{lang.desc}</span>
+                                <span className="font-display text-[8px] block" style={{ color: isActive ? group.accent : "hsl(var(--foreground))" }}>{lang.name}</span>
+                                <span className="text-[6px] text-muted-foreground block mt-0.5 font-body">{lang.desc}</span>
                               </motion.button>
                             );
                           })}
@@ -373,11 +353,11 @@ export default function SettingsPage() {
 
                     {/* ElevenLabs Voices */}
                     {group.title === "COMMENTARY" && settings.voiceEnabled && settings.voiceEngine !== "system" && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 border border-[hsl(var(--border)/0.3)]" style={cardStyle}>
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 stadium-glass">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🗣️</span>
-                          <span className="font-game-display text-[10px] tracking-wider text-foreground">ELEVENLABS VOICE</span>
-                          <span className="text-[7px] text-muted-foreground ml-auto font-game-body">tap to preview</span>
+                          <span className="font-display text-[10px] tracking-wider text-foreground">ELEVENLABS VOICE</span>
+                          <span className="text-[7px] text-muted-foreground ml-auto font-body">tap to preview</span>
                         </div>
                         <div className="grid grid-cols-2 gap-1.5">
                           {COMMENTARY_VOICES.map((voice) => {
@@ -397,8 +377,8 @@ export default function SettingsPage() {
                                 <div className="flex items-center gap-2">
                                   <span className="text-sm">{voice.emoji}</span>
                                   <div className="flex-1 min-w-0">
-                                    <span className="font-game-display text-[9px] block" style={{ color: isActive ? "hsl(51,100%,50%)" : "hsl(var(--foreground))" }}>{voice.name}</span>
-                                    <span className="text-[7px] text-muted-foreground truncate block font-game-body">{voice.desc}</span>
+                                    <span className="font-display text-[9px] block" style={{ color: isActive ? "hsl(51,100%,50%)" : "hsl(var(--foreground))" }}>{voice.name}</span>
+                                    <span className="text-[7px] text-muted-foreground truncate block font-body">{voice.desc}</span>
                                   </div>
                                   <button
                                     onClick={(e) => { e.stopPropagation(); previewElevenLabsVoice(voice.id); }}
@@ -419,11 +399,11 @@ export default function SettingsPage() {
 
                     {/* System Voices */}
                     {group.title === "COMMENTARY" && settings.voiceEnabled && settings.voiceEngine !== "elevenlabs" && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 border border-[hsl(var(--border)/0.3)]" style={cardStyle}>
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 stadium-glass">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🎭</span>
-                          <span className="font-game-display text-[10px] tracking-wider text-foreground">SYSTEM VOICES</span>
-                          <span className="text-[7px] text-muted-foreground ml-auto font-game-body">tap ▶ to preview</span>
+                          <span className="font-display text-[10px] tracking-wider text-foreground">SYSTEM VOICES</span>
+                          <span className="text-[7px] text-muted-foreground ml-auto font-body">tap ▶ to preview</span>
                         </div>
                         <div className="grid grid-cols-2 gap-1.5">
                           {SYSTEM_VOICE_PERSONAS.map((persona) => {
@@ -433,8 +413,8 @@ export default function SettingsPage() {
                                 style={{ background: "hsl(222 40% 12% / 0.8)" }}>
                                 <span className="text-sm">{persona.avatar}</span>
                                 <div className="flex-1 min-w-0">
-                                  <span className="font-game-display text-[9px] text-foreground block">{persona.name}</span>
-                                  <span className="text-[7px] text-muted-foreground block capitalize font-game-body">{persona.style} • {persona.region}</span>
+                                  <span className="font-display text-[9px] text-foreground block">{persona.name}</span>
+                                  <span className="text-[7px] text-muted-foreground block capitalize font-body">{persona.style} • {persona.region}</span>
                                 </div>
                                 <button
                                   onClick={() => previewSystemVoice(persona.id)}
@@ -463,7 +443,7 @@ export default function SettingsPage() {
             {expandedGroup === "HAND BUTTONS" && (
               <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
                 <div className="space-y-2 pt-2 pb-1">
-                  <p className="text-[8px] text-muted-foreground font-game-body tracking-wide px-1">Choose your gameplay button design</p>
+                  <p className="text-[8px] text-muted-foreground font-body tracking-wide px-1">Choose your gameplay button design</p>
                   {Object.values(BUTTON_STYLES).map((theme) => {
                     const isSelected = (selectedButtonStyle || "classic") === theme.id;
                     return (
@@ -486,8 +466,8 @@ export default function SettingsPage() {
                         <div className="flex items-center gap-3 mb-2">
                           <span className="text-xl">{theme.preview}</span>
                           <div className="flex-1">
-                            <span className="font-game-display text-[10px] tracking-wider text-foreground block">{theme.name.toUpperCase()}</span>
-                            <span className="text-[8px] text-muted-foreground font-game-body">{theme.description}</span>
+                            <span className="font-display text-[10px] tracking-wider text-foreground block">{theme.name.toUpperCase()}</span>
+                            <span className="text-[8px] text-muted-foreground font-body">{theme.description}</span>
                           </div>
                           {isSelected && <span className="text-game-green text-sm">✓</span>}
                         </div>
@@ -499,7 +479,7 @@ export default function SettingsPage() {
                               className={`flex flex-col items-center gap-0.5 py-1.5 px-2 rounded-xl border-b-2 bg-gradient-to-b ${mv.color} ${mv.border} ${mv.glow}`}
                             >
                               <span className="text-sm leading-none">{mv.emoji}</span>
-                              <span className="text-[7px] font-game-display font-bold text-white tracking-wider">{mv.label}</span>
+                              <span className="text-[7px] font-display font-bold text-white tracking-wider">{mv.label}</span>
                             </div>
                           ))}
                         </div>
@@ -521,13 +501,13 @@ export default function SettingsPage() {
                 <div className="space-y-1.5 pt-2 pb-1">
                   {user ? (
                     <>
-                      <div className="rounded-xl p-3.5 flex items-center gap-3 border border-[hsl(var(--border)/0.3)]" style={cardStyle}>
+                      <div className="rounded-xl p-3.5 flex items-center gap-3 stadium-glass">
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "hsl(207 90% 54% / 0.15)", border: "1px solid hsl(207 90% 54% / 0.3)" }}>
                           <span className="text-lg">📧</span>
                         </div>
                         <div className="flex-1">
-                          <span className="font-game-display text-[10px] tracking-wider text-foreground block">EMAIL</span>
-                          <span className="text-[9px] text-muted-foreground font-game-body">{user.email}</span>
+                          <span className="font-display text-[10px] tracking-wider text-foreground block">EMAIL</span>
+                          <span className="text-[9px] text-muted-foreground font-body">{user.email}</span>
                         </div>
                       </div>
                       <motion.button
@@ -542,7 +522,7 @@ export default function SettingsPage() {
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "hsl(4 90% 58% / 0.2)" }}>
                           <span className="text-lg">🚪</span>
                         </div>
-                        <span className="font-game-display text-[10px] tracking-wider text-game-red">SIGN OUT</span>
+                        <span className="font-display text-[10px] tracking-wider text-game-red">SIGN OUT</span>
                       </motion.button>
                     </>
                   ) : (
@@ -559,8 +539,8 @@ export default function SettingsPage() {
                         <span className="text-lg">🔐</span>
                       </div>
                       <div className="flex-1">
-                        <span className="font-game-display text-[10px] tracking-wider text-game-green block">SIGN IN</span>
-                        <span className="text-[8px] text-muted-foreground font-game-body">Save progress & compete</span>
+                        <span className="font-display text-[10px] tracking-wider text-game-green block">SIGN IN</span>
+                        <span className="text-[8px] text-muted-foreground font-body">Save progress & compete</span>
                       </div>
                     </motion.button>
                   )}
@@ -568,15 +548,14 @@ export default function SettingsPage() {
                   <motion.button
                     whileTap={{ scale: 0.97 }}
                     onClick={clearData}
-                    className="w-full rounded-xl p-3.5 flex items-center gap-3 text-left border border-[hsl(var(--border)/0.3)]"
-                    style={cardStyle}
+                    className="w-full rounded-xl p-3.5 flex items-center gap-3 text-left stadium-glass"
                   >
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "hsl(var(--muted-foreground) / 0.1)" }}>
                       <span className="text-lg">🗑️</span>
                     </div>
                     <div className="flex-1">
-                      <span className="font-game-display text-[10px] tracking-wider text-foreground block">RESET LOCAL DATA</span>
-                      <span className="text-[8px] text-muted-foreground font-game-body">Clear onboarding & settings</span>
+                      <span className="font-display text-[10px] tracking-wider text-foreground block">RESET LOCAL DATA</span>
+                      <span className="text-[8px] text-muted-foreground font-body">Clear onboarding & settings</span>
                     </div>
                   </motion.button>
                 </div>
@@ -597,8 +576,8 @@ export default function SettingsPage() {
           }}
         >
           <span className="text-3xl block mb-2">🏏</span>
-          <p className="font-game-title text-sm text-foreground" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>HAND CRICKET</p>
-          <p className="text-[9px] text-muted-foreground/50 font-game-display mt-1 tracking-widest cursor-pointer select-none"
+          <p className="font-display text-sm text-foreground" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>HAND CRICKET</p>
+          <p className="text-[9px] text-muted-foreground/50 font-display mt-1 tracking-widest cursor-pointer select-none"
             onClick={() => {
               const next = versionTaps + 1;
               setVersionTaps(next);
@@ -608,7 +587,7 @@ export default function SettingsPage() {
           {/* Chalk divider */}
           <div className="h-px my-3 mx-8 opacity-20"
             style={{ background: "repeating-linear-gradient(90deg, hsl(45 30% 80%) 0px, hsl(45 30% 80%) 8px, transparent 8px, transparent 14px)" }} />
-          <span className="text-[7px] text-muted-foreground/40 font-game-display tracking-[0.3em]">POWERED BY AI</span>
+          <span className="text-[7px] text-muted-foreground/40 font-display tracking-[0.3em]">POWERED BY AI</span>
         </motion.div>
       </div>
 
