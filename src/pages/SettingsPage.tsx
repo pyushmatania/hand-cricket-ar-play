@@ -48,13 +48,13 @@ const PREVIEW_LINES_HI = [
   "Sachin wali cover drive! Master class!",
 ];
 
-/* ──── 3D Game Toggle ──── */
+/* ──── V10 Game Toggle ──── */
 function GameToggle({ enabled, onToggle, color = "green" }: { enabled: boolean; onToggle: () => void; color?: "green" | "blue" | "gold" | "red" }) {
   const colorMap = {
-    green: { bg: "hsl(122,39%,49%)", glow: "hsl(122,39%,49%,0.4)" },
-    blue: { bg: "hsl(207,90%,54%)", glow: "hsl(207,90%,54%,0.4)" },
-    gold: { bg: "hsl(51,100%,50%)", glow: "hsl(51,100%,50%,0.4)" },
-    red: { bg: "hsl(4,90%,58%)", glow: "hsl(4,90%,58%,0.4)" },
+    green: { bg: "hsl(142, 71%, 45%)", glow: "hsl(142, 71%, 45%, 0.4)" },
+    blue: { bg: "hsl(207, 90%, 54%)", glow: "hsl(207, 90%, 54%, 0.4)" },
+    gold: { bg: "hsl(43, 100%, 50%)", glow: "hsl(43, 100%, 50%, 0.4)" },
+    red: { bg: "hsl(4, 90%, 58%)", glow: "hsl(4, 90%, 58%, 0.4)" },
   };
   const c = colorMap[color];
   return (
@@ -77,7 +77,7 @@ function GameToggle({ enabled, onToggle, color = "green" }: { enabled: boolean; 
   );
 }
 
-/* ──── Section Header — Stadium Concrete ──── */
+/* ──── Section Header — Scoreboard Metal ──── */
 function SectionHeader({ icon, title, expanded, onToggle, accentColor }: {
   icon: string; title: string; expanded: boolean; onToggle: () => void; accentColor: string;
 }) {
@@ -85,20 +85,11 @@ function SectionHeader({ icon, title, expanded, onToggle, accentColor }: {
     <motion.button
       whileTap={{ scale: 0.98 }}
       onClick={onToggle}
-      className="w-full flex items-center gap-3 rounded-2xl p-3 border-b-[4px] transition-all"
-      style={{
-        background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)",
-        borderColor: "hsl(25 25% 10%)",
-        border: `2px solid hsl(25 20% 22%)`,
-        borderBottom: `4px solid hsl(25 25% 10%)`,
-        boxShadow: `0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)`,
-      }}
+      className="w-full flex items-center gap-3 rounded-2xl p-3 scoreboard-metal border-b-[4px] transition-all"
+      style={{ borderColor: "hsl(222 47% 8%)" }}
     >
-      <div className="w-10 h-10 rounded-xl flex items-center justify-center border-b-2"
-        style={{
-          background: `linear-gradient(135deg, ${accentColor}30, ${accentColor}10)`,
-          borderColor: `${accentColor}40`,
-        }}>
+      <div className="w-10 h-10 rounded-xl flex items-center justify-center stadium-glass"
+        style={{ border: `1px solid ${accentColor}40` }}>
         <span className="text-xl">{icon}</span>
       </div>
       <span className="flex-1 text-left font-display text-xs tracking-[0.2em]" style={{ color: accentColor }}>{title}</span>
@@ -210,25 +201,15 @@ export default function SettingsPage() {
     },
   ];
 
-  const LEATHER_BG = "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)";
-  const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
-  const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
-
   const cardStyle = {
-    background: CONCRETE_CARD,
-    border: "2px solid hsl(25 20% 22%)",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+    // V10: stadium-glass cards
   };
+  const cardClassName = "stadium-glass";
 
   return (
-    <div className="min-h-screen relative overflow-hidden pb-24" style={{ background: LEATHER_BG }}>
-      {/* Leather grain overlay */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{ backgroundImage: LEATHER_GRAIN, backgroundRepeat: "repeat" }} />
-      {/* Vignette */}
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }} />
-
+    <div className="min-h-screen relative overflow-hidden pb-24" style={{
+      background: "linear-gradient(180deg, hsl(222 47% 6%) 0%, hsl(222 47% 4%) 100%)",
+    }}>
       <TopStatusBar />
 
       <div className="relative z-10 max-w-lg mx-auto px-4 pt-4 space-y-4">
