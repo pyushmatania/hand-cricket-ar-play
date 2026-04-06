@@ -60,7 +60,7 @@ export default function CollectionPage() {
           <button onClick={() => navigate(-1)} className="p-1">
             <ChevronLeft className="w-5 h-5 text-[#F5E6D3]" />
           </button>
-          <h1 className="stone-header text-lg tracking-wider">COLLECTION</h1>
+          <img src={stoneCollectionImg} alt="COLLECTION" className="h-8 w-auto drop-shadow-lg" />
           <span className="text-[10px] font-body text-[#94A3B8] ml-auto">
             {filtered.length} / {stats.total}
           </span>
