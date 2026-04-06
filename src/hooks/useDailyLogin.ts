@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 
+/* ── 7-day weekly streak bonuses (displayed in streak strip) ── */
 const STREAK_REWARDS = [
   { day: 1, xp: 10, coins: 20, label: "Day 1" },
   { day: 2, xp: 15, coins: 30, label: "Day 2" },
@@ -12,6 +13,19 @@ const STREAK_REWARDS = [
   { day: 6, xp: 50, coins: 100, label: "Day 6" },
   { day: 7, xp: 100, coins: 200, label: "Day 7 🔥" },
 ];
+
+/* ── 28-day escalating calendar rewards ── */
+function getCalendarReward(cycleDay: number): { coins: number; xp: number; bonus: string } {
+  const isMilestone = cycleDay === 14 || cycleDay === 28;
+  const isWeekEnd = cycleDay % 7 === 0;
+  const isMidWeek = cycleDay % 7 === 4;
+  const week = Math.ceil(cycleDay / 7);
+
+  if (isMilestone) return { coins: 500, xp: 200, bonus: cycleDay === 28 ? "🏆 MONTHLY JACKPOT!" : "👑 MEGA CHEST!" };
+  if (isWeekEnd) return { coins: 200, xp: 100, bonus: "🎁 Weekly Chest!" };
+  if (isMidWeek) return { coins: 100, xp: 50, bonus: "💎 Gem Bonus!" };
+  return { coins: 20 + (week - 1) * 10, xp: 10 + (week - 1) * 5, bonus: "" };
+}
 
 export function useDailyLogin() {
   const { user } = useAuth();
@@ -41,7 +55,6 @@ export function useDailyLogin() {
     const lastLogin = p.last_login_date;
 
     if (lastLogin === today) {
-      // Already claimed today
       setStreak(p.login_streak || 0);
       setBestStreak(p.best_login_streak || 0);
       setTodayClaimed(true);
@@ -57,15 +70,22 @@ export function useDailyLogin() {
       if (diffDays === 1) {
         newStreak = (p.login_streak || 0) + 1;
       }
-      // If diffDays > 1, streak resets to 1
     }
 
-    const cycleDay = ((newStreak - 1) % 7) + 1;
-    const dayReward = STREAK_REWARDS.find(r => r.day === cycleDay) || STREAK_REWARDS[0];
+    // Escalating calendar reward based on 28-day cycle
+    const cycleDay = ((newStreak - 1) % 28) + 1;
+    const calReward = getCalendarReward(cycleDay);
+
+    // Weekly streak bonus stacks on top
+    const weekDay = ((newStreak - 1) % 7) + 1;
+    const streakBonus = STREAK_REWARDS.find(r => r.day === weekDay) || STREAK_REWARDS[0];
+
+    const totalCoins = calReward.coins + streakBonus.coins;
+    const totalXp = calReward.xp + streakBonus.xp;
 
     const newBest = Math.max(p.best_login_streak || 0, newStreak);
-    const newXp = (p.xp || 0) + dayReward.xp;
-    const newCoins = (p.coins || 0) + dayReward.coins;
+    const newXp = (p.xp || 0) + totalXp;
+    const newCoins = (p.coins || 0) + totalCoins;
 
     await supabase.from("profiles").update({
       login_streak: newStreak,
@@ -78,9 +98,10 @@ export function useDailyLogin() {
     setStreak(newStreak);
     setBestStreak(newBest);
     setTodayClaimed(true);
-    setReward(dayReward);
+    setReward({ xp: totalXp, coins: totalCoins });
 
-    toast.success(`🔥 Day ${newStreak} streak! +${dayReward.xp} XP +${dayReward.coins} coins`);
+    const bonusText = calReward.bonus ? ` ${calReward.bonus}` : "";
+    toast.success(`🔥 Day ${newStreak} streak! +${totalXp} XP +${totalCoins} coins${bonusText}`);
   };
 
   return { streak, bestStreak, todayClaimed, reward, STREAK_REWARDS };
