@@ -137,7 +137,7 @@ function WoodenShelf({ children }: { children: React.ReactNode }) {
       <div
         className="relative h-4 rounded-md mx-1"
         style={{
-          background: "linear-gradient(180deg, hsl(30 45% 28%), hsl(220 15% 14%))",
+          background: "linear-gradient(180deg, hsl(220 15% 18%), hsl(220 15% 14%))",
           border: "2px solid hsl(220 12% 10%)",
           boxShadow:
             "inset 0 1px 0 hsl(35 45% 38%), inset 0 -1px 0 hsl(220 15% 8%), 0 4px 8px hsl(0 0% 0% / 0.4)",
@@ -146,7 +146,7 @@ function WoodenShelf({ children }: { children: React.ReactNode }) {
         {/* Wood grain */}
         <div className="absolute inset-0 overflow-hidden rounded-sm opacity-10">
           {[25, 50, 75].map((t) => (
-            <div key={t} className="absolute w-full h-px" style={{ top: `${t}%`, background: "hsl(30 20% 12%)" }} />
+            <div key={t} className="absolute w-full h-px" style={{ top: `${t}%`, background: "hsl(220 12% 9%)" }} />
           ))}
         </div>
       </div>
@@ -197,7 +197,7 @@ function TrophyDetail({
         onClick={(e) => e.stopPropagation()}
         className="relative w-72 rounded-2xl overflow-hidden"
         style={{
-          background: "linear-gradient(180deg, hsl(30 45% 25%), hsl(220 12% 10%))",
+          background: "linear-gradient(180deg, hsl(220 15% 16%), hsl(220 12% 10%))",
           border: "3px solid hsl(25 35% 12%)",
           boxShadow: "inset 0 2px 0 hsl(35 45% 35%), 0 12px 40px hsl(0 0% 0% / 0.6)",
         }}
@@ -404,7 +404,7 @@ export default function TrophyCase() {
       <div
         className="flex gap-1 rounded-xl p-1"
         style={{
-          background: "linear-gradient(180deg, hsl(30 40% 22%), hsl(220 15% 10%))",
+          background: "linear-gradient(180deg, hsl(220 15% 14%), hsl(220 15% 10%))",
           border: "2px solid hsl(220 15% 9%)",
           boxShadow: "inset 0 1px 0 hsl(35 40% 32%), 0 3px 8px hsl(0 0% 0% / 0.3)",
         }}
@@ -417,7 +417,7 @@ export default function TrophyCase() {
             style={{
               background:
                 activeSection === s.key
-                  ? "linear-gradient(180deg, hsl(30 50% 30%), hsl(25 45% 20%))"
+                  ? "linear-gradient(180deg, hsl(220 15% 20%), hsl(220 12% 14%))"
                   : "transparent",
               border: activeSection === s.key ? "1px solid hsl(35 40% 35% / 0.4)" : "1px solid transparent",
               color: activeSection === s.key ? "hsl(35 80% 65%)" : "hsl(220 10% 50%)",
@@ -447,7 +447,7 @@ export default function TrophyCase() {
               <div
                 className="px-4 py-2 text-center"
                 style={{
-                  background: "linear-gradient(90deg, hsl(30 45% 22%), hsl(35 50% 28%), hsl(30 45% 22%))",
+                  background: "linear-gradient(90deg, hsl(220 15% 14%), hsl(35 50% 28%), hsl(220 15% 14%))",
                   borderBottom: "2px solid hsl(220 12% 10%)",
                   boxShadow: "inset 0 1px 0 hsl(35 45% 38%)",
                 }}

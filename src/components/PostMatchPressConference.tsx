@@ -56,7 +56,7 @@ const THEME_CONFIG = {
     ambient: "🏫 School corridor",
   },
   beach: {
-    bg: "linear-gradient(180deg, hsl(30 40% 18%) 0%, hsl(200 30% 10%) 100%)",
+    bg: "linear-gradient(180deg, hsl(220 12% 12%) 0%, hsl(200 30% 10%) 100%)",
     label: "SUNSET CELEBRATION",
     winnerQuotes: [
       "Mast game tha yaar. Chalo ab chill karte hai.",
