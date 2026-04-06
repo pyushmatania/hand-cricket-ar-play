@@ -1507,6 +1507,13 @@
     --btn-dark: #1F2937;
     --btn-text: #D1D5DB;
   }
+  .btn-leather.team {
+    --btn-start: var(--team-light, #F5F0E8);
+    --btn-mid: hsl(var(--team-primary));
+    --btn-end: hsl(var(--team-accent));
+    --btn-dark: hsl(var(--team-dark));
+    --btn-text: white;
+  }
 
   /* V11 MATERIAL 4: HAMMERED METAL — Data Display */
   .metal-panel {
@@ -1529,12 +1536,13 @@
   .led-batting { --led-color: #00FF88; --led-glow: rgba(0,255,136,0.6); }
   .led-bowling { --led-color: #00D4FF; --led-glow: rgba(0,212,255,0.6); }
   .led-currency { --led-color: #FFD700; --led-glow: rgba(255,215,0,0.6); }
+  .led-timer { --led-color: #FFFFFF; --led-glow: rgba(255,255,255,0.6); }
   .led-danger { --led-color: #FF2D7B; --led-glow: rgba(255,45,123,0.6); }
 
   /* V11 MATERIAL 5: CARVED STONE — Headers */
   .stone-header {
     background:
-      url('/assets/ui/wood-plank-texture.png') repeat,
+      url('/assets/ui/stone-texture.png') repeat,
       linear-gradient(180deg, #555555 0%, #3A3A3A 100%);
     background-size: 256px 256px, 100% 100%;
     background-blend-mode: multiply;

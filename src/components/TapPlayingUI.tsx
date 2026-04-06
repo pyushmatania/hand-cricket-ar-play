@@ -18,6 +18,9 @@ import V10SemiCircleUI from "./v10/V10SemiCircleUI";
 import ArenaParticles from "./ArenaParticles";
 import OverBreakScreen from "./OverBreakScreen";
 import WicketBreakdownCard, { type WicketBreakdownData } from "./WicketBreakdownCard";
+import StadiumView3D from "./StadiumView3D";
+import BatsmanCharacter from "./BatsmanCharacter";
+import BowlerCharacter from "./BowlerCharacter";
 import pitch3d from "@/assets/pitch-3d.jpg";
 import { getBestArena } from "@/lib/arenas";
 import V10Button from "./shared/V10Button";
@@ -337,10 +340,11 @@ export default function TapPlayingUI({
 
       {/* Arena / pitch background */}
       {phase !== "not_started" && (
-        <div className="fixed inset-0 z-0 pointer-events-none">
-          <img src={arenaImage || pitch3d} alt="" className="w-full h-full object-cover opacity-20" style={{ objectPosition: "center 40%", filter: weather?.visual.imageFilter }} />
-          <div className="absolute inset-0 bg-gradient-to-b from-[hsl(220_25%_8%/0.7)] via-[hsl(220_25%_8%/0.4)] to-[hsl(220_25%_8%/0.85)]" />
-        </div>
+        <>
+          <StadiumView3D arenaImage={arenaImage || pitch3d} weatherFilter={weather?.visual.imageFilter} />
+          <BatsmanCharacter lastRuns={lastResult ? lastResult.runs : null} />
+          <BowlerCharacter />
+        </>
       )}
 
       {/* Weather overlay */}
