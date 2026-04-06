@@ -556,8 +556,9 @@ export default function TapPlayingUI({
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           className="p-3 text-center rounded-2xl"
           style={{
-            background: "linear-gradient(135deg, hsl(var(--concrete-mid) / 0.8), hsl(var(--concrete-dark) / 0.8))",
-            border: "1px solid hsl(var(--chrome-dark) / 0.3)",
+            background: "linear-gradient(135deg, #3E2410, #2E1A0E)",
+            border: "2px solid #5C3A1E",
+            borderBottom: "3px solid #3E2410",
           }}>
           <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 1.5, repeat: Infinity }}>
             <span className="text-2xl block mb-1">⏳</span>
