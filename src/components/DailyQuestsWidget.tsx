@@ -26,9 +26,9 @@ export default function DailyQuestsWidget() {
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <span className="text-sm">📋</span>
-          <span className="font-game-display text-xs tracking-wider text-foreground">DAILY QUESTS</span>
+          <span className="font-display text-xs tracking-wider text-foreground">DAILY QUESTS</span>
         </div>
-        <span className="text-[10px] font-game-display text-game-gold">{completedCount}/6</span>
+        <span className="text-[10px] font-display text-game-gold">{completedCount}/6</span>
       </div>
 
       <div className="space-y-1.5">
@@ -60,8 +60,8 @@ export default function DailyQuestsWidget() {
               {/* Info */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <span className="font-game-display text-[10px] text-foreground truncate">{q.quest.title}</span>
-                  <span className="text-[8px] font-game-body text-muted-foreground shrink-0 ml-1">
+                  <span className="font-display text-[10px] text-foreground truncate">{q.quest.title}</span>
+                  <span className="text-[8px] font-body text-muted-foreground shrink-0 ml-1">
                     {currentVal}/{q.quest.target_value}
                   </span>
                 </div>
@@ -89,8 +89,8 @@ export default function DailyQuestsWidget() {
                   </motion.div>
                 ) : (
                   <div className="text-center">
-                    <span className="text-[8px] font-game-display text-game-gold block">{q.quest.reward_coins}🪙</span>
-                    <span className="text-[7px] font-game-body text-muted-foreground">{q.quest.reward_xp}xp</span>
+                    <span className="text-[8px] font-display text-game-gold block">{q.quest.reward_coins}🪙</span>
+                    <span className="text-[7px] font-body text-muted-foreground">{q.quest.reward_xp}xp</span>
                   </div>
                 )}
               </div>

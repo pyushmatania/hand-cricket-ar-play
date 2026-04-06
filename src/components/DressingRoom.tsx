@@ -115,7 +115,7 @@ export default function DressingRoom({
             style={{ background: "hsl(25 20% 15% / 0.8)", border: "1px solid hsl(25 20% 25%)" }}
           >
             <span className="text-sm">{currentAnim.emoji}</span>
-            <span className="text-[8px] font-game-display tracking-wider text-muted-foreground">{currentAnim.label}</span>
+            <span className="text-[8px] font-display tracking-wider text-muted-foreground">{currentAnim.label}</span>
           </motion.div>
         </AnimatePresence>
       </motion.div>
@@ -126,7 +126,7 @@ export default function DressingRoom({
           background: "linear-gradient(180deg, hsl(25 20% 15%) 0%, hsl(25 15% 10%) 100%)",
           border: "1px solid hsl(25 20% 22%)",
         }}>
-        <span className="font-game-display text-[10px] font-bold tracking-wider" style={{ color: teamColor }}>{playerName}</span>
+        <span className="font-display text-[10px] font-bold tracking-wider" style={{ color: teamColor }}>{playerName}</span>
       </div>
 
       {/* Ambient light */}

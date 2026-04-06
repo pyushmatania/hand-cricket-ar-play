@@ -613,7 +613,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
             boxShadow: "0 2px 0 hsl(25 20% 6%), 0 2px 8px rgba(0,0,0,0.4)",
           }}>
           <div className="w-1.5 h-1.5 rounded-full bg-out-red animate-pulse" />
-          <span className="font-game-display text-[9px] tracking-[0.2em] text-foreground font-bold">AR CRICKET</span>
+          <span className="font-display text-[9px] tracking-[0.2em] text-foreground font-bold">AR CRICKET</span>
         </div>
         <div className="flex items-center gap-1.5">
           <button
@@ -659,7 +659,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
               boxShadow: "0 4px 0 hsl(25 20% 6%), 0 6px 20px rgba(0,0,0,0.6)",
             }}
           >
-            <p className="text-[7px] font-game-display font-bold text-muted-foreground tracking-widest px-1">FILTER</p>
+            <p className="text-[7px] font-display font-bold text-muted-foreground tracking-widest px-1">FILTER</p>
             <div className="flex gap-1">
               {FILTER_OPTIONS.map((f) => (
                 <button

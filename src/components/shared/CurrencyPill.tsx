@@ -28,7 +28,7 @@ export default function CurrencyPill({
       }}
     >
       <span className="text-base">{icon}</span>
-      <span className="text-xs font-game-display text-foreground min-w-[28px] text-right">
+      <span className="text-xs font-display text-foreground min-w-[28px] text-right">
         {typeof value === "number"
           ? value >= 1000
             ? `${(value / 1000).toFixed(1)}K`

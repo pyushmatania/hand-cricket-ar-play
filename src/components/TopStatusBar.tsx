@@ -81,13 +81,13 @@ export default function TopStatusBar() {
                 borderBottom: "3px solid hsl(207,90%,25%)",
                 boxShadow: "0 2px 6px hsl(207 90% 54% / 0.4)",
               }}>
-              <span className="font-game-display text-[7px] text-white leading-none">{level}</span>
+              <span className="font-display text-[7px] text-white leading-none">{level}</span>
             </div>
           </div>
 
           {/* Name + XP bar */}
           <div className="flex flex-col gap-1">
-            <span className="font-game-display text-[10px] tracking-wider text-foreground leading-none">
+            <span className="font-display text-[10px] tracking-wider text-foreground leading-none">
               {stats?.display_name || "PLAYER"}
             </span>
             <div className="relative w-16 h-[6px] rounded-full overflow-hidden"
@@ -130,7 +130,7 @@ export default function TopStatusBar() {
               transition={{ repeat: Infinity, duration: 1.5 }}
               className="text-xs"
             >🔥</motion.span>
-            <span className="font-game-display text-[10px] leading-none" style={{ color: "hsl(0,84%,65%)" }}>{stats.current_streak}</span>
+            <span className="font-display text-[10px] leading-none" style={{ color: "hsl(0,84%,65%)" }}>{stats.current_streak}</span>
           </motion.div>
         )}
 
@@ -151,7 +151,7 @@ export default function TopStatusBar() {
             transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
             className="text-sm inline-block"
           >🪙</motion.span>
-          <span className="font-game-display text-[10px] leading-none" style={{ color: "hsl(51,100%,60%)" }}>
+          <span className="font-display text-[10px] leading-none" style={{ color: "hsl(51,100%,60%)" }}>
             {coins >= 1000 ? `${(coins / 1000).toFixed(1)}K` : coins}
           </span>
           <span className="text-[10px] opacity-40">+</span>
@@ -190,7 +190,7 @@ export default function TopStatusBar() {
                 boxShadow: "0 2px 6px hsl(0 84% 58% / 0.5)",
               }}
             >
-              <span className="font-game-display text-[7px] text-white leading-none">{unreadCount > 9 ? "9+" : unreadCount}</span>
+              <span className="font-display text-[7px] text-white leading-none">{unreadCount > 9 ? "9+" : unreadCount}</span>
             </motion.div>
           )}
         </motion.button>

@@ -83,11 +83,11 @@ export default function ShopItemCard({
         <div className="relative z-10">
           {/* Top badges */}
           <div className="flex items-center justify-between mb-1">
-            <span className="text-[7px] font-game-display tracking-wider" style={{ color: r.color }}>
+            <span className="text-[7px] font-display tracking-wider" style={{ color: r.color }}>
               {r.label}
             </span>
             {equipped && (
-              <span className="text-[7px] font-game-display tracking-wider px-1.5 py-0.5 rounded-full"
+              <span className="text-[7px] font-display tracking-wider px-1.5 py-0.5 rounded-full"
                 style={{
                   color: "hsl(142 70% 55%)",
                   background: "hsl(142 70% 55% / 0.1)",
@@ -98,7 +98,7 @@ export default function ShopItemCard({
               </span>
             )}
             {owned && !equipped && (
-              <span className="text-[7px] font-game-display tracking-wider px-1.5 py-0.5 rounded-full"
+              <span className="text-[7px] font-display tracking-wider px-1.5 py-0.5 rounded-full"
                 style={{
                   color: "hsl(207 80% 60%)",
                   background: "hsl(207 80% 60% / 0.1)",
@@ -133,7 +133,7 @@ export default function ShopItemCard({
           <div className="flex items-center justify-between mt-1.5">
             <span className="text-[9px] text-muted-foreground line-clamp-1 flex-1">{description.slice(0, 22)}</span>
             {!owned && (
-              <span className="font-game-display text-[10px] flex items-center gap-0.5 shrink-0"
+              <span className="font-display text-[10px] flex items-center gap-0.5 shrink-0"
                 style={{ color: "hsl(43 100% 60%)" }}
               >
                 🪙 {price}

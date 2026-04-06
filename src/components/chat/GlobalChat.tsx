@@ -155,12 +155,12 @@ export default function GlobalChat() {
           <Globe className="w-4 h-4 text-white" />
         </div>
         <div>
-          <span className="font-game-display text-xs font-bold text-foreground">Global Chat</span>
+          <span className="font-display text-xs font-bold text-foreground">Global Chat</span>
           <span className="text-[7px] text-muted-foreground block">Everyone's here 🌍</span>
         </div>
         <div className="ml-auto flex items-center gap-1">
           <div className="w-2 h-2 rounded-full bg-game-green animate-pulse" />
-          <span className="text-[7px] text-game-green font-game-display">LIVE</span>
+          <span className="text-[7px] text-game-green font-display">LIVE</span>
         </div>
       </div>
 
@@ -190,7 +190,7 @@ export default function GlobalChat() {
                   {/* Name */}
                   {!isMe && profile && (
                     <div className="flex items-center gap-1 mb-0.5 px-1">
-                      <span className="text-[7px] font-game-display text-primary/70 font-bold">{profile.display_name}</span>
+                      <span className="text-[7px] font-display text-primary/70 font-bold">{profile.display_name}</span>
                       <span className="text-[7px]">{getRankEmoji(profile.rank_tier)}</span>
                     </div>
                   )}

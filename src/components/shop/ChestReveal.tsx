@@ -167,7 +167,7 @@ export default function ChestReveal({ itemName, itemEmoji, rarity, onComplete }:
                 boxShadow: `0 4px 0 hsl(25 20% 6%), 0 0 20px ${chest.glowColor}`,
               }}
             >
-              <p className="font-game-title text-2xl text-foreground" style={{ textShadow: "0 2px 0 hsl(25 30% 8%)" }}>
+              <p className="font-display text-2xl text-foreground" style={{ textShadow: "0 2px 0 hsl(25 30% 8%)" }}>
                 {itemName}
               </p>
             </motion.div>
@@ -176,7 +176,7 @@ export default function ChestReveal({ itemName, itemEmoji, rarity, onComplete }:
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="font-game-display text-xs tracking-[0.3em] mt-3"
+              className="font-display text-xs tracking-[0.3em] mt-3"
               style={{ color: chest.color, textShadow: `0 0 10px ${chest.glowColor}` }}
             >
               {rarity.toUpperCase()}

@@ -97,7 +97,7 @@ export default function AuthPage() {
           </motion.div>
           <motion.p
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
-            className="text-[10px] font-game-display tracking-[0.3em] mt-2"
+            className="text-[10px] font-display tracking-[0.3em] mt-2"
             style={{ color: "hsl(43 70% 50% / 0.6)" }}
           >
             {isLogin ? "WELCOME BACK, CHAMPION" : "JOIN THE ARENA"}
@@ -132,7 +132,7 @@ export default function AuthPage() {
                 key={String(tab.key)}
                 type="button"
                 onClick={() => { setIsLogin(tab.key); setError(""); setSuccess(""); }}
-                className="flex-1 py-2.5 rounded-lg font-game-display text-[9px] tracking-widest flex items-center justify-center gap-1.5 relative overflow-hidden"
+                className="flex-1 py-2.5 rounded-lg font-display text-[9px] tracking-widest flex items-center justify-center gap-1.5 relative overflow-hidden"
                 style={isLogin === tab.key ? {
                   background: "linear-gradient(180deg, hsl(207 90% 50%), hsl(207 85% 38%))",
                   color: "white",
@@ -159,14 +159,14 @@ export default function AuthPage() {
                 <motion.div key="name-field"
                   initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2 }}>
-                  <label className="text-[9px] font-game-display tracking-widest block mb-1.5" style={{ color: "hsl(25 15% 45%)" }}>
+                  <label className="text-[9px] font-display tracking-widest block mb-1.5" style={{ color: "hsl(25 15% 45%)" }}>
                     DISPLAY NAME
                   </label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm opacity-40">👤</span>
                     <input
                       type="text" value={displayName} onChange={(e) => setDisplayName(e.target.value)}
-                      className="w-full rounded-xl pl-9 pr-4 py-3 text-sm font-game-body placeholder:text-muted-foreground/30 focus:outline-none transition-all"
+                      className="w-full rounded-xl pl-9 pr-4 py-3 text-sm font-body placeholder:text-muted-foreground/30 focus:outline-none transition-all"
                       style={inputStyle} placeholder="Your player name"
                     />
                   </div>
@@ -175,28 +175,28 @@ export default function AuthPage() {
             </AnimatePresence>
 
             <div>
-              <label className="text-[9px] font-game-display tracking-widest block mb-1.5" style={{ color: "hsl(25 15% 45%)" }}>
+              <label className="text-[9px] font-display tracking-widest block mb-1.5" style={{ color: "hsl(25 15% 45%)" }}>
                 EMAIL
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm opacity-40">📧</span>
                 <input
                   type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
-                  className="w-full rounded-xl pl-9 pr-4 py-3 text-sm font-game-body placeholder:text-muted-foreground/30 focus:outline-none transition-all"
+                  className="w-full rounded-xl pl-9 pr-4 py-3 text-sm font-body placeholder:text-muted-foreground/30 focus:outline-none transition-all"
                   style={inputStyle} placeholder="player@email.com"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-[9px] font-game-display tracking-widest block mb-1.5" style={{ color: "hsl(25 15% 45%)" }}>
+              <label className="text-[9px] font-display tracking-widest block mb-1.5" style={{ color: "hsl(25 15% 45%)" }}>
                 PASSWORD
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm opacity-40">🔒</span>
                 <input
                   type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={6}
-                  className="w-full rounded-xl pl-9 pr-4 py-3 text-sm font-game-body placeholder:text-muted-foreground/30 focus:outline-none transition-all"
+                  className="w-full rounded-xl pl-9 pr-4 py-3 text-sm font-body placeholder:text-muted-foreground/30 focus:outline-none transition-all"
                   style={inputStyle} placeholder="••••••••"
                 />
               </div>
@@ -209,7 +209,7 @@ export default function AuthPage() {
                   className="flex items-center gap-2 px-3 py-2.5 rounded-xl"
                   style={{ background: "hsl(4 50% 20% / 0.3)", border: "1.5px solid hsl(4 60% 40% / 0.3)" }}>
                   <span className="text-sm">⚠️</span>
-                  <span className="text-[10px] font-game-display" style={{ color: "hsl(4 90% 65%)" }}>{error}</span>
+                  <span className="text-[10px] font-display" style={{ color: "hsl(4 90% 65%)" }}>{error}</span>
                 </motion.div>
               )}
               {success && (
@@ -217,7 +217,7 @@ export default function AuthPage() {
                   className="flex items-center gap-2 px-3 py-2.5 rounded-xl"
                   style={{ background: "hsl(142 30% 18% / 0.3)", border: "1.5px solid hsl(142 50% 35% / 0.3)" }}>
                   <span className="text-sm">✅</span>
-                  <span className="text-[10px] font-game-display" style={{ color: "hsl(142 71% 55%)" }}>{success}</span>
+                  <span className="text-[10px] font-display" style={{ color: "hsl(142 71% 55%)" }}>{success}</span>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -226,7 +226,7 @@ export default function AuthPage() {
             <motion.button
               type="submit" disabled={loading}
               whileTap={{ scale: 0.95, y: 2 }}
-              className="w-full py-3.5 rounded-2xl font-game-display text-sm tracking-wider relative overflow-hidden disabled:opacity-50"
+              className="w-full py-3.5 rounded-2xl font-display text-sm tracking-wider relative overflow-hidden disabled:opacity-50"
               style={{
                 background: "linear-gradient(180deg, hsl(142 71% 50%) 0%, hsl(142 65% 38%) 100%)",
                 border: "2px solid hsl(142 60% 55% / 0.5)",
@@ -255,7 +255,7 @@ export default function AuthPage() {
             {/* Chalk divider */}
             <div className="flex items-center gap-3 py-1">
               <div className="flex-1 h-px opacity-20" style={{ background: CHALK_DIVIDER }} />
-              <span className="text-[8px] font-game-display tracking-widest" style={{ color: "hsl(25 15% 35%)" }}>OR CONTINUE WITH</span>
+              <span className="text-[8px] font-display tracking-widest" style={{ color: "hsl(25 15% 35%)" }}>OR CONTINUE WITH</span>
               <div className="flex-1 h-px opacity-20" style={{ background: CHALK_DIVIDER }} />
             </div>
 
@@ -272,7 +272,7 @@ export default function AuthPage() {
                   setError(result.error.message || "Google sign-in failed");
                 }
               }}
-              className="w-full py-3 rounded-2xl font-game-display text-xs tracking-wider flex items-center justify-center gap-2.5"
+              className="w-full py-3 rounded-2xl font-display text-xs tracking-wider flex items-center justify-center gap-2.5"
               style={{
                 background: CONCRETE_CARD,
                 border: "2px solid hsl(25 18% 22%)",
@@ -295,7 +295,7 @@ export default function AuthPage() {
         <motion.button
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
           onClick={() => navigate("/")}
-          className="w-full text-center text-[10px] font-game-display tracking-wider mt-5 flex items-center justify-center gap-1.5"
+          className="w-full text-center text-[10px] font-display tracking-wider mt-5 flex items-center justify-center gap-1.5"
           style={{ color: "hsl(25 15% 35%)" }}
         >
           <span className="text-xs">←</span> Back to Home

@@ -177,7 +177,7 @@ export default function TournamentChat({ tournamentId }: TournamentChatProps) {
             >
               <div className="flex items-center gap-2">
                 <span className="text-sm">💬</span>
-                <span className="font-game-display text-xs tracking-wider" style={{ color: "hsl(43 90% 55%)" }}>
+                <span className="font-display text-xs tracking-wider" style={{ color: "hsl(43 90% 55%)" }}>
                   TOURNAMENT CHAT
                 </span>
               </div>
@@ -189,7 +189,7 @@ export default function TournamentChat({ tournamentId }: TournamentChatProps) {
             {/* Messages */}
             <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-2 min-h-[200px]">
               {messages.length === 0 && (
-                <p className="text-center font-game-body text-xs" style={{ color: "hsl(25 15% 40%)" }}>
+                <p className="text-center font-body text-xs" style={{ color: "hsl(25 15% 40%)" }}>
                   No messages yet. Say hi! 👋
                 </p>
               )}
@@ -213,11 +213,11 @@ export default function TournamentChat({ tournamentId }: TournamentChatProps) {
                       }}
                     >
                       {!isMe && (
-                        <p className="text-[9px] font-game-display font-bold mb-0.5" style={{ color: "hsl(43 70% 55%)" }}>
+                        <p className="text-[9px] font-display font-bold mb-0.5" style={{ color: "hsl(43 70% 55%)" }}>
                           {msg.display_name}
                         </p>
                       )}
-                      <p className="font-game-body text-[11px] text-foreground/90">{msg.message}</p>
+                      <p className="font-body text-[11px] text-foreground/90">{msg.message}</p>
                       <p className="text-[8px] mt-0.5" style={{ color: "hsl(25 15% 35%)" }}>
                         {new Date(msg.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                       </p>
@@ -240,7 +240,7 @@ export default function TournamentChat({ tournamentId }: TournamentChatProps) {
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
                 placeholder="Type a message..."
                 maxLength={200}
-                className="flex-1 bg-transparent font-game-body text-xs text-foreground outline-none placeholder:text-muted-foreground/40"
+                className="flex-1 bg-transparent font-body text-xs text-foreground outline-none placeholder:text-muted-foreground/40"
               />
               <motion.button
                 whileTap={{ scale: 0.85 }}

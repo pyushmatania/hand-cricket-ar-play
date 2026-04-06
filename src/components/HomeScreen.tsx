@@ -61,7 +61,7 @@ export default function HomeScreen({ onStart }: HomeScreenProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="text-muted-foreground text-base mb-2 leading-relaxed px-4 font-game-body"
+          className="text-muted-foreground text-base mb-2 leading-relaxed px-4 font-body"
         >
           The stadium is live. The crowd is ready.
         </motion.p>
@@ -69,7 +69,7 @@ export default function HomeScreen({ onStart }: HomeScreenProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="text-muted-foreground/60 text-sm mb-8 px-4 font-game-body"
+          className="text-muted-foreground/60 text-sm mb-8 px-4 font-body"
         >
           Show your hand. Gestures auto-capture. Score big. Beat the AI.
         </motion.p>
@@ -81,7 +81,7 @@ export default function HomeScreen({ onStart }: HomeScreenProps) {
           transition={{ delay: 0.6 }}
           whileTap={{ scale: 0.96, y: 3 }}
           onClick={onStart}
-          className="w-full max-w-xs mx-auto font-game-title text-base tracking-wider relative overflow-hidden"
+          className="w-full max-w-xs mx-auto font-display text-base tracking-wider relative overflow-hidden"
           style={{
             padding: "16px 32px",
             borderRadius: "16px",
@@ -127,7 +127,7 @@ export default function HomeScreen({ onStart }: HomeScreenProps) {
             >
               <div className="text-2xl mb-1">{f.icon}</div>
               <div className="text-[10px] text-foreground font-bold font-game-card">{f.label}</div>
-              <div className="text-[8px] text-muted-foreground/60 font-game-body">{f.sub}</div>
+              <div className="text-[8px] text-muted-foreground/60 font-body">{f.sub}</div>
             </div>
           ))}
         </motion.div>
@@ -140,7 +140,7 @@ export default function HomeScreen({ onStart }: HomeScreenProps) {
           className="mt-6 flex items-center justify-center gap-3"
         >
           {["✊ DEF", "☝️ 1", "✌️ 2", "🤟 3", "🖖 4", "👍 6"].map((g) => (
-            <span key={g} className="text-[9px] text-muted-foreground/40 font-game-display">
+            <span key={g} className="text-[9px] text-muted-foreground/40 font-display">
               {g}
             </span>
           ))}

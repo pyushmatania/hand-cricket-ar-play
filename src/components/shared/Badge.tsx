@@ -10,7 +10,7 @@ export default function BadgeNotif({ count, className }: BadgeNotifProps) {
   return (
     <span
       className={cn(
-        "absolute -top-1 -right-1 min-w-[16px] h-4 rounded-full bg-game-red text-white text-[9px] font-game-display flex items-center justify-center px-1 border border-game-dark",
+        "absolute -top-1 -right-1 min-w-[16px] h-4 rounded-full bg-game-red text-white text-[9px] font-display flex items-center justify-center px-1 border border-game-dark",
         className
       )}
     >

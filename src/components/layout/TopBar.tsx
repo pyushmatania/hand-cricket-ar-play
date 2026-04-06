@@ -39,10 +39,10 @@ export default function TopBar({ coins = 1250, gems = 45, runs = 3800 }: TopBarP
               🏏
             </div>
             <div className="flex flex-col items-start">
-              <span className="text-[10px] font-game-display text-foreground leading-tight">
+              <span className="text-[10px] font-display text-foreground leading-tight">
                 {user?.email?.split("@")[0]?.slice(0, 8) || "Player"}
               </span>
-              <span className="text-[8px] font-game-body" style={{ color: "hsl(51 100% 60%)" }}>Lvl 12</span>
+              <span className="text-[8px] font-body" style={{ color: "hsl(51 100% 60%)" }}>Lvl 12</span>
             </div>
           </button>
 

@@ -94,17 +94,17 @@ export default function ModeCard({ mode, index, onSelect }: ModeCardProps) {
 
         {/* Text */}
         <div className="flex-1 min-w-0" style={{ transform: "translateZ(8px)" }}>
-          <span className="font-game-display text-sm text-foreground tracking-wider block"
+          <span className="font-display text-sm text-foreground tracking-wider block"
             style={{ textShadow: "0 1px 0 hsl(25 30% 8%)" }}
           >
             {mode.title}
           </span>
-          <span className="text-[10px] font-game-display font-bold block mt-0.5"
+          <span className="text-[10px] font-display font-bold block mt-0.5"
             style={{ color: mode.accentHsl }}
           >
             {mode.subtitle}
           </span>
-          <span className="text-[10px] text-muted-foreground font-game-body block mt-1 leading-relaxed">
+          <span className="text-[10px] text-muted-foreground font-body block mt-1 leading-relaxed">
             {mode.description}
           </span>
         </div>
@@ -113,7 +113,7 @@ export default function ModeCard({ mode, index, onSelect }: ModeCardProps) {
         <motion.span
           animate={{ x: [0, 4, 0] }}
           transition={{ duration: 1.5, repeat: Infinity }}
-          className="mt-3 text-sm font-bold font-game-score"
+          className="mt-3 text-sm font-bold font-score"
           style={{ color: mode.accentHsl }}
         >
           →

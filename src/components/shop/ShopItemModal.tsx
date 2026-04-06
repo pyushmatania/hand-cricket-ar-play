@@ -73,7 +73,7 @@ export default function ShopItemModal({
 
           {/* Rarity header */}
           <div className="text-center pt-5 pb-2">
-            <span className="text-[9px] font-game-display tracking-[0.3em]" style={{ color: rs.color }}>
+            <span className="text-[9px] font-display tracking-[0.3em]" style={{ color: rs.color }}>
               {item.rarity.toUpperCase()}
             </span>
           </div>
@@ -94,11 +94,11 @@ export default function ShopItemModal({
 
           {/* Info */}
           <div className="text-center px-5 pb-4">
-            <h3 className="font-game-title text-xl text-foreground" style={{ textShadow: "0 2px 0 hsl(25 30% 8%)" }}>
+            <h3 className="font-display text-xl text-foreground" style={{ textShadow: "0 2px 0 hsl(25 30% 8%)" }}>
               {item.name}
             </h3>
-            <p className="text-xs text-muted-foreground mt-1 font-game-body">{item.description}</p>
-            <span className="text-[9px] text-muted-foreground/60 font-game-display tracking-wider mt-1.5 block">
+            <p className="text-xs text-muted-foreground mt-1 font-body">{item.description}</p>
+            <span className="text-[9px] text-muted-foreground/60 font-display tracking-wider mt-1.5 block">
               {CATEGORY_LABEL[item.category] || item.category}
             </span>
           </div>
@@ -112,14 +112,14 @@ export default function ShopItemModal({
           {!owned && (
             <div className="flex items-center justify-center gap-2 py-4">
               <span className="text-xl">🪙</span>
-              <span className="font-game-display text-3xl" style={{
+              <span className="font-display text-3xl" style={{
                 color: canAfford ? "hsl(43 100% 60%)" : "hsl(4 80% 58%)",
                 textShadow: canAfford ? "0 2px 0 hsl(35 60% 25%)" : "none",
               }}>
                 {item.price}
               </span>
               {!canAfford && (
-                <span className="text-[9px] font-game-body" style={{ color: "hsl(4 80% 58%)" }}>
+                <span className="text-[9px] font-body" style={{ color: "hsl(4 80% 58%)" }}>
                   ({item.price - coins} more)
                 </span>
               )}
@@ -140,7 +140,7 @@ export default function ShopItemModal({
                 {purchasing ? "..." : canAfford ? "🪙 BUY" : "NOT ENOUGH"}
               </GameButton>
             ) : equipped ? (
-              <div className="flex-1 py-3.5 rounded-2xl text-center font-game-display text-sm tracking-wider"
+              <div className="flex-1 py-3.5 rounded-2xl text-center font-display text-sm tracking-wider"
                 style={{
                   color: "hsl(142 70% 55%)",
                   background: "hsl(142 70% 55% / 0.08)",

@@ -259,7 +259,7 @@ export default function ShotResultOverlay({ lastResult, triggerKey }: ShotResult
             <div className="text-center relative z-10">
               {/* 3D extruded text */}
               <p
-                className="font-game-display text-5xl font-black tracking-[0.15em] relative"
+                className="font-display text-5xl font-black tracking-[0.15em] relative"
                 style={{
                   background: config.textGradient,
                   WebkitBackgroundClip: "text",
@@ -269,7 +269,7 @@ export default function ShotResultOverlay({ lastResult, triggerKey }: ShotResult
               >
                 {/* Shadow layers for 3D depth */}
                 <span
-                  className="absolute inset-0 font-game-display text-5xl font-black tracking-[0.15em]"
+                  className="absolute inset-0 font-display text-5xl font-black tracking-[0.15em]"
                   style={{
                     WebkitTextStroke: "2px hsl(0 0% 0% / 0.3)",
                     WebkitTextFillColor: "transparent",

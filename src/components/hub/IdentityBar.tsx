@@ -52,7 +52,7 @@ export default function IdentityBar({
 
         {/* Name + streak */}
         <div className="flex flex-col gap-0.5 min-w-0">
-          <span className="font-game-title text-[13px] font-bold tracking-wide text-white leading-none truncate">
+          <span className="font-display text-[13px] font-bold tracking-wide text-white leading-none truncate">
             {playerName}
           </span>
           {streak > 0 && (
@@ -62,7 +62,7 @@ export default function IdentityBar({
                 transition={{ repeat: Infinity, duration: 1.5 }}
                 className="text-[10px]"
               >🔥</motion.span>
-              <span className="font-game-title text-[10px] font-bold text-neon-orange leading-none">{streak}</span>
+              <span className="font-display text-[10px] font-bold text-neon-orange leading-none">{streak}</span>
             </div>
           )}
         </div>

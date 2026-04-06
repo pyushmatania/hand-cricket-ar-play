@@ -294,7 +294,7 @@ export default function HomePage() {
               className="text-2xl"
             >🎁</motion.span>
             <div className="text-left">
-              <div className="font-game-title text-[11px] font-semibold tracking-wide text-neon-gold">FREE CHEST</div>
+              <div className="font-display text-[11px] font-semibold tracking-wide text-neon-gold">FREE CHEST</div>
               <motion.div
                 animate={{ opacity: [0.5, 1, 0.5] }}
                 transition={{ duration: 2, repeat: Infinity }}
@@ -313,9 +313,9 @@ export default function HomePage() {
           <div className="flex items-center gap-2">
             <span className="text-2xl">🏏</span>
             <div className="text-left flex-1">
-              <div className="font-game-title text-[11px] font-semibold tracking-wide text-muted-foreground">WICKET CHEST</div>
+              <div className="font-display text-[11px] font-semibold tracking-wide text-muted-foreground">WICKET CHEST</div>
               <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="font-game-title text-[11px] font-bold text-white">18/25</span>
+                <span className="font-display text-[11px] font-bold text-white">18/25</span>
                 <div className="flex-1 h-[6px] rounded-full overflow-hidden" style={{ background: "rgba(0,0,0,0.4)" }}>
                   <div className="h-full rounded-full" style={{
                     width: "72%",
@@ -362,7 +362,7 @@ export default function HomePage() {
               <div className="font-display text-sm" style={{ color: mode.color, textShadow: `0 0 10px ${mode.color}40` }}>
                 {mode.label}
               </div>
-              <div className="font-game-body text-[9px] text-muted-foreground">{mode.sub}</div>
+              <div className="font-body text-[9px] text-muted-foreground">{mode.sub}</div>
             </div>
           </motion.button>
         ))}
@@ -372,7 +372,7 @@ export default function HomePage() {
       <div className="relative z-10 mx-4 mb-4">
         <div className="flex items-center gap-2 mb-2 px-1">
           <span className="text-xs">🎁</span>
-          <span className="font-game-title text-[10px] tracking-[2px] text-muted-foreground">CHEST SLOTS</span>
+          <span className="font-display text-[10px] tracking-[2px] text-muted-foreground">CHEST SLOTS</span>
         </div>
         <div className="flex justify-center gap-2.5">
           {chestSlots.map((chest, i) => (
@@ -388,7 +388,7 @@ export default function HomePage() {
 
       {/* ═══ G: SECONDARY MODES ═══ */}
       <div className="relative z-10 px-4 pb-4">
-        <div className="font-game-title text-[11px] font-semibold tracking-[3px] mb-2 px-1 text-muted-foreground">MORE MODES</div>
+        <div className="font-display text-[11px] font-semibold tracking-[3px] mb-2 px-1 text-muted-foreground">MORE MODES</div>
         <div className="flex flex-col gap-2">
           {SECONDARY_MODES.map((mode, idx) => (
             <motion.button
@@ -408,8 +408,8 @@ export default function HomePage() {
                 {mode.icon}
               </span>
               <div className="flex-1 text-left">
-                <div className="font-game-title text-[13px] font-bold tracking-wide text-white">{mode.label}</div>
-                <div className="font-game-body text-[10px]" style={{ color: mode.color }}>{mode.sub}</div>
+                <div className="font-display text-[13px] font-bold tracking-wide text-white">{mode.label}</div>
+                <div className="font-body text-[10px]" style={{ color: mode.color }}>{mode.sub}</div>
               </div>
               <span className="text-muted-foreground text-sm">→</span>
             </motion.button>
@@ -441,8 +441,8 @@ export default function HomePage() {
 function StatPill({ label, value, color }: { label: string; value: string; color: string }) {
   return (
     <div className="text-center">
-      <span className="font-game-body text-[8px] text-muted-foreground block leading-none">{label}</span>
-      <span className="font-game-title text-[12px] font-bold leading-none tabular-nums" style={{ color }}>{value}</span>
+      <span className="font-body text-[8px] text-muted-foreground block leading-none">{label}</span>
+      <span className="font-display text-[12px] font-bold leading-none tabular-nums" style={{ color }}>{value}</span>
     </div>
   );
 }
@@ -461,7 +461,7 @@ function ChestSlot({ chest, onTap, tick }: { chest: UserChest | null; onTap: (c:
         style={{ width: 78, height: 96, borderRadius: 16 }}
       >
         <span className="text-lg text-white/10">+</span>
-        <span className="text-[7px] mt-0.5 text-white/15 font-game-title">EMPTY</span>
+        <span className="text-[7px] mt-0.5 text-white/15 font-display">EMPTY</span>
       </div>
     );
   }
@@ -553,7 +553,7 @@ function ChestSlot({ chest, onTap, tick }: { chest: UserChest | null; onTap: (c:
         background: "linear-gradient(0deg, rgba(0,0,0,0.7), transparent)",
         borderRadius: "0 0 14px 14px",
       }}>
-        <span className="text-[8px] font-bold block font-game-title" style={{
+        <span className="text-[8px] font-bold block font-display" style={{
           color: isReady ? "#FFD700" : isUnlocking ? (chestInfo?.color || "#475569") : "#94A3B8",
           textShadow: isReady ? "0 0 8px rgba(255,215,0,0.5)" : "none",
         }}>

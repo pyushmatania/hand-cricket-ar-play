@@ -131,7 +131,7 @@ export default function CosmeticsCarousel(props: CosmeticsCarouselProps) {
   return (
     <div className="border-t border-muted/10 px-3 py-3">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-[7px] text-muted-foreground font-game-display tracking-[0.2em]">
+        <span className="text-[7px] text-muted-foreground font-display tracking-[0.2em]">
           EQUIPPED LOADOUT
         </span>
         <div className="flex gap-1">
@@ -176,14 +176,14 @@ export default function CosmeticsCarousel(props: CosmeticsCarouselProps) {
 
             {/* Info */}
             <div className="flex-1 min-w-0">
-              <span className="text-[7px] text-white/50 font-game-display tracking-[0.2em] block">
+              <span className="text-[7px] text-white/50 font-display tracking-[0.2em] block">
                 {item.category}
               </span>
-              <span className="text-sm font-game-display font-black text-white tracking-wider block truncate">
+              <span className="text-sm font-display font-black text-white tracking-wider block truncate">
                 {item.name.toUpperCase()}
               </span>
               {item.detail && (
-                <span className="text-[8px] text-white/40 font-game-body block mt-0.5">
+                <span className="text-[8px] text-white/40 font-body block mt-0.5">
                   {item.detail}
                 </span>
               )}
@@ -211,7 +211,7 @@ export default function CosmeticsCarousel(props: CosmeticsCarouselProps) {
                   e.stopPropagation();
                   navigate(`/shop?category=${item.shopCategory}`);
                 }}
-                className="absolute top-2 right-2 px-2.5 py-1 rounded-lg bg-white/15 border border-white/20 backdrop-blur-sm text-[7px] font-game-display font-bold text-white tracking-wider hover:bg-white/25 transition-colors"
+                className="absolute top-2 right-2 px-2.5 py-1 rounded-lg bg-white/15 border border-white/20 backdrop-blur-sm text-[7px] font-display font-bold text-white tracking-wider hover:bg-white/25 transition-colors"
               >
                 CHANGE
               </motion.button>
@@ -235,13 +235,13 @@ export default function CosmeticsCarousel(props: CosmeticsCarouselProps) {
         <div className="flex justify-center gap-4 mt-2">
           <button
             onClick={goPrev}
-            className="text-[8px] text-muted-foreground/40 font-game-display tracking-wider active:scale-90 transition-transform"
+            className="text-[8px] text-muted-foreground/40 font-display tracking-wider active:scale-90 transition-transform"
           >
             ◀ PREV
           </button>
           <button
             onClick={goNext}
-            className="text-[8px] text-muted-foreground/40 font-game-display tracking-wider active:scale-90 transition-transform"
+            className="text-[8px] text-muted-foreground/40 font-display tracking-wider active:scale-90 transition-transform"
           >
             NEXT ▶
           </button>

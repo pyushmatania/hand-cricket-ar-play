@@ -65,7 +65,7 @@ export default function ShareButton({
         whileTap={{ scale: 0.95 }}
         onClick={handleShare}
         disabled={sharing}
-        className={`rounded-xl font-game-display tracking-wider flex items-center gap-1.5 transition-all ${baseStyle} ${sizeStyle} ${className} ${sharing ? "opacity-50" : ""}`}
+        className={`rounded-xl font-display tracking-wider flex items-center gap-1.5 transition-all ${baseStyle} ${sizeStyle} ${className} ${sharing ? "opacity-50" : ""}`}
       >
         {sharing ? (
           <motion.span animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity }}>⏳</motion.span>

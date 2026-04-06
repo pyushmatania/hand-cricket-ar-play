@@ -85,12 +85,12 @@ export default function PlayPage() {
               style={{ background: "linear-gradient(180deg, hsl(43 90% 55%) 0%, hsl(35 60% 35%) 100%)" }}
             />
             <div>
-              <h1 className="font-game-title text-xl text-foreground"
+              <h1 className="font-display text-xl text-foreground"
                 style={{ textShadow: "0 2px 0 hsl(25 40% 8%)" }}
               >
                 Select Mode
               </h1>
-              <p className="text-[9px] text-muted-foreground font-game-display tracking-[0.2em]">
+              <p className="text-[9px] text-muted-foreground font-display tracking-[0.2em]">
                 CHOOSE YOUR ARENA & GAME TYPE
               </p>
             </div>

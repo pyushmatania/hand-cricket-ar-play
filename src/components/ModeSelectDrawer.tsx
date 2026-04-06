@@ -48,7 +48,7 @@ function SectionHeader({ label, accentGradient }: { label: string; accentGradien
   return (
     <div className="flex items-center gap-2 mb-3">
       <div className="w-1.5 h-5 rounded-sm" style={{ background: accentGradient }} />
-      <h3 className="font-game-display text-[10px] tracking-[0.2em] text-foreground uppercase">{label}</h3>
+      <h3 className="font-display text-[10px] tracking-[0.2em] text-foreground uppercase">{label}</h3>
     </div>
   );
 }
@@ -62,7 +62,7 @@ function ModeBadge({ type }: { type: string }) {
   const s = styles[type] || styles.NEW;
   return (
     <motion.span
-      className="absolute -top-1.5 -right-1.5 font-game-display text-[7px] tracking-widest px-1.5 py-0.5 z-20"
+      className="absolute -top-1.5 -right-1.5 font-display text-[7px] tracking-widest px-1.5 py-0.5 z-20"
       style={{ borderRadius: "6px", background: s.bg, color: s.text, border: `1px solid ${s.border}` }}
       initial={{ scale: 0, opacity: 0 }}
       animate={{
@@ -91,7 +91,7 @@ function LockOverlay({ rank }: { rank: string }) {
       style={{ background: "hsl(0 0% 0% / 0.55)", backdropFilter: "blur(2px)" }}>
       <div className="flex flex-col items-center gap-0.5">
         <span className="text-base">🔒</span>
-        <span className="font-game-display text-[8px] tracking-wider text-muted-foreground uppercase">
+        <span className="font-display text-[8px] tracking-wider text-muted-foreground uppercase">
           {rank} rank
         </span>
       </div>
@@ -106,7 +106,7 @@ function LiveIndicator() {
     return () => clearInterval(t);
   }, []);
   return (
-    <span className="flex items-center gap-1 font-game-body text-[8px]" style={{ color: "hsl(142 60% 55%)" }}>
+    <span className="flex items-center gap-1 font-body text-[8px]" style={{ color: "hsl(142 60% 55%)" }}>
       <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "hsl(142 71% 50%)" }} />
       {count} playing now
     </span>
@@ -130,7 +130,7 @@ function DailyResetTimer() {
     return () => clearInterval(t);
   }, []);
   return (
-    <span className="flex items-center gap-1 font-game-body text-[8px]" style={{ color: "hsl(43 80% 55%)" }}>
+    <span className="flex items-center gap-1 font-body text-[8px]" style={{ color: "hsl(43 80% 55%)" }}>
       <span className="text-[8px]">⏱</span> Resets in {timeLeft}
     </span>
   );
@@ -164,15 +164,15 @@ function CompetitiveCard({ mode, index, onNavigate, userRank }: { mode: typeof T
       <div className="absolute left-0 top-0 bottom-0 w-1 rounded-l-xl" style={{ background: mode.color, opacity: 0.6 }} />
       <span className="text-lg ml-1">{mode.emoji}</span>
       <div className="flex-1 text-left">
-        <span className="font-game-display text-[10px] text-foreground tracking-wider">{mode.label}</span>
+        <span className="font-display text-[10px] text-foreground tracking-wider">{mode.label}</span>
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-game-body text-[9px] text-muted-foreground">{mode.desc}</span>
+          <span className="font-body text-[9px] text-muted-foreground">{mode.desc}</span>
           {(mode as any).liveCount && <LiveIndicator />}
           {mode.id === "daily" && <DailyResetTimer />}
         </div>
       </div>
       {!isLocked && (
-        <span className="font-game-display text-[9px] tracking-wider px-2.5 py-1"
+        <span className="font-display text-[9px] tracking-wider px-2.5 py-1"
           style={{
             borderRadius: "8px",
             background: "linear-gradient(180deg, hsl(217 80% 55%) 0%, hsl(217 70% 42%) 100%)",
@@ -263,12 +263,12 @@ export default function ModeSelectDrawer({ open, onOpenChange }: ModeSelectDrawe
                       style={{ backgroundImage: "radial-gradient(circle, hsl(0 0% 100%) 0.5px, transparent 0.5px)", backgroundSize: "4px 4px" }} />
                     <div className="flex items-center gap-2 mb-1 relative z-10">
                       <span className="text-lg">{mode.emoji}</span>
-                      <span className="font-game-display text-[10px] text-foreground tracking-wider">{mode.label}</span>
+                      <span className="font-display text-[10px] text-foreground tracking-wider">{mode.label}</span>
                     </div>
-                    <span className="font-game-body text-[9px] text-muted-foreground relative z-10">{mode.time}</span>
+                    <span className="font-body text-[9px] text-muted-foreground relative z-10">{mode.time}</span>
                     <div className="mt-1.5 relative z-10">
                       <button onClick={(e) => { e.stopPropagation(); handlePlay(mode.id, mode.overs); }}
-                        className="w-full font-game-display text-[10px] tracking-wider"
+                        className="w-full font-display text-[10px] tracking-wider"
                         style={{
                           padding: "5px 0", borderRadius: "8px",
                           background: "linear-gradient(180deg, hsl(142 71% 50%) 0%, hsl(142 65% 38%) 100%)",
@@ -322,7 +322,7 @@ export default function ModeSelectDrawer({ open, onOpenChange }: ModeSelectDrawe
                 borderBottom: "3px solid hsl(25 12% 8%)",
               }}
             >
-              <span className="font-game-body text-xs text-muted-foreground">
+              <span className="font-body text-xs text-muted-foreground">
                 🎯 Practice Mode <span className="text-[10px]">(vs AI, no rewards)</span>
               </span>
             </motion.button>

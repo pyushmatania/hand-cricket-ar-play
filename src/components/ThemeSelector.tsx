@@ -43,10 +43,10 @@ export default function ThemeSelector({ currentTierIndex, selectedThemeId, onSel
         <div className="w-1.5 h-5 rounded-sm"
           style={{ background: "linear-gradient(180deg, hsl(43 90% 55%) 0%, hsl(35 60% 35%) 100%)" }}
         />
-        <span className="font-game-display text-[10px] tracking-[0.2em] text-foreground uppercase">
+        <span className="font-display text-[10px] tracking-[0.2em] text-foreground uppercase">
           Match Theme
         </span>
-        <span className="text-[8px] text-muted-foreground ml-auto font-game-body">
+        <span className="text-[8px] text-muted-foreground ml-auto font-body">
           {unlocked.length}/{MATCH_THEMES.length} unlocked
         </span>
       </div>
@@ -100,7 +100,7 @@ export default function ThemeSelector({ currentTierIndex, selectedThemeId, onSel
                   {/* Surface emoji + name */}
                   <div className="absolute inset-0 flex items-center justify-between px-2">
                     <span className="text-lg">{theme.emoji}</span>
-                    <span className="text-[9px] font-game-display tracking-wider text-white/90 font-bold"
+                    <span className="text-[9px] font-display tracking-wider text-white/90 font-bold"
                       style={{ textShadow: "0 1px 3px rgba(0,0,0,0.7)" }}>
                       {SURFACE_EMOJI[theme.ground.surface] || "⬜"} {theme.ground.surface.toUpperCase()}
                     </span>
@@ -136,7 +136,7 @@ export default function ThemeSelector({ currentTierIndex, selectedThemeId, onSel
                   <span className="text-[11px] font-game-card font-bold text-foreground block leading-tight truncate">
                     {theme.name}
                   </span>
-                  <span className="text-[8px] text-muted-foreground leading-none font-game-body block mb-1.5">
+                  <span className="text-[8px] text-muted-foreground leading-none font-body block mb-1.5">
                     {theme.subtitle}
                   </span>
 
@@ -147,7 +147,7 @@ export default function ThemeSelector({ currentTierIndex, selectedThemeId, onSel
                       style={{ background: "hsl(25 15% 20%)" }}
                     >
                       <Users className="w-2.5 h-2.5 text-muted-foreground" />
-                      <span className="text-[7px] font-game-body text-foreground/60">
+                      <span className="text-[7px] font-body text-foreground/60">
                         {crowdLabel(theme.crowd.count)}
                       </span>
                     </div>
@@ -156,7 +156,7 @@ export default function ThemeSelector({ currentTierIndex, selectedThemeId, onSel
                       style={{ background: "hsl(25 15% 20%)" }}
                     >
                       <Cloud className="w-2.5 h-2.5 text-muted-foreground" />
-                      <span className="text-[7px] font-game-body text-foreground/60">
+                      <span className="text-[7px] font-body text-foreground/60">
                         {theme.weatherPool.length}
                       </span>
                     </div>
@@ -165,7 +165,7 @@ export default function ThemeSelector({ currentTierIndex, selectedThemeId, onSel
                       style={{ background: "hsl(25 15% 20%)" }}
                     >
                       <Mic className="w-2.5 h-2.5" style={{ color: TONE_COLOR[theme.commentary.tone] || "hsl(0 0% 50%)" }} />
-                      <span className="text-[7px] font-game-body capitalize" style={{ color: TONE_COLOR[theme.commentary.tone] || "hsl(0 0% 60%)" }}>
+                      <span className="text-[7px] font-body capitalize" style={{ color: TONE_COLOR[theme.commentary.tone] || "hsl(0 0% 60%)" }}>
                         {theme.commentary.tone}
                       </span>
                     </div>
@@ -180,7 +180,7 @@ export default function ThemeSelector({ currentTierIndex, selectedThemeId, onSel
                     {theme.atmosphere.fogLevel > 0.05 && <span className="text-[8px]" title="Foggy">🌁</span>}
                     {/* Noise meter — tiny bar */}
                     <div className="ml-auto flex items-center gap-0.5">
-                      <span className="text-[6px] text-muted-foreground font-game-body">🔊</span>
+                      <span className="text-[6px] text-muted-foreground font-body">🔊</span>
                       <div className="w-8 h-1 rounded-full overflow-hidden" style={{ background: "hsl(25 15% 20%)" }}>
                         <div className="h-full rounded-full" style={{
                           width: `${theme.crowd.noise}%`,

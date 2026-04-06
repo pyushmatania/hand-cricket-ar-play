@@ -85,7 +85,7 @@ export default function MatchEmotes({ disabled, onEmoteSent }: MatchEmotesProps)
                 }}
               >
                 <span className="text-3xl block">{b.emote.emoji}</span>
-                <span className="text-[7px] font-game-display tracking-wider text-muted-foreground text-center block mt-0.5">
+                <span className="text-[7px] font-display tracking-wider text-muted-foreground text-center block mt-0.5">
                   {b.emote.label.toUpperCase()}
                 </span>
                 {/* Speech bubble tail */}
@@ -154,7 +154,7 @@ export default function MatchEmotes({ disabled, onEmoteSent }: MatchEmotesProps)
                     }}
                   >
                     <span className="text-lg leading-none">{emote.emoji}</span>
-                    <span className="text-[5px] font-game-display tracking-wider text-muted-foreground">
+                    <span className="text-[5px] font-display tracking-wider text-muted-foreground">
                       {emote.label.toUpperCase()}
                     </span>
                   </motion.button>

@@ -47,7 +47,7 @@ function LazyPage({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen bg-game-dark flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-2 border-game-gold border-t-transparent rounded-full animate-spin" />
-          <span className="font-game-display text-[9px] tracking-[0.25em] text-muted-foreground">LOADING</span>
+          <span className="font-display text-[9px] tracking-[0.25em] text-muted-foreground">LOADING</span>
         </div>
       </div>
     }>

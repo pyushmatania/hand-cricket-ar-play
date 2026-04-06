@@ -19,7 +19,7 @@ export default function ArenaSelector({ currentTierIndex, selectedArenaId, onSel
         <div className="w-1.5 h-5 rounded-sm"
           style={{ background: "linear-gradient(180deg, hsl(43 90% 55%) 0%, hsl(35 60% 35%) 100%)" }}
         />
-        <span className="font-game-display text-[10px] tracking-[0.2em] text-foreground uppercase">
+        <span className="font-display text-[10px] tracking-[0.2em] text-foreground uppercase">
           Arena
         </span>
       </div>
@@ -70,7 +70,7 @@ export default function ArenaSelector({ currentTierIndex, selectedArenaId, onSel
                       style={{ background: "hsl(25 20% 10% / 0.6)" }}
                     >
                       <Lock className="w-4 h-4 text-muted-foreground mb-0.5" />
-                      <span className="text-[8px] text-muted-foreground font-game-display">
+                      <span className="text-[8px] text-muted-foreground font-display">
                         {tier.emoji} {tier.name}
                       </span>
                     </div>
@@ -95,7 +95,7 @@ export default function ArenaSelector({ currentTierIndex, selectedArenaId, onSel
                   <span className="text-[10px] font-game-card font-bold text-foreground block leading-tight truncate">
                     {arena.emoji} {arena.name}
                   </span>
-                  <span className="text-[8px] text-muted-foreground leading-none font-game-body">
+                  <span className="text-[8px] text-muted-foreground leading-none font-body">
                     {arena.subtitle}
                   </span>
                 </div>

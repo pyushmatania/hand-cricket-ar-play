@@ -37,7 +37,7 @@ export default function ScrollHint({ children, className }: ScrollHintProps) {
       {/* Left fade */}
       {canScrollLeft && (
         <div className="absolute left-0 top-0 bottom-0 w-8 z-10 pointer-events-none bg-gradient-to-r from-background to-transparent flex items-center justify-start pl-1">
-          <span className="text-sm font-game-display text-primary drop-shadow-[0_2px_0_rgba(0,0,0,0.5)] animate-pulse" style={{ textShadow: "0 1px 0 hsl(var(--primary-foreground)/0.3), 0 2px 4px rgba(0,0,0,0.4)" }}>‹</span>
+          <span className="text-sm font-display text-primary drop-shadow-[0_2px_0_rgba(0,0,0,0.5)] animate-pulse" style={{ textShadow: "0 1px 0 hsl(var(--primary-foreground)/0.3), 0 2px 4px rgba(0,0,0,0.4)" }}>‹</span>
         </div>
       )}
 
@@ -49,7 +49,7 @@ export default function ScrollHint({ children, className }: ScrollHintProps) {
       {/* Right fade */}
       {canScrollRight && (
         <div className="absolute right-0 top-0 bottom-0 w-8 z-10 pointer-events-none bg-gradient-to-l from-background to-transparent flex items-center justify-end pr-1">
-          <span className="text-sm font-game-display text-primary drop-shadow-[0_2px_0_rgba(0,0,0,0.5)] animate-pulse" style={{ textShadow: "0 1px 0 hsl(var(--primary-foreground)/0.3), 0 2px 4px rgba(0,0,0,0.4)" }}>›</span>
+          <span className="text-sm font-display text-primary drop-shadow-[0_2px_0_rgba(0,0,0,0.5)] animate-pulse" style={{ textShadow: "0 1px 0 hsl(var(--primary-foreground)/0.3), 0 2px 4px rgba(0,0,0,0.4)" }}>›</span>
         </div>
       )}
     </div>

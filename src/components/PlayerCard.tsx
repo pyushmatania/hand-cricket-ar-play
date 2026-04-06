@@ -204,13 +204,13 @@ export default function PlayerCard({ player, size = "md", showStats = true, dela
               boxShadow: "0 2px 0 hsl(25 40% 10%)",
             }}
           >
-            <span className="font-game-display text-[10px] font-black text-game-gold">{player.rating}</span>
+            <span className="font-display text-[10px] font-black text-game-gold">{player.rating}</span>
           </div>
         </div>
 
         {/* Jersey number watermark */}
         <div className="absolute top-0 right-0 z-0 opacity-[0.06]">
-          <span className="font-game-display text-[60px] font-black leading-none">{player.number}</span>
+          <span className="font-display text-[60px] font-black leading-none">{player.number}</span>
         </div>
 
         {/* Character art — fills arch area */}
@@ -237,7 +237,7 @@ export default function PlayerCard({ player, size = "md", showStats = true, dela
               clipPath: "polygon(4% 0%, 96% 0%, 100% 50%, 96% 100%, 4% 100%, 0% 50%)",
             }}
           >
-            <span className="font-game-display text-[9px] font-black text-white tracking-wider whitespace-nowrap"
+            <span className="font-display text-[9px] font-black text-white tracking-wider whitespace-nowrap"
               style={{ textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}
             >
               {player.name.toUpperCase()}
@@ -247,7 +247,7 @@ export default function PlayerCard({ player, size = "md", showStats = true, dela
 
         {/* Role */}
         <div className="text-center mt-0.5 mb-1">
-          <span className="text-[7px] text-muted-foreground font-game-body tracking-widest">{player.role}</span>
+          <span className="text-[7px] text-muted-foreground font-body tracking-widest">{player.role}</span>
         </div>
 
         {/* ── Diamond Stats ── */}
@@ -255,9 +255,9 @@ export default function PlayerCard({ player, size = "md", showStats = true, dela
           <div className="px-2 pb-2 space-y-0.5">
             {player.stats.map((stat) => (
               <div key={stat.label} className="flex items-center justify-between">
-                <span className="text-[7px] text-muted-foreground font-game-body w-14 truncate">{stat.label}</span>
+                <span className="text-[7px] text-muted-foreground font-body w-14 truncate">{stat.label}</span>
                 <DiamondDots filled={stat.diamonds ?? 3} color={diamondColor} />
-                <span className="text-[7px] font-game-display text-foreground w-5 text-right">{stat.value}</span>
+                <span className="text-[7px] font-display text-foreground w-5 text-right">{stat.value}</span>
               </div>
             ))}
           </div>

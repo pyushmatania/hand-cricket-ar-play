@@ -130,7 +130,7 @@ export default function PostMatchPressConference({
       >
         {/* Header */}
         <div className="px-4 py-3 text-center" style={{ borderBottom: "1px solid hsl(25 20% 20%)" }}>
-          <span className="font-game-display text-[7px] tracking-[0.3em] text-muted-foreground">{config.label}</span>
+          <span className="font-display text-[7px] tracking-[0.3em] text-muted-foreground">{config.label}</span>
         </div>
 
         {/* Scene */}
@@ -147,7 +147,7 @@ export default function PostMatchPressConference({
             <div className="flex-1">
               <div className="flex items-center gap-1.5 mb-1">
                 <span className="text-sm">{config.winnerEmoji}</span>
-                <span className="font-game-display text-[11px] font-bold" style={{ color: "hsl(43 90% 55%)" }}>{winnerName}</span>
+                <span className="font-display text-[11px] font-bold" style={{ color: "hsl(43 90% 55%)" }}>{winnerName}</span>
                 <span className="text-[8px] text-muted-foreground">🏆 WINNER</span>
               </div>
               <motion.div
@@ -157,7 +157,7 @@ export default function PostMatchPressConference({
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5 }}
               >
-                <p className="text-[10px] text-foreground/80 font-game-body italic">"{quote}"</p>
+                <p className="text-[10px] text-foreground/80 font-body italic">"{quote}"</p>
               </motion.div>
             </div>
           </div>
@@ -166,19 +166,19 @@ export default function PostMatchPressConference({
           <div className="flex items-center justify-center gap-6 py-3 rounded-xl mb-3"
             style={{ background: "hsl(25 15% 10%)", border: "1px solid hsl(25 18% 20%)" }}>
             <div className="text-center">
-              <span className="font-game-display text-lg font-black" style={{ color: "hsl(43 90% 55%)" }}>{winnerScore}</span>
-              <span className="block text-[7px] text-muted-foreground font-game-display tracking-widest">WINNER</span>
+              <span className="font-display text-lg font-black" style={{ color: "hsl(43 90% 55%)" }}>{winnerScore}</span>
+              <span className="block text-[7px] text-muted-foreground font-display tracking-widest">WINNER</span>
             </div>
             <span className="text-muted-foreground/30">—</span>
             <div className="text-center">
-              <span className="font-game-display text-lg font-black text-muted-foreground">{loserScore}</span>
-              <span className="block text-[7px] text-muted-foreground font-game-display tracking-widest">LOSER</span>
+              <span className="font-display text-lg font-black text-muted-foreground">{loserScore}</span>
+              <span className="block text-[7px] text-muted-foreground font-display tracking-widest">LOSER</span>
             </div>
           </div>
 
           {/* Ambient */}
           <div className="text-center">
-            <span className="text-[7px] text-muted-foreground/40 font-game-display tracking-[0.2em]">{config.ambient}</span>
+            <span className="text-[7px] text-muted-foreground/40 font-display tracking-[0.2em]">{config.ambient}</span>
           </div>
         </div>
 
@@ -189,7 +189,7 @@ export default function PostMatchPressConference({
           animate={{ opacity: [0.3, 0.7, 0.3] }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          <span className="text-[8px] text-muted-foreground/50 font-game-display tracking-widest">TAP TO SKIP</span>
+          <span className="text-[8px] text-muted-foreground/50 font-display tracking-widest">TAP TO SKIP</span>
         </motion.div>
       </motion.div>
     </motion.div>

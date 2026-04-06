@@ -94,7 +94,7 @@ export default function VoiceRecorder({ onVoiceSent }: VoiceRecorderProps) {
     return (
       <div className="flex items-center gap-2 px-3 py-2">
         <Loader2 className="w-3.5 h-3.5 text-primary animate-spin" />
-        <span className="text-[9px] text-muted-foreground font-game-body">Sending voice...</span>
+        <span className="text-[9px] text-muted-foreground font-body">Sending voice...</span>
       </div>
     );
   }
@@ -111,7 +111,7 @@ export default function VoiceRecorder({ onVoiceSent }: VoiceRecorderProps) {
           transition={{ repeat: Infinity, duration: 1 }}
           className="w-3 h-3 rounded-full bg-game-red"
         />
-        <span className="text-[10px] font-game-display text-game-red tracking-wider flex-1">
+        <span className="text-[10px] font-display text-game-red tracking-wider flex-1">
           REC {formatDur(duration)}
         </span>
         <span className="text-[7px] text-muted-foreground">max 30s</span>

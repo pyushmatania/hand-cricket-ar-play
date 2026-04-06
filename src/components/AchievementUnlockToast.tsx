@@ -56,7 +56,7 @@ export default function AchievementUnlockToast({ achievement, onDone }: Achievem
               transition={{ delay: 0.3 }}
               className="flex items-center gap-1.5 mb-0.5"
             >
-              <span className="text-[7px] font-game-display tracking-[0.3em] font-bold" style={{ color: c.text }}>
+              <span className="text-[7px] font-display tracking-[0.3em] font-bold" style={{ color: c.text }}>
                 🏅 ACHIEVEMENT UNLOCKED
               </span>
             </motion.div>
@@ -64,7 +64,7 @@ export default function AchievementUnlockToast({ achievement, onDone }: Achievem
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
-              className="font-game-display text-sm font-black text-white block"
+              className="font-display text-sm font-black text-white block"
             >
               {achievement.title}
             </motion.span>
@@ -72,7 +72,7 @@ export default function AchievementUnlockToast({ achievement, onDone }: Achievem
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="text-[9px] text-white/50 font-game-body block"
+              className="text-[9px] text-white/50 font-body block"
             >
               {achievement.desc}
             </motion.span>
@@ -83,7 +83,7 @@ export default function AchievementUnlockToast({ achievement, onDone }: Achievem
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ type: "spring", delay: 0.5 }}
-            className="px-2 py-1 rounded-lg text-[7px] font-game-display font-bold tracking-wider shrink-0"
+            className="px-2 py-1 rounded-lg text-[7px] font-display font-bold tracking-wider shrink-0"
             style={{ background: `${c.border}25`, color: c.text, border: `1px solid ${c.border}40` }}
           >
             {achievement.tier.toUpperCase()}

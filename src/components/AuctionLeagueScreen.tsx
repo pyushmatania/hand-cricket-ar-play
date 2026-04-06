@@ -260,7 +260,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
         <div className="text-center">
           <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
             className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full mx-auto mb-3" />
-          <p className="font-game-display text-xs tracking-widest text-muted-foreground">LOADING AUCTION</p>
+          <p className="font-display text-xs tracking-widest text-muted-foreground">LOADING AUCTION</p>
         </div>
       </div>
     );
@@ -286,12 +286,12 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
             className="w-9 h-9 rounded-xl glass-premium flex items-center justify-center text-sm">←</motion.button>
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full glass-card">
             <span className="text-sm">🪙</span>
-            <span className="font-game-display text-[10px] tracking-wider" style={{ color: "hsl(43 90% 55%)" }}>
+            <span className="font-display text-[10px] tracking-wider" style={{ color: "hsl(43 90% 55%)" }}>
               {budget.toLocaleString()}
             </span>
           </div>
           <div className="px-3 py-1.5 rounded-full glass-card">
-            <span className="font-game-display text-[9px] tracking-widest text-accent">
+            <span className="font-display text-[9px] tracking-widest text-accent">
               {myTeam.length}/{TEAM_SIZE}
             </span>
           </div>
@@ -299,8 +299,8 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
 
         {/* Header */}
         <div className="relative z-10 text-center py-2">
-          <h2 className="font-game-display text-lg tracking-wider text-foreground">AUCTION</h2>
-          <p className="font-game-body text-[10px] text-muted-foreground">
+          <h2 className="font-display text-lg tracking-wider text-foreground">AUCTION</h2>
+          <p className="font-body text-[10px] text-muted-foreground">
             Player {currentIdx + 1} of {pool.length}
           </p>
         </div>
@@ -324,20 +324,20 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
           >
             {/* Rarity badge */}
             <div className="flex items-center justify-between mb-3">
-              <span className="font-game-display text-[9px] tracking-widest uppercase"
+              <span className="font-display text-[9px] tracking-widest uppercase"
                 style={{ color: RARITY_COLORS[currentPlayer.rarity || "common"] }}>
                 {currentPlayer.rarity || "common"}
               </span>
-              <span className="font-game-display text-[9px] tracking-wider text-muted-foreground">
+              <span className="font-display text-[9px] tracking-wider text-muted-foreground">
                 {currentPlayer.role}
               </span>
             </div>
 
             {/* Player name */}
-            <h3 className="font-game-display text-xl text-foreground mb-1">
+            <h3 className="font-display text-xl text-foreground mb-1">
               {currentPlayer.short_name || currentPlayer.name}
             </h3>
-            <p className="font-game-body text-[10px] text-muted-foreground mb-3">
+            <p className="font-body text-[10px] text-muted-foreground mb-3">
               {currentPlayer.ipl_team || "Free Agent"}
               {currentPlayer.special_ability_name && ` • ${currentPlayer.special_ability_name}`}
             </p>
@@ -353,16 +353,16 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
                 { label: "CLU", val: currentPlayer.clutch },
               ].map(s => (
                 <div key={s.label} className="text-center">
-                  <div className="font-game-display text-[8px] text-muted-foreground tracking-wider">{s.label}</div>
-                  <div className="font-game-display text-sm text-foreground">{s.val}</div>
+                  <div className="font-display text-[8px] text-muted-foreground tracking-wider">{s.label}</div>
+                  <div className="font-display text-sm text-foreground">{s.val}</div>
                 </div>
               ))}
             </div>
 
             {/* Overall */}
             <div className="text-center py-2 rounded-xl" style={{ background: "hsl(25 15% 18%)" }}>
-              <span className="font-game-display text-[9px] text-muted-foreground tracking-wider">OVERALL </span>
-              <span className="font-game-display text-lg" style={{ color: RARITY_COLORS[currentPlayer.rarity || "common"] }}>
+              <span className="font-display text-[9px] text-muted-foreground tracking-wider">OVERALL </span>
+              <span className="font-display text-lg" style={{ color: RARITY_COLORS[currentPlayer.rarity || "common"] }}>
                 {overall}
               </span>
             </div>
@@ -374,25 +374,25 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
               <>
                 {/* Bid slider */}
                 <div className="text-center mb-2">
-                  <span className="font-game-display text-[9px] text-muted-foreground tracking-wider">BASE PRICE: </span>
-                  <span className="font-game-display text-sm" style={{ color: "hsl(43 90% 55%)" }}>🪙 {basePrice}</span>
+                  <span className="font-display text-[9px] text-muted-foreground tracking-wider">BASE PRICE: </span>
+                  <span className="font-display text-sm" style={{ color: "hsl(43 90% 55%)" }}>🪙 {basePrice}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <button onClick={() => setBidAmount(prev => Math.max(basePrice, prev - 25))}
-                    className="w-10 h-10 rounded-xl glass-premium font-game-display text-lg text-foreground">−</button>
+                    className="w-10 h-10 rounded-xl glass-premium font-display text-lg text-foreground">−</button>
                   <div className="flex-1 text-center">
-                    <span className="font-game-display text-2xl" style={{ color: canAfford ? "hsl(43 90% 55%)" : "hsl(0 70% 55%)" }}>
+                    <span className="font-display text-2xl" style={{ color: canAfford ? "hsl(43 90% 55%)" : "hsl(0 70% 55%)" }}>
                       🪙 {bidAmount}
                     </span>
                   </div>
                   <button onClick={() => setBidAmount(prev => Math.min(budget, prev + 25))}
-                    className="w-10 h-10 rounded-xl glass-premium font-game-display text-lg text-foreground">+</button>
+                    className="w-10 h-10 rounded-xl glass-premium font-display text-lg text-foreground">+</button>
                 </div>
 
                 <div className="flex gap-2">
                   <motion.button whileTap={{ scale: 0.95 }} onClick={handleBid}
                     disabled={!canAfford}
-                    className="flex-1 py-3 rounded-xl font-game-display text-sm tracking-wider disabled:opacity-40"
+                    className="flex-1 py-3 rounded-xl font-display text-sm tracking-wider disabled:opacity-40"
                     style={{
                       background: "linear-gradient(180deg, hsl(142 71% 50%) 0%, hsl(142 65% 38%) 100%)",
                       border: "1.5px solid hsl(142 60% 55% / 0.4)",
@@ -402,7 +402,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
                     BID 🪙 {bidAmount}
                   </motion.button>
                   <motion.button whileTap={{ scale: 0.95 }} onClick={handleSkip}
-                    className="px-4 py-3 rounded-xl font-game-display text-[11px] tracking-wider"
+                    className="px-4 py-3 rounded-xl font-display text-[11px] tracking-wider"
                     style={{
                       background: "linear-gradient(180deg, hsl(0 50% 45%) 0%, hsl(0 45% 30%) 100%)",
                       border: "1.5px solid hsl(0 40% 50% / 0.4)",
@@ -417,7 +417,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
 
             {bidPhase === "waiting" && teamFull && (
               <motion.button whileTap={{ scale: 0.95 }} onClick={() => setPhase("review")}
-                className="w-full py-3 rounded-xl font-game-display text-sm tracking-wider"
+                className="w-full py-3 rounded-xl font-display text-sm tracking-wider"
                 style={{
                   background: "linear-gradient(180deg, hsl(43 90% 55%) 0%, hsl(35 80% 40%) 100%)",
                   border: "1.5px solid hsl(43 80% 60% / 0.4)",
@@ -431,31 +431,31 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
             {bidPhase === "bidding" && (
               <div className="text-center py-6">
                 <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 0.8 }}>
-                  <p className="font-game-display text-lg text-accent tracking-wider">BIDDING...</p>
+                  <p className="font-display text-lg text-accent tracking-wider">BIDDING...</p>
                 </motion.div>
-                <p className="font-game-body text-[10px] text-muted-foreground mt-2">AI is deciding...</p>
+                <p className="font-body text-[10px] text-muted-foreground mt-2">AI is deciding...</p>
               </div>
             )}
 
             {bidPhase === "sold" && (
               <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center py-4">
-                <p className="font-game-display text-2xl mb-2" style={{
+                <p className="font-display text-2xl mb-2" style={{
                   color: soldTo === "you" ? "hsl(142 71% 50%)" : "hsl(0 70% 55%)"
                 }}>
                   {soldTo === "you" ? "✅ SOLD TO YOU!" : "❌ SOLD TO AI"}
                 </p>
                 {soldTo === "you" && (
-                  <p className="font-game-display text-sm" style={{ color: "hsl(43 90% 55%)" }}>
+                  <p className="font-display text-sm" style={{ color: "hsl(43 90% 55%)" }}>
                     🪙 {bidAmount} spent
                   </p>
                 )}
                 {soldTo === "ai" && (
-                  <p className="font-game-body text-[10px] text-muted-foreground">
+                  <p className="font-body text-[10px] text-muted-foreground">
                     AI bid 🪙 {aiBid}
                   </p>
                 )}
                 <motion.button whileTap={{ scale: 0.95 }} onClick={handleNextPlayer}
-                  className="mt-4 px-6 py-2.5 rounded-xl font-game-display text-[11px] tracking-wider"
+                  className="mt-4 px-6 py-2.5 rounded-xl font-display text-[11px] tracking-wider"
                   style={{
                     background: "linear-gradient(180deg, hsl(217 80% 55%) 0%, hsl(217 70% 42%) 100%)",
                     border: "1.5px solid hsl(217 60% 60% / 0.4)",
@@ -482,15 +482,15 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
         <div className="relative z-10 flex items-center justify-between px-4 pt-4 pb-2">
           <motion.button whileTap={{ scale: 0.9 }} onClick={onHome}
             className="w-9 h-9 rounded-xl glass-premium flex items-center justify-center text-sm">←</motion.button>
-          <h2 className="font-game-display text-sm tracking-wider text-accent">YOUR SQUAD</h2>
+          <h2 className="font-display text-sm tracking-wider text-accent">YOUR SQUAD</h2>
           <div className="w-9" />
         </div>
 
         <div className="relative z-10 flex-1 px-4 overflow-y-auto pb-24">
           <div className="text-center mb-4">
-            <span className="font-game-display text-[10px] text-muted-foreground tracking-wider">TEAM POWER: </span>
-            <span className="font-game-display text-xl" style={{ color: "hsl(43 90% 55%)" }}>{teamPower}</span>
-            <span className="font-game-display text-[10px] text-muted-foreground ml-2">• BUDGET LEFT: 🪙 {budget}</span>
+            <span className="font-display text-[10px] text-muted-foreground tracking-wider">TEAM POWER: </span>
+            <span className="font-display text-xl" style={{ color: "hsl(43 90% 55%)" }}>{teamPower}</span>
+            <span className="font-display text-[10px] text-muted-foreground ml-2">• BUDGET LEFT: 🪙 {budget}</span>
           </div>
 
           <div className="space-y-2">
@@ -504,12 +504,12 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
                   background: "linear-gradient(180deg, hsl(25 18% 14%) 0%, hsl(25 15% 10%) 100%)",
                   border: `1.5px solid ${RARITY_COLORS[p.rarity || "common"]}40`,
                 }}>
-                <span className="font-game-display text-lg w-8 text-center text-muted-foreground">#{i + 1}</span>
+                <span className="font-display text-lg w-8 text-center text-muted-foreground">#{i + 1}</span>
                 <div className="flex-1">
-                  <p className="font-game-display text-xs text-foreground">{p.short_name || p.name}</p>
-                  <p className="font-game-body text-[9px] text-muted-foreground">{p.role} • {p.ipl_team}</p>
+                  <p className="font-display text-xs text-foreground">{p.short_name || p.name}</p>
+                  <p className="font-body text-[9px] text-muted-foreground">{p.role} • {p.ipl_team}</p>
                 </div>
-                <span className="font-game-display text-sm" style={{ color: RARITY_COLORS[p.rarity || "common"] }}>
+                <span className="font-display text-sm" style={{ color: RARITY_COLORS[p.rarity || "common"] }}>
                   {getOverall(p)}
                 </span>
               </motion.div>
@@ -519,7 +519,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
 
         <div className="fixed bottom-0 inset-x-0 p-4 z-20" style={{ background: "linear-gradient(transparent, hsl(25 15% 6%))" }}>
           <motion.button whileTap={{ scale: 0.95 }} onClick={handleStartKnockout}
-            className="w-full py-4 rounded-xl font-game-display text-base tracking-wider"
+            className="w-full py-4 rounded-xl font-display text-base tracking-wider"
             style={{
               background: "linear-gradient(180deg, hsl(142 71% 50%) 0%, hsl(142 65% 38%) 100%)",
               border: "2px solid hsl(142 60% 55% / 0.4)",
@@ -543,16 +543,16 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
 
         <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
           className="relative z-10 text-center">
-          <p className="font-game-display text-[10px] tracking-[0.3em] text-muted-foreground mb-2">
+          <p className="font-display text-[10px] tracking-[0.3em] text-muted-foreground mb-2">
             ROUND {knockoutRound + 1} OF {KNOCKOUT_ROUNDS}
           </p>
-          <h2 className="font-game-display text-2xl text-foreground mb-2">
+          <h2 className="font-display text-2xl text-foreground mb-2">
             {ROUND_NAMES[knockoutRound]}
           </h2>
-          <p className="font-game-body text-[10px] text-muted-foreground mb-1">
+          <p className="font-body text-[10px] text-muted-foreground mb-1">
             Your Team Power: <span style={{ color: "hsl(43 90% 55%)" }}>{teamPower}</span>
           </p>
-          <p className="font-game-body text-[10px] text-muted-foreground mb-6">
+          <p className="font-body text-[10px] text-muted-foreground mb-6">
             2 overs • Bat first, then bowl
           </p>
 
@@ -560,7 +560,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
           {tournamentResults.length > 0 && (
             <div className="flex items-center justify-center gap-2 mb-6">
               {tournamentResults.map((r, i) => (
-                <span key={i} className="font-game-display text-lg">
+                <span key={i} className="font-display text-lg">
                   {r === "win" ? "✅" : "❌"}
                 </span>
               ))}
@@ -568,7 +568,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
           )}
 
           <motion.button whileTap={{ scale: 0.95 }} onClick={startMatch}
-            className="px-8 py-3 rounded-xl font-game-display text-sm tracking-wider"
+            className="px-8 py-3 rounded-xl font-display text-sm tracking-wider"
             style={{
               background: "linear-gradient(180deg, hsl(0 70% 50%) 0%, hsl(0 60% 35%) 100%)",
               border: "2px solid hsl(0 60% 55% / 0.4)",
@@ -592,10 +592,10 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
 
         {/* HUD */}
         <div className="relative z-10 flex items-center justify-between px-4 pt-4 pb-2">
-          <div className="font-game-display text-[9px] tracking-widest text-accent">
+          <div className="font-display text-[9px] tracking-widest text-accent">
             {ROUND_NAMES[knockoutRound]}
           </div>
-          <div className="font-game-display text-[9px] tracking-wider px-3 py-1 rounded-full"
+          <div className="font-display text-[9px] tracking-wider px-3 py-1 rounded-full"
             style={{
               background: isBatting ? "hsl(217 70% 25%)" : "hsl(0 50% 25%)",
               color: isBatting ? "hsl(217 90% 80%)" : "hsl(0 80% 80%)",
@@ -608,21 +608,21 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
         <div className="relative z-10 text-center py-4">
           <div className="flex items-center justify-center gap-6">
             <div>
-              <p className="font-game-display text-[9px] text-muted-foreground tracking-wider">YOU</p>
-              <p className="font-game-display text-3xl text-foreground">{knockoutScore}</p>
+              <p className="font-display text-[9px] text-muted-foreground tracking-wider">YOU</p>
+              <p className="font-display text-3xl text-foreground">{knockoutScore}</p>
             </div>
-            <span className="font-game-display text-muted-foreground text-xs">vs</span>
+            <span className="font-display text-muted-foreground text-xs">vs</span>
             <div>
-              <p className="font-game-display text-[9px] text-muted-foreground tracking-wider">OPP</p>
-              <p className="font-game-display text-3xl text-foreground">{knockoutOpponentScore}</p>
+              <p className="font-display text-[9px] text-muted-foreground tracking-wider">OPP</p>
+              <p className="font-display text-3xl text-foreground">{knockoutOpponentScore}</p>
             </div>
           </div>
           {knockoutInnings === 2 && (
-            <p className="font-game-display text-[10px] mt-1" style={{ color: "hsl(43 90% 55%)" }}>
+            <p className="font-display text-[10px] mt-1" style={{ color: "hsl(43 90% 55%)" }}>
               Target: {knockoutTarget}
             </p>
           )}
-          <p className="font-game-body text-[10px] text-muted-foreground mt-1">
+          <p className="font-body text-[10px] text-muted-foreground mt-1">
             Ball {knockoutBalls}/{MATCH_BALLS}
           </p>
           {/* Progress bar */}
@@ -640,16 +640,16 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
           {knockoutResult ? (
             <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
               className="text-center mb-8">
-              <p className="font-game-display text-3xl mb-3" style={{
+              <p className="font-display text-3xl mb-3" style={{
                 color: knockoutResult === "win" ? "hsl(142 71% 50%)" : "hsl(0 70% 55%)"
               }}>
                 {knockoutResult === "win" ? "🏆 VICTORY!" : "💀 DEFEATED"}
               </p>
-              <p className="font-game-body text-xs text-muted-foreground mb-4">
+              <p className="font-body text-xs text-muted-foreground mb-4">
                 {knockoutScore} vs {knockoutOpponentScore}
               </p>
               <motion.button whileTap={{ scale: 0.95 }} onClick={handleMatchEnd}
-                className="px-8 py-3 rounded-xl font-game-display text-sm tracking-wider"
+                className="px-8 py-3 rounded-xl font-display text-sm tracking-wider"
                 style={{
                   background: "linear-gradient(180deg, hsl(217 80% 55%) 0%, hsl(217 70% 42%) 100%)",
                   border: "1.5px solid hsl(217 60% 60% / 0.4)",
@@ -664,7 +664,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
               {[1, 2, 3, 4, 5, 6].map(n => (
                 <motion.button key={n} whileTap={{ scale: 0.9 }}
                   onClick={() => playBall(n)}
-                  className="py-5 rounded-xl font-game-display text-xl text-foreground"
+                  className="py-5 rounded-xl font-display text-xl text-foreground"
                   style={{
                     background: `linear-gradient(180deg, hsl(${220 + n * 15} 50% 35%) 0%, hsl(${220 + n * 15} 45% 22%) 100%)`,
                     border: `1.5px solid hsl(${220 + n * 15} 40% 45% / 0.3)`,
@@ -693,8 +693,8 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
 
         <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
           className="relative z-10 text-center px-6">
-          <p className="font-game-display text-[10px] tracking-[0.3em] text-muted-foreground mb-4">AUCTION LEAGUE</p>
-          <h2 className="font-game-display text-3xl mb-2" style={{
+          <p className="font-display text-[10px] tracking-[0.3em] text-muted-foreground mb-4">AUCTION LEAGUE</p>
+          <h2 className="font-display text-3xl mb-2" style={{
             color: isChampion ? "hsl(43 90% 55%)" : "hsl(0 70% 55%)"
           }}>
             {finalPlacement}
@@ -702,17 +702,17 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
 
           <div className="flex items-center justify-center gap-2 my-4">
             {tournamentResults.map((r, i) => (
-              <span key={i} className="font-game-display text-2xl">{r === "win" ? "✅" : "❌"}</span>
+              <span key={i} className="font-display text-2xl">{r === "win" ? "✅" : "❌"}</span>
             ))}
           </div>
 
-          <p className="font-game-body text-xs text-muted-foreground mb-6">
+          <p className="font-body text-xs text-muted-foreground mb-6">
             Team Power: {teamPower} • Budget Left: 🪙 {budget}
           </p>
 
           <div className="flex gap-3">
             <motion.button whileTap={{ scale: 0.95 }} onClick={onHome}
-              className="px-6 py-3 rounded-xl font-game-display text-[11px] tracking-wider"
+              className="px-6 py-3 rounded-xl font-display text-[11px] tracking-wider"
               style={{
                 background: "linear-gradient(180deg, hsl(25 18% 18%) 0%, hsl(25 15% 12%) 100%)",
                 border: "1.5px solid hsl(25 18% 25%)",
@@ -723,7 +723,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
             </motion.button>
             <motion.button whileTap={{ scale: 0.95 }}
               onClick={onHome}
-              className="px-6 py-3 rounded-xl font-game-display text-[11px] tracking-wider"
+              className="px-6 py-3 rounded-xl font-display text-[11px] tracking-wider"
               style={{
                 background: "linear-gradient(180deg, hsl(142 71% 50%) 0%, hsl(142 65% 38%) 100%)",
                 border: "1.5px solid hsl(142 60% 55% / 0.4)",
