@@ -229,7 +229,12 @@ export default function AshesScreen({ onHome }: Props) {
           )}
           <div className="flex gap-3">
             <V10Button variant="secondary" size="md" onClick={onHome}>HOME</V10Button>
-            <V10Button variant="primary" size="md" glow onClick={onHome}>PLAY AGAIN</V10Button>
+            <V10Button variant="primary" size="md" glow onClick={() => {
+              setPhase("intro"); setTestNum(0); setResults([]); setScore(0); setOppScore(0);
+              setBalls(0); setInnings(1); setTarget(0); setMatchResult(null); setLastBall("");
+              ballsRef.current = 0; setFinalPlacement(""); setReward(null);
+              rewardedRef.current = false; setTournamentId(null);
+            }}>PLAY AGAIN</V10Button>
           </div>
         </motion.div>
       </div>
