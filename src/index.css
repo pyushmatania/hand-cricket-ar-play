@@ -1708,7 +1708,7 @@
     overflow: hidden;
   }
 
-  /* V11 TAB SHELF — Wooden Shelf Dock */
+  /* V11 TAB SHELF — Rough Battle-Worn Wooden Shelf Dock */
   .tab-shelf {
     position: fixed;
     bottom: 0;
@@ -1717,17 +1717,43 @@
     height: calc(72px + env(safe-area-inset-bottom, 0px));
     padding-bottom: env(safe-area-inset-bottom, 0px);
     z-index: 100;
-    border-radius: 20px 20px 0 0;
-    border-top: 2px solid #4A2810;
+    border-radius: 18px 16px 0 0;
+    border-top: 5px solid #4A2810;
+    border-left: 4px solid #3E2008;
+    border-right: 4px solid #1A0A02;
     background:
-      linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 35%, transparent 35%),
-      url('/assets/ui/polished-wood-texture.png') repeat,
-      linear-gradient(180deg, #7A5230 0%, #5C3A1E 100%);
-    background-size: 100% 100%, 256px 256px, 100% 100%;
+      /* Crack overlay */
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40'%3E%3Cpath d='M15,8 L35,15 L55,10 L80,20 L100,14' stroke='rgba(0,0,0,0.18)' stroke-width='0.5' fill='none'/%3E%3Cpath d='M120,5 L140,18 L165,12 L185,22' stroke='rgba(0,0,0,0.14)' stroke-width='0.4' fill='none'/%3E%3C/svg%3E"),
+      /* Deep cracks/grooves */
+      repeating-linear-gradient(
+        88deg,
+        transparent 0px, transparent 18px,
+        rgba(0, 0, 0, 0.15) 19px, rgba(0, 0, 0, 0.25) 20px,
+        transparent 21px, transparent 42px,
+        rgba(0, 0, 0, 0.10) 43px, transparent 44px
+      ),
+      /* Fine grain */
+      repeating-linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.04) 0px, transparent 1px,
+        transparent 3px, rgba(0, 0, 0, 0.06) 4px, transparent 5px
+      ),
+      /* Knots */
+      radial-gradient(ellipse 14px 8px at 20% 50%, rgba(0,0,0,0.30), transparent 70%),
+      radial-gradient(ellipse 10px 6px at 65% 40%, rgba(0,0,0,0.25), transparent 70%),
+      radial-gradient(ellipse 12px 7px at 85% 60%, rgba(0,0,0,0.28), transparent 70%),
+      /* Base wood gradient */
+      linear-gradient(180deg,
+        #7A4A28 0%, #6B3A1A 30%, #5A2E12 60%, #4A2410 100%
+      );
     box-shadow:
-      0 -4px 16px rgba(0,0,0,0.50),
-      0 -1px 0 rgba(0,0,0,0.30),
-      inset 0 2px 0 rgba(255,255,255,0.06);
+      0 -8px 16px rgba(0, 0, 0, 0.55),
+      0 -2px 0 rgba(0,0,0,0.30),
+      inset 0 3px 0 rgba(255, 200, 130, 0.12),
+      inset 0 4px 8px rgba(255, 180, 100, 0.06),
+      inset 0 -4px 0 rgba(0, 0, 0, 0.35),
+      inset 4px 0 6px rgba(0, 0, 0, 0.15),
+      inset -4px 0 6px rgba(0, 0, 0, 0.15);
     display: flex;
     align-items: flex-start;
     justify-content: space-around;
