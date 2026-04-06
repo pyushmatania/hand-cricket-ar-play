@@ -642,6 +642,37 @@
   border-bottom-width: 0;
 }
 
+/* V10 Gold Button */
+.btn-v10-gold {
+  background: linear-gradient(180deg, #FFE066 0%, #FFD700 35%, #CCAA00 70%, #AA8800 100%);
+  border: none;
+  border-bottom: 6px solid #775500;
+  border-radius: 16px;
+  padding: 0 28px;
+  min-height: 52px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  color: #3D2800;
+  font-family: "Bungee", cursive;
+  font-size: 18px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+  box-shadow: 0 6px 0 #775500, 0 10px 25px rgba(255,215,0,0.20), inset 0 2px 0 rgba(255,255,255,0.25);
+  transition: all 0.08s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.btn-v10-gold:active {
+  transform: translateY(4px);
+  border-bottom-width: 2px;
+}
+
+@keyframes btn-shine {
+  0%, 80% { transform: translateX(-200%) skewX(-20deg); }
+  100% { transform: translateX(400%) skewX(-20deg); }
+}
+
 /* ═══════════════════════════════════════════════════
    V10 ANIMATIONS — Timing Bible
    Instant: 60-80ms, Micro: 120-180ms,
