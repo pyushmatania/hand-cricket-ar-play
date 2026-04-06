@@ -801,6 +801,19 @@ export default function ClanWars({ clan, myRole }: ClanWarsProps) {
                 ? myClansAttacks.reduce((best, a) => a.stars_earned > best.stars_earned ? a : a.stars_earned === best.stars_earned && a.score > best.score ? a : best)
                 : null;
 
+              // Play ceremony sounds on mount
+              const playCeremonySounds = () => {
+                if (won) {
+                  if (soundEnabled) { SFX.crowdEruption(); setTimeout(() => SFX.victoryAnthem(), 300); }
+                  if (hapticsEnabled) { Haptics.success(); setTimeout(() => Haptics.victoryAnthem(), 500); }
+                } else if (!draw) {
+                  if (soundEnabled) { SFX.crowdGroan(); setTimeout(() => SFX.loss(), 400); }
+                  if (hapticsEnabled) Haptics.error();
+                }
+              };
+              // Trigger once via setTimeout to avoid re-renders
+              setTimeout(playCeremonySounds, 200);
+
               return (
                 <>
                   {/* Victory confetti & trophy */}
