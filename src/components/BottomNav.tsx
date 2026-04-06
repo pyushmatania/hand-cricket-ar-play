@@ -53,7 +53,7 @@ const TAB_ITEMS = [
 
 /* Pure-CSS 3D icon components matching CR metallic/painted style */
 function CRIcon({ type, isActive, isCenter }: { type: string; isActive: boolean; isCenter: boolean }) {
-  const size = isCenter ? 48 : 38;
+  const size = isCenter ? 58 : 38;
   const iconStyle: React.CSSProperties = {
     width: size,
     height: size,
@@ -320,15 +320,15 @@ export default function BottomNav() {
                 navigate(item.path);
               }}
               className="flex flex-col items-center relative"
-              style={{ width: item.center ? 68 : 56 }}
+              style={{ width: item.center ? 78 : 56 }}
               aria-label={item.label}
               aria-current={isActive ? "page" : undefined}
             >
               {/* Icon — lifted when active */}
               <motion.div
                 animate={{
-                  y: isActive ? (item.center ? -14 : -10) : 0,
-                  scale: isActive ? 1.1 : 1,
+                  y: item.center ? -18 : (isActive ? -10 : 0),
+                  scale: isActive ? (item.center ? 1.15 : 1.1) : 1,
                 }}
                 transition={{ type: "spring", stiffness: 400, damping: 18 }}
                 className="relative"
@@ -354,18 +354,48 @@ export default function BottomNav() {
                   isCenter={!!item.center}
                 />
 
-                {/* Battle pulse ring */}
-                {item.center && isActive && (
-                  <motion.div
-                    animate={{
-                      boxShadow: [
-                        "0 0 0 0px rgba(255,180,50,0.4)",
-                        "0 0 0 8px rgba(255,180,50,0)",
-                      ],
-                    }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full pointer-events-none z-20"
-                  />
+                {/* Battle golden pulse rings — always visible for center */}
+                {item.center && (
+                  <>
+                    {/* Outer expanding ring */}
+                    <motion.div
+                      animate={{
+                        scale: [1, 1.8],
+                        opacity: [0.6, 0],
+                      }}
+                      transition={{ duration: 1.8, repeat: Infinity, ease: "easeOut" }}
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none z-10"
+                      style={{
+                        width: 54,
+                        height: 54,
+                        border: "3px solid rgba(255,200,50,0.5)",
+                      }}
+                    />
+                    {/* Inner expanding ring (offset timing) */}
+                    <motion.div
+                      animate={{
+                        scale: [1, 1.6],
+                        opacity: [0.5, 0],
+                      }}
+                      transition={{ duration: 1.8, repeat: Infinity, ease: "easeOut", delay: 0.6 }}
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none z-10"
+                      style={{
+                        width: 54,
+                        height: 54,
+                        border: "2px solid rgba(255,180,50,0.4)",
+                      }}
+                    />
+                    {/* Static golden glow circle behind icon */}
+                    <div
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none z-0"
+                      style={{
+                        width: 62,
+                        height: 62,
+                        background: "radial-gradient(circle, rgba(255,200,50,0.18) 0%, rgba(255,160,30,0.08) 50%, transparent 70%)",
+                        boxShadow: "0 0 16px 4px rgba(255,180,50,0.15)",
+                      }}
+                    />
+                  </>
                 )}
               </motion.div>
 
