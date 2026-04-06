@@ -35,7 +35,7 @@ export default function ClanPage() {
     </div>
   );
 
-  const allTabs = myClan ? (["info", "chat", "donate", "war", "ranks", "browse"] as Tab[]) : (["ranks", "browse"] as Tab[]);
+  const allTabs = myClan ? (["info", "chat", "donate", "war", "match", "ranks", "recruit", "browse"] as Tab[]) : (["ranks", "recruit", "browse"] as Tab[]);
 
   return (
     <div className="min-h-screen bg-v10-base pb-24">
@@ -44,10 +44,10 @@ export default function ClanPage() {
 
       <div className="relative z-10 max-w-lg mx-auto px-4 pt-2">
         {/* Tabs — scoreboard-metal */}
-        <div className="flex gap-1 p-1 scoreboard-metal rounded-2xl mb-4">
+        <div className="flex gap-0.5 p-1 scoreboard-metal rounded-2xl mb-4 overflow-x-auto no-scrollbar">
           {allTabs.map(t => (
             <button key={t} onClick={() => { setTab(t); if (t === "browse") fetchAllClans(); }}
-              className={`flex-1 py-2.5 rounded-xl font-display text-[10px] tracking-widest font-bold transition-all ${tab === t ? "bg-neon-cyan/15 text-neon-cyan" : "text-muted-foreground hover:text-foreground"}`}>
+              className={`flex-shrink-0 px-2.5 py-2.5 rounded-xl font-display text-[8px] tracking-widest font-bold transition-all ${tab === t ? "bg-neon-cyan/15 text-neon-cyan" : "text-muted-foreground hover:text-foreground"}`}>
               {t.toUpperCase()}
             </button>
           ))}
