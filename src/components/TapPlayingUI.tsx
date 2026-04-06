@@ -335,11 +335,13 @@ export default function TapPlayingUI({
       <V10ScoringPopup lastResult={lastResult} triggerKey={shotOverlayKey} />
       <BallPitchAnimation lastResult={lastResult} triggerKey={shotOverlayKey} />
 
-      {/* Arena / pitch background */}
+      {/* Arena / pitch background — V11 warm overlay */}
       {phase !== "not_started" && (
         <div className="fixed inset-0 z-0 pointer-events-none">
           <img src={arenaImage || pitch3d} alt="" className="w-full h-full object-cover opacity-20" style={{ objectPosition: "center 40%", filter: weather?.visual.imageFilter }} />
-          <div className="absolute inset-0 bg-gradient-to-b from-[hsl(220_25%_8%/0.7)] via-[hsl(220_25%_8%/0.4)] to-[hsl(220_25%_8%/0.85)]" />
+          <div className="absolute inset-0" style={{
+            background: "linear-gradient(180deg, rgba(26,15,6,0.8) 0%, rgba(46,26,14,0.5) 40%, rgba(26,15,6,0.9) 100%)",
+          }} />
         </div>
       )}
 
@@ -428,9 +430,12 @@ export default function TapPlayingUI({
             className="rounded-lg overflow-hidden"
             style={{
               height: 44,
-              background: "rgba(0,0,0,0.3)",
-              borderLeft: "3px solid hsl(var(--team-primary))",
+              background: "linear-gradient(135deg, rgba(62,36,16,0.9), rgba(46,26,14,0.9))",
+              borderLeft: "3px solid #8B7355",
               padding: "8px 12px",
+              border: "1px solid rgba(92,58,30,0.4)",
+              borderLeftWidth: "3px",
+              borderLeftColor: "#C4A265",
             }}
           >
             {commentary.slice(0, 1).map((line, i) => {
@@ -465,8 +470,10 @@ export default function TapPlayingUI({
             exit={{ opacity: 0, scale: 0.95 }}
             className="rounded-xl p-2.5 relative overflow-hidden"
             style={{
-              background: "linear-gradient(135deg, hsl(var(--concrete-mid) / 0.8), hsl(var(--concrete-dark) / 0.8))",
-              border: "1px solid hsl(var(--chrome-dark) / 0.3)",
+              background: "linear-gradient(135deg, #3E2410, #2E1A0E)",
+              border: "2px solid #5C3A1E",
+              borderBottom: "3px solid #3E2410",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(245,230,211,0.06)",
             }}
           >
             <div className="flex items-center justify-center gap-4 relative z-10">
@@ -549,8 +556,9 @@ export default function TapPlayingUI({
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
           className="p-3 text-center rounded-2xl"
           style={{
-            background: "linear-gradient(135deg, hsl(var(--concrete-mid) / 0.8), hsl(var(--concrete-dark) / 0.8))",
-            border: "1px solid hsl(var(--chrome-dark) / 0.3)",
+            background: "linear-gradient(135deg, #3E2410, #2E1A0E)",
+            border: "2px solid #5C3A1E",
+            borderBottom: "3px solid #3E2410",
           }}>
           <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 1.5, repeat: Infinity }}>
             <span className="text-2xl block mb-1">⏳</span>
@@ -567,8 +575,10 @@ export default function TapPlayingUI({
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
             <div className="rounded-2xl px-3 py-3 text-center"
               style={{
-                background: "linear-gradient(180deg, hsl(var(--scoreboard-dark) / 0.95), hsl(var(--scoreboard-mid) / 0.9))",
-                border: "1px solid hsl(var(--chrome-dark) / 0.3)",
+                background: "linear-gradient(180deg, #3E2410, #2E1A0E)",
+                border: "2px solid #5C3A1E",
+                borderBottom: "4px solid #3E2410",
+                boxShadow: "0 6px 20px rgba(0,0,0,0.6), inset 0 1px 0 rgba(245,230,211,0.06)",
               }}>
               <p className="font-display text-lg font-bold tracking-wider" style={{ color: "hsl(var(--chalk-white))" }}>
                 {result === "win" ? `🏆 ${playerName.toUpperCase()} WINS!` : result === "loss" ? `😞 ${opponentName} wins!` : "🤝 A TIE!"}

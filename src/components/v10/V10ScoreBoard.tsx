@@ -1,5 +1,5 @@
 /**
- * V10 LED Scoreboard — scoreboard-metal material with animated run counters
+ * V11 Wooden Kingdom Scoreboard — wood + metal + LED materials
  */
 import { useMemo, useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -35,7 +35,7 @@ function getCurrentInningsBalls(ballHistory: BallResult[], currentInnings: 1 | 2
 }
 
 /* LED digit with glow */
-function LEDDigit({ value, color = "hsl(142 80% 55%)" }: { value: string; color?: string }) {
+function LEDDigit({ value, color = "#4ADE50" }: { value: string; color?: string }) {
   return (
     <motion.span
       key={value}
@@ -53,10 +53,13 @@ function LEDDigit({ value, color = "hsl(142 80% 55%)" }: { value: string; color?
   );
 }
 
-/* Over dot */
+/* Over dot — wooden bead style */
 function V10OverDot({ ball }: { ball: BallResult | null }) {
   if (!ball) {
-    return <div className="w-6 h-6 rounded-full" style={{ border: "1.5px dashed rgba(255,255,255,0.08)" }} />;
+    return <div className="w-6 h-6 rounded-full" style={{
+      background: "rgba(62,36,16,0.4)",
+      border: "1.5px dashed rgba(245,230,211,0.12)",
+    }} />;
   }
   const isOut = ball.runs === "OUT";
   const absRuns = typeof ball.runs === "number" ? Math.abs(ball.runs) : 0;
@@ -70,7 +73,7 @@ function V10OverDot({ ball }: { ball: BallResult | null }) {
     : isFour
     ? { bg: "rgba(234,179,8,0.3)", border: "rgba(234,179,8,0.6)", color: "#EAB308", glow: "0 0 8px rgba(234,179,8,0.4)" }
     : absRuns === 0
-    ? { bg: "rgba(0,0,0,0.4)", border: "rgba(255,255,255,0.08)", color: "#64748B", glow: "none" }
+    ? { bg: "rgba(62,36,16,0.6)", border: "rgba(245,230,211,0.1)", color: "#8B7355", glow: "none" }
     : { bg: "rgba(74,222,80,0.15)", border: "rgba(74,222,80,0.3)", color: "#4ADE50", glow: "none" };
 
   return (
@@ -139,11 +142,13 @@ export default function V10ScoreBoard({ game, playerName = "You", aiName = "Rohi
         {showInningsSwitch && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
             className="absolute inset-0 z-50 flex items-center justify-center rounded-2xl overflow-hidden pointer-events-none">
-            <div className="absolute inset-0 backdrop-blur-md" style={{ background: "linear-gradient(135deg, rgba(10,15,30,0.95), rgba(20,30,50,0.95))" }} />
+            <div className="absolute inset-0 backdrop-blur-md" style={{
+              background: "linear-gradient(135deg, #2E1A0E, #1A0F06)",
+            }} />
             <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} transition={{ type: "spring", damping: 12 }} className="relative z-10 text-center">
               <motion.span animate={{ scale: [1, 1.15, 1] }} transition={{ duration: 0.6, repeat: 3 }} className="text-3xl block mb-1">🔄</motion.span>
-              <p className="font-display text-xl font-black tracking-[0.3em] text-white">INNINGS SWITCH</p>
-              <p className="text-[10px] font-display font-bold tracking-wider mt-2 text-muted-foreground">
+              <p className="font-display text-xl font-black tracking-[0.3em]" style={{ color: "#F5E6D3" }}>INNINGS SWITCH</p>
+              <p className="text-[10px] font-display font-bold tracking-wider mt-2" style={{ color: "#8B7355" }}>
                 {game.isBatting ? "🏏 YOU BAT NOW" : "🎯 YOU BOWL NOW"}
               </p>
             </motion.div>
@@ -151,24 +156,39 @@ export default function V10ScoreBoard({ game, playerName = "You", aiName = "Rohi
         )}
       </AnimatePresence>
 
-      {/* ── Main Scoreboard — Scoreboard Metal ── */}
-      <div className="rounded-2xl overflow-hidden scoreboard-metal" style={{
-        boxShadow: "0 8px 32px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1px rgba(255,255,255,0.04)",
+      {/* ── Main Scoreboard — Dark Polished Wood + Metal ── */}
+      <div className="rounded-2xl overflow-hidden relative" style={{
+        background: `linear-gradient(180deg, #3E2410 0%, #2E1A0E 40%, #1A0F06 100%)`,
+        border: "3px solid #5C3A1E",
+        borderBottom: "5px solid #3E2410",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.7), inset 0 2px 0 rgba(245,230,211,0.08), 0 0 0 1px rgba(0,0,0,0.3)",
       }}>
-        {/* Header strip */}
-        <div className="flex items-center justify-between px-3 py-1.5" style={{
-          background: "linear-gradient(90deg, rgba(0,0,0,0.5), rgba(0,0,0,0.3), rgba(0,0,0,0.5))",
-          borderBottom: "1px solid rgba(255,255,255,0.04)",
+        {/* Wood grain overlay */}
+        <div className="absolute inset-0 opacity-[0.04] pointer-events-none" style={{
+          backgroundImage: `url('/assets/ui/wood-plank-texture.png')`,
+          backgroundSize: "200px",
+          mixBlendMode: "overlay",
+        }} />
+
+        {/* Metal corner brackets */}
+        {["top-0 left-0 border-t-2 border-l-2", "top-0 right-0 border-t-2 border-r-2", "bottom-0 left-0 border-b-2 border-l-2", "bottom-0 right-0 border-b-2 border-r-2"].map(pos => (
+          <div key={pos} className={`absolute ${pos} w-4 h-4 z-10`} style={{ borderColor: "#8B7355" }} />
+        ))}
+
+        {/* Header strip — dark wood band */}
+        <div className="flex items-center justify-between px-3 py-1.5 relative" style={{
+          background: "linear-gradient(90deg, rgba(0,0,0,0.4), rgba(0,0,0,0.2), rgba(0,0,0,0.4))",
+          borderBottom: "1px solid rgba(245,230,211,0.06)",
         }}>
           <div className="flex items-center gap-2">
             <div className="w-1.5 h-3 rounded-full" style={{
               background: "linear-gradient(180deg, #4ADE50, #22C55E)",
               boxShadow: "0 0 6px #4ADE50",
             }} />
-            <span className="text-[8px] font-display tracking-[0.2em] font-bold text-white/80">{phaseLabel()}</span>
+            <span className="text-[8px] font-display tracking-[0.2em] font-bold" style={{ color: "#F5E6D3" }}>{phaseLabel()}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            {totalOvers && <span className="text-[7px] font-body font-bold text-white/40">{totalOvers} OV</span>}
+            {totalOvers && <span className="text-[7px] font-body font-bold" style={{ color: "#8B7355" }}>{totalOvers} OV</span>}
             <div className="flex items-center gap-1 px-1.5 py-0.5 rounded-full" style={{
               background: "rgba(239,68,68,0.15)",
               border: "1px solid rgba(239,68,68,0.3)",
@@ -180,8 +200,8 @@ export default function V10ScoreBoard({ game, playerName = "You", aiName = "Rohi
         </div>
 
         {/* Scores area */}
-        <div className="px-3 py-3">
-          {/* Role badge */}
+        <div className="px-3 py-3 relative">
+          {/* Role badge — leather pill */}
           <div className="flex justify-center mb-2">
             <motion.div
               key={game.isBatting ? "bat" : "bowl"}
@@ -190,9 +210,10 @@ export default function V10ScoreBoard({ game, playerName = "You", aiName = "Rohi
               className="text-[8px] font-display font-black tracking-[0.2em] px-3 py-1 rounded-full"
               style={{
                 background: game.isBatting
-                  ? "linear-gradient(135deg, rgba(74,222,80,0.15), rgba(74,222,80,0.03))"
-                  : "linear-gradient(135deg, rgba(59,130,246,0.15), rgba(59,130,246,0.03))",
-                border: `1px solid ${game.isBatting ? "rgba(74,222,80,0.25)" : "rgba(59,130,246,0.25)"}`,
+                  ? "linear-gradient(180deg, rgba(74,222,80,0.15), rgba(74,222,80,0.05))"
+                  : "linear-gradient(180deg, rgba(59,130,246,0.15), rgba(59,130,246,0.05))",
+                border: `1px solid ${game.isBatting ? "rgba(74,222,80,0.3)" : "rgba(59,130,246,0.3)"}`,
+                borderBottom: `2px solid ${game.isBatting ? "rgba(74,222,80,0.4)" : "rgba(59,130,246,0.4)"}`,
                 color: game.isBatting ? "#4ADE50" : "#60A5FA",
               }}
             >
@@ -202,60 +223,57 @@ export default function V10ScoreBoard({ game, playerName = "You", aiName = "Rohi
 
           {/* LED Score display */}
           <div className="flex items-center justify-between">
-            {/* Player */}
             <div className="flex-1 text-center">
-              <p className="text-[7px] font-display font-bold tracking-[0.15em] mb-1 text-white/40">
+              <p className="text-[7px] font-display font-bold tracking-[0.15em] mb-1" style={{ color: "#8B7355" }}>
                 {playerName.toUpperCase().slice(0, 10)}
               </p>
               <div className="flex items-baseline justify-center gap-0.5">
                 <span className="text-[32px] leading-none">
-                  <LEDDigit value={String(game.userScore)} color="hsl(142 80% 55%)" />
+                  <LEDDigit value={String(game.userScore)} color="#4ADE50" />
                 </span>
-                <span className="text-sm font-score font-bold text-white/30">/{game.userWickets}</span>
+                <span className="text-sm font-score font-bold" style={{ color: "#5C3A1E" }}>/{game.userWickets}</span>
               </div>
             </div>
 
-            {/* Center overs */}
             <div className="flex flex-col items-center px-3">
-              <div className="w-px h-5 mb-1" style={{ background: "linear-gradient(180deg, transparent, rgba(255,255,255,0.1), transparent)" }} />
+              <div className="w-px h-5 mb-1" style={{ background: "linear-gradient(180deg, transparent, #5C3A1E, transparent)" }} />
               <div className="px-2 py-0.5 rounded-lg" style={{
-                background: "rgba(0,0,0,0.4)",
-                border: "1px solid rgba(255,255,255,0.06)",
+                background: "rgba(0,0,0,0.5)",
+                border: "1px solid #3E2410",
               }}>
                 <span className="text-[10px] font-score font-bold text-emerald-400" style={{ textShadow: "0 0 8px rgba(74,222,80,0.5)" }}>
                   {oversStr}
                 </span>
               </div>
-              {totalOvers && <span className="text-[7px] font-body text-white/25 mt-0.5">/{totalOvers} ov</span>}
+              {totalOvers && <span className="text-[7px] font-body mt-0.5" style={{ color: "#5C3A1E" }}>/{totalOvers} ov</span>}
             </div>
 
-            {/* Opponent */}
             <div className="flex-1 text-center">
-              <p className="text-[7px] font-display font-bold tracking-[0.15em] mb-1 text-white/40">
+              <p className="text-[7px] font-display font-bold tracking-[0.15em] mb-1" style={{ color: "#8B7355" }}>
                 {aiName.toUpperCase().slice(0, 10)}
               </p>
               <div className="flex items-baseline justify-center gap-0.5">
                 <span className="text-[32px] leading-none">
-                  <LEDDigit value={String(game.aiScore)} color="hsl(210 80% 65%)" />
+                  <LEDDigit value={String(game.aiScore)} color="#60A5FA" />
                 </span>
-                <span className="text-sm font-score font-bold text-white/30">/{game.aiWickets}</span>
+                <span className="text-sm font-score font-bold" style={{ color: "#5C3A1E" }}>/{game.aiWickets}</span>
               </div>
             </div>
           </div>
 
-          {/* Stats strip */}
+          {/* Stats pills — wooden tokens */}
           <div className="flex items-center justify-center gap-2 mt-2">
             <div className="flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{
-              background: "rgba(0,0,0,0.3)", border: "1px solid rgba(255,255,255,0.04)",
+              background: "rgba(0,0,0,0.3)", border: "1px solid #3E2410",
             }}>
-              <span className="text-[7px] font-display font-bold text-white/30">CRR</span>
+              <span className="text-[7px] font-display font-bold" style={{ color: "#8B7355" }}>CRR</span>
               <span className="text-[9px] font-score font-bold text-emerald-400">{runRate}</span>
             </div>
             {requiredRR && (
               <div className="flex items-center gap-1 px-2 py-0.5 rounded-lg" style={{
-                background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.15)",
+                background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)",
               }}>
-                <span className="text-[7px] font-display font-bold text-white/30">RRR</span>
+                <span className="text-[7px] font-display font-bold" style={{ color: "#8B7355" }}>RRR</span>
                 <span className="text-[9px] font-score font-bold" style={{
                   color: parseFloat(requiredRR) > 15 ? "#EF4444" : "#EAB308",
                 }}>{requiredRR}</span>
@@ -274,7 +292,7 @@ export default function V10ScoreBoard({ game, playerName = "You", aiName = "Rohi
                   </span>
                 )}
               </div>
-              <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(0,0,0,0.5)" }}>
+              <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(0,0,0,0.5)", border: "1px solid #3E2410" }}>
                 <motion.div
                   className="h-full rounded-full"
                   style={{ background: "linear-gradient(90deg, #15803D, #4ADE50, #86EFAC)" }}
@@ -286,12 +304,12 @@ export default function V10ScoreBoard({ game, playerName = "You", aiName = "Rohi
           )}
         </div>
 
-        {/* Over tracker */}
-        <div className="px-3 py-1.5" style={{ borderTop: "1px solid rgba(255,255,255,0.03)", background: "rgba(0,0,0,0.25)" }}>
+        {/* Over tracker — dark band */}
+        <div className="px-3 py-1.5 relative" style={{ borderTop: "1px solid rgba(245,230,211,0.04)", background: "rgba(0,0,0,0.3)" }}>
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-[6px] font-display font-bold tracking-[0.2em] text-white/25">THIS OVER</span>
-            <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent)" }} />
-            <span className="text-[6px] font-body text-white/20">{inningsBallCount} balls</span>
+            <span className="text-[6px] font-display font-bold tracking-[0.2em]" style={{ color: "#5C3A1E" }}>THIS OVER</span>
+            <div className="flex-1 h-px" style={{ background: "linear-gradient(90deg, transparent, #3E2410, transparent)" }} />
+            <span className="text-[6px] font-body" style={{ color: "#5C3A1E" }}>{inningsBallCount} balls</span>
           </div>
           <div className="flex gap-1">
             {currentOverBalls.map((b, i) => <V10OverDot key={`${game.currentInnings}-${i}`} ball={b} />)}
@@ -302,17 +320,19 @@ export default function V10ScoreBoard({ game, playerName = "You", aiName = "Rohi
         </div>
       </div>
 
-      {/* Result banner */}
+      {/* Result banner — carved wood plaque */}
       <AnimatePresence>
         {game.phase === "finished" && game.result && (
           <motion.div
             initial={{ scale: 0.3, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", damping: 10 }}
-            className="rounded-2xl text-center py-3 font-display font-black text-lg scoreboard-metal"
+            className="rounded-2xl text-center py-3 font-display font-black text-lg relative overflow-hidden"
             style={{
-              borderBottom: game.result === "win" ? "4px solid #22C55E" : game.result === "loss" ? "4px solid #EF4444" : "4px solid #EAB308",
-              boxShadow: `0 8px 24px rgba(0,0,0,0.5), 0 0 30px ${game.result === "win" ? "rgba(74,222,80,0.15)" : game.result === "loss" ? "rgba(239,68,68,0.15)" : "rgba(234,179,8,0.15)"}`,
+              background: `linear-gradient(180deg, #3E2410, #2E1A0E)`,
+              border: `3px solid ${game.result === "win" ? "#22C55E" : game.result === "loss" ? "#EF4444" : "#EAB308"}`,
+              borderBottom: `5px solid ${game.result === "win" ? "#15803D" : game.result === "loss" ? "#991B1B" : "#A16207"}`,
+              boxShadow: `0 8px 24px rgba(0,0,0,0.6), 0 0 30px ${game.result === "win" ? "rgba(74,222,80,0.15)" : game.result === "loss" ? "rgba(239,68,68,0.15)" : "rgba(234,179,8,0.15)"}`,
             }}
           >
             <motion.span initial={{ scale: 0 }} animate={{ scale: [0, 1.3, 1] }} className="text-2xl block mb-0.5">
@@ -326,10 +346,10 @@ export default function V10ScoreBoard({ game, playerName = "You", aiName = "Rohi
               {game.result === "loss" && `${aiName.toUpperCase()} WINS!`}
               {game.result === "draw" && "IT'S A DRAW!"}
             </span>
-            <p className="text-[10px] font-normal mt-0.5 text-white/40">
+            <p className="text-[10px] font-normal mt-0.5" style={{ color: "#8B7355" }}>
               <span className="font-bold text-emerald-400">{playerName} {game.userScore}/{game.userWickets}</span>
               <span className="mx-2">vs</span>
-              <span className="font-bold text-white/70">{aiName} {game.aiScore}/{game.aiWickets}</span>
+              <span className="font-bold" style={{ color: "#F5E6D3" }}>{aiName} {game.aiScore}/{game.aiWickets}</span>
             </p>
           </motion.div>
         )}
