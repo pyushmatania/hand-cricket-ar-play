@@ -29,8 +29,11 @@ export const CHARACTERS: Record<string, string> = {
   legspinnerRr: charLegspinnerRr,
   powerhitterPbks: charPowerhitterPbks,
   anchorGt: charAnchorGt,
+  allrounderLsg: charAllrounderLsg,
+  keeperCsk: charKeeperCsk,
+  openerRcb: charOpenerRcb,
   vsBatsman,
   vsBowler,
 };
 
-export { charBatsman, charBowler, charAllrounderCsk, charKeeperMi, charCaptainRcb, charOpenerDc, charSpinnerKkr, charPacerSrh, charFinisherMi, charLegspinnerRr, charPowerhitterPbks, charAnchorGt, vsBatsman, vsBowler };
+export { charBatsman, charBowler, charAllrounderCsk, charKeeperMi, charCaptainRcb, charOpenerDc, charSpinnerKkr, charPacerSrh, charFinisherMi, charLegspinnerRr, charPowerhitterPbks, charAnchorGt, charAllrounderLsg, charKeeperCsk, charOpenerRcb, vsBatsman, vsBowler };
