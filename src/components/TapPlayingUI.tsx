@@ -586,12 +586,12 @@ export default function TapPlayingUI({
               </div>
             </div>
             <div className="flex gap-2">
-              <GameButton variant="primary" size="lg" bounce onClick={onReset} className="flex-1">
+              <V10Button variant="primary" size="lg" glow onClick={onReset} className="flex-1">
                 {isPvP ? "🔄 REMATCH" : "⚡ NEW MATCH"}
-              </GameButton>
-              <GameButton variant="secondary" size="lg" bounce onClick={onHome} className="flex-1">
+              </V10Button>
+              <V10Button variant="secondary" size="lg" onClick={onHome} className="flex-1">
                 HOME
-              </GameButton>
+              </V10Button>
             </div>
           </motion.div>
         </div>
