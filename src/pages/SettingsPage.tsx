@@ -50,29 +50,32 @@ const PREVIEW_LINES_HI = [
   "Sachin wali cover drive! Master class!",
 ];
 
-/* ──── V10 Game Toggle ──── */
+/* ──── V11 3D Game Toggle — Cricket Leather Track ──── */
 function GameToggle({ enabled, onToggle, color = "green" }: { enabled: boolean; onToggle: () => void; color?: "green" | "blue" | "gold" | "red" }) {
-  const colorMap = {
-    green: { bg: "hsl(142, 71%, 45%)", glow: "hsl(142, 71%, 45%, 0.4)" },
-    blue: { bg: "hsl(207, 90%, 54%)", glow: "hsl(207, 90%, 54%, 0.4)" },
-    gold: { bg: "hsl(43, 100%, 50%)", glow: "hsl(43, 100%, 50%, 0.4)" },
-    red: { bg: "hsl(4, 90%, 58%)", glow: "hsl(4, 90%, 58%, 0.4)" },
-  };
-  const c = colorMap[color];
   return (
-    <button onClick={onToggle} className="relative w-[52px] h-[30px] rounded-full transition-all duration-200 border-b-[3px] active:border-b-[1px] active:translate-y-[2px]"
+    <button onClick={onToggle} className="relative w-[52px] h-[28px] rounded-[14px] transition-all duration-200"
       style={{
-        background: enabled ? `linear-gradient(to bottom, ${c.bg}, hsl(from ${c.bg} h s calc(l - 15)))` : "linear-gradient(to bottom, hsl(var(--muted)), hsl(var(--muted-foreground) / 0.3))",
-        borderColor: enabled ? `hsl(from ${c.bg} h s calc(l - 20))` : "hsl(var(--muted-foreground) / 0.15)",
-        boxShadow: enabled ? `0 2px 12px ${c.glow}` : "none",
+        background: enabled
+          ? "linear-gradient(180deg, #6B4423, #4A2810)"
+          : "linear-gradient(180deg, #6B4423, #4A2810)",
+        border: "2px solid #3E2410",
+        borderBottom: "3px solid #2E1A0E",
+        boxShadow: enabled
+          ? "0 3px 0 #2E1A0E, 0 4px 8px rgba(0,0,0,0.3), 0 0 10px rgba(74,222,80,0.25), inset 0 1px 0 rgba(255,255,255,0.08)"
+          : "0 3px 0 #2E1A0E, 0 4px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.15)",
       }}>
       <motion.div
-        animate={{ x: enabled ? 22 : 2 }}
+        animate={{ x: enabled ? 22 : 1 }}
         transition={{ type: "spring", stiffness: 600, damping: 28 }}
-        className="absolute top-[3px] w-[22px] h-[22px] rounded-full shadow-md"
-        style={{
-          background: "linear-gradient(to bottom, hsl(0 0% 100%), hsl(0 0% 90%))",
-          boxShadow: "0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8)",
+        className="absolute top-[1px] w-[22px] h-[22px] rounded-full"
+        style={enabled ? {
+          background: "radial-gradient(circle at 35% 35%, #55FF99, #22C55E, #16A34A)",
+          border: "1.5px solid #0D6B2E",
+          boxShadow: "0 2px 4px rgba(0,0,0,0.4), 0 0 8px rgba(74,222,80,0.4), inset 0 1px 0 rgba(255,255,255,0.25)",
+        } : {
+          background: "radial-gradient(circle at 35% 35%, #AAAAAA, #777777, #555555)",
+          border: "1.5px solid #444",
+          boxShadow: "0 2px 4px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.20)",
         }}
       />
     </button>
