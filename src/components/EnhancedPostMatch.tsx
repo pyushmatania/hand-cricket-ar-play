@@ -531,7 +531,7 @@ export default function EnhancedPostMatch({
 
           {/* ── BOTTOM ACTION BUTTONS — V10Button ── */}
           <div className="sticky bottom-0 p-4 pb-8 flex flex-col gap-2"
-            style={{ background: "linear-gradient(to top, hsl(220 35% 5%), hsl(220 35% 5% / 0.95), transparent)" }}>
+            style={{ background: "linear-gradient(to top, #1A1208, rgba(26,18,8,0.95), transparent)" }}>
             <div className="flex gap-2">
               <ShareButton
                 title={`${isWin ? "🏆 Victory" : isLoss ? "Defeat" : "🤝 Tie"} — ${playerScore} vs ${opponentScore}`}
