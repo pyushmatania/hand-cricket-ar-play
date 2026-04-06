@@ -415,8 +415,10 @@ export default function BottomNav() {
           const isActive =
             location.pathname === item.path ||
             (item.path === "/" && (location.pathname === "/" || location.pathname === "/index")) ||
-            (item.path === "/leaderboard" && location.pathname === "/leaderboard") ||
-            (item.path === "/collection" && location.pathname === "/collection");
+            (item.path === "/play" && location.pathname === "/play") ||
+            (item.path === "/friends" && location.pathname === "/friends") ||
+            (item.path === "/profile" && location.pathname === "/profile") ||
+            (item.path === "/leaderboard" && location.pathname === "/leaderboard");
 
           return (
             <motion.button
