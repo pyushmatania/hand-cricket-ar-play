@@ -527,80 +527,21 @@ export default function TapPlayingUI({
 
       {/* ── Hand Selector — Doc 1 §3.6: 72px round buttons, 3×2 grid ── */}
       {phase !== "not_started" && phase !== "finished" && !waitingForOpponent && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="relative pb-1">
-          <div className="flex items-center justify-between mb-2 px-1">
-            <div className="w-9" />
-            <p className="text-center text-[7px] font-display tracking-[0.2em] text-[#64748B]">
-              {isBatting ? "⚡ TAP YOUR SHOT" : "🎯 TAP YOUR BOWL"}
-            </p>
-            <MatchEmotes disabled={effectiveCooldown} />
-          </div>
-          <div
-            className="grid grid-cols-3 gap-3 px-4 py-3"
-            style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.5), transparent)" }}
-          >
-            {activeMoves.map((m, i) => {
-              const HAND_BTN_COLORS: Record<string, { bg: string; dark: string }> = {
-                "1": { bg: "linear-gradient(180deg, #4ADE80, #22C55E, #15803D)", dark: "#0F5132" },
-                "2": { bg: "linear-gradient(180deg, #67E8F9, #06B6D4, #0E7490)", dark: "#064E63" },
-                "3": { bg: "linear-gradient(180deg, #60A5FA, #3B82F6, #1D4ED8)", dark: "#1E3A6E" },
-                "4": { bg: "linear-gradient(180deg, #FDE047, #EAB308, #A16207)", dark: "#724B05" },
-                "6": { bg: "linear-gradient(180deg, #FCA5A5, #EF4444, #991B1B)", dark: "#7F1D1D" },
-                "DEF": { bg: "linear-gradient(180deg, #94A3B8, #64748B, #475569)", dark: "#334155" },
-              };
-              const key = m.move === "DEF" ? "DEF" : String(m.move);
-              const colors = HAND_BTN_COLORS[key] || HAND_BTN_COLORS["DEF"];
-
-              return (
-                <motion.button
-                  key={m.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.05, type: "spring", stiffness: 400, damping: 20 }}
-                  whileTap={{ scale: 0.92, y: 4 }}
-                  onClick={() => handleMove(m.move)}
-                  disabled={effectiveCooldown}
-                  className="flex flex-col items-center justify-center text-white mx-auto"
-                  style={effectiveCooldown ? {
-                    width: 72,
-                    height: 72,
-                    borderRadius: "50%",
-                    background: "rgba(51,65,85,0.5)",
-                    border: "4px solid rgba(51,65,85,0.3)",
-                    opacity: 0.4,
-                    filter: "grayscale(60%)",
-                  } : {
-                    width: 72,
-                    height: 72,
-                    borderRadius: "50%",
-                    background: colors.bg,
-                    border: `4px solid ${colors.dark}`,
-                    borderBottom: `6px solid ${colors.dark}`,
-                    boxShadow: "0 6px 0 rgba(0,0,0,0.2), 0 8px 16px rgba(0,0,0,0.3), inset 0 2px 0 rgba(255,255,255,0.2)",
-                    textShadow: "0 2px 4px rgba(0,0,0,0.6)",
-                  }}
-                >
-                  <span className="text-xl leading-none">{m.emoji}</span>
-                  <span className="font-heading text-xs font-bold">{m.label}</span>
-                  {effectiveCooldown && lastPlayed === m.move && (
-                    <motion.div
-                      initial={{ scaleX: 1 }}
-                      animate={{ scaleX: 0 }}
-                      transition={{ duration: 0.8, ease: "linear" }}
-                      className="absolute bottom-2 left-3 right-3 h-0.5 rounded-full origin-left bg-white/50"
-                    />
-                  )}
-                </motion.button>
-              );
-            })}
-          </div>
+        <>
+          <V10SemiCircleUI
+            isBatting={isBatting}
+            disabled={effectiveCooldown}
+            onMove={handleMove}
+            lastPlayed={lastPlayed}
+            noDefence={config.noDefence}
+          />
           {!isPvP && (
             <button onClick={onReset}
-              className="text-[8px] underline mt-1.5 active:scale-95 font-body tracking-wider w-full text-center text-[#475569]">
+              className="text-[8px] underline mt-1 active:scale-95 font-body tracking-wider w-full text-center text-white/20">
               Reset Match
             </button>
           )}
-        </motion.div>
+        </>
       )}
 
       {/* Waiting for opponent (PvP) */}
