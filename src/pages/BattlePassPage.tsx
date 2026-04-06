@@ -176,7 +176,7 @@ function TierCard({
     <motion.div
       className="relative flex items-stretch gap-0 rounded-2xl overflow-hidden"
       style={{
-        background: CONCRETE_CARD,
+        background: V10_CARD,
         border: reward.milestone
           ? "2px solid hsl(43 70% 45% / 0.5)"
           : unlocked
@@ -388,9 +388,9 @@ export default function BattlePassPage() {
   }, [user, claimed, coins, currentXp, toast]);
 
   return (
-    <div className="min-h-screen relative overflow-hidden pb-28" style={{ background: LEATHER_BG }}>
+    <div className="min-h-screen relative overflow-hidden pb-28" style={{ background: V10_BG }}>
       {/* Leather grain */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: LEATHER_GRAIN, backgroundRepeat: "repeat" }} />
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: V10_BG, backgroundRepeat: "repeat" }} />
       {/* Vignette */}
       <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }} />
 
@@ -425,7 +425,7 @@ export default function BattlePassPage() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
           className="rounded-2xl p-3 flex items-center justify-between mb-4"
           style={{
-            background: CONCRETE_CARD,
+            background: V10_CARD,
             border: "2px solid hsl(25 18% 22%)",
             borderBottom: "5px solid hsl(25 20% 10%)",
             boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
@@ -459,7 +459,7 @@ export default function BattlePassPage() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="rounded-2xl p-3.5 mb-4"
           style={{
-            background: CONCRETE_CARD,
+            background: V10_CARD,
             border: "2px solid hsl(25 18% 22%)",
             borderBottom: "5px solid hsl(25 20% 10%)",
           }}>
