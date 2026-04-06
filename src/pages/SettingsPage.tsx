@@ -87,10 +87,10 @@ function SectionHeader({ icon, title, expanded, onToggle, accentColor }: {
     <motion.button
       whileTap={{ scale: 0.98 }}
       onClick={onToggle}
-      className="w-full flex items-center gap-3 rounded-2xl p-3 scoreboard-metal border-b-[4px] transition-all"
+      className="w-full flex items-center gap-3 rounded-2xl p-3 wood-panel border-b-[4px] transition-all"
       style={{ borderColor: "hsl(222 47% 8%)" }}
     >
-      <div className="w-10 h-10 rounded-xl flex items-center justify-center stadium-glass"
+      <div className="w-10 h-10 rounded-xl flex items-center justify-center wood-panel-dark"
         style={{ border: `1px solid ${accentColor}40` }}>
         <span className="text-xl">{icon}</span>
       </div>
@@ -209,9 +209,9 @@ export default function SettingsPage() {
   ];
 
   const cardStyle = {
-    // V10: stadium-glass cards
+    // V10: wood-panel-dark cards
   };
-  const cardClassName = "stadium-glass";
+  const cardClassName = "wood-panel-dark";
 
   return (
     <div className="min-h-screen relative overflow-hidden pb-24" style={{
@@ -266,7 +266,7 @@ export default function SettingsPage() {
                           initial={{ opacity: 0, x: -15 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: i * 0.03 }}
-                          className="rounded-xl p-3 flex items-center gap-3 stadium-glass"
+                          className="rounded-xl p-3 flex items-center gap-3 wood-panel-dark"
                         >
                           <div className="w-9 h-9 rounded-lg flex items-center justify-center"
                             style={{ background: `${group.accent}18`, border: `1px solid ${group.accent}30` }}>
@@ -283,11 +283,11 @@ export default function SettingsPage() {
 
                     {/* Ambient Volume slider */}
                     {group.title === "AUDIO & SOUND" && settings.musicEnabled && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 stadium-glass">
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 wood-panel-dark">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🏟️</span>
                           <span className="font-display text-[10px] tracking-wider text-foreground">STADIUM AMBIENCE</span>
-                          <span className="text-[10px] text-game-gold font-display ml-auto">{Math.round(settings.ambientVolume * 100)}%</span>
+                          <span className="text-[10px] text-[#FFD700] font-display ml-auto">{Math.round(settings.ambientVolume * 100)}%</span>
                         </div>
                         <Slider value={[settings.ambientVolume * 100]} onValueChange={([v]) => settings.setAmbientVolume(v / 100)} max={100} min={0} step={5} className="w-full" />
                       </motion.div>
@@ -295,7 +295,7 @@ export default function SettingsPage() {
 
                     {/* Voice Engine selector */}
                     {group.title === "COMMENTARY" && settings.voiceEnabled && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 stadium-glass">
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 wood-panel-dark">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🔊</span>
                           <span className="font-display text-[10px] tracking-wider text-foreground">VOICE ENGINE</span>
@@ -329,7 +329,7 @@ export default function SettingsPage() {
 
                     {/* Commentary Language */}
                     {group.title === "COMMENTARY" && settings.commentaryEnabled && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 stadium-glass">
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 wood-panel-dark">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🌐</span>
                           <span className="font-display text-[10px] tracking-wider text-foreground">LANGUAGE</span>
@@ -360,7 +360,7 @@ export default function SettingsPage() {
 
                     {/* ElevenLabs Voices */}
                     {group.title === "COMMENTARY" && settings.voiceEnabled && settings.voiceEngine !== "system" && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 stadium-glass">
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 wood-panel-dark">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🗣️</span>
                           <span className="font-display text-[10px] tracking-wider text-foreground">ELEVENLABS VOICE</span>
@@ -406,7 +406,7 @@ export default function SettingsPage() {
 
                     {/* System Voices */}
                     {group.title === "COMMENTARY" && settings.voiceEnabled && settings.voiceEngine !== "elevenlabs" && (
-                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 stadium-glass">
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="rounded-xl p-3.5 wood-panel-dark">
                         <div className="flex items-center gap-2 mb-3">
                           <span className="text-base">🎭</span>
                           <span className="font-display text-[10px] tracking-wider text-foreground">SYSTEM VOICES</span>
@@ -476,7 +476,7 @@ export default function SettingsPage() {
                             <span className="font-display text-[10px] tracking-wider text-foreground block">{theme.name.toUpperCase()}</span>
                             <span className="text-[8px] text-muted-foreground font-body">{theme.description}</span>
                           </div>
-                          {isSelected && <span className="text-game-green text-sm">✓</span>}
+                          {isSelected && <span className="text-[#7CFC00] text-sm">✓</span>}
                         </div>
                         {/* Preview of buttons */}
                         <div className="flex gap-1.5 justify-center">
@@ -555,7 +555,7 @@ export default function SettingsPage() {
                 <div className="space-y-1.5 pt-2 pb-1">
                   {user ? (
                     <>
-                      <div className="rounded-xl p-3.5 flex items-center gap-3 stadium-glass">
+                      <div className="rounded-xl p-3.5 flex items-center gap-3 wood-panel-dark">
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "hsl(207 90% 54% / 0.15)", border: "1px solid hsl(207 90% 54% / 0.3)" }}>
                           <span className="text-lg">📧</span>
                         </div>
@@ -576,7 +576,7 @@ export default function SettingsPage() {
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "hsl(4 90% 58% / 0.2)" }}>
                           <span className="text-lg">🚪</span>
                         </div>
-                        <span className="font-display text-[10px] tracking-wider text-game-red">SIGN OUT</span>
+                        <span className="font-display text-[10px] tracking-wider text-[#FF4444]">SIGN OUT</span>
                       </motion.button>
                     </>
                   ) : (
@@ -593,7 +593,7 @@ export default function SettingsPage() {
                         <span className="text-lg">🔐</span>
                       </div>
                       <div className="flex-1">
-                        <span className="font-display text-[10px] tracking-wider text-game-green block">SIGN IN</span>
+                        <span className="font-display text-[10px] tracking-wider text-[#7CFC00] block">SIGN IN</span>
                         <span className="text-[8px] text-muted-foreground font-body">Save progress & compete</span>
                       </div>
                     </motion.button>
@@ -602,7 +602,7 @@ export default function SettingsPage() {
                   <motion.button
                     whileTap={{ scale: 0.97 }}
                     onClick={clearData}
-                    className="w-full rounded-xl p-3.5 flex items-center gap-3 text-left stadium-glass"
+                    className="w-full rounded-xl p-3.5 flex items-center gap-3 text-left wood-panel-dark"
                   >
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "hsl(var(--muted-foreground) / 0.1)" }}>
                       <span className="text-lg">🗑️</span>

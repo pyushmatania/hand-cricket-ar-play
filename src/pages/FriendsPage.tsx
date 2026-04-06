@@ -162,14 +162,14 @@ export default function FriendsPage() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-v10-base relative overflow-hidden" style={{ paddingBottom: "calc(68px + env(safe-area-inset-bottom, 16px) + 16px)" }}>
-      <div className="absolute inset-0 bg-gradient-to-b from-v10-base via-v10-base to-v10-deep pointer-events-none" />
+    <div className="min-h-screen bg-[#1A0E05] relative overflow-hidden" style={{ paddingBottom: "calc(68px + env(safe-area-inset-bottom, 16px) + 16px)" }}>
+      <div className="absolute inset-0 bg-gradient-to-b from-[#1A0E05] via-[#1A0E05] to-[#0D0704] pointer-events-none" />
       <TopBar />
 
       <div className="relative z-10 max-w-[430px] mx-auto px-4 pt-4">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 flex items-center gap-3">
-          <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-xl stadium-glass border border-neon-cyan/20">👥</div>
+          <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-xl wood-panel-dark border border-[#FFD700]/20">👥</div>
           <div>
             <h1 className="font-display text-lg text-foreground tracking-wider">Friends</h1>
             <span className="font-display text-[8px] text-muted-foreground tracking-[0.2em]">PLAY TOGETHER</span>
@@ -178,23 +178,23 @@ export default function FriendsPage() {
 
         {/* Invite Code Card */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="scoreboard-metal rounded-2xl p-3.5 mb-4 flex items-center justify-between">
+          className="wood-panel rounded-2xl p-3.5 mb-4 flex items-center justify-between">
           <div>
             <span className="font-display text-[8px] text-muted-foreground tracking-widest block">YOUR INVITE CODE</span>
-            <span className="font-display text-lg tracking-[0.2em] text-game-gold neon-text-gold">{myCode}</span>
+            <span className="font-display text-lg tracking-[0.2em] text-[#FFD700] neon-text-gold">{myCode}</span>
           </div>
           <V10Button variant="gold" size="sm" onClick={copyCode}>📋 COPY</V10Button>
         </motion.div>
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-4 rounded-2xl p-1 scoreboard-metal">
+        <div className="flex gap-1 mb-4 rounded-2xl p-1 wood-panel">
           {tabs.map((t) => (
             <button key={t.key} onClick={() => setTab(t.key)}
-              className={`flex-1 py-2.5 rounded-xl font-display text-[8px] tracking-widest transition-all flex items-center justify-center gap-1 relative ${tab === t.key ? "bg-neon-cyan/15 text-neon-cyan" : "text-muted-foreground hover:text-foreground"}`}>
+              className={`flex-1 py-2.5 rounded-xl font-display text-[8px] tracking-widest transition-all flex items-center justify-center gap-1 relative ${tab === t.key ? "bg-[#FFD700]/15 text-[#FFD700]" : "text-muted-foreground hover:text-foreground"}`}>
               <span className="text-xs">{t.icon}</span>
               <span>{t.label}</span>
               {t.badge && t.badge > 0 && (
-                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[7px] font-bold bg-destructive text-white border-2 border-v10-base">{t.badge}</span>
+                <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[7px] font-bold bg-destructive text-white border-2 border-[#1A0E05]">{t.badge}</span>
               )}
             </button>
           ))}
@@ -204,7 +204,7 @@ export default function FriendsPage() {
         <AnimatePresence>
           {feedback && (
             <motion.div initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-              className="stadium-glass rounded-2xl p-2.5 mb-3 text-center border border-neon-green/20">
+              className="wood-panel-dark rounded-2xl p-2.5 mb-3 text-center border border-neon-green/20">
               <span className="text-[10px] font-body text-foreground">{feedback}</span>
             </motion.div>
           )}
@@ -216,21 +216,21 @@ export default function FriendsPage() {
             <motion.div key="friends" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
               {myProfile && (
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                  className="stadium-glass rounded-2xl p-3.5 mb-4 flex items-center gap-3 border border-neon-cyan/20">
+                  className="wood-panel-dark rounded-2xl p-3.5 mb-4 flex items-center gap-3 border border-[#FFD700]/20">
                   <div className="relative">
                     <V10PlayerAvatar avatarUrl={myProfile.avatar_url} avatarIndex={myProfile.avatar_index ?? 0} size="md" xpProgress={((myProfile.xp ?? 0) % 500) / 5} />
-                    <div className="absolute -bottom-1 -right-1 px-1.5 py-0.5 rounded-full text-[6px] font-display tracking-wider bg-neon-cyan text-v10-base border-2 border-v10-base">YOU</div>
+                    <div className="absolute -bottom-1 -right-1 px-1.5 py-0.5 rounded-full text-[6px] font-display tracking-wider bg-[#FFD700] text-v10-base border-2 border-[#1A0E05]">YOU</div>
                   </div>
                   <div className="flex-1 min-w-0">
                     <span className="font-display text-sm font-bold text-foreground block truncate">{myProfile.display_name}</span>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className="text-[8px] text-muted-foreground font-body">{myProfile.wins}W {myProfile.losses}L</span>
-                      <span className="text-[8px] font-display text-neon-green">{myProfile.total_matches > 0 ? Math.round((myProfile.wins / myProfile.total_matches) * 100) : 0}%</span>
-                      <span className="text-[8px] font-display text-game-gold">⭐ {myProfile.high_score}</span>
+                      <span className="text-[8px] font-display text-[#7CFC00]">{myProfile.total_matches > 0 ? Math.round((myProfile.wins / myProfile.total_matches) * 100) : 0}%</span>
+                      <span className="text-[8px] font-display text-[#FFD700]">⭐ {myProfile.high_score}</span>
                     </div>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="text-[7px] font-display text-neon-cyan">✨ {myProfile.xp ?? 0} XP</span>
-                      <span className="text-[7px] font-display text-game-gold">🪙 {myProfile.coins ?? 0}</span>
+                      <span className="text-[7px] font-display text-[#FFD700]">✨ {myProfile.xp ?? 0} XP</span>
+                      <span className="text-[7px] font-display text-[#FFD700]">🪙 {myProfile.coins ?? 0}</span>
                       <span className="text-[7px] font-display text-destructive">🔥 {myProfile.current_streak ?? 0}</span>
                     </div>
                   </div>
@@ -238,7 +238,7 @@ export default function FriendsPage() {
                 </motion.div>
               )}
               {friends.length === 0 ? (
-                <div className="stadium-glass rounded-2xl p-8 text-center">
+                <div className="wood-panel-dark rounded-2xl p-8 text-center">
                   <span className="text-4xl block mb-3">👥</span>
                   <span className="font-display text-sm text-foreground">No Friends Yet</span>
                   <p className="text-[9px] text-muted-foreground font-body mt-1">Add friends to play together!</p>
@@ -250,25 +250,25 @@ export default function FriendsPage() {
                     const isHotStreak = (f.current_streak ?? 0) >= 3;
                     return (
                       <motion.div key={f.user_id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}
-                        className={`stadium-glass rounded-2xl p-3 flex items-center gap-3 cursor-pointer active:scale-[0.97] transition-transform ${isHotStreak ? "border border-destructive/30 shadow-[0_0_16px_hsl(0_70%_50%/0.1)]" : ""}`}
+                        className={`wood-panel-dark rounded-2xl p-3 flex items-center gap-3 cursor-pointer active:scale-[0.97] transition-transform ${isHotStreak ? "border border-destructive/30 shadow-[0_0_16px_hsl(0_70%_50%/0.1)]" : ""}`}
                         onClick={() => setSelectedFriend(f)}>
                         <div className="relative">
                           <V10PlayerAvatar avatarUrl={f.avatar_url} avatarIndex={f.avatar_index ?? 0} size="sm" />
-                          {isHotStreak && <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center bg-destructive border-2 border-v10-base"><span className="text-[7px]">🔥</span></div>}
+                          {isHotStreak && <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center bg-destructive border-2 border-[#1A0E05]"><span className="text-[7px]">🔥</span></div>}
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5">
                             <span className="font-display text-xs font-bold text-foreground truncate">{f.display_name}</span>
-                            {f.rank_tier && <span className="text-[7px] font-display text-game-gold">{f.rank_tier === "Diamond" ? "💎" : f.rank_tier === "Gold" ? "🥇" : f.rank_tier === "Silver" ? "🥈" : "🏅"}</span>}
+                            {f.rank_tier && <span className="text-[7px] font-display text-[#FFD700]">{f.rank_tier === "Diamond" ? "💎" : f.rank_tier === "Gold" ? "🥇" : f.rank_tier === "Silver" ? "🥈" : "🏅"}</span>}
                           </div>
                           <div className="flex items-center gap-2 mt-0.5">
                             <span className="text-[8px] text-muted-foreground font-body">{f.wins}W {f.losses}L</span>
-                            <span className="text-[8px] font-display text-neon-green">{winRate}%</span>
+                            <span className="text-[8px] font-display text-[#7CFC00]">{winRate}%</span>
                           </div>
                         </div>
                         <V10Button variant="danger" size="sm" onClick={(e) => { e.stopPropagation(); setChallengeTargetId(f.user_id); }}>⚔️ BATTLE</V10Button>
                         <div className="text-right min-w-[40px]">
-                          <span className="font-display text-sm block leading-none text-game-gold tabular-nums">{f.high_score}</span>
+                          <span className="font-display text-sm block leading-none text-[#FFD700] tabular-nums">{f.high_score}</span>
                           <span className="text-[6px] text-muted-foreground font-display tracking-widest">HIGH</span>
                         </div>
                       </motion.div>
@@ -285,13 +285,13 @@ export default function FriendsPage() {
               {incoming.length > 0 && (
                 <>
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm stadium-glass">📥</div>
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm wood-panel-dark">📥</div>
                     <span className="font-display text-[8px] text-muted-foreground tracking-[0.25em]">INCOMING</span>
                   </div>
                   <div className="space-y-2 mb-4">
                     {incoming.map((r, i) => (
                       <motion.div key={r.id} initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}
-                        className="stadium-glass rounded-2xl p-3 flex items-center gap-3 border border-neon-green/20">
+                        className="wood-panel-dark rounded-2xl p-3 flex items-center gap-3 border border-neon-green/20">
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-neon-green/10 border border-neon-green/20"><span className="text-lg">👤</span></div>
                         <div className="flex-1">
                           <span className="font-display text-xs font-bold text-foreground block">{r.from_name}</span>
@@ -309,25 +309,25 @@ export default function FriendsPage() {
               {outgoing.length > 0 && (
                 <>
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm stadium-glass">📤</div>
+                    <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm wood-panel-dark">📤</div>
                     <span className="font-display text-[8px] text-muted-foreground tracking-[0.25em]">SENT</span>
                   </div>
                   <div className="space-y-2">
                     {outgoing.map((r) => (
-                      <div key={r.id} className="stadium-glass rounded-2xl p-3 flex items-center gap-3 opacity-60">
+                      <div key={r.id} className="wood-panel-dark rounded-2xl p-3 flex items-center gap-3 opacity-60">
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-game-gold/10 border border-game-gold/15"><span className="text-lg">📤</span></div>
                         <div className="flex-1">
                           <span className="font-display text-xs font-bold text-foreground block">{r.to_name}</span>
                           <span className="text-[8px] text-muted-foreground font-body">pending...</span>
                         </div>
-                        <span className="text-[9px] font-display text-game-gold">⏳</span>
+                        <span className="text-[9px] font-display text-[#FFD700]">⏳</span>
                       </div>
                     ))}
                   </div>
                 </>
               )}
               {incoming.length === 0 && outgoing.length === 0 && (
-                <div className="stadium-glass rounded-2xl p-8 text-center">
+                <div className="wood-panel-dark rounded-2xl p-8 text-center">
                   <span className="text-4xl block mb-3">📩</span>
                   <span className="font-display text-sm text-foreground">No Requests</span>
                 </div>
@@ -338,20 +338,20 @@ export default function FriendsPage() {
           {/* ADD FRIEND */}
           {tab === "add" && (
             <motion.div key="add" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
-              <div className="stadium-glass rounded-2xl p-4">
+              <div className="wood-panel-dark rounded-2xl p-4">
                 <span className="text-[8px] font-display text-muted-foreground tracking-widest block mb-3">ADD BY INVITE CODE</span>
                 <div className="flex gap-2">
                   <input type="text" value={inviteCode} onChange={(e) => setInviteCode(e.target.value.toUpperCase())} placeholder="ENTER CODE" maxLength={8}
-                    className="flex-1 rounded-xl px-3 py-2.5 text-sm text-foreground font-display tracking-widest placeholder:text-muted-foreground/30 focus:outline-none bg-white/[0.04] border border-white/10 focus:border-neon-cyan/30 transition-colors text-center" />
+                    className="flex-1 rounded-xl px-3 py-2.5 text-sm text-foreground font-display tracking-widest placeholder:text-muted-foreground/30 focus:outline-none bg-white/[0.04] border border-white/10 focus:border-[#FFD700]/30 transition-colors text-center" />
                   <V10Button variant="primary" size="sm" onClick={addByCode} disabled={loading || inviteCode.length < 4}>ADD</V10Button>
                 </div>
               </div>
 
-              <div className="stadium-glass rounded-2xl p-4">
+              <div className="wood-panel-dark rounded-2xl p-4">
                 <span className="text-[8px] font-display text-muted-foreground tracking-widest block mb-3">SEARCH BY NAME</span>
                 <div className="flex gap-2 mb-3">
                   <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Player name..."
-                    className="flex-1 rounded-xl px-3 py-2.5 text-sm text-foreground font-body placeholder:text-muted-foreground/30 focus:outline-none bg-white/[0.04] border border-white/10 focus:border-neon-cyan/30 transition-colors"
+                    className="flex-1 rounded-xl px-3 py-2.5 text-sm text-foreground font-body placeholder:text-muted-foreground/30 focus:outline-none bg-white/[0.04] border border-white/10 focus:border-[#FFD700]/30 transition-colors"
                     onKeyDown={(e) => e.key === "Enter" && searchPlayers()} />
                   <V10Button variant="secondary" size="sm" onClick={searchPlayers} disabled={loading || !searchQuery.trim()}>🔍</V10Button>
                 </div>
@@ -368,9 +368,9 @@ export default function FriendsPage() {
                             <span className="text-[7px] text-muted-foreground font-body">{p.wins}W • {p.total_matches} matches</span>
                           </div>
                           {alreadyFriend ? (
-                            <span className="text-[8px] font-display text-neon-green">✓ FRIENDS</span>
+                            <span className="text-[8px] font-display text-[#7CFC00]">✓ FRIENDS</span>
                           ) : alreadySent ? (
-                            <span className="text-[8px] font-display text-game-gold">⏳ SENT</span>
+                            <span className="text-[8px] font-display text-[#FFD700]">⏳ SENT</span>
                           ) : (
                             <V10Button variant="primary" size="sm" onClick={() => sendRequest(p.user_id)}>+ ADD</V10Button>
                           )}
@@ -386,7 +386,7 @@ export default function FriendsPage() {
           {/* GLOBAL CHAT */}
           {tab === "global" && (
             <motion.div key="global" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="stadium-glass rounded-2xl p-3 h-[420px]">
+              className="wood-panel-dark rounded-2xl p-3 h-[420px]">
               <GlobalChat />
             </motion.div>
           )}
@@ -397,7 +397,7 @@ export default function FriendsPage() {
       {challengeTargetId && (
         <div className="fixed inset-0 z-50 flex items-end justify-center p-4 bg-black/70 backdrop-blur-sm">
           <motion.div initial={{ y: 200, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-            className="w-full max-w-sm stadium-glass rounded-3xl p-5 space-y-3 border border-destructive/20">
+            className="w-full max-w-sm wood-panel-dark rounded-3xl p-5 space-y-3 border border-destructive/20">
             <p className="font-display text-base text-foreground tracking-wider">Choose Battle Mode</p>
             <p className="text-[9px] text-muted-foreground font-body">Send a battle invite with your chosen format.</p>
             <div className="border-b border-white/10 my-2" />
@@ -408,7 +408,7 @@ export default function FriendsPage() {
             ]).map((mode) => (
               <motion.button key={mode.key} whileTap={{ scale: 0.97, y: 2 }}
                 onClick={() => { void challengeFriend(challengeTargetId, mode.key); setChallengeTargetId(null); }}
-                className="w-full p-3.5 rounded-2xl text-left stadium-glass border border-white/10 hover:border-neon-cyan/20 transition-colors">
+                className="w-full p-3.5 rounded-2xl text-left wood-panel-dark border border-white/10 hover:border-[#FFD700]/20 transition-colors">
                 <div className="flex items-center gap-3">
                   <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl bg-white/[0.05] border border-white/10">{mode.icon}</div>
                   <div>
