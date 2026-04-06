@@ -218,13 +218,14 @@ export default function EnhancedPostMatch({
                 initial={{ scale: 0.3, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.5, type: "spring", damping: 10 }}
-                className="font-display text-[48px] font-black tracking-wider leading-none"
+                className="font-display font-black tracking-wider leading-none"
                 style={{
-                  color: isWin ? "hsl(43 96% 56%)" : isLoss ? "hsl(4 90% 58%)" : "hsl(0 0% 100%)",
+                  fontSize: isWin ? "48px" : "36px",
+                  color: isWin ? "#FFD700" : isLoss ? "#FF2D7B" : "#FFF",
                   textShadow: isWin
-                    ? "0 4px 0 hsl(43 70% 30%), 0 0 60px hsl(43 96% 56% / 0.4), 0 8px 20px rgba(0,0,0,0.5)"
-                    : "0 4px 0 hsl(4 50% 25%), 0 8px 20px rgba(0,0,0,0.5)",
-                  WebkitTextStroke: "1px rgba(0,0,0,0.2)",
+                    ? "0 4px 0 #8B6914, 0 0 30px rgba(255,215,0,0.4), 0 0 60px rgba(255,215,0,0.15), 0 8px 20px rgba(0,0,0,0.5)"
+                    : "0 4px 0 rgba(0,0,0,0.4), 0 0 20px rgba(255,45,123,0.3), 0 8px 20px rgba(0,0,0,0.5)",
+                  WebkitTextStroke: "1px rgba(0,0,0,0.3)",
                 }}
               >
                 {isWin ? "VICTORY!" : isLoss ? "DEFEAT" : "TIED!"}
