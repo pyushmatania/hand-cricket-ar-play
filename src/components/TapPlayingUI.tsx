@@ -335,11 +335,13 @@ export default function TapPlayingUI({
       <V10ScoringPopup lastResult={lastResult} triggerKey={shotOverlayKey} />
       <BallPitchAnimation lastResult={lastResult} triggerKey={shotOverlayKey} />
 
-      {/* Arena / pitch background */}
+      {/* Arena / pitch background — V11 warm overlay */}
       {phase !== "not_started" && (
         <div className="fixed inset-0 z-0 pointer-events-none">
           <img src={arenaImage || pitch3d} alt="" className="w-full h-full object-cover opacity-20" style={{ objectPosition: "center 40%", filter: weather?.visual.imageFilter }} />
-          <div className="absolute inset-0 bg-gradient-to-b from-[hsl(220_25%_8%/0.7)] via-[hsl(220_25%_8%/0.4)] to-[hsl(220_25%_8%/0.85)]" />
+          <div className="absolute inset-0" style={{
+            background: "linear-gradient(180deg, rgba(26,15,6,0.8) 0%, rgba(46,26,14,0.5) 40%, rgba(26,15,6,0.9) 100%)",
+          }} />
         </div>
       )}
 
