@@ -259,8 +259,7 @@ export default function SettingsPage() {
                           initial={{ opacity: 0, x: -15 }}
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: i * 0.03 }}
-                          className="rounded-xl p-3 flex items-center gap-3 "
-                          className="stadium-glass"
+                          className="rounded-xl p-3 flex items-center gap-3 stadium-glass"
                         >
                           <div className="w-9 h-9 rounded-lg flex items-center justify-center"
                             style={{ background: `${group.accent}18`, border: `1px solid ${group.accent}30` }}>
@@ -549,8 +548,7 @@ export default function SettingsPage() {
                   <motion.button
                     whileTap={{ scale: 0.97 }}
                     onClick={clearData}
-                    className="w-full rounded-xl p-3.5 flex items-center gap-3 text-left "
-                    className="stadium-glass"
+                    className="w-full rounded-xl p-3.5 flex items-center gap-3 text-left stadium-glass"
                   >
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "hsl(var(--muted-foreground) / 0.1)" }}>
                       <span className="text-lg">🗑️</span>
