@@ -109,13 +109,9 @@ export default function ShopPage() {
   return (
     <div className="min-h-screen relative overflow-hidden pb-24"
       style={{
-        background: "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)",
+        background: "linear-gradient(180deg, hsl(222 47% 6%) 0%, hsl(222 47% 4%) 100%)",
       }}
     >
-      {/* Leather grain overlay */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{ backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")", backgroundRepeat: "repeat" }}
-      />
 
       <TopStatusBar />
 
@@ -124,12 +120,7 @@ export default function ShopPage() {
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
             <motion.button whileTap={{ scale: 0.9 }} onClick={() => navigate(-1)}
-              className="w-10 h-10 rounded-xl flex items-center justify-center font-body text-sm text-foreground active:scale-95 transition-transform"
-              style={{
-                background: "linear-gradient(180deg, hsl(28 20% 22%) 0%, hsl(25 18% 15%) 100%)",
-                border: "2px solid hsl(43 50% 35%)",
-                boxShadow: "0 3px 0 hsl(25 30% 10%), inset 0 1px 0 hsl(43 40% 45% / 0.3)",
-              }}
+              className="w-10 h-10 rounded-xl flex items-center justify-center font-body text-sm text-foreground active:scale-95 transition-transform scoreboard-metal"
             >
               ←
             </motion.button>
@@ -144,24 +135,12 @@ export default function ShopPage() {
         </div>
 
         {/* Category tabs - Stadium Concrete + Jersey Mesh */}
-        <div className="flex gap-1 mb-5 rounded-2xl p-1"
-          style={{
-            background: "linear-gradient(180deg, hsl(25 15% 16%) 0%, hsl(25 12% 12%) 100%)",
-            border: "1px solid hsl(25 20% 22% / 0.6)",
-          }}
-        >
+        <div className="flex gap-1 mb-5 rounded-2xl p-1 scoreboard-metal">
           {CATEGORIES.map(c => (
             <button key={c.key} onClick={() => setCategory(c.key)}
-              className="flex-1 py-2.5 rounded-xl font-display text-[8px] tracking-widest transition-all flex items-center justify-center gap-1"
-              style={category === c.key ? {
-                background: "linear-gradient(180deg, hsl(43 70% 50%) 0%, hsl(35 60% 40%) 100%)",
-                color: "hsl(25 40% 8%)",
-                borderBottom: "3px solid hsl(35 50% 28%)",
-                boxShadow: "0 2px 8px hsl(43 80% 45% / 0.3), inset 0 1px 0 hsl(43 80% 70% / 0.4)",
-                fontWeight: 700,
-              } : {
-                color: "hsl(28 15% 55%)",
-              }}
+              className={`flex-1 py-2.5 rounded-xl font-display text-[8px] tracking-widest transition-all flex items-center justify-center gap-1 ${
+                category === c.key ? "bg-neon-green text-background font-bold" : "text-muted-foreground"
+              }`}
             >
               <span className="text-sm">{c.icon}</span>
               {c.label}
