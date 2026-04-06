@@ -18,9 +18,6 @@ const RANK_ICONS: Record<string, string> = {
   Bronze: "🥉", Silver: "🥈", Gold: "🥇", Platinum: "💎", Diamond: "💠", Master: "👑", Legend: "🏅",
 };
 
-const CONCRETE_CARD = "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)";
-const CHROME_BORDER = "2px solid hsl(220 15% 18%)";
-
 export default function TopStatusBar() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -51,12 +48,12 @@ export default function TopStatusBar() {
   const level = stats ? Math.floor(stats.total_matches / 5) + 1 : 1;
   const xpProgress = stats ? ((stats.total_matches % 5) / 5) * 100 : 0;
   const coins = stats?.coins ?? (stats ? stats.wins * 50 : 0);
-  const rankIcon = RANK_ICONS[stats?.rank_tier || "Bronze"] || "🥉";
 
   return (
     <div className="relative z-20 px-3 pt-3 pb-1">
-      {/* Main bar */}
-      <div className="flex items-center gap-2">
+      {/* Polished wood shelf bar */}
+      <div className="flex items-center gap-2 polished-wood rounded-xl px-3 py-2"
+        style={{ borderBottom: "4px solid #2E1A0E" }}>
 
         {/* Player avatar + level + XP */}
         <button
@@ -64,46 +61,36 @@ export default function TopStatusBar() {
           className="relative flex items-center gap-2 flex-shrink-0 active:scale-95 transition-transform"
         >
           <div className="relative">
-            {/* Avatar ring — concrete with chrome border */}
+            {/* Avatar ring — wood frame */}
             <div className="w-11 h-11 rounded-full flex items-center justify-center"
               style={{
-                background: CONCRETE_CARD,
-                border: "2.5px solid hsl(35 40% 45%)",
-                boxShadow: "0 3px 0 hsl(220 15% 5%), 0 2px 8px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.15)",
+                background: `url('/assets/ui/wood-plank-texture.png') repeat, linear-gradient(180deg, #5C3A1E, #3E2410)`,
+                border: "2.5px solid #2E1A0E",
+                boxShadow: "0 3px 0 rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)",
               }}>
               <span className="text-lg">{user ? "🏏" : "👤"}</span>
             </div>
-            {/* Level badge - 3D pill */}
-            <div className="absolute -bottom-1 -right-1.5 px-1.5 py-0.5 rounded-full"
-              style={{
-                background: "linear-gradient(to bottom, hsl(207,90%,54%), hsl(207,90%,40%))",
-                border: "2px solid hsl(207,90%,30%)",
-                borderBottom: "3px solid hsl(207,90%,25%)",
-                boxShadow: "0 2px 6px hsl(207 90% 54% / 0.4)",
-              }}>
-              <span className="font-display text-[7px] text-white leading-none">{level}</span>
+            {/* Level badge - metal panel */}
+            <div className="absolute -bottom-1 -right-1.5 metal-panel px-1.5 py-0.5 rounded-full">
+              <span className="font-display text-[7px] led-number led-batting leading-none">{level}</span>
             </div>
           </div>
 
           {/* Name + XP bar */}
           <div className="flex flex-col gap-1">
-            <span className="font-display text-[10px] tracking-wider text-foreground leading-none">
+            <span className="font-display text-[10px] tracking-wider leading-none"
+              style={{ color: "#F5E6D3", textShadow: "0 1px 2px rgba(0,0,0,0.5)" }}>
               {stats?.display_name || "PLAYER"}
             </span>
-            <div className="relative w-16 h-[6px] rounded-full overflow-hidden"
-              style={{
-                background: "linear-gradient(to bottom, hsl(220 12% 8%), hsl(220 12% 10%))",
-                border: "1px solid hsl(220 15% 14%)",
-                boxShadow: "inset 0 1px 3px rgba(0,0,0,0.5)",
-              }}>
+            <div className="relative w-16 h-[6px] rounded-full overflow-hidden metal-panel !rounded-full !border !p-0">
               <motion.div
                 initial={{ width: 0 }}
                 animate={{ width: `${xpProgress}%` }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
                 className="h-full rounded-full"
                 style={{
-                  background: "linear-gradient(to right, hsl(134 61% 58%), hsl(51 100% 50%))",
-                  boxShadow: "0 0 6px hsl(134 61% 58% / 0.5)",
+                  background: "linear-gradient(to right, #4ADE50, #FFD700)",
+                  boxShadow: "0 0 6px rgba(74,222,80,0.5)",
                 }}
               />
             </div>
@@ -117,60 +104,44 @@ export default function TopStatusBar() {
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="flex items-center gap-1 px-2 py-1 rounded-xl"
-            style={{
-              background: CONCRETE_CARD,
-              border: CHROME_BORDER,
-              borderBottom: "3px solid hsl(220 15% 6%)",
-              boxShadow: "0 2px 8px hsl(0 84% 60% / 0.15), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
-            }}
+            className="flex items-center gap-1 px-2 py-1 rounded-xl wood-panel"
           >
             <motion.span
               animate={{ scale: [1, 1.2, 1], rotate: [0, 5, -5, 0] }}
               transition={{ repeat: Infinity, duration: 1.5 }}
               className="text-xs"
             >🔥</motion.span>
-            <span className="font-display text-[10px] leading-none" style={{ color: "hsl(0,84%,65%)" }}>{stats.current_streak}</span>
+            <span className="font-display text-[10px] leading-none" style={{ color: "#FF6B35" }}>{stats.current_streak}</span>
           </motion.div>
         )}
 
-        {/* Coins - 3D concrete pill */}
+        {/* Coins - metal pill */}
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={() => navigate("/shop")}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl"
-          style={{
-            background: CONCRETE_CARD,
-            border: CHROME_BORDER,
-            borderBottom: "3px solid hsl(220 15% 6%)",
-            boxShadow: "0 3px 0 hsl(220 15% 5%), 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
-          }}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl metal-panel"
         >
           <motion.span
             animate={{ rotateY: [0, 360] }}
             transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
             className="text-sm inline-block"
           >🪙</motion.span>
-          <span className="font-display text-[10px] leading-none" style={{ color: "hsl(51,100%,60%)" }}>
+          <span className="font-display text-[10px] leading-none led-number led-currency">
             {coins >= 1000 ? `${(coins / 1000).toFixed(1)}K` : coins}
           </span>
-          <span className="text-[10px] opacity-40">+</span>
+          <span className="text-[10px] opacity-40" style={{ color: "#F5E6D3" }}>+</span>
         </motion.button>
 
-        {/* Notification bell */}
+        {/* Notification bell — wood button */}
         <motion.button
           whileTap={{ scale: 0.85 }}
           onClick={() => navigate("/notifications")}
           className="relative w-10 h-10 rounded-xl flex items-center justify-center"
           style={{
-            background: unreadCount > 0
-              ? "linear-gradient(180deg, hsl(0 84% 60% / 0.12), hsl(220 12% 10%))"
-              : CONCRETE_CARD,
-            border: CHROME_BORDER,
-            borderBottom: "3px solid hsl(220 15% 6%)",
-            boxShadow: unreadCount > 0
-              ? "0 3px 0 hsl(220 15% 5%), 0 2px 10px hsl(0 84% 60% / 0.15), inset 0 1px 0 hsl(35 40% 40% / 0.08)"
-              : "0 3px 0 hsl(220 15% 5%), 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+            background: `url('/assets/ui/wood-plank-texture.png') repeat, linear-gradient(180deg, #5C3A1E, #3E2410)`,
+            border: "2px solid #2E1A0E",
+            borderBottom: "4px solid #2E1A0E",
+            boxShadow: "0 3px 0 rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)",
           }}
         >
           <motion.span
@@ -184,10 +155,9 @@ export default function TopStatusBar() {
               animate={{ scale: 1 }}
               className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center"
               style={{
-                background: "linear-gradient(to bottom, hsl(0,84%,58%), hsl(0,84%,45%))",
-                border: "2px solid hsl(220 12% 8%)",
-                borderBottom: "2.5px solid hsl(0,84%,35%)",
-                boxShadow: "0 2px 6px hsl(0 84% 58% / 0.5)",
+                background: "linear-gradient(to bottom, #EF4444, #CC2222)",
+                border: "1.5px solid #7F1D1D",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.4)",
               }}
             >
               <span className="font-display text-[7px] text-white leading-none">{unreadCount > 9 ? "9+" : unreadCount}</span>
@@ -195,16 +165,16 @@ export default function TopStatusBar() {
           )}
         </motion.button>
 
-        {/* Settings gear */}
+        {/* Settings gear — wood button */}
         <motion.button
           whileTap={{ scale: 0.85, rotate: 90 }}
           onClick={() => navigate("/settings")}
           className="w-10 h-10 rounded-xl flex items-center justify-center"
           style={{
-            background: CONCRETE_CARD,
-            border: CHROME_BORDER,
-            borderBottom: "3px solid hsl(220 15% 6%)",
-            boxShadow: "0 3px 0 hsl(220 15% 5%), 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+            background: `url('/assets/ui/wood-plank-texture.png') repeat, linear-gradient(180deg, #5C3A1E, #3E2410)`,
+            border: "2px solid #2E1A0E",
+            borderBottom: "4px solid #2E1A0E",
+            boxShadow: "0 3px 0 rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)",
           }}
         >
           <span className="text-base opacity-60">⚙️</span>
