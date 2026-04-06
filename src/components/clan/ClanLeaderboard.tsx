@@ -15,6 +15,7 @@ interface ClanRanking {
   total_stars: number;
   prev_wins: number;
   prev_stars: number;
+  trophyCounts: { gold: number; silver: number; bronze: number };
 }
 
 interface ClanTrophy {
@@ -48,19 +49,32 @@ export default function ClanLeaderboard() {
 
   useEffect(() => {
     (async () => {
-      const { data: clans } = await supabase.from("clans").select("id, name, tag, emoji, level, max_members");
+      const [clansRes, warsRes, memberCountsRes, trophiesRes] = await Promise.all([
+        supabase.from("clans").select("id, name, tag, emoji, level, max_members"),
+        supabase.from("clan_wars").select("clan_a_id, clan_b_id, clan_a_stars, clan_b_stars, winner_clan_id, created_at").eq("status", "ended"),
+        supabase.from("clan_members").select("clan_id"),
+        supabase.from("clan_trophies").select("clan_id, trophy_type"),
+      ]);
+
+      const clans = clansRes.data;
       if (!clans?.length) { setLoading(false); return; }
 
       const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-      const { data: wars } = await supabase.from("clan_wars")
-        .select("clan_a_id, clan_b_id, clan_a_stars, clan_b_stars, winner_clan_id, created_at")
-        .eq("status", "ended");
-      const warList = (wars as any[]) || [];
+      const warList = (warsRes.data as any[]) || [];
 
-      const { data: memberCounts } = await supabase.from("clan_members").select("clan_id");
       const countMap = new Map<string, number>();
-      (memberCounts || []).forEach((m: any) => {
+      (memberCountsRes.data || []).forEach((m: any) => {
         countMap.set(m.clan_id, (countMap.get(m.clan_id) || 0) + 1);
+      });
+
+      // Trophy counts per clan
+      const trophyMap = new Map<string, { gold: number; silver: number; bronze: number }>();
+      (trophiesRes.data || []).forEach((t: any) => {
+        if (!trophyMap.has(t.clan_id)) trophyMap.set(t.clan_id, { gold: 0, silver: 0, bronze: 0 });
+        const tc = trophyMap.get(t.clan_id)!;
+        if (t.trophy_type === "gold") tc.gold++;
+        else if (t.trophy_type === "silver") tc.silver++;
+        else tc.bronze++;
       });
 
       const allStats = new Map<string, { wins: number; stars: number }>();
@@ -94,6 +108,7 @@ export default function ClanLeaderboard() {
         total_stars: allStats.get(c.id)?.stars || 0,
         prev_wins: prevStats.get(c.id)?.wins || 0,
         prev_stars: prevStats.get(c.id)?.stars || 0,
+        trophyCounts: trophyMap.get(c.id) || { gold: 0, silver: 0, bronze: 0 },
       }));
 
       setRankings(ranked);
@@ -466,9 +481,16 @@ export default function ClanLeaderboard() {
                     <span className="font-display text-xs font-bold text-foreground truncate">{c.name}</span>
                     <span className="text-[7px] text-muted-foreground font-display">[{c.tag}]</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[8px] text-muted-foreground font-display tabular-nums">
+                  <div className="flex items-center gap-1.5 text-[8px] text-muted-foreground font-display tabular-nums">
                     <span>Lv.{c.level}</span>
                     <span>👥 {c.member_count}</span>
+                    {(c.trophyCounts.gold > 0 || c.trophyCounts.silver > 0 || c.trophyCounts.bronze > 0) && (
+                      <span className="flex items-center gap-0.5 ml-0.5">
+                        {c.trophyCounts.gold > 0 && <span className="text-[7px]">🏆{c.trophyCounts.gold}</span>}
+                        {c.trophyCounts.silver > 0 && <span className="text-[7px]">🥈{c.trophyCounts.silver}</span>}
+                        {c.trophyCounts.bronze > 0 && <span className="text-[7px]">🥉{c.trophyCounts.bronze}</span>}
+                      </span>
+                    )}
                   </div>
                 </div>
 

@@ -8,6 +8,8 @@ import TopBar from "@/components/layout/TopBar";
 import ClanDonations from "@/components/clan/ClanDonations";
 import ClanLeaderboard from "@/components/clan/ClanLeaderboard";
 import ClanWars from "@/components/clan/ClanWars";
+import ClanRecruitment from "@/components/clan/ClanRecruitment";
+import ClanMatchmaking from "@/components/clan/ClanMatchmaking";
 import V10PlayerAvatar from "@/components/shared/V10PlayerAvatar";
 import V10Button from "@/components/shared/V10Button";
 
@@ -17,7 +19,7 @@ const ROLE_COLORS: Record<string, string> = { leader: "text-neon-cyan", co_leade
 const CLAN_EMOJIS = ["🏏", "⚡", "🔥", "💎", "🦁", "🐯", "🦅", "🐉", "⭐", "🌟", "👑", "🛡️"];
 const LEVEL_XP = [0, 100, 300, 600, 1000, 1500, 2200, 3000, 4000, 5500];
 
-type Tab = "info" | "chat" | "donate" | "war" | "ranks" | "browse";
+type Tab = "info" | "chat" | "donate" | "war" | "ranks" | "recruit" | "match" | "browse";
 
 export default function ClanPage() {
   const navigate = useNavigate();
@@ -33,7 +35,7 @@ export default function ClanPage() {
     </div>
   );
 
-  const allTabs = myClan ? (["info", "chat", "donate", "war", "ranks", "browse"] as Tab[]) : (["ranks", "browse"] as Tab[]);
+  const allTabs = myClan ? (["info", "chat", "donate", "war", "match", "ranks", "recruit", "browse"] as Tab[]) : (["ranks", "recruit", "browse"] as Tab[]);
 
   return (
     <div className="min-h-screen bg-v10-base pb-24">
@@ -42,10 +44,10 @@ export default function ClanPage() {
 
       <div className="relative z-10 max-w-lg mx-auto px-4 pt-2">
         {/* Tabs — scoreboard-metal */}
-        <div className="flex gap-1 p-1 scoreboard-metal rounded-2xl mb-4">
+        <div className="flex gap-0.5 p-1 scoreboard-metal rounded-2xl mb-4 overflow-x-auto no-scrollbar">
           {allTabs.map(t => (
             <button key={t} onClick={() => { setTab(t); if (t === "browse") fetchAllClans(); }}
-              className={`flex-1 py-2.5 rounded-xl font-display text-[10px] tracking-widest font-bold transition-all ${tab === t ? "bg-neon-cyan/15 text-neon-cyan" : "text-muted-foreground hover:text-foreground"}`}>
+              className={`flex-shrink-0 px-2.5 py-2.5 rounded-xl font-display text-[8px] tracking-widest font-bold transition-all ${tab === t ? "bg-neon-cyan/15 text-neon-cyan" : "text-muted-foreground hover:text-foreground"}`}>
               {t.toUpperCase()}
             </button>
           ))}
@@ -75,6 +77,16 @@ export default function ClanPage() {
           {tab === "ranks" && (
             <motion.div key="ranks" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
               <ClanLeaderboard />
+            </motion.div>
+          )}
+          {tab === "match" && myClan && (
+            <motion.div key="match" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
+              <ClanMatchmaking />
+            </motion.div>
+          )}
+          {tab === "recruit" && (
+            <motion.div key="recruit" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
+              <ClanRecruitment />
             </motion.div>
           )}
           {tab === "browse" && (
