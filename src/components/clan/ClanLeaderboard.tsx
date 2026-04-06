@@ -275,6 +275,8 @@ export default function ClanLeaderboard() {
     return { aWins, bWins, draws };
   }, [compareData]);
 
+  const MEDAL = ["🥇", "🥈", "🥉"];
+
   if (loading) return (
     <div className="flex items-center justify-center py-12">
       <div className="w-6 h-6 border-2 border-neon-cyan border-t-transparent rounded-full animate-spin" />
