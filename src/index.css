@@ -1507,6 +1507,13 @@
     --btn-dark: #1F2937;
     --btn-text: #D1D5DB;
   }
+  .btn-leather.team {
+    --btn-start: var(--team-light, #F5F0E8);
+    --btn-mid: hsl(var(--team-primary));
+    --btn-end: hsl(var(--team-accent));
+    --btn-dark: hsl(var(--team-dark));
+    --btn-text: white;
+  }
 
   /* V11 MATERIAL 4: HAMMERED METAL — Data Display */
   .metal-panel {
