@@ -470,8 +470,10 @@ export default function TapPlayingUI({
             exit={{ opacity: 0, scale: 0.95 }}
             className="rounded-xl p-2.5 relative overflow-hidden"
             style={{
-              background: "linear-gradient(135deg, hsl(var(--concrete-mid) / 0.8), hsl(var(--concrete-dark) / 0.8))",
-              border: "1px solid hsl(var(--chrome-dark) / 0.3)",
+              background: "linear-gradient(135deg, #3E2410, #2E1A0E)",
+              border: "2px solid #5C3A1E",
+              borderBottom: "3px solid #3E2410",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.5), inset 0 1px 0 rgba(245,230,211,0.06)",
             }}
           >
             <div className="flex items-center justify-center gap-4 relative z-10">
