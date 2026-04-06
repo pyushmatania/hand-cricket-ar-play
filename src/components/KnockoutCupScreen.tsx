@@ -52,6 +52,16 @@ export default function KnockoutCupScreen({ onHome }: Props) {
   const [reward, setReward] = useState<TournamentReward | null>(null);
   const rewardedRef = useRef(false);
 
+  const handlePlayAgain = useCallback(() => {
+    const shuffled = [...AI_TEAMS].sort(() => Math.random() - 0.5).slice(0, 7);
+    setBracket([{ name: "Your Team", emoji: "⭐", strength: 80, isPlayer: true }, ...shuffled].sort(() => Math.random() - 0.5));
+    setPhase("bracket"); setRound(0); setMatchResults([]); setCurrentOpponent(null);
+    setScore(0); setOppScore(0); setBalls(0); setInnings(1); setTarget(0);
+    setMatchResult(null); setLastBall(""); ballsRef.current = 0;
+    setFinalPlacement(""); setReward(null); rewardedRef.current = false;
+    tournamentCreated.current = false; setTournamentId(null);
+  }, []);
+
   useEffect(() => {
     if (!tournamentCreated.current && user) {
       tournamentCreated.current = true;
@@ -253,7 +263,7 @@ export default function KnockoutCupScreen({ onHome }: Props) {
           )}
           <div className="flex gap-3">
             <V10Button variant="secondary" size="md" onClick={onHome}>HOME</V10Button>
-            <V10Button variant="primary" size="md" glow onClick={onHome}>PLAY AGAIN</V10Button>
+            <V10Button variant="primary" size="md" glow onClick={handlePlayAgain}>PLAY AGAIN</V10Button>
           </div>
         </motion.div>
       </div>
