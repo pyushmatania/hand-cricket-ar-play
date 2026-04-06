@@ -35,6 +35,16 @@ const ROUNDS: Round[] = [
 ];
 
 type Phase = "lobby" | "storm" | "batting" | "result" | "eliminated" | "champion";
+type LobbyTab = "info" | "leaderboard";
+
+interface LeaderboardEntry {
+  user_id: string;
+  display_name: string;
+  best_placement: number;
+  total_runs: number;
+  games_played: number;
+  champions: number;
+}
 
 interface CricketRoyaleScreenProps {
   onHome: () => void;
