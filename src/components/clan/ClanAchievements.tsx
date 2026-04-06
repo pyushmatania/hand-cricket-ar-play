@@ -58,6 +58,8 @@ export default function ClanAchievements({ clanId }: { clanId: string }) {
   const [stats, setStats] = useState<ClanStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>("all");
+  const [newlyUnlockedIds, setNewlyUnlockedIds] = useState<string[]>([]);
+  const [celebrationAchievement, setCelebrationAchievement] = useState<AchievementDef | null>(null);
 
   useEffect(() => {
     loadData();
