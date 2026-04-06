@@ -1,14 +1,18 @@
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { SFX, Haptics } from "@/lib/sounds";
-import type { ReactNode, ButtonHTMLAttributes } from "react";
+import type { ReactNode } from "react";
 
-interface V10ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface V10ButtonProps {
   variant?: "primary" | "secondary" | "danger" | "battle" | "gold";
   size?: "sm" | "md" | "lg" | "battle";
   children: ReactNode;
   icon?: ReactNode;
   glow?: boolean;
+  className?: string;
+  disabled?: boolean;
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+  type?: "button" | "submit" | "reset";
 }
 
 const variantClasses: Record<string, string> = {
@@ -33,17 +37,21 @@ export default function V10Button({
   icon,
   glow = false,
   className,
-  ...props
+  disabled,
+  onClick,
+  type = "button",
 }: V10ButtonProps) {
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     SFX.tap();
     Haptics.light();
-    props.onClick?.(e);
+    onClick?.(e);
   };
 
   return (
     <motion.button
-      whileTap={{ scale: 0.97 }}
+      whileTap={disabled ? undefined : { scale: 0.97 }}
+      type={type}
+      disabled={disabled}
       className={cn(
         variantClasses[variant],
         sizeOverrides[size],
@@ -53,11 +61,10 @@ export default function V10Button({
         "relative overflow-hidden",
         className
       )}
-      {...props}
       onClick={handleClick}
     >
       {/* Shine sweep */}
-      <span className="absolute inset-0 pointer-events-none overflow-hidden rounded-inherit">
+      <span className="absolute inset-0 pointer-events-none overflow-hidden">
         <span className="absolute top-0 -left-full w-1/2 h-full bg-gradient-to-r from-transparent via-white/15 to-transparent skew-x-[-20deg] animate-[btn-shine_4s_ease-in-out_infinite_2s]" />
       </span>
       {icon && <span className="text-xl relative z-10">{icon}</span>}
