@@ -53,6 +53,8 @@ function formatTime(seconds: number): string {
   return `${s}s`;
 }
 
+// Removed CRICKET_CHEST — now using getChestTier() from lib/chests for 3D images
+
 const MAIN_MODES = [
   { id: "tap", icon: "⚡", label: "TAP", sub: "Quick Play", color: "#4ADE50" },
   { id: "pvp", icon: "⚔️", label: "PVP", sub: "Online", color: "#FF2D7B" },
@@ -177,12 +179,14 @@ export default function HomePage() {
   const winRate = profile && profile.total_matches > 0 ? Math.round((profile.wins / profile.total_matches) * 100) : 0;
 
   return (
-    <div className="relative w-full h-full overflow-y-auto overflow-x-hidden no-scrollbar game-screen-v11">
+    <div className="relative w-full h-full overflow-y-auto overflow-x-hidden no-scrollbar game-screen">
 
-      {/* V11 Floating dust particles */}
+      {/* V10 Ambient particles */}
       <div className="fixed inset-0 pointer-events-none z-[2] overflow-hidden">
-        {Array.from({ length: 18 }).map((_, i) => {
-          const size = 1.5 + (i % 3) * 0.5;
+        {Array.from({ length: 20 }).map((_, i) => {
+          const size = 1.5 + (i % 4) * 0.8;
+          const colors = ["rgba(74,222,80,", "rgba(0,212,255,", "rgba(255,215,0,", "rgba(168,85,247,"];
+          const color = colors[i % colors.length];
           return (
             <div
               key={i}
@@ -190,22 +194,22 @@ export default function HomePage() {
               style={{
                 width: size,
                 height: size,
-                left: `${(i * 5.6 + 3) % 100}%`,
+                left: `${(i * 5.3 + 3) % 100}%`,
                 bottom: `${-5 - (i % 6) * 3}%`,
-                background: `rgba(139,115,85,0.15)`,
-                boxShadow: `0 0 ${size * 2}px rgba(139,115,85,0.08)`,
-                ['--rise-dur' as string]: `${12 + (i % 5) * 2}s`,
-                ['--delay' as string]: `${(i * 0.8) % 14}s`,
-                ['--drift-x' as string]: `${Math.sin(i * 0.9) * 20}px`,
-                ['--sway-amount' as string]: `${5 + (i % 3) * 3}px`,
-                ['--sway-dur' as string]: `${4 + (i % 3) * 1.5}s`,
+                background: `${color}0.4)`,
+                boxShadow: `0 0 ${size * 2}px ${color}0.2)`,
+                ['--rise-dur' as string]: `${10 + (i % 6) * 2}s`,
+                ['--delay' as string]: `${(i * 0.7) % 12}s`,
+                ['--drift-x' as string]: `${Math.sin(i * 0.9) * 25}px`,
+                ['--sway-amount' as string]: `${6 + (i % 4) * 4}px`,
+                ['--sway-dur' as string]: `${4 + (i % 4) * 1.5}s`,
               }}
             />
           );
         })}
       </div>
 
-      {/* ═══ A: V11 IDENTITY BAR ═══ */}
+      {/* ═══ A: V10 IDENTITY BAR ═══ */}
       <IdentityBar
         playerName={playerName}
         playerLevel={playerLevel}
@@ -237,75 +241,53 @@ export default function HomePage() {
 
       {/* ═══ C: STATS BAR + BATTLE BUTTON ═══ */}
       <div className="relative z-10 flex flex-col items-center -mt-6 mb-3 px-5">
-        {/* Quick stats bar — hammered metal */}
+        {/* Quick stats bar */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="metal-panel flex items-center gap-4 px-5 py-2.5 mb-3"
+          className="scoreboard-metal flex items-center gap-4 px-5 py-2 mb-3"
           style={{ borderRadius: 10 }}
         >
           <StatPill label="W/L" value={`${profile?.wins ?? 0}/${profile?.losses ?? 0}`} color="#4ADE50" />
-          <div className="w-px h-4" style={{ background: "rgba(255,255,255,0.08)" }} />
+          <div className="w-px h-4 bg-white/10" />
           <StatPill label="RATE" value={`${winRate}%`} color="#00D4FF" />
-          <div className="w-px h-4" style={{ background: "rgba(255,255,255,0.08)" }} />
+          <div className="w-px h-4 bg-white/10" />
           <StatPill label="BEST" value={String(profile?.high_score ?? 0)} color="#FFD700" />
-          <div className="w-px h-4" style={{ background: "rgba(255,255,255,0.08)" }} />
+          <div className="w-px h-4 bg-white/10" />
           <StatPill label="STREAK" value={`🔥${profile?.current_streak ?? 0}`} color="#FF6B35" />
         </motion.div>
 
-        {/* V11 BATTLE Button — leather green */}
+        {/* V10 BATTLE Button */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.4, type: "spring", stiffness: 300 }}
           className="w-full max-w-[320px]"
         >
-          <motion.button
-            whileTap={{ scale: 0.97, y: 3 }}
+          <V10Button
+            variant="battle"
+            size="battle"
+            glow
+            icon={<span className="text-2xl">⚔️</span>}
             onClick={() => {
               try { SFX.tap(); Haptics.heavy(); } catch {}
               setShowStumpAnim(true);
             }}
-            className="btn-leather w-full relative overflow-hidden font-display text-[22px] tracking-[4px]"
-            style={{
-              minHeight: 68,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 10,
-            }}
+            className="w-full"
           >
-            {/* Metal studs */}
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-[6px] h-[6px] rounded-full pointer-events-none"
-              style={{
-                background: "radial-gradient(circle at 35% 35%, #AAAAAA, #777777 40%, #555555)",
-                boxShadow: "inset -1px -1px 0 rgba(0,0,0,0.3), 0 1px 1px rgba(0,0,0,0.3)",
-              }}
-            />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 w-[6px] h-[6px] rounded-full pointer-events-none"
-              style={{
-                background: "radial-gradient(circle at 35% 35%, #AAAAAA, #777777 40%, #555555)",
-                boxShadow: "inset -1px -1px 0 rgba(0,0,0,0.3), 0 1px 1px rgba(0,0,0,0.3)",
-              }}
-            />
-            {/* Shine sweep */}
-            <span className="absolute inset-0 pointer-events-none overflow-hidden">
-              <span className="absolute top-0 -left-full w-1/2 h-full bg-gradient-to-r from-transparent via-white/15 to-transparent skew-x-[-20deg] animate-[btn-shine_4s_ease-in-out_infinite_2s]" />
-            </span>
-            <span className="text-2xl relative z-10">⚔️</span>
-            <span className="relative z-10">BATTLE</span>
-          </motion.button>
+            BATTLE
+          </V10Button>
         </motion.div>
       </div>
 
-      {/* ═══ D: CHEST BANNER ROW — Wood panels ═══ */}
+      {/* ═══ D: CHEST BANNER ROW ═══ */}
       <div className="relative z-10 flex gap-2 px-4 mb-3">
         <motion.button
           whileTap={{ scale: 0.96 }}
           onClick={() => navigate("/shop")}
-          className="flex-1 wood-panel metal-corners overflow-hidden"
-          style={{ borderRadius: 14, padding: "10px 12px", borderLeft: "3px solid #8B6914" }}
+          className="flex-1 stadium-glass overflow-hidden !border-l-[3px] !border-l-neon-gold/30"
+          style={{ borderRadius: 14, padding: "10px 12px" }}
         >
           <div className="flex items-center gap-2">
             <motion.span
@@ -314,12 +296,11 @@ export default function HomePage() {
               className="text-2xl"
             >🎁</motion.span>
             <div className="text-left">
-              <div className="font-display text-[11px] font-semibold tracking-wide" style={{ color: "#FFD700" }}>FREE CHEST</div>
+              <div className="font-display text-[11px] font-semibold tracking-wide text-neon-gold">FREE CHEST</div>
               <motion.div
                 animate={{ opacity: [0.5, 1, 0.5] }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="font-display text-[13px]"
-                style={{ color: "#FFD700", textShadow: "0 0 8px rgba(255,215,0,0.4)" }}
+                className="font-display text-[13px] text-neon-gold neon-text-gold"
               >OPEN</motion.div>
             </div>
           </div>
@@ -328,19 +309,19 @@ export default function HomePage() {
         <motion.button
           whileTap={{ scale: 0.96 }}
           onClick={() => handleModeSelect("daily")}
-          className="flex-1 wood-panel metal-corners overflow-hidden"
-          style={{ borderRadius: 14, padding: "10px 12px", borderLeft: "3px solid #0E7490" }}
+          className="flex-1 stadium-glass overflow-hidden !border-l-[3px] !border-l-neon-cyan/30"
+          style={{ borderRadius: 14, padding: "10px 12px" }}
         >
           <div className="flex items-center gap-2">
             <span className="text-2xl">🏏</span>
             <div className="text-left flex-1">
-              <div className="font-display text-[11px] font-semibold tracking-wide" style={{ color: "#8B7355" }}>WICKET CHEST</div>
+              <div className="font-display text-[11px] font-semibold tracking-wide text-muted-foreground">WICKET CHEST</div>
               <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="font-display text-[11px] font-bold" style={{ color: "#F5E6D3" }}>18/25</span>
+                <span className="font-display text-[11px] font-bold text-white">18/25</span>
                 <div className="flex-1 h-[6px] rounded-full overflow-hidden" style={{ background: "rgba(0,0,0,0.4)" }}>
                   <div className="h-full rounded-full" style={{
                     width: "72%",
-                    background: "linear-gradient(90deg, #00D4FF, #4ADE50)",
+                    background: "linear-gradient(90deg, hsl(var(--neon-cyan)), hsl(var(--neon-green)))",
                     boxShadow: "0 0 6px rgba(0,212,255,0.5)",
                   }} />
                 </div>
@@ -350,7 +331,7 @@ export default function HomePage() {
         </motion.button>
       </div>
 
-      {/* ═══ E: MAIN MODE CARDS — Wood panels ═══ */}
+      {/* ═══ E: MAIN MODE CARDS ═══ */}
       <div className="relative z-10 flex gap-2 px-4 mb-4">
         {MAIN_MODES.map((mode, idx) => (
           <motion.button
@@ -360,11 +341,11 @@ export default function HomePage() {
             transition={{ delay: 0.5 + idx * 0.08 }}
             whileTap={{ scale: 0.93, y: 2 }}
             onClick={() => handleModeSelect(mode.id)}
-            className="flex-1 wood-panel metal-corners overflow-hidden flex flex-col items-center justify-center gap-1.5"
+            className="flex-1 stadium-glass overflow-hidden !border-l-[3px] flex flex-col items-center justify-center gap-1.5"
             style={{
               height: 100,
               borderRadius: 14,
-              borderLeft: `3px solid ${mode.color}40`,
+              borderLeftColor: `${mode.color}40`,
             }}
           >
             <motion.div
@@ -383,17 +364,17 @@ export default function HomePage() {
               <div className="font-display text-sm" style={{ color: mode.color, textShadow: `0 0 10px ${mode.color}40` }}>
                 {mode.label}
               </div>
-              <div className="font-body text-[9px]" style={{ color: "#8B7355" }}>{mode.sub}</div>
+              <div className="font-body text-[9px] text-muted-foreground">{mode.sub}</div>
             </div>
           </motion.button>
         ))}
       </div>
 
-      {/* ═══ F: V11 CHEST SLOT ROW — Wood framed ═══ */}
+      {/* ═══ F: V10 CHEST SLOT ROW ═══ */}
       <div className="relative z-10 mx-4 mb-4">
         <div className="flex items-center gap-2 mb-2 px-1">
           <span className="text-xs">🎁</span>
-          <span className="font-display text-[10px] tracking-[2px]" style={{ color: "#8B7355" }}>CHEST SLOTS</span>
+          <span className="font-display text-[10px] tracking-[2px] text-muted-foreground">CHEST SLOTS</span>
         </div>
         <div className="flex justify-center gap-2.5">
           {chestSlots.map((chest, i) => (
@@ -407,12 +388,9 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* ═══ G: SECONDARY MODES — Wood panels ═══ */}
+      {/* ═══ G: SECONDARY MODES ═══ */}
       <div className="relative z-10 px-4 pb-4">
-        {/* Stone header */}
-        <div className="stone-header rounded-lg px-3 py-1.5 mb-2 inline-block">
-          <span className="font-display text-[11px] font-semibold tracking-[3px]" style={{ color: "#C8C0B0" }}>MORE MODES</span>
-        </div>
+        <div className="font-display text-[11px] font-semibold tracking-[3px] mb-2 px-1 text-muted-foreground">MORE MODES</div>
         <div className="flex flex-col gap-2">
           {SECONDARY_MODES.map((mode, idx) => (
             <motion.button
@@ -422,27 +400,24 @@ export default function HomePage() {
               transition={{ delay: 0.6 + idx * 0.04 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => handleModeSelect(mode.id)}
-              className="w-full flex items-center gap-3 p-3 wood-panel metal-corners"
+              className="w-full flex items-center gap-3 p-3 stadium-glass !border-l-[3px]"
               style={{
                 borderRadius: 14,
-                borderLeft: `3px solid ${mode.color}60`,
+                borderLeftColor: `${mode.color}60`,
               }}
             >
               <span className="text-2xl w-10 text-center flex-shrink-0" style={{ filter: `drop-shadow(0 0 8px ${mode.color}40)` }}>
                 {mode.icon}
               </span>
               <div className="flex-1 text-left">
-                <div className="font-display text-[13px] font-bold tracking-wide" style={{ color: "#F5E6D3" }}>{mode.label}</div>
+                <div className="font-display text-[13px] font-bold tracking-wide text-white">{mode.label}</div>
                 <div className="font-body text-[10px]" style={{ color: mode.color }}>{mode.sub}</div>
               </div>
-              <span className="text-sm" style={{ color: "#8B7355" }}>→</span>
+              <span className="text-muted-foreground text-sm">→</span>
             </motion.button>
           ))}
         </div>
       </div>
-
-      {/* Rope separator before bottom spacer */}
-      <div className="rope-separator mx-4" />
 
       {/* Bottom spacer for tab bar */}
       <div style={{ height: "calc(var(--tab-bar-height, 68px) + env(safe-area-inset-bottom, 0px) + 16px)" }} />
@@ -468,8 +443,8 @@ export default function HomePage() {
 function StatPill({ label, value, color }: { label: string; value: string; color: string }) {
   return (
     <div className="text-center">
-      <span className="font-body text-[8px] block leading-none" style={{ color: "#8B7355" }}>{label}</span>
-      <span className="font-display text-[12px] font-bold leading-none tabular-nums led-number" style={{ '--led-color': color } as React.CSSProperties}>{value}</span>
+      <span className="font-body text-[8px] text-muted-foreground block leading-none">{label}</span>
+      <span className="font-display text-[12px] font-bold leading-none tabular-nums" style={{ color }}>{value}</span>
     </div>
   );
 }
@@ -484,15 +459,11 @@ function ChestSlot({ chest, onTap, tick }: { chest: UserChest | null; onTap: (c:
 
   if (!chest) {
     return (
-      <div className="flex flex-col items-center justify-center wood-panel"
-        style={{
-          width: 78, height: 96, borderRadius: 16,
-          opacity: 0.5,
-          borderStyle: "dashed",
-        }}
+      <div className="flex flex-col items-center justify-center stadium-glass !border-l-0 !border-dashed !border-white/5"
+        style={{ width: 78, height: 96, borderRadius: 16 }}
       >
-        <span className="text-lg" style={{ color: "#8B7355", opacity: 0.3 }}>+</span>
-        <span className="text-[7px] mt-0.5 font-display" style={{ color: "#8B7355", opacity: 0.3 }}>EMPTY</span>
+        <span className="text-lg text-white/10">+</span>
+        <span className="text-[7px] mt-0.5 text-white/15 font-display">EMPTY</span>
       </div>
     );
   }
@@ -501,7 +472,7 @@ function ChestSlot({ chest, onTap, tick }: { chest: UserChest | null; onTap: (c:
     <motion.button
       whileTap={{ scale: 0.9, y: 2 }}
       onClick={() => onTap(chest)}
-      className="relative flex flex-col items-center justify-center overflow-hidden wood-panel metal-corners"
+      className="relative flex flex-col items-center justify-center overflow-hidden stadium-glass !border-l-0"
       style={{
         width: 78,
         height: 96,
@@ -576,11 +547,11 @@ function ChestSlot({ chest, onTap, tick }: { chest: UserChest | null; onTap: (c:
       )}
 
       <div className="absolute bottom-0 inset-x-0 py-1 text-center z-10" style={{
-        background: "linear-gradient(0deg, rgba(30,15,5,0.8), transparent)",
+        background: "linear-gradient(0deg, rgba(0,0,0,0.7), transparent)",
         borderRadius: "0 0 14px 14px",
       }}>
         <span className="text-[8px] font-bold block font-display" style={{
-          color: isReady ? "#FFD700" : isUnlocking ? (tier?.color || "#475569") : "#8B7355",
+          color: isReady ? "#FFD700" : isUnlocking ? (tier?.color || "#475569") : "#94A3B8",
           textShadow: isReady ? "0 0 8px rgba(255,215,0,0.5)" : "none",
         }}>
           {isReady ? "OPEN!" : isUnlocking ? formatTime(remaining) : tier?.name.split(" ")[0]}

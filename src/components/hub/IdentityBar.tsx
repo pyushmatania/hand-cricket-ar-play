@@ -33,9 +33,7 @@ export default function IdentityBar({
   return (
     <div className="relative z-30" style={{
       padding: "max(env(safe-area-inset-top, 8px), 8px) 12px 8px",
-      background: `url('/assets/ui/polished-wood-texture.png') repeat, linear-gradient(180deg, #5C3A1E 0%, #3E2410 80%, transparent)`,
-      borderBottom: "3px solid #2E1A0E",
-      boxShadow: "0 4px 12px rgba(0,0,0,0.6), inset 0 -1px 0 rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)",
+      background: "linear-gradient(180deg, rgba(5,8,16,0.95), rgba(5,8,16,0.7) 80%, transparent)",
     }}>
       <div className="flex items-center gap-2">
         {/* Avatar with XP ring + level */}
@@ -52,10 +50,9 @@ export default function IdentityBar({
           />
         </button>
 
-        {/* Name + streak on wood */}
+        {/* Name + streak */}
         <div className="flex flex-col gap-0.5 min-w-0">
-          <span className="font-display text-[13px] font-bold tracking-wide leading-none truncate"
-            style={{ color: "#F5E6D3", textShadow: "0 1px 2px rgba(0,0,0,0.5)" }}>
+          <span className="font-display text-[13px] font-bold tracking-wide text-white leading-none truncate">
             {playerName}
           </span>
           {streak > 0 && (
@@ -65,8 +62,7 @@ export default function IdentityBar({
                 transition={{ repeat: Infinity, duration: 1.5 }}
                 className="text-[10px]"
               >🔥</motion.span>
-              <span className="font-display text-[10px] font-bold leading-none"
-                style={{ color: "#FF6B35", textShadow: "0 0 6px rgba(255,107,53,0.4)" }}>{streak}</span>
+              <span className="font-display text-[10px] font-bold text-neon-orange leading-none">{streak}</span>
             </div>
           )}
         </div>
@@ -91,25 +87,19 @@ export default function IdentityBar({
           )}
         </div>
 
-        {/* Bell — wood button */}
+        {/* Bell */}
         <button
           onClick={() => navigate("/notifications")}
-          className="relative w-9 h-9 rounded-xl flex items-center justify-center active:scale-90 transition-transform"
-          style={{
-            background: `url('/assets/ui/wood-plank-texture.png') repeat, linear-gradient(180deg, #5C3A1E, #3E2410)`,
-            border: "2px solid #2E1A0E",
-            borderBottom: "4px solid #2E1A0E",
-            boxShadow: "0 3px 0 rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)",
-          }}
+          className="relative w-9 h-9 rounded-xl flex items-center justify-center active:scale-90 transition-transform stadium-glass !border-l-0 !p-0"
         >
-          <span className="text-sm opacity-80">🔔</span>
+          <span className="text-sm opacity-70">🔔</span>
           {unreadCount > 0 && (
             <span
               className="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center text-[8px] font-bold text-white"
               style={{
-                background: "linear-gradient(180deg, #EF4444, #CC2222)",
-                border: "1.5px solid #7F1D1D",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.4)",
+                background: "hsl(var(--neon-pink))",
+                border: "2px solid hsl(var(--bg-void))",
+                boxShadow: "0 0 6px rgba(255,45,123,0.5)",
               }}
             >
               {unreadCount > 9 ? "9+" : unreadCount}
@@ -117,18 +107,12 @@ export default function IdentityBar({
           )}
         </button>
 
-        {/* Settings — wood button */}
+        {/* Settings */}
         <button
           onClick={() => navigate("/settings")}
-          className="w-9 h-9 rounded-xl flex items-center justify-center active:scale-90 transition-transform"
-          style={{
-            background: `url('/assets/ui/wood-plank-texture.png') repeat, linear-gradient(180deg, #5C3A1E, #3E2410)`,
-            border: "2px solid #2E1A0E",
-            borderBottom: "4px solid #2E1A0E",
-            boxShadow: "0 3px 0 rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)",
-          }}
+          className="w-9 h-9 rounded-xl flex items-center justify-center active:scale-90 transition-transform stadium-glass !border-l-0 !p-0"
         >
-          <span className="text-sm opacity-70">⚙️</span>
+          <span className="text-sm opacity-60">⚙️</span>
         </button>
       </div>
     </div>

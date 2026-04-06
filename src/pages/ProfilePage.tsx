@@ -279,13 +279,8 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden pb-24" style={{
-      background: "linear-gradient(180deg, #1A0F06 0%, #12080A 100%)",
+      background: "linear-gradient(180deg, hsl(222 47% 6%) 0%, hsl(222 47% 4%) 100%)",
     }}>
-      {/* Wood grain background */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{
-        backgroundImage: `url('/assets/ui/wood-plank-texture.png')`,
-        backgroundSize: "300px",
-      }} />
       <TopStatusBar />
 
       <div className="relative z-10 max-w-lg mx-auto px-3 pt-3">
@@ -296,19 +291,15 @@ export default function ProfilePage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative rounded-2xl overflow-hidden mb-4"
+          className="relative rounded-2xl overflow-hidden mb-4 stadium-glass"
           style={{
-            background: "linear-gradient(180deg, #3E2410, #2E1A0E)",
             border: `2px solid ${tierChrome.border}`,
-            boxShadow: `0 8px 24px rgba(0,0,0,0.6), 0 0 20px ${tierChrome.glow}`,
+            boxShadow: `0 8px 24px hsl(0 0% 0% / 0.5), 0 0 20px ${tierChrome.glow}`,
           }}
         >
 
           {/* Top chrome rank banner */}
-            <div className="relative px-4 py-3" style={{
-              background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
-              borderBottom: "2px solid #2E1A0E",
-            }}>
+          <div className="relative px-4 py-3 scoreboard-metal">
             {/* Chrome rivet corners */}
             {["top-1.5 left-2", "top-1.5 right-2"].map(pos => (
               <div key={pos} className={`absolute ${pos} w-2 h-2 rounded-full`} style={{
@@ -455,10 +446,7 @@ export default function ProfilePage() {
           </div>
 
           {/* 4-stat ribbon — scoreboard paint on concrete */}
-          <div className="grid grid-cols-4" style={{
-            background: "linear-gradient(180deg, #3E2410, #2E1A0E)",
-            borderTop: "1px solid #5C3A1E",
-          }}>
+          <div className="grid grid-cols-4 scoreboard-metal">
             {[
               { value: totalWins, label: "WINS", color: "hsl(142 71% 55%)" },
               { value: totalLosses, label: "LOSSES", color: "hsl(4 90% 58%)" },
@@ -466,7 +454,7 @@ export default function ProfilePage() {
               { value: Math.max(profile?.high_score || 0, pvpRecord?.highScore || 0), label: "HIGH", color: "hsl(43 100% 60%)" },
             ].map((s, i) => (
               <div key={s.label} className="text-center py-3" style={{
-                borderLeft: i > 0 ? "1px solid #5C3A1E" : undefined,
+                borderLeft: i > 0 ? "1px solid hsl(222 15% 15%)" : undefined,
               }}>
                 <span className="font-display text-xl font-black block leading-none" style={{ color: s.color }}>{s.value}</span>
                 <span className="text-[6px] text-muted-foreground font-display font-bold tracking-[0.15em]">{s.label}</span>
@@ -535,11 +523,7 @@ export default function ProfilePage() {
 
         {/* ═══ Tab Switcher — 3D Jersey Mesh ═══ */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="flex gap-1 mb-4 rounded-xl p-1" style={{
-            background: "linear-gradient(180deg, #3E2410, #2E1A0E)",
-            border: "2px solid #5C3A1E",
-            borderBottom: "4px solid #2E1A0E",
-          }}>
+          className="flex gap-1 mb-4 rounded-xl p-1 scoreboard-metal">
           {tabs.map((tab) => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)}
               className="flex-1 py-2.5 rounded-lg font-display text-[8px] font-bold tracking-widest transition-all duration-200 flex items-center justify-center gap-1"
@@ -575,10 +559,10 @@ export default function ProfilePage() {
                     transition={{ delay: 0.1 + i * 0.05 }}
                     className="rounded-xl p-2.5 text-center"
                     style={{
-                      background: "linear-gradient(180deg, #3E2410, #2E1A0E)",
-                      border: "2px solid #5C3A1E",
-                      borderBottom: "4px solid #2E1A0E",
-                      boxShadow: "0 3px 8px rgba(0,0,0,0.4)",
+                      background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                      border: "2px solid hsl(222 15% 12%)",
+                      borderBottom: "4px solid hsl(222 12% 8%)",
+                      boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
                     }}>
                     <span className="text-base block mb-0.5">{s.icon}</span>
                     <span className="font-display text-lg font-black text-foreground block leading-none">{s.value}</span>
