@@ -1,6 +1,8 @@
-import { useState, useEffect, useMemo } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
+import V10Button from "@/components/shared/V10Button";
+import V10PlayerAvatar from "@/components/shared/V10PlayerAvatar";
 
 interface ClanRanking {
   id: string;
@@ -15,11 +17,23 @@ interface ClanRanking {
   prev_stars: number;
 }
 
+interface ClanDetailData {
+  clan: ClanRanking;
+  members: { user_id: string; display_name: string; role: string; avatar_index: number; donated_cards: number }[];
+  warHistory: { id: string; opp_name: string; opp_emoji: string; my_stars: number; opp_stars: number; won: boolean; draw: boolean; created_at: string }[];
+}
+
+const ROLE_LABELS: Record<string, string> = { leader: "👑 Leader", co_leader: "⚔️ Co-Leader", elder: "🛡️ Elder", member: "🏏 Member" };
+const ROLE_COLORS: Record<string, string> = { leader: "text-neon-cyan", co_leader: "text-neon-green", elder: "text-game-gold", member: "text-muted-foreground" };
+const ROLE_ORDER: Record<string, number> = { leader: 0, co_leader: 1, elder: 2, member: 3 };
+
 export default function ClanLeaderboard() {
   const [rankings, setRankings] = useState<ClanRanking[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<"wins" | "stars">("wins");
   const [search, setSearch] = useState("");
+  const [detail, setDetail] = useState<ClanDetailData | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -27,28 +41,22 @@ export default function ClanLeaderboard() {
       if (!clans?.length) { setLoading(false); return; }
 
       const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-
-      // Fetch all ended wars + wars ended before last week (for prev ranking)
       const { data: wars } = await supabase.from("clan_wars")
         .select("clan_a_id, clan_b_id, clan_a_stars, clan_b_stars, winner_clan_id, created_at")
         .eq("status", "ended");
-
       const warList = (wars as any[]) || [];
 
-      // Count members
       const { data: memberCounts } = await supabase.from("clan_members").select("clan_id");
       const countMap = new Map<string, number>();
       (memberCounts || []).forEach((m: any) => {
         countMap.set(m.clan_id, (countMap.get(m.clan_id) || 0) + 1);
       });
 
-      // Aggregate: all-time + prev-week (wars before cutoff)
       const allStats = new Map<string, { wins: number; stars: number }>();
       const prevStats = new Map<string, { wins: number; stars: number }>();
 
       warList.forEach((w: any) => {
         const isPrev = w.created_at < oneWeekAgo;
-
         for (const side of ["a", "b"] as const) {
           const clanId = side === "a" ? w.clan_a_id : w.clan_b_id;
           const stars = side === "a" ? (w.clan_a_stars || 0) : (w.clan_b_stars || 0);
@@ -69,11 +77,7 @@ export default function ClanLeaderboard() {
       });
 
       const ranked: ClanRanking[] = clans.map((c: any) => ({
-        id: c.id,
-        name: c.name,
-        tag: c.tag,
-        emoji: c.emoji,
-        level: c.level,
+        id: c.id, name: c.name, tag: c.tag, emoji: c.emoji, level: c.level,
         member_count: countMap.get(c.id) || 0,
         war_wins: allStats.get(c.id)?.wins || 0,
         total_stars: allStats.get(c.id)?.stars || 0,
@@ -86,21 +90,17 @@ export default function ClanLeaderboard() {
     })();
   }, []);
 
-  // Sort current rankings
   const sortFn = (a: ClanRanking, b: ClanRanking) =>
     sortBy === "wins"
       ? b.war_wins - a.war_wins || b.total_stars - a.total_stars
       : b.total_stars - a.total_stars || b.war_wins - a.war_wins;
 
-  // Sort prev rankings (same key but using prev data)
   const prevSortFn = (a: ClanRanking, b: ClanRanking) =>
     sortBy === "wins"
       ? b.prev_wins - a.prev_wins || b.prev_stars - a.prev_stars
       : b.prev_stars - a.prev_stars || b.prev_wins - a.prev_wins;
 
   const sorted = useMemo(() => [...rankings].sort(sortFn), [rankings, sortBy]);
-
-  // Build prev rank map (id -> previous position)
   const prevRankMap = useMemo(() => {
     const prevSorted = [...rankings].sort(prevSortFn);
     const map = new Map<string, number>();
@@ -108,14 +108,72 @@ export default function ClanLeaderboard() {
     return map;
   }, [rankings, sortBy]);
 
-  // Search filter
   const filtered = useMemo(() => {
     if (!search.trim()) return sorted;
     const q = search.trim().toLowerCase();
-    return sorted.filter(c =>
-      c.name.toLowerCase().includes(q) || c.tag.toLowerCase().includes(q)
-    );
+    return sorted.filter(c => c.name.toLowerCase().includes(q) || c.tag.toLowerCase().includes(q));
   }, [sorted, search]);
+
+  const openDetail = useCallback(async (clan: ClanRanking) => {
+    setDetailLoading(true);
+    setDetail({ clan, members: [], warHistory: [] });
+
+    // Fetch members + profiles in parallel with war history
+    const [membersRes, warsRes] = await Promise.all([
+      supabase.from("clan_members").select("user_id, role, donated_cards").eq("clan_id", clan.id),
+      supabase.from("clan_wars").select("*")
+        .or(`clan_a_id.eq.${clan.id},clan_b_id.eq.${clan.id}`)
+        .eq("status", "ended")
+        .order("created_at", { ascending: false })
+        .limit(20),
+    ]);
+
+    const memberRows = (membersRes.data as any[]) || [];
+    const warRows = (warsRes.data as any[]) || [];
+
+    // Fetch profiles for members
+    const userIds = memberRows.map(m => m.user_id);
+    let profileMap = new Map<string, { display_name: string; avatar_index: number }>();
+    if (userIds.length > 0) {
+      const { data: profiles } = await supabase.from("profiles").select("user_id, display_name, avatar_index").in("user_id", userIds);
+      (profiles || []).forEach((p: any) => profileMap.set(p.user_id, { display_name: p.display_name, avatar_index: p.avatar_index }));
+    }
+
+    const members = memberRows.map(m => ({
+      user_id: m.user_id,
+      display_name: profileMap.get(m.user_id)?.display_name || "Player",
+      avatar_index: profileMap.get(m.user_id)?.avatar_index ?? 0,
+      role: m.role,
+      donated_cards: m.donated_cards || 0,
+    })).sort((a, b) => (ROLE_ORDER[a.role] ?? 3) - (ROLE_ORDER[b.role] ?? 3));
+
+    // Fetch opponent clan names for wars
+    const oppIds = [...new Set(warRows.map((w: any) => w.clan_a_id === clan.id ? w.clan_b_id : w.clan_a_id))];
+    let oppMap = new Map<string, { name: string; emoji: string }>();
+    if (oppIds.length > 0) {
+      const { data: opps } = await supabase.from("clans").select("id, name, emoji").in("id", oppIds);
+      (opps || []).forEach((o: any) => oppMap.set(o.id, { name: o.name, emoji: o.emoji }));
+    }
+
+    const warHistory = warRows.map((w: any) => {
+      const isA = w.clan_a_id === clan.id;
+      const oppId = isA ? w.clan_b_id : w.clan_a_id;
+      const opp = oppMap.get(oppId);
+      return {
+        id: w.id,
+        opp_name: opp?.name || "Unknown",
+        opp_emoji: opp?.emoji || "🏏",
+        my_stars: isA ? (w.clan_a_stars || 0) : (w.clan_b_stars || 0),
+        opp_stars: isA ? (w.clan_b_stars || 0) : (w.clan_a_stars || 0),
+        won: w.winner_clan_id === clan.id,
+        draw: !w.winner_clan_id,
+        created_at: w.created_at,
+      };
+    });
+
+    setDetail({ clan, members, warHistory });
+    setDetailLoading(false);
+  }, []);
 
   const MEDAL = ["🥇", "🥈", "🥉"];
 
@@ -127,6 +185,140 @@ export default function ClanLeaderboard() {
 
   return (
     <div className="space-y-3">
+      {/* Detail Modal */}
+      <AnimatePresence>
+        {detail && (
+          <motion.div
+            key="detail-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end justify-center"
+            onClick={() => setDetail(null)}
+          >
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              onClick={e => e.stopPropagation()}
+              className="w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-t-3xl"
+              style={{
+                background: "linear-gradient(180deg, hsl(220 15% 10%), hsl(220 12% 6%))",
+                borderTop: "2px solid hsl(190 80% 50% / 0.2)",
+              }}
+            >
+              {/* Drag handle */}
+              <div className="flex justify-center pt-3 pb-1">
+                <div className="w-10 h-1 rounded-full bg-white/20" />
+              </div>
+
+              {detailLoading ? (
+                <div className="flex items-center justify-center py-16">
+                  <div className="w-6 h-6 border-2 border-neon-cyan border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : (
+                <div className="px-4 pb-6 space-y-4">
+                  {/* Clan header */}
+                  <div className="text-center pt-2">
+                    <span className="text-5xl block mb-2">{detail.clan.emoji}</span>
+                    <h3 className="font-display text-lg font-black text-foreground tracking-wider">{detail.clan.name}</h3>
+                    <span className="text-[10px] text-muted-foreground font-display tracking-widest">[{detail.clan.tag}]</span>
+                    <div className="flex items-center justify-center gap-6 mt-2">
+                      <div className="text-center">
+                        <span className="font-display text-lg font-black text-neon-cyan">Lv.{detail.clan.level}</span>
+                        <span className="text-[8px] text-muted-foreground block font-display">LEVEL</span>
+                      </div>
+                      <div className="text-center">
+                        <span className="font-display text-lg font-black text-neon-green">{detail.members.length}</span>
+                        <span className="text-[8px] text-muted-foreground block font-display">MEMBERS</span>
+                      </div>
+                      <div className="text-center">
+                        <span className="font-display text-lg font-black text-game-gold">{detail.clan.war_wins}</span>
+                        <span className="text-[8px] text-muted-foreground block font-display">WAR WINS</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* War stats banner */}
+                  <div className="flex gap-2">
+                    <div className="flex-1 text-center py-2.5 rounded-xl bg-neon-green/10 border border-neon-green/20">
+                      <p className="font-display text-xl font-black text-neon-green tabular-nums">{detail.clan.war_wins}</p>
+                      <p className="font-display text-[7px] tracking-widest text-neon-green/70">WINS</p>
+                    </div>
+                    <div className="flex-1 text-center py-2.5 rounded-xl bg-game-gold/10 border border-game-gold/20">
+                      <p className="font-display text-xl font-black text-game-gold tabular-nums">{detail.clan.total_stars}</p>
+                      <p className="font-display text-[7px] tracking-widest text-game-gold/70">⭐ STARS</p>
+                    </div>
+                  </div>
+
+                  {/* Members */}
+                  <div className="stadium-glass rounded-2xl p-3">
+                    <div className="scoreboard-metal rounded-xl px-3 py-2 mb-3">
+                      <h4 className="font-display text-[10px] tracking-widest text-neon-cyan/80 font-bold">MEMBERS ({detail.members.length})</h4>
+                    </div>
+                    <div className="space-y-1.5 max-h-[180px] overflow-y-auto">
+                      {detail.members.map(m => (
+                        <div key={m.user_id} className="flex items-center gap-2 p-2 rounded-xl bg-white/[0.03] border border-white/5">
+                          <V10PlayerAvatar avatarIndex={m.avatar_index} size="sm" />
+                          <div className="flex-1 min-w-0">
+                            <span className="font-display text-xs font-bold text-foreground truncate block">{m.display_name}</span>
+                            <span className={`text-[9px] font-display ${ROLE_COLORS[m.role] ?? "text-muted-foreground"}`}>
+                              {ROLE_LABELS[m.role] ?? m.role}
+                            </span>
+                          </div>
+                          <span className="text-[9px] text-muted-foreground font-display tabular-nums">🎴 {m.donated_cards}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* War History */}
+                  <div className="stadium-glass rounded-2xl p-3">
+                    <div className="scoreboard-metal rounded-xl px-3 py-2 mb-3">
+                      <h4 className="font-display text-[10px] tracking-widest text-neon-cyan/80 font-bold">WAR HISTORY</h4>
+                    </div>
+                    {detail.warHistory.length === 0 ? (
+                      <p className="text-center text-muted-foreground text-[10px] font-body py-4">No wars played yet</p>
+                    ) : (
+                      <div className="space-y-1.5 max-h-[200px] overflow-y-auto">
+                        {detail.warHistory.map(w => (
+                          <div key={w.id} className={`flex items-center justify-between px-3 py-2 rounded-xl border ${
+                            w.won ? "bg-neon-green/[0.04] border-neon-green/15" : w.draw ? "bg-game-gold/[0.04] border-game-gold/15" : "bg-destructive/[0.04] border-destructive/15"
+                          }`}>
+                            <div className="flex items-center gap-2">
+                              <span className="text-lg">{w.opp_emoji}</span>
+                              <div>
+                                <p className="font-display text-[10px] font-bold text-foreground truncate max-w-[120px]">vs {w.opp_name}</p>
+                                <p className="text-[7px] font-body text-muted-foreground">
+                                  {new Date(w.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-display text-xs font-black tabular-nums text-foreground">
+                                {w.my_stars}⭐ vs {w.opp_stars}⭐
+                              </p>
+                              <p className={`font-display text-[8px] font-bold ${w.won ? "text-neon-green" : w.draw ? "text-game-gold" : "text-destructive"}`}>
+                                {w.won ? "🏆 WON" : w.draw ? "🤝 DRAW" : "❌ LOST"}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <V10Button variant="secondary" size="md" onClick={() => setDetail(null)} className="w-full">
+                    CLOSE
+                  </V10Button>
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <div className="scoreboard-metal rounded-2xl p-4 text-center">
         <span className="text-4xl block mb-1">🏆</span>
@@ -170,18 +362,19 @@ export default function ClanLeaderboard() {
       ) : (
         <div className="space-y-1.5">
           {filtered.map((c, i) => {
-            // Calculate rank in full sorted list for display
             const currentRank = sorted.findIndex(s => s.id === c.id);
             const prevRank = prevRankMap.get(c.id) ?? currentRank;
-            const rankDelta = prevRank - currentRank; // positive = moved up
+            const rankDelta = prevRank - currentRank;
 
             return (
-              <motion.div
+              <motion.button
                 key={c.id}
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.03 }}
-                className={`flex items-center gap-2 p-2.5 rounded-xl border transition-colors ${
+                whileTap={{ scale: 0.97 }}
+                onClick={() => openDetail(c)}
+                className={`flex items-center gap-2 p-2.5 rounded-xl border transition-colors w-full text-left ${
                   currentRank === 0 ? "stadium-glass border-game-gold/30 bg-game-gold/[0.04]"
                   : currentRank < 3 ? "stadium-glass border-white/10"
                   : "bg-white/[0.02] border-white/5"
@@ -212,10 +405,8 @@ export default function ClanLeaderboard() {
                   )}
                 </div>
 
-                {/* Emoji */}
                 <span className="text-xl flex-shrink-0">{c.emoji}</span>
 
-                {/* Name + meta */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1">
                     <span className="font-display text-xs font-bold text-foreground truncate">{c.name}</span>
@@ -227,7 +418,6 @@ export default function ClanLeaderboard() {
                   </div>
                 </div>
 
-                {/* Stats */}
                 <div className="flex items-center gap-2.5 flex-shrink-0">
                   <div className="text-center">
                     <p className={`font-display text-sm font-black tabular-nums ${sortBy === "wins" ? "text-neon-cyan" : "text-foreground"}`}>
@@ -242,7 +432,7 @@ export default function ClanLeaderboard() {
                     <p className="text-[6px] font-display tracking-widest text-muted-foreground">⭐</p>
                   </div>
                 </div>
-              </motion.div>
+              </motion.button>
             );
           })}
         </div>
