@@ -296,10 +296,11 @@ export default function ProfilePage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative rounded-2xl overflow-hidden mb-4 stadium-glass"
+          className="relative rounded-2xl overflow-hidden mb-4"
           style={{
+            background: "linear-gradient(180deg, #3E2410, #2E1A0E)",
             border: `2px solid ${tierChrome.border}`,
-            boxShadow: `0 8px 24px hsl(0 0% 0% / 0.5), 0 0 20px ${tierChrome.glow}`,
+            boxShadow: `0 8px 24px rgba(0,0,0,0.6), 0 0 20px ${tierChrome.glow}`,
           }}
         >
 
