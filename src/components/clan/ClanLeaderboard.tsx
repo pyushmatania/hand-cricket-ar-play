@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import V10Button from "@/components/shared/V10Button";
 import V10PlayerAvatar from "@/components/shared/V10PlayerAvatar";
+import canvasConfetti from "canvas-confetti";
 
 interface ClanRanking {
   id: string;
@@ -46,6 +47,10 @@ export default function ClanLeaderboard() {
   const [search, setSearch] = useState("");
   const [detail, setDetail] = useState<ClanDetailData | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [compareMode, setCompareMode] = useState(false);
+  const [compareSelections, setCompareSelections] = useState<ClanRanking[]>([]);
+  const [compareData, setCompareData] = useState<{ a: ClanDetailData; b: ClanDetailData } | null>(null);
+  const [compareLoading, setCompareLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
