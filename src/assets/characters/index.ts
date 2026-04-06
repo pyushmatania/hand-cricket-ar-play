@@ -10,6 +10,9 @@ import charFinisherMi from "../char-finisher-mi.png";
 import charLegspinnerRr from "../char-legspinner-rr.png";
 import charPowerhitterPbks from "../char-powerhitter-pbks.png";
 import charAnchorGt from "../char-anchor-gt.png";
+import charAllrounderLsg from "../char-allrounder-lsg.png";
+import charKeeperCsk from "../char-keeper-csk.png";
+import charOpenerRcb from "../char-opener-rcb.png";
 import vsBatsman from "../vs-batsman.png";
 import vsBowler from "../vs-bowler.png";
 
@@ -26,8 +29,11 @@ export const CHARACTERS: Record<string, string> = {
   legspinnerRr: charLegspinnerRr,
   powerhitterPbks: charPowerhitterPbks,
   anchorGt: charAnchorGt,
+  allrounderLsg: charAllrounderLsg,
+  keeperCsk: charKeeperCsk,
+  openerRcb: charOpenerRcb,
   vsBatsman,
   vsBowler,
 };
 
-export { charBatsman, charBowler, charAllrounderCsk, charKeeperMi, charCaptainRcb, charOpenerDc, charSpinnerKkr, charPacerSrh, charFinisherMi, charLegspinnerRr, charPowerhitterPbks, charAnchorGt, vsBatsman, vsBowler };
+export { charBatsman, charBowler, charAllrounderCsk, charKeeperMi, charCaptainRcb, charOpenerDc, charSpinnerKkr, charPacerSrh, charFinisherMi, charLegspinnerRr, charPowerhitterPbks, charAnchorGt, charAllrounderLsg, charKeeperCsk, charOpenerRcb, vsBatsman, vsBowler };
