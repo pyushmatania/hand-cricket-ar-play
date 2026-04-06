@@ -177,7 +177,15 @@ export default function CollectionPlayerCard({ player, size = "sm", onTap, delay
           )}
         </div>
 
-        {/* Name ribbon */}
+        {/* Rarity Frame Overlay */}
+        {frameImg && (
+          <img
+            src={frameImg}
+            alt={`${rarity} frame`}
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none z-[15] mix-blend-screen opacity-50"
+          />
+        )}
+
         <div className="px-2 py-1 text-center" style={{ background: `${frame.border}44` }}>
           <p className="font-display text-[9px] font-black text-white truncate leading-tight"
             style={{ textShadow: "0 1px 2px rgba(0,0,0,0.5)" }}
