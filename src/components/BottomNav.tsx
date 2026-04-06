@@ -53,7 +53,7 @@ const TAB_ITEMS = [
 
 /* Pure-CSS 3D icon components matching CR metallic/painted style */
 function CRIcon({ type, isActive, isCenter }: { type: string; isActive: boolean; isCenter: boolean }) {
-  const size = isCenter ? 48 : 38;
+  const size = isCenter ? 58 : 38;
   const iconStyle: React.CSSProperties = {
     width: size,
     height: size,
