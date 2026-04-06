@@ -201,6 +201,7 @@ export default function ClanWars({ clan, myRole }: ClanWarsProps) {
         const newAttack: AttackRecord = {
           id: crypto.randomUUID(),
           attacker_id: user.id,
+          clan_id: clan.id,
           score,
           stars_earned: stars,
           target_score: attackResult.par,
