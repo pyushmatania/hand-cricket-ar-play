@@ -32,6 +32,7 @@ import StadiumEstablishingShot from "./StadiumEstablishingShot";
 import TeamLineupWalkout from "./TeamLineupWalkout";
 import { useEquippedCosmetics } from "@/hooks/useEquippedCosmetics";
 import { getAvatarPreset } from "@/lib/avatars";
+import { getMatchupCharacters } from "@/lib/teamCharacters";
 
 const MOVE_EMOJI: Record<string, string> = {
   DEF: "✊", "1": "☝️", "2": "✌️", "3": "🤟", "4": "🖖", "6": "👍",
@@ -65,6 +66,9 @@ export default function GameScreen({ onHome }: GameScreenProps) {
   const arenaImage = locState?.arenaImage;
   const arenaId = locState?.arenaId;
   const themeId = locState?.themeId;
+  const playerTeamId = locState?.playerTeamId;
+  const opponentTeamId = locState?.opponentTeamId;
+  const { playerCharacter, opponentCharacter } = getMatchupCharacters(playerTeamId, opponentTeamId);
   const matchTheme = getThemeById(themeId || localStorage.getItem("selectedTheme") || "gully");
   const cameraRef = useRef<CameraFeedHandle>(null);
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
@@ -557,6 +561,8 @@ export default function GameScreen({ onHome }: GameScreenProps) {
           playerAvatarIndex={playerAvatarIndex}
           playerAvatarUrl={playerAvatarUrl}
           playerFrame={cosmetics.avatarFrame}
+          playerCharacter={playerCharacter}
+          opponentCharacter={opponentCharacter}
           onComplete={handleWalkoutComplete}
         />
       )}
