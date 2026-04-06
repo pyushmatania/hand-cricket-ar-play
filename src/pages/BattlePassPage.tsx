@@ -385,6 +385,20 @@ export default function BattlePassPage() {
     setClaimingReward(reward);
     setClaimed((prev) => new Set(prev).add(key));
 
+    // Parse tier and track from key (e.g. "free-5" or "prem-10")
+    const [track, tierStr] = key.split("-");
+    const tier = parseInt(tierStr, 10);
+
+    // Persist claim to database
+    supabase.from("battle_pass_claims" as any).insert({
+      user_id: user.id,
+      tier,
+      track: track === "prem" ? "premium" : "free",
+      season_label: SEASON_LABEL,
+    } as any).then(({ error }) => {
+      if (error) console.error("Failed to persist claim:", error.message);
+    });
+
     const updates: Record<string, number> = {};
     if (reward.label === "Coins" && reward.amount) {
       updates.coins = coins + reward.amount;
