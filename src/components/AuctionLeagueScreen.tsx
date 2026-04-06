@@ -186,7 +186,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
       } else {
         // AI folds - you win
         setAiBid(Math.round(bidAmount * 0.7));
-        setBidPhase("sold");
+        setBidPhase("countdown");
         setSoldTo("you");
         setMyTeam(prev => [...prev, currentPlayer]);
         setBudget(prev => prev - bidAmount);
@@ -201,7 +201,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
     const raise = Math.round(aiBid * (1.1 + Math.random() * 0.15));
     if (raise > budget) {
       // Can't afford — AI wins
-      setBidPhase("sold");
+      setBidPhase("countdown");
       setSoldTo("ai");
       setBidHistory(prev => [...prev, { playerName: currentPlayer.short_name || currentPlayer.name, soldTo: "ai", price: aiBid, rarity: currentPlayer.rarity || "common" }]);
       return;
@@ -217,7 +217,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
     setTimeout(() => {
       if (bidRound + 1 >= MAX_BID_ROUNDS || raise > aiWillingness) {
         // AI folds after max rounds or price too high
-        setBidPhase("sold");
+        setBidPhase("countdown");
         setSoldTo("you");
         setMyTeam(prev => [...prev, currentPlayer]);
         setBudget(prev => prev - raise);
@@ -233,7 +233,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
 
   const handleFold = useCallback(() => {
     if (!currentPlayer) return;
-    setBidPhase("sold");
+    setBidPhase("countdown");
     setSoldTo("ai");
     setBidHistory(prev => [...prev, { playerName: currentPlayer.short_name || currentPlayer.name, soldTo: "ai", price: aiBid, rarity: currentPlayer.rarity || "common" }]);
     if (soundEnabled) SFX.tap();
@@ -243,7 +243,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
     if (bidPhase !== "waiting" || !currentPlayer) return;
     if (soundEnabled) SFX.tap();
     setSoldTo("ai");
-    setBidPhase("sold");
+    setBidPhase("countdown");
     setAiBid(getBasePrice(currentPlayer));
     setBidHistory(prev => [...prev, { playerName: currentPlayer.short_name || currentPlayer.name, soldTo: "ai", price: getBasePrice(currentPlayer), rarity: currentPlayer.rarity || "common" }]);
   }, [currentPlayer, bidPhase, soundEnabled]);
