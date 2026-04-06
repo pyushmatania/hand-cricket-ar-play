@@ -320,7 +320,7 @@ export default function BottomNav() {
                 navigate(item.path);
               }}
               className="flex flex-col items-center relative"
-              style={{ width: item.center ? 68 : 56 }}
+              style={{ width: item.center ? 78 : 56 }}
               aria-label={item.label}
               aria-current={isActive ? "page" : undefined}
             >
