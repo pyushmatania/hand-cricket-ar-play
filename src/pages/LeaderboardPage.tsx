@@ -497,14 +497,14 @@ export default function LeaderboardPage() {
     { key: "network", label: "NETWORK", icon: "🕸️" },
   ];
 
-  const LEATHER_BG = "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)";
+  const "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 18% 5%) 100%)" = "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)";
   const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
-  const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
+  const "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)" = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
   const CHALK_BORDER = "2px dashed hsl(43 30% 30% / 0.25)";
 
   return (
     <div className="min-h-screen relative overflow-hidden"
-      style={{ background: LEATHER_BG, paddingBottom: "calc(68px + env(safe-area-inset-bottom, 16px) + 16px)" }}
+      style={{ background: "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 18% 5%) 100%)", paddingBottom: "calc(68px + env(safe-area-inset-bottom, 16px) + 16px)" }}
     >
       {/* Leather grain */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
@@ -657,7 +657,7 @@ export default function LeaderboardPage() {
                 })()}
               </div>
               {tourneyLeaders.length === 0 ? (
-                <div className="rounded-2xl p-8 text-center" style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
+                <div className="rounded-2xl p-8 text-center" style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
                   <span className="text-4xl block mb-3">🏅</span>
                   <p className="font-display text-sm font-bold text-foreground">No tournament results yet</p>
                   <p className="text-[10px] text-muted-foreground mt-1">Play World Cup, Ashes, or Knockout to appear here!</p>
@@ -671,7 +671,7 @@ export default function LeaderboardPage() {
                     <motion.div key={entry.user_id} initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
                       className="rounded-xl p-3 flex items-center gap-3"
                       style={{
-                        background: CONCRETE_CARD,
+                        background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
                         border: isMe ? "2px solid hsl(207 90% 54% / 0.4)" : i < 3 ? `2px solid hsl(43 80% 50% / ${0.4 - i * 0.1})` : "2px solid hsl(25 20% 22%)",
                         borderBottom: "5px solid hsl(25 25% 10%)",
                         boxShadow: i === 0 ? "0 0 20px hsl(43 90% 50% / 0.15)" : isMe ? "0 0 16px hsl(207 90% 54% / 0.1)" : undefined,
@@ -709,7 +709,7 @@ export default function LeaderboardPage() {
             <motion.div key="seasons" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-3">
               {!viewingArchive ? (
                 <>
-                  <div className="rounded-xl p-3" style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
+                  <div className="rounded-xl p-3" style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
                     <div className="flex items-center justify-between mb-2">
                       <button onClick={() => setSeasonWeeksAgo(w => w + 1)} className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors" style={{ background: "hsl(25 15% 10%)", border: "1px solid hsl(25 18% 20%)" }}>◀</button>
                       <div className="text-center">
@@ -729,7 +729,7 @@ export default function LeaderboardPage() {
                     )}
                   </div>
                   {seasonEntries.length === 0 ? (
-                    <div className="rounded-2xl p-8 text-center" style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
+                    <div className="rounded-2xl p-8 text-center" style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
                       <span className="text-4xl block mb-3">📅</span>
                       <p className="font-display text-sm font-bold text-foreground">No matches this week</p>
                       <p className="text-[10px] text-muted-foreground mt-1">Play matches to climb the weekly leaderboard!</p>
@@ -743,7 +743,7 @@ export default function LeaderboardPage() {
                           <motion.div key={entry.user_id} initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
                             className="rounded-xl p-3 flex items-center gap-3"
                             style={{
-                              background: CONCRETE_CARD,
+                              background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
                               border: isMe ? "2px solid hsl(207 90% 54% / 0.4)" : "2px solid hsl(25 20% 22%)",
                               borderBottom: "5px solid hsl(25 25% 10%)",
                               boxShadow: isMe ? "0 0 16px hsl(207 90% 54% / 0.1)" : undefined,
@@ -798,7 +798,7 @@ export default function LeaderboardPage() {
                     style={{ background: "hsl(25 15% 10%)", border: "1px solid hsl(25 18% 20%)" }}>
                     ← BACK TO SEASONS
                   </button>
-                  <div className="rounded-xl p-3 text-center" style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
+                  <div className="rounded-xl p-3 text-center" style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
                     <span className="text-2xl block mb-1">🏛️</span>
                     <span className="font-display text-[10px] font-bold tracking-widest" style={{ color: "hsl(43 90% 55%)" }}>{viewingArchive}</span>
                   </div>
@@ -809,7 +809,7 @@ export default function LeaderboardPage() {
                         <motion.div key={entry.id} initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
                           className="rounded-xl p-3 flex items-center gap-3"
                           style={{
-                            background: CONCRETE_CARD,
+                            background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
                             border: isMe ? "2px solid hsl(207 90% 54% / 0.4)" : "2px solid hsl(25 20% 22%)",
                             borderBottom: "5px solid hsl(25 25% 10%)",
                           }}>
@@ -838,7 +838,7 @@ export default function LeaderboardPage() {
           {mainTab === "rivalry" && (
             <motion.div key="rivalry" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-2">
               {rivalFriends.length === 0 ? (
-                <div className="rounded-2xl p-8 text-center" style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
+                <div className="rounded-2xl p-8 text-center" style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
                   <span className="text-4xl block mb-3">⚔️</span>
                   <p className="font-display text-sm font-bold text-foreground">Add friends to see rivalries!</p>
                   <p className="text-[10px] text-muted-foreground mt-1">Play multiplayer against friends to build H2H stats</p>
@@ -865,7 +865,7 @@ export default function LeaderboardPage() {
                 return (
                   <motion.div key={rt.title} initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}
                     className="rounded-xl p-4 relative overflow-hidden"
-                    style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
+                    style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
                     <div className="absolute top-0 right-0 w-24 h-24 rounded-bl-full pointer-events-none"
                       style={{ background: "radial-gradient(circle at top right, hsl(43 90% 55% / 0.06), transparent 70%)" }} />
                     <div className="flex items-center gap-3 mb-2">
@@ -920,7 +920,7 @@ export default function LeaderboardPage() {
           {(mainTab === "global" || mainTab === "friends") && (
             <motion.div key={`${mainTab}-${sortBy}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
               {activeList.length === 0 ? (
-                <div className="rounded-2xl p-8 text-center" style={{ background: CONCRETE_CARD, border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
+                <div className="rounded-2xl p-8 text-center" style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(25 20% 22%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
                   <span className="text-4xl block mb-3">{mainTab === "friends" ? "👥" : "🏟️"}</span>
                   <p className="font-display text-sm font-bold text-foreground">{mainTab === "friends" ? "Add friends to see rankings!" : "No players yet"}</p>
                   <p className="text-[10px] text-muted-foreground mt-1">{mainTab === "friends" ? "Go to the Friends tab to add players" : "Be the first to play!"}</p>
@@ -1014,7 +1014,7 @@ export default function LeaderboardPage() {
                           onClick={() => { if (mainTab === "friends" && !isMe) setPreviewFriendId(player.user_id); }}
                           className={`rounded-2xl p-3 flex items-center gap-3 ${mainTab === "friends" && !isMe ? "cursor-pointer active:scale-[0.98] transition-transform" : ""}`}
                           style={{
-                            background: CONCRETE_CARD,
+                            background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
                             border: isMe ? "2px solid hsl(207 90% 54% / 0.4)" : "2px solid hsl(25 20% 22%)",
                             borderBottom: "5px solid hsl(25 25% 10%)",
                             boxShadow: isMe ? "0 0 16px hsl(207 90% 54% / 0.15)" : "0 4px 16px rgba(0,0,0,0.3)",
@@ -1069,7 +1069,7 @@ export default function LeaderboardPage() {
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
             className="mt-5 rounded-2xl p-4 flex items-center gap-3"
             style={{
-              background: CONCRETE_CARD,
+              background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
               border: "2px solid hsl(207 90% 54% / 0.3)",
               borderBottom: "5px solid hsl(25 25% 10%)",
               boxShadow: "0 0 16px hsl(207 90% 54% / 0.12)",
@@ -1127,7 +1127,7 @@ export default function LeaderboardPage() {
             animate={{ y: 0, opacity: 1 }}
             className="w-full max-w-sm rounded-3xl p-5 space-y-3"
             style={{
-              background: CONCRETE_CARD,
+              background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
               border: "2px solid hsl(4 80% 50% / 0.3)",
               borderBottom: "6px solid hsl(25 25% 8%)",
               boxShadow: "0 0 40px hsl(4 90% 50% / 0.15)",
@@ -1147,7 +1147,7 @@ export default function LeaderboardPage() {
                 onClick={() => { void challengeFriend(challengeTargetId, mode.key); setChallengeTargetId(null); }}
                 className="w-full p-3.5 rounded-2xl text-left relative overflow-hidden"
                 style={{
-                  background: CONCRETE_CARD,
+                  background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
                   border: `2px solid hsl(${mode.hue} 60% 45% / 0.4)`,
                   borderBottom: `5px solid hsl(${mode.hue} 40% 20%)`,
                   boxShadow: `0 0 16px hsl(${mode.hue} 60% 50% / 0.1)`,

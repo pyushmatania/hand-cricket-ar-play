@@ -8,9 +8,9 @@ import { supabase } from "@/integrations/supabase/client";
 import TopStatusBar from "@/components/TopStatusBar";
 
 /* ── Doc 1 Material Constants ── */
-const LEATHER_BG = "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)";
+const "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 18% 5%) 100%)" = "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)";
 const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
-const CONCRETE_CARD = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
+const "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)" = "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)";
 const CHALK_DIVIDER = "repeating-linear-gradient(90deg, hsl(45 30% 80%) 0px, hsl(45 30% 80%) 8px, transparent 8px, transparent 14px)";
 
 interface BallRecord {
@@ -141,7 +141,7 @@ export default function MatchHistoryPage() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: LEATHER_BG }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 18% 5%) 100%)" }}>
         <div className="text-center">
           <span className="text-5xl block mb-3">🔒</span>
           <p className="font-display text-sm text-muted-foreground tracking-wider">Sign in to view match history</p>
@@ -162,7 +162,7 @@ export default function MatchHistoryPage() {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden pb-24" style={{ background: LEATHER_BG }}>
+    <div className="min-h-screen relative overflow-hidden pb-24" style={{ background: "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 18% 5%) 100%)" }}>
       <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: LEATHER_GRAIN, backgroundRepeat: "repeat" }} />
       <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }} />
       <TopStatusBar />
@@ -202,7 +202,7 @@ export default function MatchHistoryPage() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08 }}
           className="rounded-2xl p-4 mb-4 relative overflow-hidden"
           style={{
-            background: CONCRETE_CARD,
+            background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
             border: "2px solid hsl(43 50% 35% / 0.3)",
             borderBottom: "5px solid hsl(25 20% 10%)",
             boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
@@ -319,13 +319,13 @@ export default function MatchHistoryPage() {
         {loading ? (
           <div className="space-y-3">
             {[1,2,3].map(i => (
-              <div key={i} className="rounded-2xl h-20 animate-pulse" style={{ background: CONCRETE_CARD }} />
+              <div key={i} className="rounded-2xl h-20 animate-pulse" style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)" }} />
             ))}
           </div>
         ) : filtered.length === 0 ? (
           <div className="rounded-2xl p-10 text-center"
             style={{
-              background: CONCRETE_CARD,
+              background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
               border: "2px solid hsl(25 18% 22%)",
               borderBottom: "5px solid hsl(25 20% 10%)",
             }}>
@@ -371,7 +371,7 @@ export default function MatchHistoryPage() {
                       transition={{ delay: Math.min(i * 0.03, 0.3) }}
                       className="rounded-2xl relative overflow-hidden"
                       style={{
-                        background: CONCRETE_CARD,
+                        background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
                         border: `2px solid ${theme.bg}25`,
                         borderBottom: `5px solid ${theme.bg}15`,
                         boxShadow: `0 3px 8px hsl(0 0% 0% / 0.3)`,
