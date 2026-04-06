@@ -265,6 +265,47 @@ export default function ClanLeaderboard() {
                     </div>
                   </div>
 
+                  {/* Trophy Cabinet */}
+                  {detail.trophies.length > 0 && (
+                    <div className="stadium-glass rounded-2xl p-3">
+                      <div className="scoreboard-metal rounded-xl px-3 py-2 mb-3">
+                        <h4 className="font-display text-[10px] tracking-widest text-neon-cyan/80 font-bold">🏆 TROPHY CABINET ({detail.trophies.length})</h4>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        {detail.trophies.slice(0, 9).map((t, ti) => {
+                          const trophyEmoji = t.trophy_type === "gold" ? "🏆" : t.trophy_type === "silver" ? "🥈" : "🥉";
+                          const borderColor = t.trophy_type === "gold" ? "border-game-gold/40" : t.trophy_type === "silver" ? "border-white/30" : "border-orange-600/30";
+                          const bgColor = t.trophy_type === "gold" ? "bg-game-gold/[0.06]" : t.trophy_type === "silver" ? "bg-white/[0.04]" : "bg-orange-600/[0.04]";
+                          return (
+                            <motion.div
+                              key={t.id}
+                              initial={{ scale: 0, rotate: -15 }}
+                              animate={{ scale: 1, rotate: 0 }}
+                              transition={{ delay: ti * 0.08, type: "spring", stiffness: 300 }}
+                              className={`text-center py-3 px-1 rounded-xl border ${borderColor} ${bgColor}`}
+                            >
+                              <span className="text-2xl block mb-1">{trophyEmoji}</span>
+                              <p className="font-display text-[7px] font-bold text-foreground tracking-wider truncate">
+                                {t.trophy_type.toUpperCase()}
+                              </p>
+                              <p className="text-[6px] text-muted-foreground font-body truncate mt-0.5">
+                                {t.season_label}
+                              </p>
+                              <p className="text-[6px] text-game-gold/70 font-display tabular-nums mt-0.5">
+                                {t.war_wins}W · {t.total_stars}⭐
+                              </p>
+                            </motion.div>
+                          );
+                        })}
+                      </div>
+                      {detail.trophies.length > 9 && (
+                        <p className="text-center text-[8px] text-muted-foreground mt-2 font-body">
+                          +{detail.trophies.length - 9} more trophies
+                        </p>
+                      )}
+                    </div>
+                  )}
+
                   {/* Members */}
                   <div className="stadium-glass rounded-2xl p-3">
                     <div className="scoreboard-metal rounded-xl px-3 py-2 mb-3">
