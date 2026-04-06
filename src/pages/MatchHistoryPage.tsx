@@ -144,9 +144,9 @@ export default function MatchHistoryPage() {
       <div className="min-h-screen flex items-center justify-center" style={{ background: LEATHER_BG }}>
         <div className="text-center">
           <span className="text-5xl block mb-3">🔒</span>
-          <p className="font-game-display text-sm text-muted-foreground tracking-wider">Sign in to view match history</p>
+          <p className="font-display text-sm text-muted-foreground tracking-wider">Sign in to view match history</p>
           <motion.button whileTap={{ scale: 0.95, y: 2 }} onClick={() => navigate("/auth")}
-            className="mt-4 px-6 py-3 rounded-2xl font-game-display text-xs tracking-wider relative overflow-hidden"
+            className="mt-4 px-6 py-3 rounded-2xl font-display text-xs tracking-wider relative overflow-hidden"
             style={{
               background: "linear-gradient(180deg, hsl(142 71% 50%), hsl(142 65% 38%))",
               border: "2px solid hsl(142 60% 35% / 0.5)",
@@ -171,7 +171,7 @@ export default function MatchHistoryPage() {
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3 mb-4">
           <motion.button whileTap={{ scale: 0.9 }} onClick={() => navigate(-1)}
-            className="w-10 h-10 rounded-xl flex items-center justify-center font-game-body text-sm text-foreground"
+            className="w-10 h-10 rounded-xl flex items-center justify-center font-body text-sm text-foreground"
             style={{
               background: "linear-gradient(180deg, hsl(28 20% 22%) 0%, hsl(25 18% 15%) 100%)",
               border: "2px solid hsl(43 50% 35%)",
@@ -180,10 +180,10 @@ export default function MatchHistoryPage() {
             ←
           </motion.button>
           <div className="flex-1">
-            <h1 className="font-game-title text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(25 40% 8%)" }}>
+            <h1 className="font-display text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(25 40% 8%)" }}>
               Match History
             </h1>
-            <span className="text-[9px] text-muted-foreground font-game-display tracking-[0.2em]">{matches.length} MATCHES PLAYED</span>
+            <span className="text-[9px] text-muted-foreground font-display tracking-[0.2em]">{matches.length} MATCHES PLAYED</span>
           </div>
           {/* Best score badge */}
           <div className="text-right rounded-xl px-3 py-1.5"
@@ -193,8 +193,8 @@ export default function MatchHistoryPage() {
               borderBottom: "4px solid hsl(43 40% 18%)",
               boxShadow: "0 3px 8px hsl(43 90% 55% / 0.15)",
             }}>
-            <span className="font-game-score text-lg font-black leading-none" style={{ color: "hsl(43 90% 55%)" }}>{summary.highScore}</span>
-            <span className="text-[6px] font-game-display tracking-widest block" style={{ color: "hsl(43 70% 50% / 0.7)" }}>BEST SCORE</span>
+            <span className="font-display text-lg font-black leading-none" style={{ color: "hsl(43 90% 55%)" }}>{summary.highScore}</span>
+            <span className="text-[6px] font-display tracking-widest block" style={{ color: "hsl(43 70% 50% / 0.7)" }}>BEST SCORE</span>
           </div>
         </motion.div>
 
@@ -215,8 +215,8 @@ export default function MatchHistoryPage() {
                   strokeDasharray={`${summary.winRate * 0.975} 97.5`} strokeLinecap="round" />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="font-game-score text-sm font-black leading-none" style={{ color: "hsl(142 71% 55%)" }}>{summary.winRate}%</span>
-                <span className="text-[5px] text-muted-foreground font-game-display tracking-widest">WIN</span>
+                <span className="font-display text-sm font-black leading-none" style={{ color: "hsl(142 71% 55%)" }}>{summary.winRate}%</span>
+                <span className="text-[5px] text-muted-foreground font-display tracking-widest">WIN</span>
               </div>
             </div>
             <div className="flex-1 grid grid-cols-3 gap-2">
@@ -231,8 +231,8 @@ export default function MatchHistoryPage() {
                     border: `1px solid ${s.color}15`,
                     borderBottom: `3px solid ${s.color}10`,
                   }}>
-                  <span className="font-game-score text-lg font-black block leading-none" style={{ color: s.color }}>{s.val}</span>
-                  <span className="text-[6px] text-muted-foreground font-game-display tracking-widest">{s.label}</span>
+                  <span className="font-display text-lg font-black block leading-none" style={{ color: s.color }}>{s.val}</span>
+                  <span className="text-[6px] text-muted-foreground font-display tracking-widest">{s.label}</span>
                 </div>
               ))}
             </div>
@@ -253,8 +253,8 @@ export default function MatchHistoryPage() {
                   borderBottom: "3px solid hsl(25 15% 8%)",
                 }}>
                 <span className="text-xs block mb-0.5">{s.icon}</span>
-                <span className="font-game-score text-sm font-black text-foreground block leading-none">{s.val}</span>
-                <span className="text-[5px] text-muted-foreground font-game-display tracking-widest">{s.label}</span>
+                <span className="font-display text-sm font-black text-foreground block leading-none">{s.val}</span>
+                <span className="text-[5px] text-muted-foreground font-display tracking-widest">{s.label}</span>
               </div>
             ))}
           </div>
@@ -272,7 +272,7 @@ export default function MatchHistoryPage() {
               const theme = f === "all" ? null : RESULT_THEME[f];
               return (
                 <motion.button key={f} whileTap={{ scale: 0.95 }} onClick={() => setResultFilter(f)}
-                  className="flex-1 py-2 rounded-xl font-game-display text-[8px] tracking-widest relative overflow-hidden"
+                  className="flex-1 py-2 rounded-xl font-display text-[8px] tracking-widest relative overflow-hidden"
                   style={isActive ? {
                     background: theme ? `linear-gradient(180deg, ${theme.bg}, ${theme.bg}cc)` : "linear-gradient(180deg, hsl(207 90% 50%), hsl(207 85% 38%))",
                     color: "white",
@@ -298,7 +298,7 @@ export default function MatchHistoryPage() {
                 const isActive = modeFilter === f;
                 return (
                   <motion.button key={f} whileTap={{ scale: 0.95 }} onClick={() => setModeFilter(f)}
-                    className="px-3 py-1.5 rounded-xl font-game-display text-[7px] tracking-widest whitespace-nowrap flex items-center gap-1"
+                    className="px-3 py-1.5 rounded-xl font-display text-[7px] tracking-widest whitespace-nowrap flex items-center gap-1"
                     style={{
                       background: isActive
                         ? `linear-gradient(180deg, ${meta.accent}25, ${meta.accent}10)`
@@ -330,13 +330,13 @@ export default function MatchHistoryPage() {
               borderBottom: "5px solid hsl(25 20% 10%)",
             }}>
             <span className="text-4xl block mb-3">📭</span>
-            <span className="font-game-display text-xs text-muted-foreground tracking-wider">NO MATCHES FOUND</span>
-            <p className="text-[9px] text-muted-foreground/60 mt-1 font-game-body">
+            <span className="font-display text-xs text-muted-foreground tracking-wider">NO MATCHES FOUND</span>
+            <p className="text-[9px] text-muted-foreground/60 mt-1 font-body">
               {matches.length === 0 ? "Play your first match!" : "Try different filters"}
             </p>
             {matches.length === 0 && (
               <motion.button whileTap={{ scale: 0.95, y: 2 }} onClick={() => navigate("/play")}
-                className="mt-4 px-5 py-2.5 rounded-xl font-game-display text-[9px] tracking-wider relative overflow-hidden"
+                className="mt-4 px-5 py-2.5 rounded-xl font-display text-[9px] tracking-wider relative overflow-hidden"
                 style={{
                   background: "linear-gradient(180deg, hsl(142 71% 50%), hsl(142 65% 38%))",
                   borderBottom: "4px solid hsl(142 55% 25%)",
@@ -393,8 +393,8 @@ export default function MatchHistoryPage() {
                               borderBottom: `3px solid ${theme.bg}25`,
                               boxShadow: `0 2px 8px ${theme.glow}`,
                             }}>
-                            <span className="font-game-score text-base font-black leading-none" style={{ color: theme.text }}>{theme.badge}</span>
-                            <span className="text-[5px] font-game-display tracking-widest text-muted-foreground mt-0.5">{theme.label}</span>
+                            <span className="font-display text-base font-black leading-none" style={{ color: theme.text }}>{theme.badge}</span>
+                            <span className="text-[5px] font-display tracking-widest text-muted-foreground mt-0.5">{theme.label}</span>
                           </div>
                           <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-[10px]"
                             style={{ background: `${modeMeta.accent}30`, border: `1px solid ${modeMeta.accent}50` }}>
@@ -404,33 +404,33 @@ export default function MatchHistoryPage() {
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-1.5 mb-0.5">
-                            <span className="font-game-display text-[10px] tracking-wider" style={{ color: theme.text }}>
+                            <span className="font-display text-[10px] tracking-wider" style={{ color: theme.text }}>
                               {m.result === "win" ? `${playerName} WON` : m.result === "loss" ? "ROHIT AI WON" : "MATCH DRAWN"}
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-[7px] font-game-display px-1.5 py-0.5 rounded-md tracking-wider"
+                            <span className="text-[7px] font-display px-1.5 py-0.5 rounded-md tracking-wider"
                               style={{ background: `${modeMeta.accent}15`, color: modeMeta.accent }}>
                               {modeMeta.label}
                             </span>
                             {m.result !== "draw" && (
-                              <span className="text-[7px] text-muted-foreground font-game-body">by {margin} runs</span>
+                              <span className="text-[7px] text-muted-foreground font-body">by {margin} runs</span>
                             )}
                             <span className="text-[7px] text-muted-foreground">•</span>
-                            <span className="text-[7px] text-muted-foreground font-game-body">{getTimeAgo(m.created_at)}</span>
+                            <span className="text-[7px] text-muted-foreground font-body">{getTimeAgo(m.created_at)}</span>
                           </div>
                         </div>
 
                         {/* Score */}
                         <div className="text-right flex items-baseline gap-2">
                           <div className="text-center">
-                            <span className="font-game-score text-lg font-black leading-none" style={{ color: m.result === "win" ? theme.text : "hsl(var(--foreground))" }}>{m.user_score}</span>
-                            <span className="text-[5px] text-muted-foreground font-game-display tracking-widest block">YOU</span>
+                            <span className="font-display text-lg font-black leading-none" style={{ color: m.result === "win" ? theme.text : "hsl(var(--foreground))" }}>{m.user_score}</span>
+                            <span className="text-[5px] text-muted-foreground font-display tracking-widest block">YOU</span>
                           </div>
-                          <span className="text-[8px] font-game-display" style={{ color: "hsl(25 15% 35%)" }}>vs</span>
+                          <span className="text-[8px] font-display" style={{ color: "hsl(25 15% 35%)" }}>vs</span>
                           <div className="text-center">
-                            <span className="font-game-score text-lg font-black leading-none" style={{ color: m.result === "loss" ? theme.text : "hsl(var(--foreground) / 0.6)" }}>{m.ai_score}</span>
-                            <span className="text-[5px] text-muted-foreground font-game-display tracking-widest block">AI</span>
+                            <span className="font-display text-lg font-black leading-none" style={{ color: m.result === "loss" ? theme.text : "hsl(var(--foreground) / 0.6)" }}>{m.ai_score}</span>
+                            <span className="text-[5px] text-muted-foreground font-display tracking-widest block">AI</span>
                           </div>
                         </div>
                       </button>
@@ -453,9 +453,9 @@ export default function MatchHistoryPage() {
                                       border: `1.5px solid ${p.color}25`,
                                       borderBottom: `3px solid ${p.color}12`,
                                     }}>
-                                    <span className="text-[7px] text-muted-foreground font-game-display tracking-widest block mb-1">{p.name}</span>
-                                    <span className="font-game-score text-2xl font-black block leading-none" style={{ color: p.color }}>{p.score}</span>
-                                    <span className="text-[8px] text-muted-foreground mt-1 block font-game-body">RR {p.rr}</span>
+                                    <span className="text-[7px] text-muted-foreground font-display tracking-widest block mb-1">{p.name}</span>
+                                    <span className="font-display text-2xl font-black block leading-none" style={{ color: p.color }}>{p.score}</span>
+                                    <span className="text-[8px] text-muted-foreground mt-1 block font-body">RR {p.rr}</span>
                                   </div>
                                 ))}
                               </div>
@@ -467,7 +467,7 @@ export default function MatchHistoryPage() {
                                     border: "1.5px solid hsl(25 18% 20%)",
                                     borderBottom: "3px solid hsl(25 15% 8%)",
                                   }}>
-                                  <span className="text-[7px] text-muted-foreground font-game-display tracking-widest block mb-2">SHOT BREAKDOWN</span>
+                                  <span className="text-[7px] text-muted-foreground font-display tracking-widest block mb-2">SHOT BREAKDOWN</span>
                                   <div className="grid grid-cols-4 gap-1.5">
                                     {[
                                       { label: "6s", val: ballStats.sixes, color: "hsl(207,90%,54%)" },
@@ -480,8 +480,8 @@ export default function MatchHistoryPage() {
                                       { label: "Balls", val: ballStats.totalBalls, color: "hsl(var(--foreground))" },
                                     ].map(s => (
                                       <div key={s.label} className="text-center py-1.5 rounded-lg" style={{ background: `${s.color}10` }}>
-                                        <span className="font-game-score text-sm font-black block leading-none" style={{ color: s.color }}>{s.val}</span>
-                                        <span className="text-[6px] text-muted-foreground font-game-display tracking-widest">{s.label}</span>
+                                        <span className="font-display text-sm font-black block leading-none" style={{ color: s.color }}>{s.val}</span>
+                                        <span className="text-[6px] text-muted-foreground font-display tracking-widest">{s.label}</span>
                                       </div>
                                     ))}
                                   </div>
@@ -496,10 +496,10 @@ export default function MatchHistoryPage() {
                                     borderBottom: "3px solid hsl(25 15% 8%)",
                                   }}>
                                   <div className="flex items-center justify-between mb-2">
-                                    <span className="text-[7px] text-muted-foreground font-game-display tracking-widest">BALL-BY-BALL</span>
+                                    <span className="text-[7px] text-muted-foreground font-display tracking-widest">BALL-BY-BALL</span>
                                     <motion.button whileTap={{ scale: 0.9, y: 1 }}
                                       onClick={(e) => { e.stopPropagation(); if (isReplaying) { setReplayingMatch(null); } else { startReplay(m.id); } }}
-                                      className="px-2.5 py-1 rounded-lg font-game-display text-[7px] tracking-wider flex items-center gap-1"
+                                      className="px-2.5 py-1 rounded-lg font-display text-[7px] tracking-wider flex items-center gap-1"
                                       style={{
                                         background: isReplaying ? "hsl(4 50% 20% / 0.3)" : "hsl(142 30% 18% / 0.3)",
                                         border: isReplaying ? "1.5px solid hsl(4 60% 40% / 0.3)" : "1.5px solid hsl(142 50% 35% / 0.3)",
@@ -528,7 +528,7 @@ export default function MatchHistoryPage() {
                                         <motion.div key={bi}
                                           initial={isReplaying ? { scale: 0 } : false}
                                           animate={isVisible ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
-                                          className="w-7 h-7 rounded-lg flex items-center justify-center text-[8px] font-game-score font-black"
+                                          className="w-7 h-7 rounded-lg flex items-center justify-center text-[8px] font-display font-black"
                                           style={{
                                             background: bg,
                                             color,
@@ -545,7 +545,7 @@ export default function MatchHistoryPage() {
                                     <motion.div key={replayBall} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}
                                       className="mt-2 rounded-lg p-2 text-center"
                                       style={{ background: "hsl(25 18% 14%)", border: "1px solid hsl(25 18% 20%)" }}>
-                                      <span className="text-[9px] text-foreground font-game-display">
+                                      <span className="text-[9px] text-foreground font-display">
                                         Ball {replayBall + 1}: {balls[replayBall].description || (balls[replayBall].runs === "OUT" ? "OUT! 🔴" : `${Math.abs(typeof balls[replayBall].runs === "number" ? balls[replayBall].runs as number : 0)} runs`)}
                                       </span>
                                     </motion.div>
@@ -566,8 +566,8 @@ export default function MatchHistoryPage() {
                                   { label: "Played On", value: new Date(m.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }), color: "hsl(var(--foreground))" },
                                 ].map(d => (
                                   <div key={d.label} className="flex justify-between items-center py-1" style={{ borderBottom: "1px solid hsl(25 18% 18%)" }}>
-                                    <span className="text-[8px] font-game-display tracking-wider" style={{ color: "hsl(25 15% 40%)" }}>{d.label}</span>
-                                    <span className="text-[9px] font-game-score font-bold" style={{ color: d.color }}>{d.value}</span>
+                                    <span className="text-[8px] font-display tracking-wider" style={{ color: "hsl(25 15% 40%)" }}>{d.label}</span>
+                                    <span className="text-[9px] font-display font-bold" style={{ color: d.color }}>{d.value}</span>
                                   </div>
                                 ))}
                               </div>
