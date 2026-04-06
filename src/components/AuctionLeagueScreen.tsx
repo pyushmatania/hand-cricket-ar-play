@@ -587,25 +587,113 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
             )}
 
             {bidPhase === "sold" && (
-              <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-center py-4">
-                <p className="font-display text-2xl mb-2" style={{
-                  color: soldTo === "you" ? "hsl(142 71% 50%)" : "hsl(0 70% 55%)"
-                }}>
-                  {soldTo === "you" ? "✅ SOLD TO YOU!" : "❌ SOLD TO AI"}
-                </p>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-4 relative">
+                {/* Gavel slam animation */}
+                <motion.div
+                  initial={{ rotate: -45, y: -60, scale: 1.5 }}
+                  animate={{ rotate: 0, y: 0, scale: 1 }}
+                  transition={{ type: "spring", damping: 8, stiffness: 300, duration: 0.4 }}
+                  className="text-5xl mb-1"
+                  onAnimationComplete={() => {
+                    if (hapticsEnabled) Haptics.heavy();
+                  }}
+                >
+                  🔨
+                </motion.div>
+                {/* Impact shockwave */}
+                <motion.div
+                  className="absolute left-1/2 top-[60px] -translate-x-1/2 w-24 h-24 rounded-full"
+                  initial={{ scale: 0.2, opacity: 0.8 }}
+                  animate={{ scale: 3, opacity: 0 }}
+                  transition={{ duration: 0.6 }}
+                  style={{
+                    border: soldTo === "you"
+                      ? "2px solid hsl(142 60% 50% / 0.5)"
+                      : "2px solid hsl(0 50% 50% / 0.5)",
+                  }}
+                />
+                {/* Second shockwave */}
+                <motion.div
+                  className="absolute left-1/2 top-[60px] -translate-x-1/2 w-16 h-16 rounded-full"
+                  initial={{ scale: 0.2, opacity: 0.6 }}
+                  animate={{ scale: 2.5, opacity: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  style={{
+                    background: soldTo === "you"
+                      ? "radial-gradient(circle, hsl(43 90% 55% / 0.3), transparent)"
+                      : "radial-gradient(circle, hsl(0 50% 55% / 0.2), transparent)",
+                  }}
+                />
+                {/* SOLD text with slam entrance */}
+                <motion.p
+                  initial={{ scale: 2.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: "spring", damping: 12, delay: 0.15 }}
+                  className="font-display text-2xl mb-1"
+                  style={{
+                    color: soldTo === "you" ? "hsl(142 71% 50%)" : "hsl(0 70% 55%)",
+                    textShadow: soldTo === "you"
+                      ? "0 3px 0 hsl(142 50% 25%), 0 0 20px hsl(142 71% 50% / 0.3)"
+                      : "0 3px 0 hsl(0 50% 25%)",
+                  }}
+                >
+                  {soldTo === "you" ? "SOLD TO YOU!" : "SOLD TO AI"}
+                </motion.p>
+                {/* Crowd roar bar */}
+                <motion.div
+                  className="mx-auto mb-2 overflow-hidden rounded-full"
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: "70%", opacity: 1 }}
+                  transition={{ delay: 0.3, duration: 0.5 }}
+                >
+                  <div className="flex items-center justify-center gap-1 py-1 px-3 rounded-full"
+                    style={{
+                      background: "linear-gradient(90deg, hsl(220 15% 12%), hsl(220 12% 8%))",
+                      border: "1px solid hsl(220 15% 16%)",
+                    }}>
+                    {["👏", "🎉", "📣", "🔥", "👏"].map((e, i) => (
+                      <motion.span
+                        key={i}
+                        className="text-sm"
+                        initial={{ y: 10, opacity: 0 }}
+                        animate={{ y: [0, -4, 0], opacity: 1 }}
+                        transition={{
+                          delay: 0.4 + i * 0.08,
+                          y: { repeat: Infinity, duration: 0.6, delay: 0.4 + i * 0.1 },
+                        }}
+                      >
+                        {e}
+                      </motion.span>
+                    ))}
+                    <motion.span
+                      className="font-display text-[8px] tracking-wider text-muted-foreground ml-1"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.6 }}
+                    >
+                      CROWD ROARS!
+                    </motion.span>
+                  </div>
+                </motion.div>
                 {soldTo === "you" && (
-                  <p className="font-display text-sm" style={{ color: "hsl(43 90% 55%)" }}>🪙 {bidAmount} spent</p>
+                  <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
+                    className="font-display text-sm" style={{ color: "hsl(43 90% 55%)" }}>🪙 {bidAmount} spent</motion.p>
                 )}
                 {soldTo === "ai" && (
-                  <p className="font-body text-[10px] text-muted-foreground">AI bid 🪙 {aiBid}</p>
+                  <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
+                    className="font-body text-[10px] text-muted-foreground">AI bid 🪙 {aiBid}</motion.p>
                 )}
-                <motion.button whileTap={{ scale: 0.95 }} onClick={handleNextPlayer}
+                <motion.button whileTap={{ scale: 0.95, y: 2 }} onClick={handleNextPlayer}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7 }}
                   className="mt-4 px-6 py-2.5 rounded-xl font-display text-[11px] tracking-wider"
                   style={{
                     background: "linear-gradient(180deg, hsl(217 80% 55%) 0%, hsl(217 70% 42%) 100%)",
                     border: "1.5px solid hsl(217 60% 60% / 0.4)",
-                    borderBottom: "3px solid hsl(217 55% 28%)",
+                    borderBottom: "4px solid hsl(217 55% 28%)",
                     color: "hsl(217 90% 95%)",
+                    boxShadow: "0 3px 0 hsl(217 55% 20%)",
                   }}>
                   NEXT →
                 </motion.button>
