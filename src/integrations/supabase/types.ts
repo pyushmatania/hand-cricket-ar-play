@@ -1612,6 +1612,10 @@ export type Database = {
       }
       accept_match_invite: { Args: { p_invite_id: string }; Returns: string }
       claim_multiplayer_game: { Args: { p_game_id: string }; Returns: string }
+      increment_clan_xp_if_exists: {
+        Args: { p_clan_id: string; p_xp: number }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
