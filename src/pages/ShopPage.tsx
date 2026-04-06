@@ -126,7 +126,7 @@ export default function ShopPage() {
               ←
             </motion.button>
             <div>
-              <img src={stoneShopImg} alt="SHOP" className="h-8 w-auto drop-shadow-lg" />
+              <img src={stoneShopImg} alt="SHOP" style={{ height: 32, width: "auto", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.6))" }} />
               <span className="text-[9px] text-[#94A3B8] font-display tracking-[0.2em]">WOODEN MARKETPLACE</span>
             </div>
           </div>
