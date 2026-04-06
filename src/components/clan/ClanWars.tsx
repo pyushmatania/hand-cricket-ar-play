@@ -63,6 +63,8 @@ export default function ClanWars({ clan, myRole }: ClanWarsProps) {
   const [resultWar, setResultWar] = useState<any>(null);
   const [resultAttacks, setResultAttacks] = useState<AttackRecord[]>([]);
   const [resultOppClan, setResultOppClan] = useState<Clan | null>(null);
+  const [historyStats, setHistoryStats] = useState<WarHistoryStats | null>(null);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
   /* ─── Load wars ─── */
   useEffect(() => {
