@@ -1,36 +1,24 @@
+## Auction Draft System — Enhancement Plan
 
-# Phase 10: Sound + Haptics + Splash Polish
+The auction draft system already exists with full bidding, AI opponents, knockout matches, and results. Here's what we'll enhance:
 
-## Step 1: Expand Web Audio SFX Library (85+ effects)
-Rebuild `src/lib/sounds.ts` with V10-spec sounds covering all categories:
+### 1. Fix "Play Again" button (currently just goes home)
+- Wire the Play Again button to actually reset all state and restart
 
-**New SFX to add (~50+ new):**
-- **Bat hits**: `batSoft`, `batMedium`, `batHard`, `batMassive` (intensity-mapped)
-- **Ball sounds**: `ballBounce`, `ballIntoGloves`, `ballEdge`, `ballPadHit`, `ballFlight`
-- **Stumps**: `stumpsHit`, `bailsFlying`
-- **Crowd layers**: `crowdCheerMild`, `crowdCheerExcited`, `crowdEruption`, `crowdGasp`, `crowdGroan`, `crowdAppeal`
-- **UI sounds**: `cardSlideIn`, `cardSlideOut`, `scoreTick`, `drawerOpen`, `drawerClose`, `tabSwitch`, `modalOpen`, `modalClose`
-- **Rewards**: `coinCollect`, `gemCollect`, `cardFlip`, `legendaryReveal`, `chestShake`, `chestCrack`, `chestBurst`
-- **Special**: `coinFlip`, `coinLand`, `heartbeat`, `timerExpire`, `drsWhoosh`, `drsVerdict`
-- **Match flow**: `matchFound`, `vsSlam`, `walkoutDrums`, `overBreak`, `inningsSwitch`
-- **Social**: `chatMessage`, `friendRequest`, `clanWarHorn`
+### 2. Add bid war mechanic (multi-round bidding)
+- Instead of single-bid → sold, add counter-bidding rounds
+- Player bids → AI counters → Player can raise or fold
+- Up to 3 rounds of bidding per player
+- Adds drama and strategy to each auction lot
 
-All synthesized via Web Audio API (no MP3 dependencies).
+### 3. Add live bid history ticker
+- Show a scrolling ticker of recent auction results ("Kohli SOLD to AI for 🪙350")
+- Visible during the auction phase
 
-## Step 2: Comprehensive Haptic Mappings (85+)
-Expand `Haptics` object to match every SFX with appropriate vibration patterns:
-- Intensity tiers: `micro(3ms)`, `light(8ms)`, `medium(20ms)`, `heavy(40ms)`, `impact(60ms)`
-- Complex patterns for: stumps, crowd reactions, chest opening, card reveals, DRS, celebrations
+### 4. Save auction results to database
+- Save final team, placement, and budget to `auction_sessions` and `auction_budgets` tables
+- Show past auction results on return
 
-## Step 3: Splash Screen Enhancement
-- Add floodlight beam sweeps during loading
-- Cricket ball arc animation (ball travels across screen)
-- Flash exit transition (white flash → fade)
-- Add splash SFX (stadium ambience + horn on complete)
-
-## Step 4: reduce-motion Support
-- Wrap all SFX/haptics in a `prefers-reduced-motion` check
-- Add `soundEnabled` and `hapticsEnabled` settings integration
-
-**Files modified:** `src/lib/sounds.ts`, `src/components/SplashScreen.tsx`
-**No new dependencies needed** — all Web Audio API
+### 5. Wire team characters into auction
+- Show IPL team character illustrations on player cards during auction
+- Use the team-to-character mapping for visual flair
