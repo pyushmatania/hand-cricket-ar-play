@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import stoneShopImg from "@/assets/ui/stone-shop.png";
 import StoneHeader from "@/components/shared/StoneHeader";
 import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
