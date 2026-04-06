@@ -85,6 +85,11 @@ export default function ClanPage() {
               <ClanMatchmaking />
             </motion.div>
           )}
+          {tab === "badges" && myClan && (
+            <motion.div key="badges" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
+              <ClanAchievements clanId={myClan.id} />
+            </motion.div>
+          )}
           {tab === "recruit" && (
             <motion.div key="recruit" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
               <ClanRecruitment />
