@@ -1,5 +1,4 @@
 import { useState, useCallback, useEffect } from "react";
-import stoneSettingsImg from "@/assets/ui/stone-settings.png";
 import StoneHeader from "@/components/shared/StoneHeader";
 import { Slider } from "@/components/ui/slider";
 import { motion, AnimatePresence } from "framer-motion";
