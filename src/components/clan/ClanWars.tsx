@@ -379,12 +379,31 @@ export default function ClanWars({ clan, myRole }: ClanWarsProps) {
                       const wOppStars = wIsA ? w.clan_b_stars : w.clan_a_stars;
                       const won = w.winner_clan_id === clan.id;
                       return (
-                        <div key={w.id} className={`flex items-center justify-between px-3 py-2 rounded-xl stadium-glass border ${won ? "border-neon-green/20" : "border-destructive/20"}`}>
+                        <motion.button key={w.id} whileTap={{ scale: 0.97 }}
+                          onClick={async () => {
+                            // Load attacks for this war
+                            const { data: atks } = await supabase.from("war_attacks").select("*").eq("war_id", w.id).order("created_at", { ascending: true });
+                            const atkList = (atks as AttackRecord[]) || [];
+                            const ids = [...new Set(atkList.map(a => a.attacker_id))];
+                            if (ids.length > 0) {
+                              const { data: profs } = await supabase.from("profiles").select("user_id, display_name").in("user_id", ids);
+                              const nm = new Map((profs || []).map((p: any) => [p.user_id, p.display_name]));
+                              atkList.forEach(a => { a.display_name = nm.get(a.attacker_id) || "Player"; });
+                            }
+                            // Load opponent clan
+                            const oppId = wIsA ? w.clan_b_id : w.clan_a_id;
+                            const { data: opp } = await supabase.from("clans").select("*").eq("id", oppId).single();
+                            setResultWar(w);
+                            setResultAttacks(atkList);
+                            setResultOppClan(opp as unknown as Clan || null);
+                            setWarPhase("war_results");
+                          }}
+                          className={`flex items-center justify-between px-3 py-2 rounded-xl stadium-glass border w-full text-left ${won ? "border-neon-green/20" : "border-destructive/20"}`}>
                           <span className="font-display text-xs text-foreground tabular-nums">{wMyStars}⭐ vs {wOppStars}⭐</span>
                           <span className={`text-[9px] font-display ${won ? "text-neon-green" : "text-destructive"}`}>
-                            {won ? "🏆 WON" : "❌ LOST"}
+                            {won ? "🏆 WON" : "❌ LOST"} →
                           </span>
-                        </div>
+                        </motion.button>
                       );
                     })}
                   </div>
