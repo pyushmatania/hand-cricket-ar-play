@@ -1,5 +1,4 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import stoneLuckySpinImg from "@/assets/ui/stone-luckyspin.png";
 import StoneHeader from "@/components/shared/StoneHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
