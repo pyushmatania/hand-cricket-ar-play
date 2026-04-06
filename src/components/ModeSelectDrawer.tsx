@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { SFX, Haptics } from "@/lib/sounds";
 import { supabase } from "@/integrations/supabase/client";
+import { IPL_TEAMS } from "@/components/ipl/IPLData";
 import {
   Drawer,
   DrawerContent,
@@ -205,7 +206,10 @@ export default function ModeSelectDrawer({ open, onOpenChange }: ModeSelectDrawe
   const handlePlay = (formatId: string, overs?: number) => {
     try { SFX.tap(); Haptics.heavy(); } catch { /* Intentionally ignored - non-critical */ }
     onOpenChange(false);
-    navigate(`/game/tap`, { state: { format: formatId, overs } });
+    const playerTeamId = localStorage.getItem("favoriteTeamId") || IPL_TEAMS[Math.floor(Math.random() * IPL_TEAMS.length)].id;
+    const availableOpponents = IPL_TEAMS.filter(t => t.id !== playerTeamId);
+    const opponentTeamId = availableOpponents[Math.floor(Math.random() * availableOpponents.length)].id;
+    navigate(`/game/tap`, { state: { format: formatId, overs, playerTeamId, opponentTeamId } });
   };
 
   const handleNavigate = (id: string) => {
