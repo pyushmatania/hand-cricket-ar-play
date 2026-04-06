@@ -57,13 +57,13 @@ const defaults: Settings = {
   commentaryVoice: "nPczCjzI2devNBz1zQrb",
   voiceEngine: "system" as VoiceEngine,
   commentaryLanguage: "both" as CommentaryLanguage,
-  ceremoniesEnabled: false,
+  ceremoniesEnabled: true,
   ambientVolume: 0.25,
-  tapCeremoniesEnabled: false,
-  arCeremoniesEnabled: false,
-  tournamentCeremoniesEnabled: false,
-  dailyCeremoniesEnabled: false,
-  multiplayerCeremoniesEnabled: false,
+  tapCeremoniesEnabled: true,
+  arCeremoniesEnabled: true,
+  tournamentCeremoniesEnabled: true,
+  dailyCeremoniesEnabled: true,
+  multiplayerCeremoniesEnabled: true,
 };
 
 const SettingsContext = createContext<SettingsContextType>({

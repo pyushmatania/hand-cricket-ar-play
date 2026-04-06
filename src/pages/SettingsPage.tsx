@@ -10,6 +10,7 @@ import { SYSTEM_VOICE_PERSONAS, speakWithSystemPersona } from "@/lib/systemVoice
 import { BUTTON_STYLES } from "@/lib/cosmetics";
 import { supabase } from "@/integrations/supabase/client";
 import { speakElevenLabs } from "@/lib/elevenLabsAudio";
+import { setSoundEnabled, setHapticsEnabled } from "@/lib/sounds";
 
 const COMMENTARY_VOICES = [
   { id: "nPczCjzI2devNBz1zQrb", name: "Brian", desc: "Deep authoritative broadcaster", emoji: "🎙️" },
