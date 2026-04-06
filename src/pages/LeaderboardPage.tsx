@@ -499,7 +499,7 @@ export default function LeaderboardPage() {
 
   const V10_BG = "linear-gradient(180deg, #1A0F06 0%, #12080A 100%)";
   const LEATHER_GRAIN = `url('/assets/ui/leather-texture.png')`;
-  const CONCRETE_CARD = "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)";
+  const CONCRETE_CARD = "linear-gradient(180deg, #3E2410, #2E1A0E)";
   const CHALK_BORDER = "2px dashed hsl(43 30% 30% / 0.25)";
 
   return (
