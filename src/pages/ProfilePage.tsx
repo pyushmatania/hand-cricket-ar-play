@@ -299,8 +299,11 @@ export default function ProfilePage() {
           }}
         >
 
-          {/* Top chrome rank banner */}
-          <div className="relative px-4 py-3 scoreboard-metal">
+          {/* Top rank banner — Hammered Metal */}
+          <div className="relative px-4 py-3" style={{
+            background: "linear-gradient(180deg, #3A3A4A, #1E293B)",
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.3)",
+          }}>
             {/* Chrome rivet corners */}
             {["top-1.5 left-2", "top-1.5 right-2"].map(pos => (
               <div key={pos} className={`absolute ${pos} w-2 h-2 rounded-full`} style={{
