@@ -2,22 +2,17 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 /**
- * Hand Cricket Trophy — 12-second cinematic ceremony
+ * V10 Hand Cricket Trophy — 12-second cinematic ceremony
  * Phases: Rise (0-3s) → Glow burst (3-5s) → Spin reveal (5-8s) → Settle (8-12s)
+ * Uses scoreboard-metal for name plate
  */
 
 const HAND_FINGERS = [
-  // Palm base
   { d: "M35 95 Q30 75 32 60 L68 60 Q70 75 65 95 Z", fill: "hsl(43 80% 52%)" },
-  // Thumb
   { d: "M32 65 Q20 55 18 40 Q17 30 25 28 Q30 26 33 35 Q35 45 35 60", fill: "hsl(43 75% 48%)" },
-  // Index
   { d: "M36 60 Q35 35 34 18 Q34 10 40 10 Q46 10 46 18 Q45 35 44 60", fill: "hsl(43 80% 55%)" },
-  // Middle
   { d: "M44 60 Q44 32 44 12 Q44 4 50 4 Q56 4 56 12 Q56 32 56 60", fill: "hsl(43 85% 58%)" },
-  // Ring
   { d: "M56 60 Q57 35 57 18 Q57 10 62 10 Q68 10 68 18 Q67 35 64 60", fill: "hsl(43 80% 55%)" },
-  // Pinky
   { d: "M64 60 Q66 42 67 28 Q67 20 72 22 Q77 24 76 32 Q74 45 68 60", fill: "hsl(43 75% 48%)" },
 ];
 
@@ -34,7 +29,7 @@ interface TrophyCeremonyProps {
 }
 
 export default function TrophyCeremony({ playerName, stars = 1, onPhaseChange }: TrophyCeremonyProps) {
-  const [phase, setPhase] = useState(0); // 0=rise, 1=glow, 2=spin, 3=settle
+  const [phase, setPhase] = useState(0);
 
   useEffect(() => {
     const timers = [
@@ -105,33 +100,23 @@ export default function TrophyCeremony({ playerName, stars = 1, onPhaseChange }:
         style={{ perspective: 800 }}
       >
         <svg viewBox="0 0 100 130" className="w-36 h-44 drop-shadow-[0_0_30px_hsl(43_96%_56%/0.5)]">
-          {/* Base pedestal */}
           <rect x="25" y="100" width="50" height="8" rx="3"
             fill="url(#pedestalGrad)" stroke="hsl(43 60% 35%)" strokeWidth="1" />
           <rect x="30" y="108" width="40" height="6" rx="2"
             fill="url(#pedestalGrad2)" stroke="hsl(43 50% 30%)" strokeWidth="0.5" />
-
-          {/* Stem */}
           <rect x="45" y="88" width="10" height="14" rx="2"
             fill="url(#stemGrad)" stroke="hsl(43 60% 40%)" strokeWidth="0.5" />
-
-          {/* Hand */}
           <g transform="translate(0, -5)">
             {HAND_FINGERS.map((f, i) => (
               <path key={i} d={f.d} fill={f.fill}
                 stroke="hsl(43 60% 35%)" strokeWidth="0.8" strokeLinejoin="round" />
             ))}
-            {/* Palm highlight */}
             <ellipse cx="50" cy="72" rx="12" ry="8" fill="hsl(43 90% 65%)" opacity="0.3" />
           </g>
-
-          {/* Engraved text on base */}
           <text x="50" y="106" textAnchor="middle" fontSize="4" fontWeight="bold"
             fill="hsl(43 30% 25%)" fontFamily="sans-serif">
             CHAMPION
           </text>
-
-          {/* Gradients */}
           <defs>
             <linearGradient id="pedestalGrad" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="hsl(43 50% 40%)" />
@@ -166,7 +151,7 @@ export default function TrophyCeremony({ playerName, stars = 1, onPhaseChange }:
         )}
       </AnimatePresence>
 
-      {/* Player name plate — appears in settle phase */}
+      {/* Player name plate — scoreboard-metal V10 */}
       <AnimatePresence>
         {phase >= 3 && (
           <motion.div
@@ -174,15 +159,8 @@ export default function TrophyCeremony({ playerName, stars = 1, onPhaseChange }:
             animate={{ opacity: 1, y: 0 }}
             className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-max"
           >
-            <div
-              className="px-4 py-1.5 rounded-lg text-center"
-              style={{
-                background: "linear-gradient(180deg, hsl(43 50% 20%), hsl(43 40% 12%))",
-                border: "1px solid hsl(43 50% 30%)",
-                boxShadow: "0 4px 16px hsl(0 0% 0% / 0.4)",
-              }}
-            >
-              <span className="font-game-display text-[8px] tracking-[0.3em] block"
+            <div className="px-4 py-1.5 rounded-lg text-center scoreboard-metal">
+              <span className="font-display text-[8px] tracking-[0.3em] block"
                 style={{ color: "hsl(43 80% 60%)" }}>
                 🏆 {playerName.toUpperCase()}
               </span>

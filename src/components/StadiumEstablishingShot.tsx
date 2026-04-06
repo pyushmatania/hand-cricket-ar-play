@@ -1,7 +1,8 @@
 /**
- * Stadium Establishing Shot — Cinematic opening
+ * Stadium Establishing Shot — V10 Cinematic opening
  * Night stadium with sweeping floodlight beams,
  * camera pan effect, and match info reveal.
+ * Uses stadium-glass + scoreboard-metal materials.
  * Total duration: ~4s
  */
 
@@ -44,7 +45,7 @@ export default function StadiumEstablishingShot({
           transition={{ duration: 0.3 }}
           className="fixed inset-0 z-[72] overflow-hidden"
         >
-          {/* Night sky base */}
+          {/* Night sky base — V10 deep navy */}
           <motion.div
             className="absolute inset-0"
             initial={{ scale: 1.3, y: "-10%" }}
@@ -57,7 +58,7 @@ export default function StadiumEstablishingShot({
             }
             transition={{ duration: 1.4, ease: "easeInOut" }}
             style={{
-              background: "linear-gradient(180deg, hsl(220 40% 4%) 0%, hsl(220 30% 10%) 40%, hsl(100 20% 12%) 75%, hsl(100 25% 8%) 100%)",
+              background: "linear-gradient(180deg, hsl(220 40% 4%) 0%, hsl(220 30% 8%) 40%, hsl(100 20% 10%) 75%, hsl(100 25% 6%) 100%)",
             }}
           >
             {/* Stars */}
@@ -79,7 +80,6 @@ export default function StadiumEstablishingShot({
 
             {/* Stadium silhouette — tiered arcs */}
             <div className="absolute bottom-0 left-0 right-0 h-[45%]">
-              {/* Upper tier */}
               <div
                 className="absolute bottom-[55%] left-[5%] right-[5%] h-[25%] rounded-t-[50%]"
                 style={{
@@ -88,7 +88,6 @@ export default function StadiumEstablishingShot({
                   borderBottom: "none",
                 }}
               />
-              {/* Lower tier */}
               <div
                 className="absolute bottom-[30%] left-[2%] right-[2%] h-[30%] rounded-t-[40%]"
                 style={{
@@ -97,24 +96,17 @@ export default function StadiumEstablishingShot({
                   borderBottom: "none",
                 }}
               />
-              {/* Pitch floor */}
               <div
                 className="absolute bottom-0 left-0 right-0 h-[35%]"
-                style={{
-                  background: "linear-gradient(180deg, hsl(100 30% 14%) 0%, hsl(100 25% 8%) 100%)",
-                }}
+                style={{ background: "linear-gradient(180deg, hsl(100 30% 12%) 0%, hsl(100 25% 6%) 100%)" }}
               />
-              {/* Center pitch strip */}
               <div
                 className="absolute bottom-[5%] left-1/2 -translate-x-1/2 w-[8%] h-[25%] rounded-sm"
-                style={{
-                  background: "linear-gradient(180deg, hsl(40 25% 25%) 0%, hsl(40 20% 18%) 100%)",
-                  opacity: 0.6,
-                }}
+                style={{ background: "linear-gradient(180deg, hsl(40 25% 22%) 0%, hsl(40 20% 15%) 100%)", opacity: 0.6 }}
               />
             </div>
 
-            {/* Floodlight towers — 4 positions */}
+            {/* Floodlight towers */}
             {[
               { left: "8%", height: "55%", beamAngle: 25 },
               { left: "28%", height: "50%", beamAngle: 12 },
@@ -122,15 +114,10 @@ export default function StadiumEstablishingShot({
               { left: "92%", height: "55%", beamAngle: -25 },
             ].map((tower, i) => (
               <div key={`tower-${i}`} className="absolute" style={{ left: tower.left, bottom: "35%", height: tower.height }}>
-                {/* Tower pole */}
                 <div
                   className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[3px]"
-                  style={{
-                    height: "100%",
-                    background: "linear-gradient(180deg, hsl(0 0% 35%), hsl(0 0% 15%))",
-                  }}
+                  style={{ height: "100%", background: "linear-gradient(180deg, hsl(0 0% 35%), hsl(0 0% 15%))" }}
                 />
-                {/* Light head */}
                 <div
                   className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-3 rounded-sm"
                   style={{
@@ -138,7 +125,6 @@ export default function StadiumEstablishingShot({
                     boxShadow: "0 0 12px hsl(43 96% 56% / 0.6)",
                   }}
                 />
-                {/* Light beam cone */}
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: [0.06, 0.15, 0.06] }}
@@ -160,10 +146,7 @@ export default function StadiumEstablishingShot({
 
             {/* Sweeping spotlight */}
             <motion.div
-              animate={{
-                x: ["-30%", "130%"],
-                opacity: [0, 0.12, 0.12, 0],
-              }}
+              animate={{ x: ["-30%", "130%"], opacity: [0, 0.12, 0.12, 0] }}
               transition={{ duration: 3, ease: "easeInOut" }}
               className="absolute top-[15%] w-24 h-[80%]"
               style={{
@@ -172,7 +155,7 @@ export default function StadiumEstablishingShot({
               }}
             />
 
-            {/* Crowd dots — tiny lights in stands */}
+            {/* Crowd dots */}
             {[...Array(60)].map((_, i) => (
               <motion.div
                 key={`crowd-${i}`}
@@ -190,7 +173,7 @@ export default function StadiumEstablishingShot({
             ))}
           </motion.div>
 
-          {/* Title overlay */}
+          {/* Title overlay — scoreboard-metal framed */}
           <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
             {/* Arena name */}
             <motion.div
@@ -206,12 +189,12 @@ export default function StadiumEstablishingShot({
               </span>
             </motion.div>
 
-            {/* VS matchup */}
+            {/* VS matchup — scoreboard-metal card */}
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={phase === "title" ? { opacity: 1, scale: 1 } : {}}
               transition={{ type: "spring", damping: 12 }}
-              className="text-center mt-3"
+              className="text-center mt-3 px-6 py-4 rounded-xl scoreboard-metal"
             >
               <span className="font-display text-lg font-black text-white tracking-wider block" style={{ textShadow: "0 2px 10px rgba(0,0,0,0.8)" }}>
                 {playerName.toUpperCase()}
