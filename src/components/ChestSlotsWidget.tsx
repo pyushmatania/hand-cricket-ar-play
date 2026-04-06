@@ -215,7 +215,7 @@ function ChestSlot({
       )}
 
       {/* Status overlay */}
-      <div className="absolute bottom-0 inset-x-0 py-0.5 text-center" style={{ background: "rgba(0,0,0,0.7)" }}>
+      <div className="absolute bottom-0 inset-x-0 py-0.5 text-center" style={{ background: "rgba(30,15,5,0.85)" }}>
         {isLocked && (
           <div className="flex items-center justify-center gap-0.5">
             <Lock className="w-2.5 h-2.5 text-muted-foreground" />
