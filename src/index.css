@@ -10,32 +10,32 @@
 @layer base {
   :root {
     /* ═══════════════════════════════════════════════════
-       V8 SUPERCELL DESIGN BIBLE — Design Tokens
-       Supersedes V7 neon-glass system
+       V10 ULTIMATE REBUILD — Design DNA Tokens
+       Supersedes V8/V9. FINAL spec. Locked decisions.
        ═══════════════════════════════════════════════════ */
 
-    /* ── V8 Background Layers ── */
-    --bg-void: 228 60% 3%;           /* #050810 */
+    /* ── V10 Background Layers ── */
+    --bg-void: 228 60% 3%;           /* #050810 — stadium sky at night */
     --bg-abyss: 230 57% 6%;          /* #070B1A */
-    --bg-deep: 232 58% 10%;          /* #0D1229 */
-    --bg-surface: 232 51% 14%;       /* #131836 */
+    --bg-deep: 232 58% 10%;          /* #0D1229 — panel interiors */
+    --bg-surface: 232 51% 14%;       /* #131836 — elevated panels, modals */
     --bg-raised: 232 37% 18%;        /* #1A2042 */
 
-    /* ── V8 Neon Accents ── */
-    --neon-green: 153 100% 50%;      /* #00FF88 */
-    --neon-cyan: 195 100% 50%;       /* #00D4FF */
-    --neon-pink: 343 100% 59%;       /* #FF2D7B */
-    --neon-gold: 51 100% 50%;        /* #FFD700 */
-    --neon-orange: 19 100% 60%;      /* #FF6B35 */
-    --neon-purple: 258 90% 66%;      /* #A855F7 */
+    /* ── V10 Core Palette (from logo DNA: Gold + Green) ── */
+    --neon-green: 130 74% 58%;       /* #4ADE50 — Cricket Green, pitch under floodlights */
+    --neon-cyan: 192 100% 50%;       /* #00D4FF — Stadium Cyan, LED boards */
+    --neon-pink: 343 100% 59%;       /* #FF2D7B — Neon Pink, broken stumps urgency */
+    --neon-gold: 51 100% 50%;        /* #FFD700 — Trophy Gold, World Cup trophy */
+    --neon-orange: 19 100% 60%;      /* #FF6B35 — Boundary, ball hitting cushion */
+    --neon-purple: 258 90% 66%;      /* #A855F7 — Epic/XP, champion cape */
     --neon-white: 216 100% 97%;      /* #F0F6FF */
 
     /* ── Cricket-Specific Colors ── */
-    --cricket-red: 0 72% 47%;        /* #CC2222 */
-    --cricket-willow: 28 34% 59%;    /* #C4956A */
-    --cricket-grass: 122 47% 33%;    /* #2E7D32 */
+    --cricket-red: 0 72% 47%;        /* #CC2222 — Kookaburra ball */
+    --cricket-willow: 28 34% 59%;    /* #C4956A — English willow bat */
+    --cricket-grass: 122 47% 33%;    /* #2E7D32 — Pitch green */
     --cricket-white: 36 33% 93%;     /* #F5F0E8 */
-    --stump-gold: 43 75% 46%;        /* #D4A017 */
+    --stump-gold: 43 75% 46%;        /* #D4A017 — Golden stumps */
 
     /* ── Core Backgrounds ── */
     --background: 228 60% 3%;
@@ -45,41 +45,42 @@
     --popover: 232 51% 14%;
     --popover-foreground: 210 40% 96%;
 
-    /* ── Text Hierarchy ── */
-    --text-primary: 0 0% 100%;
-    --text-body: 215 20% 79%;       /* #CBD5E1 */
+    /* ── Text Hierarchy (V10) ── */
+    --text-primary: 0 0% 100%;       /* #FFFFFF */
+    --text-body: 215 20% 79%;        /* #CBD5E1 — Soft White */
     --text-secondary: 215 16% 62%;   /* #94A3B8 */
-    --text-muted: 215 19% 35%;      /* #475569 */
+    --text-muted: 215 19% 35%;       /* #475569 */
 
     /* ── Borders ── */
     --border-subtle: 215 16% 62%;
-    --border-focus: 153 100% 50%;
+    --border-focus: 130 74% 58%;
 
     /* ── Dynamic Team Colors (CSK Default) ── */
-    --team-primary: 51 100% 50%;
+    --team-primary: 51 100% 50%;     /* #FFD700 */
     --team-primary-rgb: 255, 215, 0;
-    --team-accent: 30 100% 50%;
-    --team-dark: 43 75% 31%;
-    --team-gradient: linear-gradient(135deg, #FFD700, #FF6B00);
+    --team-accent: 30 100% 50%;      /* #FF8C00 */
+    --team-accent-rgb: 255, 140, 0;
+    --team-dark: 43 75% 31%;         /* #8B6914 */
+    --team-gradient: linear-gradient(135deg, #FFD700, #FF8C00);
 
-    /* ── UI Component Colors ── */
-    --primary: 195 100% 50%;
-    --primary-foreground: 0 0% 100%;
+    /* ── UI Component Colors (V10: Primary = Cricket Green) ── */
+    --primary: 130 74% 58%;          /* #4ADE50 */
+    --primary-foreground: 140 100% 6%; /* #052E16 */
     --secondary: 232 37% 18%;
     --secondary-foreground: 214 32% 91%;
     --muted: 232 51% 14%;
     --muted-foreground: 215 19% 35%;
-    --accent: 51 100% 50%;
+    --accent: 51 100% 50%;           /* Trophy Gold */
     --accent-foreground: 0 0% 100%;
-    --destructive: 343 100% 59%;
+    --destructive: 343 100% 59%;     /* Neon Pink */
     --destructive-foreground: 210 40% 96%;
 
     --border: 232 37% 18%;
     --input: 232 37% 18%;
-    --ring: 195 100% 50%;
+    --ring: 130 74% 58%;
     --radius: 0.75rem;
 
-    /* ── Spacing (V8) ── */
+    /* ── Spacing (V10) ── */
     --space-xs: 4px;
     --space-sm: 8px;
     --space-md: 12px;
@@ -90,7 +91,7 @@
     --screen-padding-x: 20px;
     --tab-bar-height: 68px;
 
-    /* ── Border Radius Scale (V8) ── */
+    /* ── Border Radius Scale ── */
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
@@ -101,14 +102,14 @@
     --touch-min: 44px;
     --touch-comfortable: 48px;
 
-    /* ── Game Colors ── */
-    --green-play: 153 100% 50%;
-    --green-play-light: 153 100% 60%;
-    --green-play-dark: 153 100% 30%;
-    --green-play-shadow: 153 100% 20%;
-    --blue-info: 195 100% 50%;
-    --blue-info-light: 195 100% 60%;
-    --blue-info-dark: 195 100% 35%;
+    /* ── Game Colors (V10 Cricket Green primary) ── */
+    --green-play: 130 74% 58%;       /* #4ADE50 */
+    --green-play-light: 130 74% 68%;
+    --green-play-dark: 130 74% 40%;
+    --green-play-shadow: 130 74% 25%;
+    --blue-info: 192 100% 50%;
+    --blue-info-light: 192 100% 60%;
+    --blue-info-dark: 192 100% 35%;
     --red-hot: 343 100% 59%;
     --red-hot-light: 343 100% 70%;
     --red-hot-dark: 343 100% 40%;
@@ -117,25 +118,26 @@
 
     /* ── Rarity Colors ── */
     --rarity-common-border: 215 14% 64%;
-    --rarity-rare-border: 195 100% 50%;
+    --rarity-rare-border: 192 100% 50%;
     --rarity-epic-border: 258 90% 66%;
     --rarity-legendary-border: 51 100% 50%;
+    --rarity-mythic-border: 0 0% 100%; /* Rainbow handled via animation */
 
     /* ── Legacy tokens for shadcn ── */
     --sidebar-background: 232 51% 14%;
     --sidebar-foreground: 210 40% 96%;
-    --sidebar-primary: 195 100% 50%;
+    --sidebar-primary: 130 74% 58%;
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 232 51% 14%;
     --sidebar-accent-foreground: 210 40% 96%;
     --sidebar-border: 232 37% 18%;
-    --sidebar-ring: 195 100% 50%;
+    --sidebar-ring: 130 74% 58%;
     --glass-border: 232 25% 28% / 0.5;
 
-    /* Supercell palette aliases */
-    --game-green: 153 100% 50%;
+    /* V10 palette aliases */
+    --game-green: 130 74% 58%;
     --game-gold: 51 100% 50%;
-    --game-blue: 195 100% 50%;
+    --game-blue: 192 100% 50%;
     --game-red: 343 100% 59%;
     --game-orange: 19 100% 60%;
     --game-purple: 258 90% 66%;
@@ -168,13 +170,18 @@
     overscroll-behavior: none;
     -webkit-tap-highlight-color: transparent;
   }
+  /* V10: Tabular nums on ALL numeric displays */
+  .tabular-nums, [data-numeric] {
+    font-variant-numeric: tabular-nums;
+  }
 }
 
 /* ═══════════════════════════════════════════════════
-   V8 MATERIAL SYSTEM — 5 Materials
+   V10 MATERIAL SYSTEM — 5 Materials
+   Every surface uses exactly one. No plain flat CSS.
    ═══════════════════════════════════════════════════ */
 
-/* MATERIAL 1: Stadium Glass — Primary panels, cards, containers */
+/* MATERIAL 1: Stadium Glass (80% of all surfaces) */
 .stadium-glass {
   background: linear-gradient(135deg, rgba(13,18,41,0.88), rgba(19,24,54,0.82));
   backdrop-filter: blur(24px) saturate(1.4);
@@ -192,13 +199,24 @@
   inset: -1px;
   border-radius: inherit;
   z-index: -1;
-  background: linear-gradient(135deg, rgba(var(--team-primary-rgb),0.12) 0%, transparent 50%, rgba(var(--team-primary-rgb),0.06) 100%);
+  background: linear-gradient(135deg,
+    rgba(var(--team-primary-rgb),0.25), transparent 40%,
+    transparent 60%, rgba(var(--team-accent-rgb, var(--team-primary-rgb)),0.15));
   pointer-events: none;
+}
+.stadium-glass:hover {
+  border-color: rgba(148,163,184,0.22);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.50);
 }
 .stadium-glass:active {
   transform: scale(0.98);
   box-shadow: 0 4px 12px rgba(0,0,0,0.40);
+  background: linear-gradient(135deg, rgba(13,18,41,0.95), rgba(19,24,54,0.90));
   transition: all 0.08s ease;
+}
+.stadium-glass:disabled, .stadium-glass.disabled {
+  opacity: 0.45;
+  pointer-events: none;
 }
 
 /* V7 compat alias */
@@ -212,17 +230,7 @@
   position: relative;
 }
 
-/* MATERIAL 2: Pitch Turf — Cricket ground surfaces */
-.pitch-turf {
-  background:
-    repeating-linear-gradient(90deg, rgba(34,139,34,0.12) 0 20px, rgba(46,160,46,0.12) 20px 40px),
-    linear-gradient(180deg, #1B5E20 0%, #2E7D32 50%, #1B5E20 100%);
-  border: 2px solid rgba(76,175,80,0.25);
-  border-radius: var(--radius-md);
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.25), 0 4px 10px rgba(0,0,0,0.25);
-}
-
-/* MATERIAL 3: Scoreboard Metal — Numeric displays, stat panels */
+/* MATERIAL 2: Scoreboard Metal — Brushed metal, LED numbers */
 .scoreboard-metal {
   background:
     repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0 1px, transparent 1px 4px),
@@ -232,7 +240,17 @@
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), inset 0 -1px 0 rgba(0,0,0,0.25), 0 4px 12px rgba(0,0,0,0.4);
 }
 
-/* MATERIAL 4: Holo Chrome — Legendary/Mythic elements */
+/* MATERIAL 3: Pitch Turf — Cricket ground surfaces */
+.pitch-turf {
+  background:
+    repeating-linear-gradient(90deg, rgba(34,139,34,0.12) 0 20px, rgba(46,160,46,0.12) 20px 40px),
+    linear-gradient(180deg, #1B5E20 0%, #2E7D32 50%, #1B5E20 100%);
+  border: 2px solid rgba(76,175,80,0.25);
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.25), 0 4px 10px rgba(0,0,0,0.25);
+}
+
+/* MATERIAL 4: Holo Chrome — Legendary/Mythic, animated rainbow */
 .holo-chrome {
   background: linear-gradient(135deg, rgba(30,35,70,0.9), rgba(40,50,90,0.85) 25%, rgba(50,40,80,0.85) 50%, rgba(30,45,85,0.9) 75%, rgba(25,30,65,0.9));
   border: 2px solid transparent;
@@ -248,7 +266,7 @@
   inset: -2px;
   border-radius: inherit;
   z-index: -1;
-  background: linear-gradient(135deg, #FF2D7B, #FFD700, #00FF88, #00D4FF, #A855F7, #FF2D7B);
+  background: linear-gradient(135deg, #FF2D7B, #FFD700, #4ADE50, #00D4FF, #A855F7, #FF2D7B);
   background-size: 300% 300%;
   animation: holo-rotate 8s linear infinite;
 }
@@ -272,13 +290,15 @@
   100% { transform: translateX(200%); }
 }
 
-/* MATERIAL 5: Cricket Leather — NEW in V8, warm tactile accent */
+/* MATERIAL 5: Cricket Leather — BATTLE button, warm tactile accent */
 .cricket-leather {
   background: linear-gradient(180deg, #8B4513 0%, #6B3410 50%, #5C2D0E 100%);
-  border: 2px solid #3E1A08;
+  border: none;
+  border-bottom: 6px solid #3E1A08;
   border-radius: var(--radius-lg);
   box-shadow: 0 6px 0 #3E1A08, 0 10px 20px rgba(0,0,0,0.35), inset 0 2px 0 rgba(255,255,255,0.12);
   position: relative;
+  transition: all 0.08s ease;
 }
 .cricket-leather::before {
   content: "";
@@ -288,21 +308,22 @@
   opacity: 0.08;
   background: repeating-linear-gradient(
     0deg,
-    transparent 0px,
-    transparent 8px,
-    rgba(255,255,255,0.15) 8px,
-    rgba(255,255,255,0.15) 10px,
-    transparent 10px,
-    transparent 18px
+    transparent 0px, transparent 8px,
+    rgba(255,255,255,0.15) 8px, rgba(255,255,255,0.15) 10px,
+    transparent 10px, transparent 18px
   );
   pointer-events: none;
 }
+.cricket-leather:active {
+  border-bottom-width: 2px;
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 #3E1A08, 0 4px 10px rgba(0,0,0,0.25);
+}
 
 /* ═══════════════════════════════════════════════════
-   V8 7-LAYER BACKGROUND SYSTEM
+   V10 7-LAYER BACKGROUND SYSTEM
    ═══════════════════════════════════════════════════ */
 
-/* Layer 1: Void Base + Layers 2-4 in ::before, Layers 5-6 in ::after */
 .game-screen {
   background: #050810;
   position: relative;
@@ -360,8 +381,8 @@
   z-index: 0;
 }
 
-/* V8 Vignette */
-.v8-vignette {
+/* Vignettes */
+.v8-vignette, .v10-vignette {
   position: fixed;
   inset: 0;
   background: radial-gradient(ellipse at 50% 55%, transparent 40%, rgba(0,0,0,0.35) 100%);
@@ -377,55 +398,73 @@
 }
 
 /* ═══════════════════════════════════════════════════
-   V8 TEXT EFFECTS
+   V10 TEXT EFFECTS
    ═══════════════════════════════════════════════════ */
 
-/* Neon Glow text */
+/* Neon Glow — on ALL Bungee text, color matches context */
 .neon-text-green {
-  text-shadow: 0 0 8px hsl(153 100% 50% / 0.6), 0 0 24px hsl(153 100% 50% / 0.3), 0 0 48px hsl(153 100% 50% / 0.15);
+  text-shadow: 0 0 8px rgba(74,222,80,0.6), 0 0 24px rgba(74,222,80,0.3), 0 0 48px rgba(74,222,80,0.15);
 }
 .neon-text-cyan {
-  text-shadow: 0 0 8px hsl(195 100% 50% / 0.6), 0 0 24px hsl(195 100% 50% / 0.3);
+  text-shadow: 0 0 8px rgba(0,212,255,0.6), 0 0 24px rgba(0,212,255,0.3), 0 0 48px rgba(0,212,255,0.15);
 }
 .neon-text-pink {
-  text-shadow: 0 0 8px hsl(343 100% 59% / 0.6), 0 0 24px hsl(343 100% 59% / 0.3);
+  text-shadow: 0 0 8px rgba(255,45,123,0.6), 0 0 24px rgba(255,45,123,0.3), 0 0 48px rgba(255,45,123,0.15);
 }
 .neon-text-gold {
-  text-shadow: 0 0 8px hsl(51 100% 50% / 0.6), 0 0 24px hsl(51 100% 50% / 0.3);
+  text-shadow: 0 0 8px rgba(255,215,0,0.6), 0 0 24px rgba(255,215,0,0.3), 0 0 48px rgba(255,215,0,0.15);
 }
 .neon-text-purple {
-  text-shadow: 0 0 8px hsl(258 90% 66% / 0.6), 0 0 24px hsl(258 90% 66% / 0.3);
+  text-shadow: 0 0 8px rgba(168,85,247,0.6), 0 0 24px rgba(168,85,247,0.3), 0 0 48px rgba(168,85,247,0.15);
 }
 .neon-text-orange {
-  text-shadow: 0 0 8px hsl(19 100% 60% / 0.6), 0 0 24px hsl(19 100% 60% / 0.3);
+  text-shadow: 0 0 8px rgba(255,107,53,0.6), 0 0 24px rgba(255,107,53,0.3), 0 0 48px rgba(255,107,53,0.15);
 }
 
-/* 3D Extrusion text */
+/* 3D Extrusion — VS text, hero scores, popups */
 .text-3d-extrude {
   text-shadow:
     0 1px 0 rgba(0,0,0,0.8),
     0 2px 0 rgba(0,0,0,0.7),
     0 3px 0 rgba(0,0,0,0.6),
     0 4px 0 rgba(0,0,0,0.5),
+    0 5px 0 rgba(0,0,0,0.4),
     0 6px 8px rgba(0,0,0,0.4);
 }
 
-/* Gradient text fill */
+/* Gradient text fill — metallic sheen */
 .text-gradient-fill {
   background: linear-gradient(180deg, #FFFFFF 0%, hsl(var(--team-primary)) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+.text-gradient-gold {
+  background: linear-gradient(180deg, #FFFFFF 20%, #FFD700 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.text-gradient-green {
+  background: linear-gradient(180deg, #FFFFFF 20%, #4ADE50 80%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Stroke Outline — text over busy backgrounds */
+.text-stroke {
+  -webkit-text-stroke: 1.5px rgba(0,0,0,0.8);
+}
 
 /* ═══════════════════════════════════════════════════
-   V8 LIVING PARTICLES — CSS-only GPU accelerated
+   V10 LIVING PARTICLES — CSS-only GPU accelerated
    ═══════════════════════════════════════════════════ */
 
 @keyframes v8-dust-rise {
   0% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
-  10% { opacity: var(--particle-opacity, 0.2); }
-  90% { opacity: calc(var(--particle-opacity, 0.2) * 0.5); }
+  10% { opacity: var(--particle-opacity, 0.18); }
+  90% { opacity: calc(var(--particle-opacity, 0.18) * 0.5); }
   100% { transform: translateY(-110vh) translateX(var(--drift-x, 20px)) scale(0.4); opacity: 0; }
 }
 @keyframes v8-dust-sway {
@@ -433,7 +472,7 @@
   50% { transform: translateX(var(--sway-amount, 12px)); }
 }
 
-.v8-particle {
+.v8-particle, .v10-particle {
   position: absolute;
   border-radius: 50%;
   will-change: transform, opacity;
@@ -455,14 +494,16 @@
 }
 
 /* ═══════════════════════════════════════════════════
-   V8 BUTTON SYSTEM
+   V10 BUTTON SYSTEM — Supercell anatomy:
+   Surface + Bottom Shadow Bar + Outer Glow +
+   Inner Highlight + Text + Shine Sweep
    ═══════════════════════════════════════════════════ */
 
-/* V8 Primary Button (Battle, Open, Confirm) */
-.btn-v8-primary {
-  background: linear-gradient(180deg, #00FF88 0%, #00DD70 45%, #00BB5C 100%);
+/* V10 Primary Button (Battle, Open, Confirm) */
+.btn-v8-primary, .btn-v10-primary {
+  background: linear-gradient(180deg, #55FF99 0%, #4ADE50 35%, #22C55E 70%, #16A34A 100%);
   border: none;
-  border-bottom: 6px solid #007A3D;
+  border-bottom: 6px solid #0D6B2E;
   border-radius: 16px;
   padding: 0 32px;
   min-height: 62px;
@@ -477,40 +518,41 @@
   text-transform: uppercase;
   text-shadow: 0 1px 0 rgba(255,255,255,0.25);
   box-shadow:
-    0 6px 0 #007A3D,
-    0 10px 25px rgba(0,255,136,0.25),
-    0 0 50px rgba(0,255,136,0.10),
+    0 6px 0 #0D6B2E,
+    0 10px 25px rgba(74,222,80,0.25),
+    0 0 50px rgba(74,222,80,0.10),
     inset 0 2px 0 rgba(255,255,255,0.20);
   transition: all 0.08s ease;
   cursor: pointer;
   position: relative;
   overflow: hidden;
 }
-.btn-v8-primary:active {
+.btn-v8-primary:active, .btn-v10-primary:active {
   transform: translateY(4px);
   border-bottom-width: 2px;
   box-shadow:
-    0 2px 0 #007A3D,
-    0 4px 10px rgba(0,255,136,0.15),
+    0 2px 0 #0D6B2E,
+    0 4px 10px rgba(74,222,80,0.15),
     inset 0 2px 0 rgba(255,255,255,0.15);
 }
-.btn-v8-primary:disabled {
+.btn-v8-primary:disabled, .btn-v10-primary:disabled {
   opacity: 0.45;
   pointer-events: none;
   filter: grayscale(0.3);
 }
 
-/* V8 BATTLE Button — Special treatment */
-.btn-v8-battle {
+/* V10 BATTLE Button — Special (68px, 26px text, 7px bar) */
+.btn-v8-battle, .btn-v10-battle {
   width: calc(100% - 36px);
   margin: 0 auto;
   min-height: 68px;
   font-size: 26px;
   letter-spacing: 4px;
+  border-bottom-width: 7px;
 }
 
-/* V8 Secondary Button */
-.btn-v8-secondary {
+/* V10 Secondary Button */
+.btn-v8-secondary, .btn-v10-secondary {
   background: linear-gradient(135deg, rgba(13,18,41,0.88), rgba(19,24,54,0.82));
   backdrop-filter: blur(24px);
   border: 1.5px solid rgba(148,163,184,0.18);
@@ -530,13 +572,13 @@
   transition: all 0.08s ease;
   cursor: pointer;
 }
-.btn-v8-secondary:active {
+.btn-v8-secondary:active, .btn-v10-secondary:active {
   transform: scale(0.96);
   background: linear-gradient(135deg, rgba(13,18,41,0.95), rgba(19,24,54,0.9));
 }
 
-/* V8 Danger Button */
-.btn-v8-danger {
+/* V10 Danger Button */
+.btn-v8-danger, .btn-v10-danger {
   background: linear-gradient(180deg, #FF2D7B 0%, #CC1155 60%, #991144 100%);
   border: none;
   border-bottom: 5px solid #660033;
@@ -556,13 +598,13 @@
   transition: all 0.08s ease;
   cursor: pointer;
 }
-.btn-v8-danger:active {
+.btn-v8-danger:active, .btn-v10-danger:active {
   transform: translateY(3px);
   border-bottom-width: 2px;
 }
 
-/* V8 Icon Button */
-.btn-v8-icon {
+/* V10 Icon Button */
+.btn-v8-icon, .btn-v10-icon {
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -574,12 +616,37 @@
   cursor: pointer;
   transition: all 0.12s ease;
 }
-.btn-v8-icon:active {
+.btn-v8-icon:active, .btn-v10-icon:active {
   background: rgba(var(--team-primary-rgb),0.2);
 }
 
+/* V10 Currency Add Button */
+.btn-v10-currency-add {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #4ADE50, #22C55E);
+  border: none;
+  border-bottom: 2px solid #0D6B2E;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: "Bungee", cursive;
+  font-size: 14px;
+  color: #052E16;
+  transition: all 0.08s ease;
+}
+.btn-v10-currency-add:active {
+  transform: translateY(1px);
+  border-bottom-width: 0;
+}
+
 /* ═══════════════════════════════════════════════════
-   V8 ANIMATIONS
+   V10 ANIMATIONS — Timing Bible
+   Instant: 60-80ms, Micro: 120-180ms,
+   Standard: 200-300ms (spring), Spring: 300-500ms,
+   Ambient: 2000-6000ms, Impact: 60-150ms
    ═══════════════════════════════════════════════════ */
 
 /* Shine sweep on idle buttons */
@@ -587,28 +654,33 @@
   0% { transform: translateX(-100%) rotate(-15deg); }
   100% { transform: translateX(300%) rotate(-15deg); }
 }
-.v8-shine-sweep::after {
+.v8-shine-sweep::after, .v10-shine-sweep::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent);
-  animation: v8-shine-sweep 5s ease-in-out infinite;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  animation: v8-shine-sweep 4s ease-in-out infinite;
+  animation-delay: 2.8s;
   pointer-events: none;
 }
 
 /* Battle button idle pulse */
+@keyframes v10-battle-pulse {
+  0%, 100% { box-shadow: 0 7px 0 #0D6B2E, 0 10px 25px rgba(74,222,80,0.15), 0 0 15px rgba(74,222,80,0.15); }
+  50% { box-shadow: 0 7px 0 #0D6B2E, 0 10px 25px rgba(74,222,80,0.35), 0 0 45px rgba(74,222,80,0.25); }
+}
 @keyframes v8-battle-pulse {
-  0%, 100% { box-shadow: 0 6px 0 #007A3D, 0 10px 25px rgba(0,255,136,0.15), 0 0 15px rgba(0,255,136,0.15); }
-  50% { box-shadow: 0 6px 0 #007A3D, 0 10px 25px rgba(0,255,136,0.35), 0 0 45px rgba(0,255,136,0.25); }
+  0%, 100% { box-shadow: 0 6px 0 #0D6B2E, 0 10px 25px rgba(74,222,80,0.15), 0 0 15px rgba(74,222,80,0.15); }
+  50% { box-shadow: 0 6px 0 #0D6B2E, 0 10px 25px rgba(74,222,80,0.35), 0 0 45px rgba(74,222,80,0.25); }
 }
 
-/* Staggered section entrance */
-@keyframes v8-section-enter {
+/* Staggered section entrance — spring physics */
+@keyframes v10-section-enter {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.v8-section-anim {
-  animation: v8-section-enter 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+.v8-section-anim, .v10-section-anim {
+  animation: v10-section-enter 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
 }
 
 /* V7 compat */
@@ -622,42 +694,59 @@
 
 /* Glow pulse */
 @keyframes v8-glow-pulse {
-  0%, 100% { box-shadow: 0 0 8px rgba(0,255,136,0.15); }
-  50% { box-shadow: 0 0 20px rgba(0,255,136,0.35), 0 0 40px rgba(0,255,136,0.12); }
+  0%, 100% { box-shadow: 0 0 8px rgba(74,222,80,0.15); }
+  50% { box-shadow: 0 0 20px rgba(74,222,80,0.35), 0 0 40px rgba(74,222,80,0.12); }
 }
 
-/* Screen shake profiles */
+/* ═══════════════════════════════════════════════════
+   V10 SCREEN SHAKE PROFILES
+   Feather→Light→Medium→Heavy→Earthquake
+   ═══════════════════════════════════════════════════ */
+
 @keyframes shake-feather {
   0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(-2px); }
+  50% { transform: translate(-2px, 1px); }
 }
 @keyframes shake-light {
   0%, 100% { transform: translate(0, 0); }
-  20% { transform: translate(-3px, 1px); }
-  40% { transform: translate(3px, -1px); }
-  60% { transform: translate(-2px, 2px); }
+  20% { transform: translate(-4px, 1px); }
+  40% { transform: translate(4px, -1px); }
+  60% { transform: translate(-3px, 2px); }
 }
 @keyframes shake-medium {
   0%, 100% { transform: translate(0, 0); }
-  10% { transform: translate(-5px, 2px); }
-  30% { transform: translate(4px, -3px); }
-  50% { transform: translate(-3px, 4px); }
-  70% { transform: translate(2px, -2px); }
+  10% { transform: translate(-6px, 2px); }
+  30% { transform: translate(5px, -3px); }
+  50% { transform: translate(-4px, 4px); }
+  70% { transform: translate(3px, -2px); }
   90% { transform: translate(-1px, 1px); }
 }
 @keyframes shake-heavy {
   0%, 100% { transform: translate(0, 0); }
-  8% { transform: translate(-8px, 5px); }
-  16% { transform: translate(7px, -4px); }
-  25% { transform: translate(-5px, 6px); }
+  8% { transform: translate(-10px, 5px); }
+  16% { transform: translate(8px, -4px); }
+  25% { transform: translate(-6px, 6px); }
   33% { transform: translate(4px, -3px); }
   50% { transform: translate(-3px, 2px); }
   67% { transform: translate(2px, -1px); }
 }
+@keyframes shake-earthquake {
+  0%, 100% { transform: translate(0, 0); }
+  6% { transform: translate(-14px, 8px); }
+  12% { transform: translate(12px, -6px); }
+  19% { transform: translate(-10px, 10px); }
+  25% { transform: translate(8px, -5px); }
+  37% { transform: translate(-6px, 4px); }
+  50% { transform: translate(4px, -3px); }
+  62% { transform: translate(-3px, 2px); }
+  75% { transform: translate(2px, -1px); }
+}
+
 .shake-feather { animation: shake-feather 0.04s ease-in-out; }
 .shake-light { animation: shake-light 0.06s ease-in-out; }
 .shake-medium { animation: shake-medium 0.1s ease-in-out; }
 .shake-heavy { animation: shake-heavy 0.15s ease-in-out; }
+.shake-earthquake { animation: shake-earthquake 0.2s ease-in-out; }
 
 /* Float/bob */
 @keyframes v8-float {
@@ -669,6 +758,36 @@
 @keyframes v8-sparkle {
   0%, 100% { opacity: 0; transform: scale(0); }
   50% { opacity: 1; transform: scale(1); }
+}
+
+/* Trophy spin */
+@keyframes trophy-spin {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+
+/* Gem prismatic */
+@keyframes gem-hue {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+/* Coin spin */
+@keyframes coin-spin {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+
+/* Bounce ready chest */
+@keyframes chest-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Conic light rays for ready chest */
+@keyframes conic-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 /* ═══════════════════════════════════════════════════
@@ -728,9 +847,9 @@
     text-transform: uppercase;
     color: white;
     text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    background: linear-gradient(180deg, #00FF88, #00DD70, #00BB5C);
+    background: linear-gradient(180deg, #55FF99, #4ADE50, #22C55E);
     border: none;
-    border-bottom: 8px solid #007A3D;
+    border-bottom: 8px solid #0D6B2E;
     border-radius: var(--radius-lg);
     box-shadow: 0 8px 0 rgba(0,0,0,0.15), 0 12px 24px rgba(0,0,0,0.4), inset 0 3px 0 rgba(255,255,255,0.25);
     cursor: pointer;
@@ -775,9 +894,9 @@
   }
 
   .btn-green {
-    background: linear-gradient(180deg, #00FF88, #00DD70, #00BB5C);
+    background: linear-gradient(180deg, #55FF99, #4ADE50, #22C55E);
     border: none;
-    border-bottom: 7px solid #007A3D;
+    border-bottom: 7px solid #0D6B2E;
     border-radius: var(--radius-lg);
     color: #052E16;
     font-family: 'Bungee', sans-serif;
@@ -822,9 +941,9 @@
     width: 28px;
     height: 28px;
     border-radius: var(--radius-full);
-    background: linear-gradient(180deg, #00FF88, #00CC6A);
-    border: 2px solid #007A3D;
-    border-bottom: 3px solid #007A3D;
+    background: linear-gradient(180deg, #4ADE50, #22C55E);
+    border: 2px solid #0D6B2E;
+    border-bottom: 3px solid #0D6B2E;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -914,16 +1033,19 @@
     gap: 8px;
   }
 
-  /* Currency Pill */
+  /* Currency Pill — Scoreboard Metal */
   .currency-pill {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: hsl(var(--bg-card));
-    border: 2px solid hsl(var(--team-primary));
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0 1px, transparent 1px 4px),
+      linear-gradient(180deg, #1E293B, #0F172A 45%, #1E293B 55%, #0F172A);
+    border: 1px solid rgba(148,163,184,0.12);
     border-radius: var(--radius-full);
     padding: 4px 8px 4px 4px;
     height: 32px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 2px 6px rgba(0,0,0,0.3);
   }
   .currency-pill .icon { width: 24px; height: 24px; border-radius: var(--radius-full); }
   .currency-pill .amount {
@@ -933,6 +1055,7 @@
     color: white;
     min-width: 40px;
     text-align: right;
+    font-variant-numeric: tabular-nums;
   }
 
   /* Progress Bars */
@@ -948,8 +1071,8 @@
   .progress-bar-fill {
     height: 100%;
     border-radius: 5px;
-    background: linear-gradient(90deg, hsl(var(--team-primary)), hsl(var(--team-accent)));
-    box-shadow: 0 0 8px hsl(var(--team-accent) / 0.5);
+    background: linear-gradient(90deg, hsl(var(--neon-green)), hsl(var(--team-accent)));
+    box-shadow: 0 0 8px hsl(var(--neon-green) / 0.5);
     transition: width 0.5s ease;
   }
 
@@ -973,7 +1096,7 @@
     padding: 0 4px;
   }
 
-  /* V8 Tab Bar */
+  /* V10 Tab Bar */
   .tab-bar {
     position: fixed;
     bottom: 0;
@@ -986,7 +1109,7 @@
     -webkit-backdrop-filter: blur(24px) saturate(1.4);
     border-top: 1px solid rgba(148,163,184,0.08);
     border-radius: 22px 22px 0 0;
-    box-shadow: 0 -1px 0 rgba(0,212,255,0.08), 0 -8px 32px rgba(0,0,0,0.5);
+    box-shadow: 0 -1px 0 rgba(74,222,80,0.08), 0 -8px 32px rgba(0,0,0,0.5);
     display: flex;
     align-items: flex-start;
     justify-content: space-around;
@@ -1005,7 +1128,7 @@
   .tab-item.active { transform: translateY(-2px); }
   .tab-item.active .tab-icon {
     color: hsl(var(--neon-green));
-    filter: drop-shadow(0 -3px 6px rgba(0,255,136,0.15));
+    filter: drop-shadow(0 -3px 6px rgba(74,222,80,0.15));
   }
   .tab-item .tab-icon {
     color: hsl(var(--text-muted));
@@ -1021,6 +1144,16 @@
   .tab-item.active .tab-label { color: white; }
   .tab-item .tab-label { color: hsl(var(--text-muted)); }
 
+  /* Active tab neon pill indicator */
+  .tab-active-pill {
+    width: 20px;
+    height: 3px;
+    border-radius: 2px;
+    background: hsl(var(--neon-green));
+    box-shadow: 0 0 8px rgba(74,222,80,0.4);
+    margin-top: 2px;
+  }
+
   /* Over tracker dots */
   .over-dot {
     width: 20px;
@@ -1032,12 +1165,13 @@
     font-family: 'Rajdhani', sans-serif;
     font-weight: 700;
     font-size: 10px;
+    font-variant-numeric: tabular-nums;
   }
   .over-dot-empty { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); color: transparent; }
   .over-dot-dot { background: #334155; border: 1px solid #475569; color: #94A3B8; }
   .over-dot-run { background: rgba(59,130,246,0.2); border: 1px solid rgba(59,130,246,0.4); color: #60A5FA; }
   .over-dot-four { background: rgba(255,107,53,0.2); border: 1px solid rgba(255,107,53,0.4); color: #FF6B35; }
-  .over-dot-six { background: rgba(0,255,136,0.2); border: 2px solid rgba(0,255,136,0.5); color: #00FF88; box-shadow: 0 0 8px rgba(0,255,136,0.3); }
+  .over-dot-six { background: rgba(74,222,80,0.2); border: 2px solid rgba(74,222,80,0.5); color: #4ADE50; box-shadow: 0 0 8px rgba(74,222,80,0.3); }
   .over-dot-wicket { background: rgba(255,45,123,0.3); border: 2px solid #FF2D7B; color: #FF2D7B; font-weight: 900; }
 
   .divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); margin: 8px 0; }
@@ -1065,6 +1199,7 @@
   .rarity-rare    { border-color: #00D4FF; box-shadow: 0 0 12px rgba(0,212,255,0.3); }
   .rarity-epic    { border-color: #A855F7; box-shadow: 0 0 16px rgba(168,85,247,0.4); }
   .rarity-legendary { border-color: #FFD700; box-shadow: 0 0 20px rgba(255,215,0,0.4); }
+  .rarity-mythic { border-image: linear-gradient(135deg, #FF2D7B, #FFD700, #4ADE50, #00D4FF, #A855F7) 1; box-shadow: 0 0 24px rgba(168,85,247,0.4); }
 
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
@@ -1133,6 +1268,7 @@
   .ball-chip {
     @apply inline-flex items-center justify-center w-7 h-7 rounded-full text-[10px] font-bold;
     font-family: 'Rajdhani', sans-serif;
+    font-variant-numeric: tabular-nums;
   }
   .ball-chip-run { background: rgba(59,130,246,0.2); color: #60A5FA; border: 1px solid rgba(59,130,246,0.3); }
   .ball-chip-wicket { background: rgba(255,45,123,0.2); color: #FF2D7B; border: 1px solid rgba(255,45,123,0.3); }
@@ -1168,6 +1304,7 @@
     .animate-chest-glow { animation: none; }
     .shimmer { animation: none; }
     .light-sweep { animation: none; }
-    .v8-particle, .v7-particle { animation: none; display: none; }
+    .v8-particle, .v10-particle, .v7-particle { animation: none; display: none; }
+    .holo-chrome::before, .holo-chrome::after { animation: none; }
   }
 }
