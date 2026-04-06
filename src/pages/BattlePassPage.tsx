@@ -390,7 +390,7 @@ export default function BattlePassPage() {
   return (
     <div className="min-h-screen relative overflow-hidden pb-28" style={{ background: V10_BG }}>
       {/* Leather grain */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: V10_BG, backgroundRepeat: "repeat" }} />
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ display: "none" }} />
       {/* Vignette */}
       <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }} />
 
