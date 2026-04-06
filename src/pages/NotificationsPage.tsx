@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import stoneNotificationsImg from "@/assets/ui/stone-notifications.png";
+import StoneHeader from "@/components/shared/StoneHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
