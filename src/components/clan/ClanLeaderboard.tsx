@@ -632,7 +632,8 @@ export default function ClanLeaderboard() {
                 whileTap={{ scale: 0.97 }}
                 onClick={() => compareMode ? toggleCompareSelection(c) : openDetail(c)}
                 className={`flex items-center gap-2 p-2.5 rounded-xl border transition-colors w-full text-left ${
-                  currentRank === 0 ? "stadium-glass border-game-gold/30 bg-game-gold/[0.04]"
+                  isSelected ? "stadium-glass border-neon-cyan/40 bg-neon-cyan/[0.08] ring-1 ring-neon-cyan/30"
+                  : currentRank === 0 ? "stadium-glass border-game-gold/30 bg-game-gold/[0.04]"
                   : currentRank < 3 ? "stadium-glass border-white/10"
                   : "bg-white/[0.02] border-white/5"
                 }`}
