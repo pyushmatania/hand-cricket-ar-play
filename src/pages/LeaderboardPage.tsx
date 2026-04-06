@@ -534,7 +534,7 @@ export default function LeaderboardPage() {
                 🏆
               </div>
               <div>
-                <StoneHeader src={stoneLeaderboardImg} alt="Leaderboard" height={28} />
+                <StoneHeader text="LEADERBOARD" />
                 <span className="font-display text-[8px] text-muted-foreground tracking-[0.2em]">COMPETE & CLIMB</span>
               </div>
             </div>

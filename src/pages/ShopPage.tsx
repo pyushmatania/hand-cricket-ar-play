@@ -126,7 +126,7 @@ export default function ShopPage() {
               ←
             </motion.button>
             <div>
-              <StoneHeader src={stoneShopImg} alt="SHOP" height={32} />
+              <StoneHeader text="SHOP" />
               <span className="text-[9px] text-[#94A3B8] font-display tracking-[0.2em]">WOODEN MARKETPLACE</span>
             </div>
           </div>

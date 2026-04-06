@@ -131,7 +131,7 @@ export default function NotificationsPage() {
               ←
             </motion.button>
             <div>
-              <StoneHeader src={stoneNotificationsImg} alt="Notifications" height={28} />
+              <StoneHeader text="NOTIFICATIONS" />
               {unreadCount > 0 && (
                 <span className="text-[9px] font-display tracking-[0.2em]" style={{ color: "hsl(207,90%,55%)" }}>{unreadCount} NEW ALERTS</span>
               )}

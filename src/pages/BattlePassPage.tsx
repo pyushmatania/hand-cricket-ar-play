@@ -348,7 +348,7 @@ export default function BattlePassPage() {
             ←
           </motion.button>
           <div className="flex-1">
-            <StoneHeader src={stoneBattlePassImg} alt="BATTLE PASS" height={30} />
+            <StoneHeader text="BATTLE PASS" />
             <span className="text-[9px] font-display tracking-[0.2em]" style={{ color: "#FFD700" }}>{SEASON_LABEL}</span>
           </div>
           <CurrencyPill icon="🪙" value={coins} showPlus={false} />

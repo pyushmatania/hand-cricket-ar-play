@@ -240,7 +240,7 @@ export default function SettingsPage() {
             ⚙️
           </div>
           <div>
-            <StoneHeader src={stoneSettingsImg} alt="Settings" height={28} />
+            <StoneHeader text="SETTINGS" />
             <p className="text-[9px] text-muted-foreground font-display tracking-[0.2em]">CUSTOMIZE YOUR EXPERIENCE</p>
           </div>
         </motion.div>

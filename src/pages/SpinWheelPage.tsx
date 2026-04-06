@@ -198,7 +198,7 @@ export default function SpinWheelPage() {
         <button onClick={() => navigate(-1)} className="p-1">
           <ChevronLeft className="w-5 h-5 text-foreground" />
         </button>
-        <StoneHeader src={stoneLuckySpinImg} alt="LUCKY SPIN" height={28} />
+        <StoneHeader text="LUCKY SPIN" />
         <div className="ml-auto flex items-center gap-1 px-2.5 py-1 rounded-full"
           style={{ background: "linear-gradient(135deg, hsl(35 40% 15%), hsl(35 30% 10%))", border: "1px solid hsl(35 30% 25%)" }}
         >

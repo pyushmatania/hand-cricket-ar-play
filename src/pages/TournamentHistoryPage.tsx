@@ -45,7 +45,7 @@ export default function TournamentHistoryPage() {
           className="w-9 h-9 rounded-xl flex items-center justify-center text-sm stadium-glass text-foreground">
           ←
         </motion.button>
-        <StoneHeader src={stoneTournamentHistoryImg} alt="TOURNAMENT HISTORY" height={28} />
+        <StoneHeader text="TOURNAMENT HISTORY" size="sm" />
       </div>
 
       <div className="relative z-10 px-4 space-y-3">
