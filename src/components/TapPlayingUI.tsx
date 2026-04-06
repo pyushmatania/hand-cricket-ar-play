@@ -430,9 +430,12 @@ export default function TapPlayingUI({
             className="rounded-lg overflow-hidden"
             style={{
               height: 44,
-              background: "rgba(0,0,0,0.3)",
-              borderLeft: "3px solid hsl(var(--team-primary))",
+              background: "linear-gradient(135deg, rgba(62,36,16,0.9), rgba(46,26,14,0.9))",
+              borderLeft: "3px solid #8B7355",
               padding: "8px 12px",
+              border: "1px solid rgba(92,58,30,0.4)",
+              borderLeftWidth: "3px",
+              borderLeftColor: "#C4A265",
             }}
           >
             {commentary.slice(0, 1).map((line, i) => {
