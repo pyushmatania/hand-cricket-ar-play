@@ -90,11 +90,7 @@ export default function PlayPage() {
               style={{ background: "linear-gradient(180deg, hsl(43 90% 55%) 0%, hsl(35 60% 35%) 100%)" }}
             />
             <div>
-              <h1 className="font-display text-xl text-foreground"
-                style={{ textShadow: "0 2px 0 hsl(220 18% 6%)" }}
-              >
-                Select Mode
-              </h1>
+              <img src={stoneSelectModeImg} alt="Select Mode" style={{ height: 28, width: "auto", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.6))" }} />
               <p className="text-[9px] text-muted-foreground font-display tracking-[0.2em]">
                 CHOOSE YOUR ARENA & GAME TYPE
               </p>

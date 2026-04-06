@@ -45,7 +45,7 @@ export default function TournamentHistoryPage() {
           className="w-9 h-9 rounded-xl flex items-center justify-center text-sm stadium-glass text-foreground">
           ←
         </motion.button>
-        <h1 className="font-display text-base tracking-wider text-foreground">🏆 TOURNAMENT HISTORY</h1>
+        <img src={stoneTournamentHistoryImg} alt="TOURNAMENT HISTORY" style={{ height: 28, width: "auto", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.6))" }} />
       </div>
 
       <div className="relative z-10 px-4 space-y-3">

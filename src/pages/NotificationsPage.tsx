@@ -131,9 +131,7 @@ export default function NotificationsPage() {
               ←
             </motion.button>
             <div>
-              <h1 className="font-display text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(220 18% 6%)" }}>
-                Notifications
-              </h1>
+              <img src={stoneNotificationsImg} alt="Notifications" style={{ height: 28, width: "auto", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.6))" }} />
               {unreadCount > 0 && (
                 <span className="text-[9px] font-display tracking-[0.2em]" style={{ color: "hsl(207,90%,55%)" }}>{unreadCount} NEW ALERTS</span>
               )}
