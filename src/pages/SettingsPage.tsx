@@ -222,7 +222,7 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden pb-24" style={{
-      background: "linear-gradient(180deg, hsl(222 47% 6%) 0%, hsl(222 47% 4%) 100%)",
+      background: "linear-gradient(180deg, #1A0E05 0%, #0D0704 100%)",
     }}>
       <TopStatusBar />
 
