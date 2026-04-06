@@ -11,6 +11,7 @@ import { BUTTON_STYLES } from "@/lib/cosmetics";
 import { supabase } from "@/integrations/supabase/client";
 import { speakElevenLabs } from "@/lib/elevenLabsAudio";
 import { setSoundEnabled, setHapticsEnabled } from "@/lib/sounds";
+import { IPL_TEAMS } from "@/components/ipl/IPLData";
 
 const COMMENTARY_VOICES = [
   { id: "nPczCjzI2devNBz1zQrb", name: "Brian", desc: "Deep authoritative broadcaster", emoji: "🎙️" },
@@ -119,6 +120,7 @@ export default function SettingsPage() {
   const [expandedGroup, setExpandedGroup] = useState<string | null>("AUDIO & SOUND");
   const [previewingVoice, setPreviewingVoice] = useState<string | null>(null);
   const [selectedButtonStyle, setSelectedButtonStyle] = useState<string>("classic");
+  const [favoriteTeam, setFavoriteTeam] = useState<string | null>(localStorage.getItem("favoriteTeamId"));
   const [versionTaps, setVersionTaps] = useState(0);
 
   // Sync sound/haptics toggles to the Web Audio SFX engine
@@ -491,6 +493,53 @@ export default function SettingsPage() {
                       </motion.button>
                     );
                   })}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+
+        {/* Favorite Team Section */}
+        <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
+          <SectionHeader icon="🏏" title="FAVORITE TEAM" expanded={expandedGroup === "FAVORITE TEAM"} onToggle={() => setExpandedGroup(expandedGroup === "FAVORITE TEAM" ? null : "FAVORITE TEAM")} accentColor="hsl(43,100%,50%)" />
+          <AnimatePresence>
+            {expandedGroup === "FAVORITE TEAM" && (
+              <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
+                <div className="pt-2 pb-1">
+                  <p className="text-[8px] text-muted-foreground font-body mb-2 px-1">Your team's character appears in VS intros & walkouts</p>
+                  <div className="grid grid-cols-5 gap-1.5">
+                    {IPL_TEAMS.map((team) => {
+                      const isActive = favoriteTeam === team.id;
+                      return (
+                        <motion.button
+                          key={team.id}
+                          whileTap={{ scale: 0.92 }}
+                          onClick={() => {
+                            const next = isActive ? null : team.id;
+                            setFavoriteTeam(next);
+                            if (next) localStorage.setItem("favoriteTeamId", next);
+                            else localStorage.removeItem("favoriteTeamId");
+                          }}
+                          className="flex flex-col items-center gap-1 p-2 rounded-xl transition-all border-b-2"
+                          style={{
+                            background: isActive
+                              ? `linear-gradient(135deg, ${team.color}30, ${team.color}10)`
+                              : "hsl(222 40% 12% / 0.6)",
+                            borderColor: isActive ? `${team.color}80` : "transparent",
+                            boxShadow: isActive ? `0 0 14px ${team.color}25` : "none",
+                          }}
+                        >
+                          <span className="text-lg">{team.emoji}</span>
+                          <span className="font-display text-[7px] tracking-wider" style={{ color: isActive ? team.color : "hsl(var(--muted-foreground))" }}>{team.shortName}</span>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                  {favoriteTeam && (
+                    <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[9px] text-center mt-2 font-display tracking-wider" style={{ color: IPL_TEAMS.find(t => t.id === favoriteTeam)?.color }}>
+                      {IPL_TEAMS.find(t => t.id === favoriteTeam)?.name}
+                    </motion.p>
+                  )}
                 </div>
               </motion.div>
             )}
