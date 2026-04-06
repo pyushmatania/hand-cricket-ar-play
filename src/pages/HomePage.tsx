@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,14 +10,9 @@ import { getChestTier } from "@/lib/chests";
 import ChestReveal from "@/components/shop/ChestReveal";
 import StumpHitAnimation from "@/components/StumpHitAnimation";
 import { toast } from "sonner";
-
 import IdentityBar from "@/components/hub/IdentityBar";
-import StadiumPitchHero from "@/components/hub/StadiumPitchHero";
-import V10Button from "@/components/shared/V10Button";
-
-/* ═══════════════════════════════════════
-   TYPES & CONSTANTS
-   ═══════════════════════════════════════ */
+import FloatingIslandCarousel from "@/components/hub/FloatingIslandCarousel";
+import CricketProgressBar from "@/components/hub/CricketProgressBar";
 
 interface ProfileData {
   total_matches: number;
@@ -34,13 +29,13 @@ interface ProfileData {
 }
 
 const ARENA_LEVELS = [
-  { name: "Gully Grounds", trophies: 0, unlock: "Free", emoji: "🏏", accent: "#4ADE50" },
-  { name: "School Ground", trophies: 100, unlock: "Level 3", emoji: "🏫", accent: "#4ADE80" },
-  { name: "District Stadium", trophies: 300, unlock: "Level 7", emoji: "🏟️", accent: "#00D4FF" },
-  { name: "Ranji Trophy", trophies: 600, unlock: "Level 12", emoji: "🏆", accent: "#FFD700" },
-  { name: "IPL Stadium", trophies: 1200, unlock: "Level 18", emoji: "✨", accent: "#A855F7" },
-  { name: "International", trophies: 2000, unlock: "Level 22", emoji: "🌍", accent: "#00D4FF" },
-  { name: "World Cup", trophies: 3000, unlock: "Level 25", emoji: "🏆", accent: "#FFD700" },
+  { name: "Gully Grounds", trophies: 0 },
+  { name: "School Ground", trophies: 100 },
+  { name: "District Stadium", trophies: 300 },
+  { name: "Ranji Trophy", trophies: 600 },
+  { name: "IPL Stadium", trophies: 1200 },
+  { name: "International", trophies: 2000 },
+  { name: "World Cup", trophies: 3000 },
 ];
 
 function formatTime(seconds: number): string {
@@ -53,30 +48,24 @@ function formatTime(seconds: number): string {
   return `${s}s`;
 }
 
-// Removed CRICKET_CHEST — now using getChestTier() from lib/chests for 3D images
-
-const MAIN_MODES = [
-  { id: "tap", icon: "⚡", label: "TAP", sub: "Quick Play", color: "#4ADE50" },
-  { id: "pvp", icon: "⚔️", label: "PVP", sub: "Online", color: "#FF2D7B" },
-  { id: "ar",  icon: "📷", label: "AR",  sub: "Camera", color: "#00D4FF" },
+const QUICK_MODES = [
+  { id: "tap", icon: "⚡", label: "TAP PLAY", sub: "Quick Match", color: "#4ADE50" },
+  { id: "pvp", icon: "⚔️", label: "PVP", sub: "Real Player", color: "#FF2D7B" },
+  { id: "ar", icon: "📷", label: "AR MODE", sub: "Camera", color: "#00D4FF" },
 ];
 
-const SECONDARY_MODES = [
-  { id: "tournament", icon: "🏆", label: "Tournament", sub: "5-Round Bracket", color: "#A855F7" },
-  { id: "ipl", icon: "🏏", label: "IPL Season", sub: "Full Tournament", color: "#FFD700" },
-  { id: "worldcup", icon: "🌍", label: "World Cup", sub: "10 Nations", color: "#00D4FF" },
-  { id: "ashes", icon: "🏺", label: "The Ashes", sub: "Best of 5", color: "#FF6B35" },
-  { id: "knockout", icon: "🥊", label: "Knockout Cup", sub: "8-Team Bracket", color: "#FF2D7B" },
-  { id: "auction", icon: "💰", label: "Auction League", sub: "Bid & Battle", color: "#FFD700" },
-  { id: "royale", icon: "💀", label: "Cricket Royale", sub: "Battle Royale", color: "#A855F7" },
-  { id: "battlepass", icon: "⚔️", label: "Battle Pass", sub: "Season 3", color: "#A855F7" },
-  { id: "daily", icon: "📅", label: "Daily Challenge", sub: "New Target Daily", color: "#FF6B35" },
-  { id: "practice", icon: "🎯", label: "Practice", sub: "Learn & Improve", color: "#4ADE50" },
+const MORE_MODES = [
+  { id: "tournament", icon: "🏆", label: "Tournament", color: "#A855F7" },
+  { id: "ipl", icon: "🏏", label: "IPL Season", color: "#FFD700" },
+  { id: "worldcup", icon: "🌍", label: "World Cup", color: "#00D4FF" },
+  { id: "ashes", icon: "🏺", label: "The Ashes", color: "#FF6B35" },
+  { id: "knockout", icon: "🥊", label: "Knockout", color: "#FF2D7B" },
+  { id: "auction", icon: "💰", label: "Auction", color: "#FFD700" },
+  { id: "royale", icon: "💀", label: "Royale", color: "#A855F7" },
+  { id: "daily", icon: "📅", label: "Daily", color: "#FF6B35" },
+  { id: "practice", icon: "🎯", label: "Practice", color: "#4ADE50" },
+  { id: "battlepass", icon: "⭐", label: "Battle Pass", color: "#A855F7" },
 ];
-
-/* ═══════════════════════════════════════
-   MAIN COMPONENT
-   ═══════════════════════════════════════ */
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -126,7 +115,7 @@ export default function HomePage() {
   };
 
   const handleModeSelect = useCallback((modeId: string) => {
-    try { SFX.tap(); Haptics.heavy(); } catch { /* */ }
+    try { SFX.tap(); Haptics.heavy(); } catch {}
     if (modeId === "battlepass") { navigate("/battle-pass"); return; }
     setPendingMode(modeId);
     setShowStumpAnim(true);
@@ -174,42 +163,14 @@ export default function HomePage() {
   const playerLevel = Math.floor((profile?.xp ?? 0) / 500) + 1;
   const xpProgress = ((profile?.xp ?? 0) % 500) / 500 * 100;
   const playerName = profile?.display_name || user?.email?.split("@")[0]?.slice(0, 10) || "Player";
-  const arenaProgress = ((currentTrophies - currentArena.trophies) / Math.max(nextArena.trophies - currentArena.trophies, 1)) * 100;
-  const chestSlots = Array.from({ length: 4 }, (_, i) => chests?.find(c => c.slot_index === i) || null);
   const winRate = profile && profile.total_matches > 0 ? Math.round((profile.wins / profile.total_matches) * 100) : 0;
+  const chestSlots = Array.from({ length: 4 }, (_, i) => chests?.find(c => c.slot_index === i) || null);
 
   return (
-    <div className="relative w-full h-full overflow-y-auto overflow-x-hidden no-scrollbar game-screen">
-
-      {/* V10 Ambient particles */}
-      <div className="fixed inset-0 pointer-events-none z-[2] overflow-hidden">
-        {Array.from({ length: 20 }).map((_, i) => {
-          const size = 1.5 + (i % 4) * 0.8;
-          const colors = ["rgba(74,222,80,", "rgba(0,212,255,", "rgba(255,215,0,", "rgba(168,85,247,"];
-          const color = colors[i % colors.length];
-          return (
-            <div
-              key={i}
-              className="v10-particle"
-              style={{
-                width: size,
-                height: size,
-                left: `${(i * 5.3 + 3) % 100}%`,
-                bottom: `${-5 - (i % 6) * 3}%`,
-                background: `${color}0.4)`,
-                boxShadow: `0 0 ${size * 2}px ${color}0.2)`,
-                ['--rise-dur' as string]: `${10 + (i % 6) * 2}s`,
-                ['--delay' as string]: `${(i * 0.7) % 12}s`,
-                ['--drift-x' as string]: `${Math.sin(i * 0.9) * 25}px`,
-                ['--sway-amount' as string]: `${6 + (i % 4) * 4}px`,
-                ['--sway-dur' as string]: `${4 + (i % 4) * 1.5}s`,
-              }}
-            />
-          );
-        })}
-      </div>
-
-      {/* ═══ A: V10 IDENTITY BAR ═══ */}
+    <div className="relative w-full h-full overflow-y-auto overflow-x-hidden no-scrollbar game-screen"
+      style={{ background: "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 18% 5%) 100%)" }}
+    >
+      {/* ═══ IDENTITY BAR ═══ */}
       <IdentityBar
         playerName={playerName}
         playerLevel={playerLevel}
@@ -222,118 +183,75 @@ export default function HomePage() {
         unreadCount={unreadCount}
       />
 
-      {/* ═══ B: STADIUM PITCH HERO ═══ */}
-      <StadiumPitchHero
-        arenaName={currentArena.name}
-        arenaEmoji={currentArena.emoji}
-        trophies={currentTrophies}
-        nextArenaName={nextArena.name}
+      {/* ═══ FLOATING ISLAND CAROUSEL ═══ */}
+      <FloatingIslandCarousel currentTrophies={currentTrophies} />
+
+      {/* ═══ CRICKET PROGRESS BAR ═══ */}
+      <CricketProgressBar
+        currentTrophies={currentTrophies}
         nextTrophies={nextArena.trophies}
-        progress={arenaProgress}
-        arenaKey={
-          currentArena.name.toLowerCase().includes("gully") ? "gully" :
-          currentArena.name.toLowerCase().includes("school") ? "school" :
-          currentArena.name.toLowerCase().includes("ipl") ? "ipl" :
-          currentArena.name.toLowerCase().includes("international") ? "international" :
-          currentArena.name.toLowerCase().includes("world") ? "worldcup" : "default"
-        }
+        arenaName={currentArena.name}
+        nextArenaName={nextArena.name}
       />
 
-      {/* ═══ C: STATS BAR + BATTLE BUTTON ═══ */}
-      <div className="relative z-10 flex flex-col items-center -mt-6 mb-3 px-5">
-        {/* Quick stats bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="scoreboard-metal flex items-center gap-4 px-5 py-2 mb-3"
-          style={{ borderRadius: 10 }}
-        >
-          <StatPill label="W/L" value={`${profile?.wins ?? 0}/${profile?.losses ?? 0}`} color="#4ADE50" />
-          <div className="w-px h-4 bg-white/10" />
-          <StatPill label="RATE" value={`${winRate}%`} color="#00D4FF" />
-          <div className="w-px h-4 bg-white/10" />
-          <StatPill label="BEST" value={String(profile?.high_score ?? 0)} color="#FFD700" />
-          <div className="w-px h-4 bg-white/10" />
-          <StatPill label="STREAK" value={`🔥${profile?.current_streak ?? 0}`} color="#FF6B35" />
-        </motion.div>
-
-        {/* V10 BATTLE Button */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.4, type: "spring", stiffness: 300 }}
-          className="w-full max-w-[320px]"
-        >
-          <V10Button
-            variant="battle"
-            size="battle"
-            glow
-            icon={<span className="text-2xl">⚔️</span>}
-            onClick={() => {
-              try { SFX.tap(); Haptics.heavy(); } catch {}
-              setShowStumpAnim(true);
+      {/* ═══ STATS CHIPS ═══ */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="flex items-center justify-center gap-2 px-4 mt-4 mb-3"
+      >
+        {[
+          { label: "W/L", value: `${profile?.wins ?? 0}/${profile?.losses ?? 0}`, c: "#4ADE50" },
+          { label: "RATE", value: `${winRate}%`, c: "#00D4FF" },
+          { label: "BEST", value: String(profile?.high_score ?? 0), c: "#FFD700" },
+          { label: "🔥", value: String(profile?.current_streak ?? 0), c: "#FF6B35" },
+        ].map((s, i) => (
+          <div key={i} className="flex flex-col items-center px-3 py-1.5 rounded-lg"
+            style={{
+              background: "linear-gradient(180deg, rgba(30,28,24,0.9) 0%, rgba(18,16,12,0.95) 100%)",
+              border: "1px solid rgba(255,255,255,0.06)",
             }}
-            className="w-full"
           >
-            BATTLE
-          </V10Button>
-        </motion.div>
-      </div>
-
-      {/* ═══ D: CHEST BANNER ROW ═══ */}
-      <div className="relative z-10 flex gap-2 px-4 mb-3">
-        <motion.button
-          whileTap={{ scale: 0.96 }}
-          onClick={() => navigate("/shop")}
-          className="flex-1 stadium-glass overflow-hidden !border-l-[3px] !border-l-neon-gold/30"
-          style={{ borderRadius: 14, padding: "10px 12px" }}
-        >
-          <div className="flex items-center gap-2">
-            <motion.span
-              animate={{ y: [-2, 2, -2], scale: [1, 1.05, 1] }}
-              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-              className="text-2xl"
-            >🎁</motion.span>
-            <div className="text-left">
-              <div className="font-display text-[11px] font-semibold tracking-wide text-neon-gold">FREE CHEST</div>
-              <motion.div
-                animate={{ opacity: [0.5, 1, 0.5] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="font-display text-[13px] text-neon-gold neon-text-gold"
-              >OPEN</motion.div>
-            </div>
+            <span className="text-[7px] text-muted-foreground font-display tracking-wider">{s.label}</span>
+            <span className="font-display text-[13px] font-bold tabular-nums" style={{ color: s.c }}>{s.value}</span>
           </div>
-        </motion.button>
+        ))}
+      </motion.div>
 
+      {/* ═══ BIG BATTLE BUTTON ═══ */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.4, type: "spring", stiffness: 300 }}
+        className="px-6 mb-4"
+      >
         <motion.button
-          whileTap={{ scale: 0.96 }}
-          onClick={() => handleModeSelect("daily")}
-          className="flex-1 stadium-glass overflow-hidden !border-l-[3px] !border-l-neon-cyan/30"
-          style={{ borderRadius: 14, padding: "10px 12px" }}
+          whileTap={{ scale: 0.96, y: 3 }}
+          onClick={() => { try { SFX.tap(); Haptics.heavy(); } catch {} setShowStumpAnim(true); }}
+          className="w-full relative overflow-hidden font-display text-lg tracking-[4px]"
+          style={{
+            padding: "18px 32px",
+            borderRadius: 16,
+            background: "linear-gradient(180deg, hsl(142 71% 50%) 0%, hsl(142 65% 38%) 100%)",
+            border: "2px solid hsl(142 60% 55% / 0.5)",
+            borderBottom: "6px solid hsl(142 55% 25%)",
+            color: "hsl(142 80% 98%)",
+            textShadow: "0 2px 0 hsl(142 50% 20%)",
+            boxShadow: "0 8px 30px hsl(142 71% 45% / 0.35), inset 0 1px 0 hsl(142 80% 65% / 0.4)",
+          }}
         >
-          <div className="flex items-center gap-2">
-            <span className="text-2xl">🏏</span>
-            <div className="text-left flex-1">
-              <div className="font-display text-[11px] font-semibold tracking-wide text-muted-foreground">WICKET CHEST</div>
-              <div className="flex items-center gap-1.5 mt-0.5">
-                <span className="font-display text-[11px] font-bold text-white">18/25</span>
-                <div className="flex-1 h-[6px] rounded-full overflow-hidden" style={{ background: "rgba(0,0,0,0.4)" }}>
-                  <div className="h-full rounded-full" style={{
-                    width: "72%",
-                    background: "linear-gradient(90deg, hsl(var(--neon-cyan)), hsl(var(--neon-green)))",
-                    boxShadow: "0 0 6px rgba(0,212,255,0.5)",
-                  }} />
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Jersey mesh texture */}
+          <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
+            style={{ backgroundImage: "radial-gradient(circle, hsl(0 0% 100%) 0.5px, transparent 0.5px)", backgroundSize: "4px 4px" }}
+          />
+          <span className="relative z-10">⚔️ BATTLE</span>
         </motion.button>
-      </div>
+      </motion.div>
 
-      {/* ═══ E: MAIN MODE CARDS ═══ */}
-      <div className="relative z-10 flex gap-2 px-4 mb-4">
-        {MAIN_MODES.map((mode, idx) => (
+      {/* ═══ QUICK MODES ROW ═══ */}
+      <div className="flex gap-2 px-4 mb-4">
+        {QUICK_MODES.map((mode, idx) => (
           <motion.button
             key={mode.id}
             initial={{ opacity: 0, y: 20 }}
@@ -341,79 +259,67 @@ export default function HomePage() {
             transition={{ delay: 0.5 + idx * 0.08 }}
             whileTap={{ scale: 0.93, y: 2 }}
             onClick={() => handleModeSelect(mode.id)}
-            className="flex-1 stadium-glass overflow-hidden !border-l-[3px] flex flex-col items-center justify-center gap-1.5"
+            className="flex-1 flex flex-col items-center justify-center gap-1 overflow-hidden"
             style={{
-              height: 100,
+              height: 90,
               borderRadius: 14,
-              borderLeftColor: `${mode.color}40`,
+              background: "linear-gradient(180deg, rgba(30,28,24,0.9) 0%, rgba(18,16,12,0.95) 100%)",
+              border: `1.5px solid ${mode.color}20`,
+              borderBottom: `4px solid ${mode.color}30`,
             }}
           >
-            <motion.div
-              animate={
-                mode.id === "tap" ? { rotate: [-3, 3, -3] } :
-                mode.id === "pvp" ? { scale: [1, 1.1, 1] } :
-                { y: [-1, 1, -1] }
-              }
-              transition={{ duration: mode.id === "pvp" ? 2 : 3, repeat: Infinity, ease: "easeInOut" }}
-              className="text-3xl"
-              style={{ filter: `drop-shadow(0 0 10px ${mode.color}60)` }}
+            <motion.span
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 2.5, repeat: Infinity }}
+              className="text-2xl"
+              style={{ filter: `drop-shadow(0 0 8px ${mode.color}50)` }}
             >
               {mode.icon}
-            </motion.div>
+            </motion.span>
             <div className="text-center">
-              <div className="font-display text-sm" style={{ color: mode.color, textShadow: `0 0 10px ${mode.color}40` }}>
-                {mode.label}
-              </div>
-              <div className="font-body text-[9px] text-muted-foreground">{mode.sub}</div>
+              <div className="font-display text-[11px] font-bold" style={{ color: mode.color }}>{mode.label}</div>
+              <div className="text-[8px] text-muted-foreground font-body">{mode.sub}</div>
             </div>
           </motion.button>
         ))}
       </div>
 
-      {/* ═══ F: V10 CHEST SLOT ROW ═══ */}
-      <div className="relative z-10 mx-4 mb-4">
+      {/* ═══ CHEST SLOTS ═══ */}
+      <div className="px-4 mb-4">
         <div className="flex items-center gap-2 mb-2 px-1">
           <span className="text-xs">🎁</span>
           <span className="font-display text-[10px] tracking-[2px] text-muted-foreground">CHEST SLOTS</span>
         </div>
         <div className="flex justify-center gap-2.5">
           {chestSlots.map((chest, i) => (
-            <ChestSlot
-              key={i}
-              chest={chest}
-              onTap={handleChestTap}
-              tick={tick}
-            />
+            <ChestSlot key={i} chest={chest} onTap={handleChestTap} tick={tick} />
           ))}
         </div>
       </div>
 
-      {/* ═══ G: SECONDARY MODES ═══ */}
-      <div className="relative z-10 px-4 pb-4">
-        <div className="font-display text-[11px] font-semibold tracking-[3px] mb-2 px-1 text-muted-foreground">MORE MODES</div>
-        <div className="flex flex-col gap-2">
-          {SECONDARY_MODES.map((mode, idx) => (
+      {/* ═══ MORE MODES GRID ═══ */}
+      <div className="px-4 pb-4">
+        <div className="flex items-center gap-2 mb-2 px-1">
+          <span className="text-xs">🏟️</span>
+          <span className="font-display text-[10px] tracking-[2px] text-muted-foreground">MORE MODES</span>
+        </div>
+        <div className="grid grid-cols-5 gap-2">
+          {MORE_MODES.map((mode, idx) => (
             <motion.button
               key={mode.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.6 + idx * 0.04 }}
-              whileTap={{ scale: 0.97 }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.6 + idx * 0.03 }}
+              whileTap={{ scale: 0.9 }}
               onClick={() => handleModeSelect(mode.id)}
-              className="w-full flex items-center gap-3 p-3 stadium-glass !border-l-[3px]"
+              className="flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl"
               style={{
-                borderRadius: 14,
-                borderLeftColor: `${mode.color}60`,
+                background: "linear-gradient(180deg, rgba(30,28,24,0.8) 0%, rgba(18,16,12,0.9) 100%)",
+                border: `1px solid ${mode.color}15`,
               }}
             >
-              <span className="text-2xl w-10 text-center flex-shrink-0" style={{ filter: `drop-shadow(0 0 8px ${mode.color}40)` }}>
-                {mode.icon}
-              </span>
-              <div className="flex-1 text-left">
-                <div className="font-display text-[13px] font-bold tracking-wide text-white">{mode.label}</div>
-                <div className="font-body text-[10px]" style={{ color: mode.color }}>{mode.sub}</div>
-              </div>
-              <span className="text-muted-foreground text-sm">→</span>
+              <span className="text-xl" style={{ filter: `drop-shadow(0 0 6px ${mode.color}40)` }}>{mode.icon}</span>
+              <span className="font-display text-[8px] tracking-wider" style={{ color: mode.color }}>{mode.label}</span>
             </motion.button>
           ))}
         </div>
@@ -436,18 +342,7 @@ export default function HomePage() {
   );
 }
 
-/* ═══════════════════════════════════════
-   SUB-COMPONENTS
-   ═══════════════════════════════════════ */
-
-function StatPill({ label, value, color }: { label: string; value: string; color: string }) {
-  return (
-    <div className="text-center">
-      <span className="font-body text-[8px] text-muted-foreground block leading-none">{label}</span>
-      <span className="font-display text-[12px] font-bold leading-none tabular-nums" style={{ color }}>{value}</span>
-    </div>
-  );
-}
+/* ═══ SUB-COMPONENTS ═══ */
 
 function ChestSlot({ chest, onTap, tick }: { chest: UserChest | null; onTap: (c: UserChest | null) => void; tick: number }) {
   const tier = chest ? getChestTier(chest.chest_tier) : null;
@@ -459,8 +354,12 @@ function ChestSlot({ chest, onTap, tick }: { chest: UserChest | null; onTap: (c:
 
   if (!chest) {
     return (
-      <div className="flex flex-col items-center justify-center stadium-glass !border-l-0 !border-dashed !border-white/5"
-        style={{ width: 78, height: 96, borderRadius: 16 }}
+      <div className="flex flex-col items-center justify-center"
+        style={{
+          width: 78, height: 96, borderRadius: 16,
+          background: "linear-gradient(180deg, rgba(30,28,24,0.5) 0%, rgba(18,16,12,0.6) 100%)",
+          border: "1.5px dashed rgba(255,255,255,0.06)",
+        }}
       >
         <span className="text-lg text-white/10">+</span>
         <span className="text-[7px] mt-0.5 text-white/15 font-display">EMPTY</span>
@@ -472,40 +371,23 @@ function ChestSlot({ chest, onTap, tick }: { chest: UserChest | null; onTap: (c:
     <motion.button
       whileTap={{ scale: 0.9, y: 2 }}
       onClick={() => onTap(chest)}
-      className="relative flex flex-col items-center justify-center overflow-hidden stadium-glass !border-l-0"
+      className="relative flex flex-col items-center justify-center overflow-hidden"
       style={{
-        width: 78,
-        height: 96,
-        borderRadius: 16,
-        borderColor: isReady ? tier?.color : undefined,
-        boxShadow: isReady ? `0 0 24px ${tier?.color}40, 0 4px 12px rgba(0,0,0,0.4)` : undefined,
+        width: 78, height: 96, borderRadius: 16,
+        background: "linear-gradient(180deg, rgba(30,28,24,0.9) 0%, rgba(18,16,12,0.95) 100%)",
+        border: `1.5px solid ${isReady ? tier?.color : "rgba(255,255,255,0.08)"}`,
+        boxShadow: isReady ? `0 0 24px ${tier?.color}40` : undefined,
       }}
     >
-      {isReady && (
-        <motion.div
-          animate={{ rotate: [0, 360] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          className="absolute inset-0 pointer-events-none overflow-hidden rounded-[14px]"
-          style={{
-            background: `conic-gradient(from 0deg, transparent 0%, ${tier?.color}15 10%, transparent 20%, ${tier?.color}15 30%, transparent 40%, ${tier?.color}15 50%, transparent 60%, ${tier?.color}15 70%, transparent 80%, ${tier?.color}15 90%, transparent 100%)`,
-          }}
-        />
-      )}
-
       {isUnlocking && (
         <svg className="absolute inset-0 w-full h-full pointer-events-none -rotate-90" viewBox="0 0 78 96">
           <rect x="2" y="2" width="74" height="92" rx="14" ry="14" fill="none"
-            stroke={tier?.color || "#475569"}
-            strokeWidth="2"
-            strokeDasharray={`${progressPct * 3.32} 332`}
-            strokeLinecap="round"
-            opacity="0.5"
-            style={{ filter: `drop-shadow(0 0 4px ${tier?.color}40)` }}
+            stroke={tier?.color || "#475569"} strokeWidth="2"
+            strokeDasharray={`${progressPct * 3.32} 332`} strokeLinecap="round" opacity="0.5"
           />
         </svg>
       )}
 
-      {/* Chest 3D image */}
       <motion.img
         src={tier?.image}
         alt={tier?.name}
@@ -513,46 +395,15 @@ function ChestSlot({ chest, onTap, tick }: { chest: UserChest | null; onTap: (c:
         transition={{ duration: isReady ? 1.5 : 2, repeat: Infinity, ease: "easeInOut" }}
         className="w-10 h-10 object-contain relative z-10"
         style={{
-          filter: isUnlocking
-            ? `brightness(0.5) saturate(0.3) drop-shadow(0 2px 4px rgba(0,0,0,0.5))`
-            : isReady
-              ? `drop-shadow(0 0 12px ${tier?.color}80)`
-              : `drop-shadow(0 2px 6px rgba(0,0,0,0.5))`,
+          filter: isUnlocking ? `brightness(0.5) saturate(0.3)` : isReady ? `drop-shadow(0 0 12px ${tier?.color}80)` : `drop-shadow(0 2px 6px rgba(0,0,0,0.5))`,
         }}
       />
 
-      {isReady && [0, 1, 2, 3].map(s => (
-        <motion.div
-          key={s}
-          animate={{ opacity: [0, 1, 0], scale: [0.3, 1, 0.3], y: [-5, -15] }}
-          transition={{ duration: 1.2, repeat: Infinity, delay: s * 0.3 }}
-          className="absolute w-1 h-1 rounded-full pointer-events-none"
-          style={{
-            background: s % 2 === 0 ? "#FFD700" : (tier?.color || "#fff"),
-            left: `${18 + s * 18}%`,
-            top: "25%",
-            boxShadow: `0 0 6px ${tier?.color}`,
-          }}
-        />
-      ))}
-
-      {isUnlocking && (
-        <motion.div
-          animate={{ rotateZ: [-5, 5, -5] }}
-          transition={{ duration: 0.8, repeat: Infinity }}
-          className="absolute top-1.5 right-1.5 z-20"
-        >
-          <span className="text-[10px]">🔒</span>
-        </motion.div>
-      )}
-
-      <div className="absolute bottom-0 inset-x-0 py-1 text-center z-10" style={{
-        background: "linear-gradient(0deg, rgba(0,0,0,0.7), transparent)",
-        borderRadius: "0 0 14px 14px",
-      }}>
+      <div className="absolute bottom-0 inset-x-0 py-1 text-center z-10"
+        style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.7), transparent)", borderRadius: "0 0 14px 14px" }}
+      >
         <span className="text-[8px] font-bold block font-display" style={{
           color: isReady ? "#FFD700" : isUnlocking ? (tier?.color || "#475569") : "#94A3B8",
-          textShadow: isReady ? "0 0 8px rgba(255,215,0,0.5)" : "none",
         }}>
           {isReady ? "OPEN!" : isUnlocking ? formatTime(remaining) : tier?.name.split(" ")[0]}
         </span>
