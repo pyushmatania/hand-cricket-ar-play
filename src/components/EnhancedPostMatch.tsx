@@ -403,8 +403,12 @@ export default function EnhancedPostMatch({
               transition={{ delay: 0.75, type: "spring", damping: 12 }}
               className="rounded-2xl p-[3px] mb-4"
               style={{
-                background: "conic-gradient(from 0deg, hsl(43 100% 65%), hsl(35 90% 45%), hsl(43 100% 60%), hsl(45 100% 75%), hsl(35 80% 50%), hsl(43 100% 65%))",
-                boxShadow: "0 0 40px hsl(43 96% 56% / 0.15), 0 8px 24px rgba(0,0,0,0.5)",
+                background: isWin
+                  ? "conic-gradient(from 0deg, #FFD700, #B8860B, #FFD700, #FFF8DC, #B8860B, #FFD700)"
+                  : "conic-gradient(from 0deg, #6B4423, #5C3A1E, #6B4423, #8B7355, #5C3A1E, #6B4423)",
+                boxShadow: isWin
+                  ? "0 0 40px rgba(255,215,0,0.15), 0 8px 24px rgba(0,0,0,0.5)"
+                  : "0 0 20px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.5)",
               }}
             >
               <div className="rounded-[13px] p-5 text-center scoreboard-metal">
