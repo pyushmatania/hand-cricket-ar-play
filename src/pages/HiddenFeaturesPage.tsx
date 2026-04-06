@@ -51,7 +51,7 @@ export default function HiddenFeaturesPage() {
     }
   }, [visibleIndex]);
 
-  const LEATHER_BG = "linear-gradient(180deg, hsl(28 35% 14%) 0%, hsl(25 30% 8%) 40%, hsl(222 40% 6%) 100%)";
+  const LEATHER_BG = "linear-gradient(180deg, hsl(220 20% 10%) 0%, hsl(220 18% 7%) 40%, hsl(222 40% 6%) 100%)";
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{ background: LEATHER_BG }}>
@@ -90,13 +90,13 @@ export default function HiddenFeaturesPage() {
                   transition={{ duration: 0.6, ease: "easeOut" }}
                   className="rounded-2xl overflow-hidden"
                   style={{
-                    background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 11%) 100%)",
-                    border: "2px solid hsl(25 20% 22%)",
+                    background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
+                    border: "2px solid hsl(220 15% 18%)",
                     borderBottom: "5px solid hsl(25 25% 10%)",
                   }}
                 >
                   {/* Category header */}
-                  <div className="px-4 py-3 flex items-center gap-3" style={{ borderBottom: "1px solid hsl(25 18% 20%)" }}>
+                  <div className="px-4 py-3 flex items-center gap-3" style={{ borderBottom: "1px solid hsl(220 15% 16%)" }}>
                     <span className="text-xl">{category.icon}</span>
                     <span className="font-display text-[11px] font-bold tracking-[0.2em]" style={{ color: "hsl(43 90% 55%)" }}>
                       {category.title.toUpperCase()}
@@ -114,8 +114,8 @@ export default function HiddenFeaturesPage() {
                         transition={{ delay: j * 0.08, duration: 0.3 }}
                         className="px-2.5 py-1 rounded-lg text-[9px] font-display tracking-wider"
                         style={{
-                          background: "hsl(25 15% 10%)",
-                          border: "1px solid hsl(25 18% 20%)",
+                          background: "hsl(220 12% 8%)",
+                          border: "1px solid hsl(220 15% 16%)",
                           color: "hsl(0 0% 80%)",
                         }}
                       >
@@ -151,9 +151,9 @@ export default function HiddenFeaturesPage() {
               onClick={() => navigate("/settings")}
               className="mt-4 px-6 py-2.5 rounded-xl font-display text-[9px] tracking-widest"
               style={{
-                background: "hsl(25 15% 10%)",
-                border: "1px solid hsl(25 18% 20%)",
-                color: "hsl(25 20% 50%)",
+                background: "hsl(220 12% 8%)",
+                border: "1px solid hsl(220 15% 16%)",
+                color: "hsl(220 15% 50%)",
               }}
             >
               ← BACK TO SETTINGS
@@ -167,8 +167,8 @@ export default function HiddenFeaturesPage() {
             className="fixed bottom-24 right-4 z-20 px-4 py-2 rounded-xl font-display text-[8px] tracking-widest"
             style={{
               background: "hsl(25 15% 12%)",
-              border: "1px solid hsl(25 18% 22%)",
-              color: "hsl(25 20% 50%)",
+              border: "1px solid hsl(220 15% 18%)",
+              color: "hsl(220 15% 50%)",
             }}
             whileTap={{ scale: 0.95 }}
             onClick={() => { setAutoScroll(false); setVisibleIndex(FEATURES.length - 1); }}

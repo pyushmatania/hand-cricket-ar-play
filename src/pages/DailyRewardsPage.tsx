@@ -183,7 +183,7 @@ export default function DailyRewardsPage() {
       {/* Leather grain */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ display: "none" }} />
       {/* Vignette */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(220 18% 4% / 0.7) 100%)" }} />
 
       <TopStatusBar />
 
@@ -198,14 +198,14 @@ export default function DailyRewardsPage() {
           <motion.button whileTap={{ scale: 0.9 }} onClick={() => navigate(-1)}
             className="w-10 h-10 rounded-xl flex items-center justify-center font-body text-sm text-foreground"
             style={{
-              background: "linear-gradient(180deg, hsl(28 20% 22%) 0%, hsl(25 18% 15%) 100%)",
+              background: "linear-gradient(180deg, hsl(220 15% 16%) 0%, hsl(220 12% 10%) 100%)",
               border: "2px solid hsl(43 50% 35%)",
-              boxShadow: "0 3px 0 hsl(25 30% 10%), inset 0 1px 0 hsl(43 40% 45% / 0.3)",
+              boxShadow: "0 3px 0 hsl(220 15% 8%), inset 0 1px 0 hsl(43 40% 45% / 0.3)",
             }}>
             ←
           </motion.button>
           <div className="flex-1">
-            <h1 className="font-display text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(25 40% 8%)" }}>
+            <h1 className="font-display text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(220 18% 6%)" }}>
               Daily Rewards
             </h1>
             <span className="text-[9px] text-muted-foreground font-display tracking-[0.2em]">
@@ -231,7 +231,7 @@ export default function DailyRewardsPage() {
           style={{
             background: V10_CARD,
             border: "2px solid hsl(43 50% 35% / 0.3)",
-            borderBottom: "5px solid hsl(25 20% 10%)",
+            borderBottom: "5px solid hsl(220 15% 8%)",
             boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
           }}>
           <div className="flex items-center justify-between mb-2">
@@ -241,8 +241,8 @@ export default function DailyRewardsPage() {
             </span>
           </div>
           <div className="relative h-3 rounded-full overflow-hidden" style={{
-            background: "linear-gradient(180deg, hsl(25 30% 10%), hsl(25 25% 14%))",
-            border: "1px solid hsl(25 20% 8%)",
+            background: "linear-gradient(180deg, hsl(220 15% 8%), hsl(25 25% 14%))",
+            border: "1px solid hsl(220 15% 6%)",
             boxShadow: "inset 0 1px 3px hsl(0 0% 0% / 0.5)",
           }}>
             <motion.div
@@ -265,7 +265,7 @@ export default function DailyRewardsPage() {
           <div className="flex justify-between mt-1.5">
             {[7, 14, 21, 28].map(m => (
               <span key={m} className="text-[7px] font-display tracking-wider"
-                style={{ color: cycleDay >= m ? "hsl(43 90% 55%)" : "hsl(25 15% 35%)" }}>
+                style={{ color: cycleDay >= m ? "hsl(43 90% 55%)" : "hsl(220 15% 35%)" }}>
                 {m === 7 ? "🎁" : m === 14 ? "👑" : m === 21 ? "🎁" : "🏆"} D{m}
               </span>
             ))}
@@ -276,7 +276,7 @@ export default function DailyRewardsPage() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
           className="flex gap-1 mb-4 rounded-2xl p-1"
           style={{
-            background: "linear-gradient(180deg, hsl(25 15% 16%) 0%, hsl(25 12% 12%) 100%)",
+            background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 10%) 100%)",
             border: "1px solid hsl(25 20% 22% / 0.6)",
           }}>
           {[
@@ -292,7 +292,7 @@ export default function DailyRewardsPage() {
                 borderBottom: `3px solid hsl(${p.hue} 50% 25%)`,
                 boxShadow: `0 2px 8px hsl(${p.hue} 80% 45% / 0.3), inset 0 1px 0 hsl(${p.hue} 80% 65% / 0.4)`,
               } : {
-                color: "hsl(25 15% 45%)",
+                color: "hsl(220 15% 45%)",
                 borderBottom: "3px solid transparent",
               }}
             >
@@ -315,7 +315,7 @@ export default function DailyRewardsPage() {
             transition={{ delay: 0.12 + wi * 0.06 }} className="mb-3">
             <div className="flex items-center gap-2 mb-1.5">
               <span className="font-display text-[8px] tracking-[0.2em]"
-                style={{ color: currentWeek === wi + 1 ? "hsl(43 90% 55%)" : "hsl(25 15% 35%)" }}>
+                style={{ color: currentWeek === wi + 1 ? "hsl(43 90% 55%)" : "hsl(220 15% 35%)" }}>
                 WEEK {wi + 1}
               </span>
               <div className="flex-1 h-px opacity-20" style={{ background: CHALK_DIVIDER }} />
@@ -342,17 +342,17 @@ export default function DailyRewardsPage() {
                         ? `linear-gradient(135deg, ${color}25, ${color}08)`
                         : isPast
                           ? "hsl(142 40% 18% / 0.15)"
-                          : "linear-gradient(180deg, hsl(25 18% 14%), hsl(25 15% 10%))",
+                          : "linear-gradient(180deg, hsl(220 12% 10%), hsl(220 12% 8%))",
                       border: isCurrent
                         ? `2px solid ${color}50`
                         : isPast
                           ? "2px solid hsl(142 39% 49% / 0.2)"
-                          : "2px solid hsl(25 18% 20%)",
+                          : "2px solid hsl(220 15% 16%)",
                       borderBottom: isCurrent
                         ? `4px solid ${color}30`
                         : isPast
                           ? "4px solid hsl(142 30% 15%)"
-                          : "4px solid hsl(25 15% 8%)",
+                          : "4px solid hsl(220 12% 6%)",
                       boxShadow: isCurrent ? `0 2px 12px ${color}25` : "0 2px 4px hsl(0 0% 0% / 0.2)",
                       opacity: isLocked ? 0.4 : 1,
                     }}
@@ -367,7 +367,7 @@ export default function DailyRewardsPage() {
                     )}
 
                     <span className="text-[7px] font-display tracking-wider block mb-0.5"
-                      style={{ color: isCurrent ? color : isPast ? "hsl(142,70%,55%)" : "hsl(25 15% 35%)" }}>
+                      style={{ color: isCurrent ? color : isPast ? "hsl(142,70%,55%)" : "hsl(220 15% 35%)" }}>
                       D{day.day}
                     </span>
 
@@ -380,7 +380,7 @@ export default function DailyRewardsPage() {
                     </motion.span>
 
                     <span className="text-[6px] font-score font-black block mt-0.5"
-                      style={{ color: isCurrent ? "hsl(43 90% 55%)" : "hsl(25 15% 35%)" }}>
+                      style={{ color: isCurrent ? "hsl(43 90% 55%)" : "hsl(220 15% 35%)" }}>
                       +{reward.coins}
                     </span>
 
@@ -417,7 +417,7 @@ export default function DailyRewardsPage() {
                 background: "linear-gradient(180deg, hsl(43 90% 55%), hsl(35 80% 42%))",
                 border: "2px solid hsl(43 70% 45% / 0.5)",
                 borderBottom: "5px solid hsl(35 60% 28%)",
-                color: "hsl(25 40% 8%)",
+                color: "hsl(220 18% 6%)",
                 boxShadow: "0 4px 16px hsl(43 90% 55% / 0.3)",
               }}>
               <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
@@ -433,7 +433,7 @@ export default function DailyRewardsPage() {
           style={{
             background: V10_CARD,
             border: "2px solid hsl(4 50% 30% / 0.3)",
-            borderBottom: "5px solid hsl(25 20% 10%)",
+            borderBottom: "5px solid hsl(220 15% 8%)",
             boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
           }}>
           <div className="flex items-center gap-2 mb-3">
@@ -454,20 +454,20 @@ export default function DailyRewardsPage() {
                       ? "hsl(4 50% 20% / 0.3)"
                       : isPast
                         ? "hsl(142 30% 18% / 0.2)"
-                        : "linear-gradient(180deg, hsl(25 18% 14%), hsl(25 15% 10%))",
+                        : "linear-gradient(180deg, hsl(220 12% 10%), hsl(220 12% 8%))",
                     border: isCurrent
                       ? "2px solid hsl(4 60% 40% / 0.4)"
                       : "2px solid hsl(25 18% 18%)",
                     borderBottom: isCurrent
                       ? "3px solid hsl(4 40% 22%)"
-                      : "3px solid hsl(25 15% 8%)",
+                      : "3px solid hsl(220 12% 6%)",
                   }}>
                   <span className="text-[10px] block">{isPast ? "✅" : isCurrent ? "🔥" : "🔒"}</span>
                   <span className="text-[6px] font-display tracking-wider block mt-0.5"
-                    style={{ color: isCurrent ? "hsl(4,90%,65%)" : isPast ? "hsl(142,70%,55%)" : "hsl(25 15% 35%)" }}>
+                    style={{ color: isCurrent ? "hsl(4,90%,65%)" : isPast ? "hsl(142,70%,55%)" : "hsl(220 15% 35%)" }}>
                     D{day}
                   </span>
-                  <span className="text-[5px] font-score font-black block" style={{ color: "hsl(25 15% 40%)" }}>
+                  <span className="text-[5px] font-score font-black block" style={{ color: "hsl(220 15% 40%)" }}>
                     +{r.coins}🪙
                   </span>
                 </div>

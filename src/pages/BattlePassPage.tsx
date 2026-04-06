@@ -142,7 +142,7 @@ function ClaimOverlay({ reward, onClose }: { reward: PassReward["free"]; onClose
           className="mt-4 px-8 py-3 rounded-xl font-display text-sm tracking-wider"
           style={{
             background: "linear-gradient(180deg, hsl(43 90% 55%), hsl(35 80% 42%))",
-            color: "hsl(25 40% 8%)",
+            color: "hsl(220 18% 6%)",
             border: "2px solid hsl(35 70% 35%)",
             borderBottom: "5px solid hsl(35 60% 28%)",
             boxShadow: "0 4px 16px hsl(43 90% 55% / 0.3)",
@@ -181,12 +181,12 @@ function TierCard({
           ? "2px solid hsl(43 70% 45% / 0.5)"
           : unlocked
             ? "2px solid hsl(142 50% 35% / 0.3)"
-            : "2px solid hsl(25 18% 22%)",
+            : "2px solid hsl(220 15% 18%)",
         borderBottom: reward.milestone
           ? "5px solid hsl(43 60% 28%)"
           : unlocked
             ? "5px solid hsl(142 40% 20%)"
-            : "5px solid hsl(25 20% 10%)",
+            : "5px solid hsl(220 15% 8%)",
         boxShadow: `0 3px 8px hsl(0 0% 0% / 0.3), ${milestoneGlow}`,
       }}
       initial={{ opacity: 0, x: -20 }}
@@ -198,12 +198,12 @@ function TierCard({
         style={{
           background: reward.milestone
             ? "linear-gradient(180deg, hsl(43 60% 22%), hsl(43 50% 14%))"
-            : "linear-gradient(180deg, hsl(25 20% 14%), hsl(25 15% 10%))",
+            : "linear-gradient(180deg, hsl(220 12% 10%), hsl(220 12% 8%))",
           borderRight: "1px solid hsl(25 18% 18%)",
         }}
       >
         <span className="font-score text-lg font-black" style={{
-          color: reward.milestone ? "hsl(43 90% 55%)" : unlocked ? "hsl(142 71% 55%)" : "hsl(25 15% 40%)",
+          color: reward.milestone ? "hsl(43 90% 55%)" : unlocked ? "hsl(142 71% 55%)" : "hsl(220 15% 40%)",
         }}>
           {reward.tier}
         </span>
@@ -216,7 +216,7 @@ function TierCard({
         <div className="flex-1 min-w-0">
           <p className="font-body text-[11px] text-foreground truncate">{reward.free.label}</p>
           {reward.free.amount && (
-            <p className="font-score text-xs" style={{ color: "hsl(25 15% 45%)" }}>×{reward.free.amount}</p>
+            <p className="font-score text-xs" style={{ color: "hsl(220 15% 45%)" }}>×{reward.free.amount}</p>
           )}
         </div>
         {unlocked && !freeClaimed ? (
@@ -236,7 +236,7 @@ function TierCard({
         ) : freeClaimed ? (
           <span className="text-[10px] font-display font-bold" style={{ color: "hsl(142 71% 55%)" }}>✓</span>
         ) : (
-          <Lock className="w-3.5 h-3.5" style={{ color: "hsl(25 15% 30%)" }} />
+          <Lock className="w-3.5 h-3.5" style={{ color: "hsl(220 15% 30%)" }} />
         )}
       </div>
 
@@ -254,7 +254,7 @@ function TierCard({
         <div className="flex-1 min-w-0">
           <p className="font-body text-[11px] truncate" style={{ color: "hsl(43 90% 60%)" }}>{reward.premium.label}</p>
           {reward.premium.amount && (
-            <p className="font-score text-xs" style={{ color: "hsl(25 15% 45%)" }}>×{reward.premium.amount}</p>
+            <p className="font-score text-xs" style={{ color: "hsl(220 15% 45%)" }}>×{reward.premium.amount}</p>
           )}
         </div>
         {isPremium && unlocked && !premClaimed ? (
@@ -262,7 +262,7 @@ function TierCard({
             className="px-2 py-1 rounded-lg text-[10px] font-display tracking-wider"
             style={{
               background: "linear-gradient(180deg, hsl(43 90% 55%), hsl(35 80% 42%))",
-              color: "hsl(25 40% 8%)",
+              color: "hsl(220 18% 6%)",
               borderBottom: "3px solid hsl(35 60% 28%)",
               boxShadow: "0 2px 8px hsl(43 90% 55% / 0.3)",
             }}
@@ -392,7 +392,7 @@ export default function BattlePassPage() {
       {/* Leather grain */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ display: "none" }} />
       {/* Vignette */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(25 30% 4% / 0.7) 100%)" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(220 18% 4% / 0.7) 100%)" }} />
 
       <TopStatusBar />
 
@@ -404,14 +404,14 @@ export default function BattlePassPage() {
           <motion.button whileTap={{ scale: 0.9 }} onClick={() => navigate(-1)}
             className="w-10 h-10 rounded-xl flex items-center justify-center font-body text-sm text-foreground"
             style={{
-              background: "linear-gradient(180deg, hsl(28 20% 22%) 0%, hsl(25 18% 15%) 100%)",
+              background: "linear-gradient(180deg, hsl(220 15% 16%) 0%, hsl(220 12% 10%) 100%)",
               border: "2px solid hsl(43 50% 35%)",
-              boxShadow: "0 3px 0 hsl(25 30% 10%), inset 0 1px 0 hsl(43 40% 45% / 0.3)",
+              boxShadow: "0 3px 0 hsl(220 15% 8%), inset 0 1px 0 hsl(43 40% 45% / 0.3)",
             }}>
             ←
           </motion.button>
           <div className="flex-1">
-            <h1 className="font-display text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(25 40% 8%)" }}>
+            <h1 className="font-display text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(220 18% 6%)" }}>
               Battle Pass
             </h1>
             <span className="text-[9px] font-display tracking-[0.2em]" style={{ color: "hsl(43 90% 55%)" }}>
@@ -426,8 +426,8 @@ export default function BattlePassPage() {
           className="rounded-2xl p-3 flex items-center justify-between mb-4"
           style={{
             background: V10_CARD,
-            border: "2px solid hsl(25 18% 22%)",
-            borderBottom: "5px solid hsl(25 20% 10%)",
+            border: "2px solid hsl(220 15% 18%)",
+            borderBottom: "5px solid hsl(220 15% 8%)",
             boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
           }}>
           <div className="flex items-center gap-2">
@@ -460,8 +460,8 @@ export default function BattlePassPage() {
           className="rounded-2xl p-3.5 mb-4"
           style={{
             background: V10_CARD,
-            border: "2px solid hsl(25 18% 22%)",
-            borderBottom: "5px solid hsl(25 20% 10%)",
+            border: "2px solid hsl(220 15% 18%)",
+            borderBottom: "5px solid hsl(220 15% 8%)",
           }}>
           <div className="flex justify-between items-center mb-1.5">
             <span className="font-display text-[9px] tracking-wider text-muted-foreground">
@@ -472,8 +472,8 @@ export default function BattlePassPage() {
             </span>
           </div>
           <div className="h-3 rounded-full overflow-hidden" style={{
-            background: "linear-gradient(180deg, hsl(25 30% 10%), hsl(25 25% 14%))",
-            border: "1px solid hsl(25 20% 8%)",
+            background: "linear-gradient(180deg, hsl(220 15% 8%), hsl(25 25% 14%))",
+            border: "1px solid hsl(220 15% 6%)",
             boxShadow: "inset 0 1px 3px hsl(0 0% 0% / 0.5)",
           }}>
             <motion.div
@@ -498,7 +498,7 @@ export default function BattlePassPage() {
               background: "linear-gradient(180deg, hsl(43 90% 55%) 0%, hsl(35 80% 42%) 100%)",
               border: "2px solid hsl(43 70% 45% / 0.5)",
               borderBottom: "6px solid hsl(35 60% 28%)",
-              color: "hsl(25 40% 8%)",
+              color: "hsl(220 18% 6%)",
               textShadow: "0 1px 0 hsl(43 80% 70% / 0.3)",
               boxShadow: "0 6px 24px hsl(43 90% 55% / 0.3), inset 0 1px 0 hsl(43 80% 70% / 0.4)",
             }}
@@ -550,7 +550,7 @@ export default function BattlePassPage() {
                 <div className="flex items-center gap-2 py-2 mb-1">
                   <div className="flex-1 h-px opacity-20" style={{ background: CHALK_DIVIDER }} />
                   <span className="font-display text-[8px] tracking-[0.3em] px-2" style={{
-                    color: r.tier <= currentTier + 1 ? "hsl(43 90% 55%)" : "hsl(25 15% 40%)",
+                    color: r.tier <= currentTier + 1 ? "hsl(43 90% 55%)" : "hsl(220 15% 40%)",
                   }}>
                     {r.tier === 1 ? "TIER 1–10" : r.tier === 11 ? "TIER 11–20" : r.tier === 21 ? "TIER 21–30" : r.tier === 31 ? "TIER 31–40" : r.tier === 41 ? "TIER 41–50" : "TIER 51–60"}
                   </span>

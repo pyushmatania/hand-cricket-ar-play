@@ -352,7 +352,7 @@ export default function SpinWheelPage() {
             exit={{ opacity: 0, scale: 0.8 }}
             className="mt-6 text-center px-6 py-4 rounded-2xl"
             style={{
-              background: "linear-gradient(180deg, hsl(25 20% 14%), hsl(25 15% 8%))",
+              background: "linear-gradient(180deg, hsl(220 12% 10%), hsl(220 12% 6%))",
               border: `2px solid ${result.color}`,
               boxShadow: `0 0 20px ${result.color}44`,
             }}
