@@ -575,10 +575,10 @@ export default function ProfilePage() {
                     transition={{ delay: 0.1 + i * 0.05 }}
                     className="rounded-xl p-2.5 text-center"
                     style={{
-                      background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
-                      border: "2px solid hsl(222 15% 12%)",
-                      borderBottom: "4px solid hsl(222 12% 8%)",
-                      boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
+                      background: "linear-gradient(180deg, #3E2410, #2E1A0E)",
+                      border: "2px solid #5C3A1E",
+                      borderBottom: "4px solid #2E1A0E",
+                      boxShadow: "0 3px 8px rgba(0,0,0,0.4)",
                     }}>
                     <span className="text-base block mb-0.5">{s.icon}</span>
                     <span className="font-display text-lg font-black text-foreground block leading-none">{s.value}</span>
