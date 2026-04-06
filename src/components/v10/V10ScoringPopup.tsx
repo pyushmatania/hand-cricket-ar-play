@@ -258,7 +258,7 @@ function SixPopup({ onComplete }: { onComplete: () => void }) {
   const [showCracks, setShowCracks] = useState(false);
 
   useEffect(() => {
-    try { SFX.play("six"); } catch {}
+    try { SFX.sixHit(); } catch {}
     try { navigator.vibrate?.([50, 30, 80]); } catch {}
     const crackTimer = setTimeout(() => setShowCracks(true), 220);
     const t = setTimeout(onComplete, 2000);
