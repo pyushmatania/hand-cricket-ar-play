@@ -72,6 +72,11 @@ export default function ClanPage() {
               <ClanWars clan={myClan} myRole={myRole} />
             </motion.div>
           )}
+          {tab === "ranks" && (
+            <motion.div key="ranks" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
+              <ClanLeaderboard />
+            </motion.div>
+          )}
           {tab === "browse" && (
             <motion.div key="browse" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
               <BrowseClans clans={allClans} onJoin={joinClan} onCreate={() => setTab("browse")} hasClam={!!myClan} />
