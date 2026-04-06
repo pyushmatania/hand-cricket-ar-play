@@ -77,9 +77,48 @@ export default function ChestSlotsWidget() {
   return (
     <>
       <div className="px-4 mb-4">
+        {/* ── Two chest banners side-by-side ── */}
+        <div className="flex gap-2 mb-3">
+          {/* FREE CHEST Banner */}
+          <div
+            className="flex-1 rounded-xl px-3 py-2.5 flex items-center gap-2 relative overflow-hidden"
+            style={{
+              background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+              border: "3px solid #2E1A0E",
+              boxShadow: "inset 0 2px 0 rgba(255,255,255,0.06), 0 4px 8px rgba(0,0,0,0.4)",
+            }}
+          >
+            <div className="absolute inset-0 opacity-[0.05]" style={{ background: "rgba(255,107,53,0.08)" }} />
+            <span className="text-2xl">🎁</span>
+            <div className="flex flex-col min-w-0">
+              <span className="font-display text-[9px] font-bold tracking-wider" style={{ color: "#F5E6D3" }}>FREE CHEST</span>
+              <span className="text-[7px] font-body" style={{ color: "#8B7355" }}>2h 30m</span>
+            </div>
+          </div>
+
+          {/* WICKET CHEST Banner */}
+          <div
+            className="flex-1 rounded-xl px-3 py-2.5 flex items-center gap-2 relative overflow-hidden"
+            style={{
+              background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+              border: "3px solid #2E1A0E",
+              boxShadow: "inset 0 2px 0 rgba(255,255,255,0.06), 0 4px 8px rgba(0,0,0,0.4)",
+            }}
+          >
+            <div className="absolute inset-0 opacity-[0.04]" style={{ background: "rgba(0,212,255,0.06)" }} />
+            <span className="text-2xl">⚡</span>
+            <div className="flex flex-col min-w-0">
+              <span className="font-display text-[9px] font-bold tracking-wider" style={{ color: "#F5E6D3" }}>WICKET CHEST</span>
+              <div className="w-full h-[6px] rounded-full mt-0.5" style={{ background: "#2E1A0E" }}>
+                <div className="h-full rounded-full" style={{ width: "72%", background: "linear-gradient(90deg, hsl(var(--primary)), #00D4FF)" }} />
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="flex items-center gap-2 mb-2">
-          <Gift className="w-4 h-4 text-game-gold" />
-          <span className="font-display text-xs tracking-wider text-foreground">CHEST SLOTS</span>
+          <Gift className="w-4 h-4" style={{ color: "#FFD700" }} />
+          <span className="font-display text-xs tracking-wider" style={{ color: "#F5E6D3" }}>CHEST SLOTS</span>
         </div>
         
         <div className="grid grid-cols-4 gap-2">
@@ -122,8 +161,14 @@ function ChestSlot({
 }) {
   if (!chest) {
     return (
-      <div className="aspect-square rounded-xl border-2 border-dashed border-border/30 flex items-center justify-center opacity-40">
-        <Plus className="w-4 h-4 text-muted-foreground" />
+      <div
+        className="aspect-square rounded-xl flex items-center justify-center opacity-40"
+        style={{
+          background: "linear-gradient(180deg, #3A2A1A, #2E1A0E)",
+          border: "2px dashed #5C3A1E",
+        }}
+      >
+        <Plus className="w-4 h-4" style={{ color: "#8B7355" }} />
       </div>
     );
   }
@@ -140,9 +185,11 @@ function ChestSlot({
       onClick={() => onTap(chest, slotIndex)}
       className="relative aspect-square rounded-xl overflow-hidden"
       style={{
-        background: `linear-gradient(180deg, hsl(220 12% 9%), hsl(222 30% 8%))`,
-        border: `2px solid ${isReady ? tier.color : tier.borderColor}`,
-        boxShadow: isReady ? `0 0 12px ${tier.glowColor}` : "none",
+        background: "linear-gradient(180deg, #4A3A2A, #3A2A1A)",
+        border: `3px solid ${isReady ? tier.color : "#2E1A0E"}`,
+        boxShadow: isReady
+          ? `0 0 12px ${tier.glowColor}, inset 0 1px 0 rgba(255,255,255,0.06)`
+          : "inset 0 1px 0 rgba(255,255,255,0.06), 0 3px 8px rgba(0,0,0,0.4)",
       }}
     >
       {/* Chest image */}
@@ -168,7 +215,7 @@ function ChestSlot({
       )}
 
       {/* Status overlay */}
-      <div className="absolute bottom-0 inset-x-0 py-0.5 text-center" style={{ background: "rgba(0,0,0,0.7)" }}>
+      <div className="absolute bottom-0 inset-x-0 py-0.5 text-center" style={{ background: "rgba(30,15,5,0.85)" }}>
         {isLocked && (
           <div className="flex items-center justify-center gap-0.5">
             <Lock className="w-2.5 h-2.5 text-muted-foreground" />

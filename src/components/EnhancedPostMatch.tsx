@@ -66,29 +66,34 @@ function getStarRating(result: string, playerScore: number, opponentScore: numbe
 }
 
 const CONFETTI_COLORS = [
-  "hsl(43 96% 56%)", "hsl(142 71% 45%)", "hsl(4 90% 58%)",
-  "hsl(280 70% 55%)", "hsl(200 80% 55%)", "hsl(320 70% 60%)",
+  "#FFD700", "#4CAF50", "#FF6B35", "#A855F7", "#00D4FF", "#FFF",
 ];
 
 function ConfettiParticles() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      {[...Array(30)].map((_, i) => {
+      {[...Array(50)].map((_, i) => {
         const size = 4 + Math.random() * 6;
-        const isCircle = Math.random() > 0.5;
+        const isCircle = Math.random() > 0.6;
+        const isStar = !isCircle && Math.random() > 0.5;
         return (
           <motion.div
             key={i}
             initial={{ y: -20, x: `${Math.random() * 100}%`, opacity: 1, rotate: 0, scale: 1 }}
-            animate={{ y: "110vh", rotate: 360 * (Math.random() > 0.5 ? 2 : -2), scale: [1, 0.8, 1] }}
+            animate={{
+              y: "110vh",
+              rotate: 360 * (Math.random() > 0.5 ? 2 : -2),
+              x: `${Math.random() * 100}%`,
+            }}
             transition={{ duration: 2.5 + Math.random() * 3, delay: Math.random() * 2, repeat: Infinity, ease: "linear" }}
             className="absolute"
             style={{
               left: `${Math.random() * 100}%`,
               width: size,
               height: isCircle ? size : size * 1.5,
-              borderRadius: isCircle ? "50%" : "2px",
+              borderRadius: isCircle ? "50%" : isStar ? "2px" : "1px",
               background: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+              boxShadow: `0 0 4px ${CONFETTI_COLORS[i % CONFETTI_COLORS.length]}40`,
             }}
           />
         );
@@ -157,10 +162,10 @@ export default function EnhancedPostMatch({
   const runRate = stats.totalBalls > 0 ? ((stats.totalRuns / stats.totalBalls) * 6).toFixed(1) : "0.0";
 
   const resultBg = isWin
-    ? "linear-gradient(180deg, hsl(43 40% 6%) 0%, hsl(220 35% 5%) 100%)"
+    ? "linear-gradient(180deg, #2A1F0E 0%, #1A1208 100%)"
     : isLoss
-    ? "linear-gradient(180deg, hsl(4 30% 6%) 0%, hsl(220 35% 5%) 100%)"
-    : "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 35% 5%) 100%)";
+    ? "linear-gradient(180deg, #2D1515 0%, #1A0A0A 100%)"
+    : "linear-gradient(180deg, #1E1E1E 0%, #121212 100%)";
 
   return (
     <AnimatePresence>
@@ -213,13 +218,14 @@ export default function EnhancedPostMatch({
                 initial={{ scale: 0.3, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ delay: 0.5, type: "spring", damping: 10 }}
-                className="font-display text-[48px] font-black tracking-wider leading-none"
+                className="font-display font-black tracking-wider leading-none"
                 style={{
-                  color: isWin ? "hsl(43 96% 56%)" : isLoss ? "hsl(4 90% 58%)" : "hsl(0 0% 100%)",
+                  fontSize: isWin ? "48px" : "36px",
+                  color: isWin ? "#FFD700" : isLoss ? "#FF2D7B" : "#FFF",
                   textShadow: isWin
-                    ? "0 4px 0 hsl(43 70% 30%), 0 0 60px hsl(43 96% 56% / 0.4), 0 8px 20px rgba(0,0,0,0.5)"
-                    : "0 4px 0 hsl(4 50% 25%), 0 8px 20px rgba(0,0,0,0.5)",
-                  WebkitTextStroke: "1px rgba(0,0,0,0.2)",
+                    ? "0 4px 0 #8B6914, 0 0 30px rgba(255,215,0,0.4), 0 0 60px rgba(255,215,0,0.15), 0 8px 20px rgba(0,0,0,0.5)"
+                    : "0 4px 0 rgba(0,0,0,0.4), 0 0 20px rgba(255,45,123,0.3), 0 8px 20px rgba(0,0,0,0.5)",
+                  WebkitTextStroke: "1px rgba(0,0,0,0.3)",
                 }}
               >
                 {isWin ? "VICTORY!" : isLoss ? "DEFEAT" : "TIED!"}
@@ -265,7 +271,13 @@ export default function EnhancedPostMatch({
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="rounded-2xl p-4 mb-4 scoreboard-metal"
+              className="rounded-2xl p-4 mb-4"
+              style={{
+                background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+                border: "3px solid #2E1A0E",
+                borderBottom: "5px solid #2E1A0E",
+                boxShadow: "inset 0 2px 0 rgba(255,255,255,0.08), 0 6px 20px rgba(0,0,0,0.5)",
+              }}
             >
               <div className="flex items-center justify-center gap-1 mb-3">
                 <span className="text-xs">🏏</span>
@@ -314,7 +326,12 @@ export default function EnhancedPostMatch({
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.55 + i * 0.06 }}
-                  className="rounded-xl p-2.5 text-center stadium-glass"
+                  className="rounded-xl p-2.5 text-center"
+                  style={{
+                    background: "linear-gradient(180deg, #4A3A2A, #3A2A1A)",
+                    border: "2px solid #2E1A0E",
+                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 3px 8px rgba(0,0,0,0.4)",
+                  }}
                 >
                   <span className="text-sm block">{s.icon}</span>
                   <span className="font-score text-lg font-black block leading-none" style={{ color: s.color }}>{s.value}</span>
@@ -328,7 +345,12 @@ export default function EnhancedPostMatch({
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.6 }}
-              className="rounded-2xl p-3 mb-4 stadium-glass"
+              className="rounded-2xl p-3 mb-4"
+              style={{
+                background: "linear-gradient(180deg, #4A3A2A, #3A2A1A)",
+                border: "2px solid #2E1A0E",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 12px rgba(0,0,0,0.4)",
+              }}
             >
               <span className="font-display text-[8px] font-bold text-foreground/25 tracking-[0.2em] block mb-2 text-center">SHOT DISTRIBUTION</span>
               <div className="flex items-end justify-center gap-3">
@@ -364,7 +386,12 @@ export default function EnhancedPostMatch({
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.7 }}
-              className="rounded-2xl p-3 mb-4 stadium-glass"
+              className="rounded-2xl p-3 mb-4"
+              style={{
+                background: "linear-gradient(180deg, #4A3A2A, #3A2A1A)",
+                border: "2px solid #2E1A0E",
+                boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 12px rgba(0,0,0,0.4)",
+              }}
             >
               <WagonWheel ballHistory={ballHistory} isBatting={true} compact />
             </motion.div>
@@ -376,11 +403,18 @@ export default function EnhancedPostMatch({
               transition={{ delay: 0.75, type: "spring", damping: 12 }}
               className="rounded-2xl p-[3px] mb-4"
               style={{
-                background: "conic-gradient(from 0deg, hsl(43 100% 65%), hsl(35 90% 45%), hsl(43 100% 60%), hsl(45 100% 75%), hsl(35 80% 50%), hsl(43 100% 65%))",
-                boxShadow: "0 0 40px hsl(43 96% 56% / 0.15), 0 8px 24px rgba(0,0,0,0.5)",
+                background: isWin
+                  ? "conic-gradient(from 0deg, #FFD700, #B8860B, #FFD700, #FFF8DC, #B8860B, #FFD700)"
+                  : "conic-gradient(from 0deg, #6B4423, #5C3A1E, #6B4423, #8B7355, #5C3A1E, #6B4423)",
+                boxShadow: isWin
+                  ? "0 0 40px rgba(255,215,0,0.15), 0 8px 24px rgba(0,0,0,0.5)"
+                  : "0 0 20px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.5)",
               }}
             >
-              <div className="rounded-[13px] p-5 text-center scoreboard-metal">
+              <div className="rounded-[13px] p-5 text-center" style={{
+                background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+                border: "2px solid #2E1A0E",
+              }}>
                 <motion.div
                   animate={{ y: [0, -3, 0] }}
                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
@@ -431,8 +465,12 @@ export default function EnhancedPostMatch({
                   animate={{ y: 0, opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ type: "spring", damping: 12 }}
-                  className="rounded-2xl p-4 mb-6 stadium-glass"
-                  style={{ border: "2px solid hsl(43 50% 30% / 0.2)" }}
+                  className="rounded-2xl p-4 mb-6"
+                  style={{
+                    background: "linear-gradient(180deg, #4A3A2A, #3A2A1A)",
+                    border: "2px solid #2E1A0E",
+                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 4px 12px rgba(0,0,0,0.4)",
+                  }}
                 >
                   <span className="font-display text-[8px] font-bold tracking-[0.3em] text-foreground/30 block text-center mb-3">MATCH REWARDS</span>
                   <div className="flex items-center justify-center gap-6">
@@ -493,7 +531,7 @@ export default function EnhancedPostMatch({
 
           {/* ── BOTTOM ACTION BUTTONS — V10Button ── */}
           <div className="sticky bottom-0 p-4 pb-8 flex flex-col gap-2"
-            style={{ background: "linear-gradient(to top, hsl(220 35% 5%), hsl(220 35% 5% / 0.95), transparent)" }}>
+            style={{ background: "linear-gradient(to top, #1A1208, rgba(26,18,8,0.95), transparent)" }}>
             <div className="flex gap-2">
               <ShareButton
                 title={`${isWin ? "🏆 Victory" : isLoss ? "Defeat" : "🤝 Tie"} — ${playerScore} vs ${opponentScore}`}
