@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import stoneCollectionImg from "@/assets/ui/stone-collection.png";
+import StoneHeader from "@/components/shared/StoneHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePlayers, IPL_TEAMS, DBPlayer, overallRating, statToDiamonds, roleLabel } from "@/hooks/usePlayers";
 import { useUserCards, UPGRADE_COSTS, useUpgradeCard } from "@/hooks/useUserCards";
@@ -60,7 +61,7 @@ export default function CollectionPage() {
           <button onClick={() => navigate(-1)} className="p-1">
             <ChevronLeft className="w-5 h-5 text-[#F5E6D3]" />
           </button>
-          <img src={stoneCollectionImg} alt="COLLECTION" style={{ height: 28, width: "auto", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.6))" }} />
+          <StoneHeader src={stoneCollectionImg} alt="COLLECTION" height={28} />
           <span className="text-[10px] font-body text-[#94A3B8] ml-auto">
             {filtered.length} / {stats.total}
           </span>

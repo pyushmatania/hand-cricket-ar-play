@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import stoneSettingsImg from "@/assets/ui/stone-settings.png";
+import StoneHeader from "@/components/shared/StoneHeader";
 import { Slider } from "@/components/ui/slider";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -240,7 +241,7 @@ export default function SettingsPage() {
             ⚙️
           </div>
           <div>
-            <img src={stoneSettingsImg} alt="Settings" style={{ height: 28, width: "auto", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.6))" }} />
+            <StoneHeader src={stoneSettingsImg} alt="Settings" height={28} />
             <p className="text-[9px] text-muted-foreground font-display tracking-[0.2em]">CUSTOMIZE YOUR EXPERIENCE</p>
           </div>
         </motion.div>

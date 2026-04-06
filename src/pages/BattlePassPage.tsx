@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import stoneBattlePassImg from "@/assets/ui/stone-battlepass.png";
+import StoneHeader from "@/components/shared/StoneHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Crown, Lock, Clock, Gift } from "lucide-react";
@@ -348,7 +349,7 @@ export default function BattlePassPage() {
             ←
           </motion.button>
           <div className="flex-1">
-            <img src={stoneBattlePassImg} alt="BATTLE PASS" style={{ height: 30, width: "auto", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.6))" }} />
+            <StoneHeader src={stoneBattlePassImg} alt="BATTLE PASS" height={30} />
             <span className="text-[9px] font-display tracking-[0.2em]" style={{ color: "#FFD700" }}>{SEASON_LABEL}</span>
           </div>
           <CurrencyPill icon="🪙" value={coins} showPlus={false} />

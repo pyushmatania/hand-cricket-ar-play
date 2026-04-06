@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import stoneTournamentHistoryImg from "@/assets/ui/stone-tournamenthistory.png";
+import StoneHeader from "@/components/shared/StoneHeader";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useTournamentPersistence } from "@/hooks/useTournamentPersistence";
@@ -45,7 +46,7 @@ export default function TournamentHistoryPage() {
           className="w-9 h-9 rounded-xl flex items-center justify-center text-sm stadium-glass text-foreground">
           ←
         </motion.button>
-        <img src={stoneTournamentHistoryImg} alt="TOURNAMENT HISTORY" style={{ height: 28, width: "auto", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.6))" }} />
+        <StoneHeader src={stoneTournamentHistoryImg} alt="TOURNAMENT HISTORY" height={28} />
       </div>
 
       <div className="relative z-10 px-4 space-y-3">

@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import stoneDailyRewardsImg from "@/assets/ui/stone-dailyrewards.png";
+import StoneHeader from "@/components/shared/StoneHeader";
 import { SFX, Haptics } from "@/lib/sounds";
 import engines from "@/engines/EngineManager";
 import { motion, AnimatePresence } from "framer-motion";
@@ -206,7 +207,7 @@ export default function DailyRewardsPage() {
             ←
           </motion.button>
           <div className="flex-1">
-            <img src={stoneDailyRewardsImg} alt="Daily Rewards" style={{ height: 30, width: "auto", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.6))" }} />
+            <StoneHeader src={stoneDailyRewardsImg} alt="Daily Rewards" height={30} />
             <span className="text-[9px] text-muted-foreground font-display tracking-[0.2em]">
               DAY {cycleDay} OF 28 • WEEK {currentWeek}
             </span>
