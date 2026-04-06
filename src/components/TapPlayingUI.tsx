@@ -332,7 +332,7 @@ export default function TapPlayingUI({
   return (
     <>
       <CelebrationEffects lastResult={lastResult} gameResult={result} phase={phase} batSkin={equippedBatSkin} />
-      <ShotResultOverlay lastResult={lastResult} triggerKey={shotOverlayKey} />
+      <V10ScoringPopup lastResult={lastResult} triggerKey={shotOverlayKey} />
       <BallPitchAnimation lastResult={lastResult} triggerKey={shotOverlayKey} />
 
       {/* Arena / pitch background */}
@@ -408,7 +408,7 @@ export default function TapPlayingUI({
 
       {/* Scoreboard */}
       {phase !== "not_started" && (
-        <ScoreBoard
+        <V10ScoreBoard
           game={gameStateForScoreboard as any}
           playerName={playerName}
           aiName={opponentName}
