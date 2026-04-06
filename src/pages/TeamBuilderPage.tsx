@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import stoneTeamBuilderImg from "@/assets/ui/stone-teambuilder.png";
 import StoneHeader from "@/components/shared/StoneHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
