@@ -57,6 +57,9 @@ export default function ClanWars({ clan, myRole }: ClanWarsProps) {
   const [opponentClan, setOpponentClan] = useState<Clan | null>(null);
   const [defPitch, setDefPitch] = useState(PITCH_TYPES[0]);
   const [defField, setDefField] = useState(FIELD_PLACEMENTS[0]);
+  const [resultWar, setResultWar] = useState<any>(null);
+  const [resultAttacks, setResultAttacks] = useState<AttackRecord[]>([]);
+  const [resultOppClan, setResultOppClan] = useState<Clan | null>(null);
 
   /* ─── Load wars ─── */
   useEffect(() => {
