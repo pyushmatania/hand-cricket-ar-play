@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SFX, Haptics } from "@/lib/sounds";
 import ModeCard from "@/components/play/ModeCard";
 import { MODES } from "@/components/play/modes";
+import { IPL_TEAMS } from "@/components/ipl/IPLData";
 
 export default function PlayPage() {
   const navigate = useNavigate();
@@ -57,8 +58,11 @@ export default function PlayPage() {
   };
 
   const handleModeSelect = (modeId: string) => {
+    const playerTeamId = localStorage.getItem("favoriteTeamId") || IPL_TEAMS[Math.floor(Math.random() * IPL_TEAMS.length)].id;
+    const availableOpponents = IPL_TEAMS.filter(t => t.id !== playerTeamId);
+    const opponentTeamId = availableOpponents[Math.floor(Math.random() * availableOpponents.length)].id;
     navigate(`/game/${modeId}`, {
-      state: { arenaImage: selectedArena.image, arenaId: selectedArena.id, themeId: selectedTheme.id },
+      state: { arenaImage: selectedArena.image, arenaId: selectedArena.id, themeId: selectedTheme.id, playerTeamId, opponentTeamId },
     });
   };
 
