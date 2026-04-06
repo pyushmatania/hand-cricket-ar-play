@@ -77,9 +77,48 @@ export default function ChestSlotsWidget() {
   return (
     <>
       <div className="px-4 mb-4">
+        {/* ── Two chest banners side-by-side ── */}
+        <div className="flex gap-2 mb-3">
+          {/* FREE CHEST Banner */}
+          <div
+            className="flex-1 rounded-xl px-3 py-2.5 flex items-center gap-2 relative overflow-hidden"
+            style={{
+              background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+              border: "3px solid #2E1A0E",
+              boxShadow: "inset 0 2px 0 rgba(255,255,255,0.06), 0 4px 8px rgba(0,0,0,0.4)",
+            }}
+          >
+            <div className="absolute inset-0 opacity-[0.05]" style={{ background: "rgba(255,107,53,0.08)" }} />
+            <span className="text-2xl">🎁</span>
+            <div className="flex flex-col min-w-0">
+              <span className="font-display text-[9px] font-bold tracking-wider" style={{ color: "#F5E6D3" }}>FREE CHEST</span>
+              <span className="text-[7px] font-body" style={{ color: "#8B7355" }}>2h 30m</span>
+            </div>
+          </div>
+
+          {/* WICKET CHEST Banner */}
+          <div
+            className="flex-1 rounded-xl px-3 py-2.5 flex items-center gap-2 relative overflow-hidden"
+            style={{
+              background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+              border: "3px solid #2E1A0E",
+              boxShadow: "inset 0 2px 0 rgba(255,255,255,0.06), 0 4px 8px rgba(0,0,0,0.4)",
+            }}
+          >
+            <div className="absolute inset-0 opacity-[0.04]" style={{ background: "rgba(0,212,255,0.06)" }} />
+            <span className="text-2xl">⚡</span>
+            <div className="flex flex-col min-w-0">
+              <span className="font-display text-[9px] font-bold tracking-wider" style={{ color: "#F5E6D3" }}>WICKET CHEST</span>
+              <div className="w-full h-[6px] rounded-full mt-0.5" style={{ background: "#2E1A0E" }}>
+                <div className="h-full rounded-full" style={{ width: "72%", background: "linear-gradient(90deg, hsl(var(--primary)), #00D4FF)" }} />
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="flex items-center gap-2 mb-2">
-          <Gift className="w-4 h-4 text-game-gold" />
-          <span className="font-display text-xs tracking-wider text-foreground">CHEST SLOTS</span>
+          <Gift className="w-4 h-4" style={{ color: "#FFD700" }} />
+          <span className="font-display text-xs tracking-wider" style={{ color: "#F5E6D3" }}>CHEST SLOTS</span>
         </div>
         
         <div className="grid grid-cols-4 gap-2">
