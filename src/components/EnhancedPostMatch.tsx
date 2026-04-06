@@ -411,7 +411,10 @@ export default function EnhancedPostMatch({
                   : "0 0 20px rgba(0,0,0,0.3), 0 8px 24px rgba(0,0,0,0.5)",
               }}
             >
-              <div className="rounded-[13px] p-5 text-center scoreboard-metal">
+              <div className="rounded-[13px] p-5 text-center" style={{
+                background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+                border: "2px solid #2E1A0E",
+              }}>
                 <motion.div
                   animate={{ y: [0, -3, 0] }}
                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
