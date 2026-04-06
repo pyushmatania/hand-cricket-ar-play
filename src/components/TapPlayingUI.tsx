@@ -575,8 +575,10 @@ export default function TapPlayingUI({
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
             <div className="rounded-2xl px-3 py-3 text-center"
               style={{
-                background: "linear-gradient(180deg, hsl(var(--scoreboard-dark) / 0.95), hsl(var(--scoreboard-mid) / 0.9))",
-                border: "1px solid hsl(var(--chrome-dark) / 0.3)",
+                background: "linear-gradient(180deg, #3E2410, #2E1A0E)",
+                border: "2px solid #5C3A1E",
+                borderBottom: "4px solid #3E2410",
+                boxShadow: "0 6px 20px rgba(0,0,0,0.6), inset 0 1px 0 rgba(245,230,211,0.06)",
               }}>
               <p className="font-display text-lg font-bold tracking-wider" style={{ color: "hsl(var(--chalk-white))" }}>
                 {result === "win" ? `🏆 ${playerName.toUpperCase()} WINS!` : result === "loss" ? `😞 ${opponentName} wins!` : "🤝 A TIE!"}
