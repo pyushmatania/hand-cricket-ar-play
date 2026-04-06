@@ -8,6 +8,8 @@ import TopBar from "@/components/layout/TopBar";
 import ClanDonations from "@/components/clan/ClanDonations";
 import ClanLeaderboard from "@/components/clan/ClanLeaderboard";
 import ClanWars from "@/components/clan/ClanWars";
+import ClanRecruitment from "@/components/clan/ClanRecruitment";
+import ClanMatchmaking from "@/components/clan/ClanMatchmaking";
 import V10PlayerAvatar from "@/components/shared/V10PlayerAvatar";
 import V10Button from "@/components/shared/V10Button";
 
