@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import stoneLeaderboardImg from "@/assets/ui/stone-leaderboard.png";
 import StoneHeader from "@/components/shared/StoneHeader";
 import ScrollHint from "@/components/shared/ScrollHint";
 import { motion, AnimatePresence } from "framer-motion";
