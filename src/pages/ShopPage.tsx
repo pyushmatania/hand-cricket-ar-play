@@ -124,7 +124,7 @@ export default function ShopPage() {
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
             <motion.button whileTap={{ scale: 0.9 }} onClick={() => navigate(-1)}
-              className="w-10 h-10 rounded-xl flex items-center justify-center font-game-body text-sm text-foreground active:scale-95 transition-transform"
+              className="w-10 h-10 rounded-xl flex items-center justify-center font-body text-sm text-foreground active:scale-95 transition-transform"
               style={{
                 background: "linear-gradient(180deg, hsl(28 20% 22%) 0%, hsl(25 18% 15%) 100%)",
                 border: "2px solid hsl(43 50% 35%)",
@@ -134,10 +134,10 @@ export default function ShopPage() {
               ←
             </motion.button>
             <div>
-              <h1 className="font-game-title text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(25 40% 8%)" }}>
+              <h1 className="font-display text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(25 40% 8%)" }}>
                 Shop
               </h1>
-              <span className="text-[9px] text-muted-foreground font-game-display tracking-[0.2em]">CUSTOMIZE YOUR STYLE</span>
+              <span className="text-[9px] text-muted-foreground font-display tracking-[0.2em]">CUSTOMIZE YOUR STYLE</span>
             </div>
           </div>
           <CurrencyPill icon="🪙" value={coins} showPlus={false} />
@@ -152,7 +152,7 @@ export default function ShopPage() {
         >
           {CATEGORIES.map(c => (
             <button key={c.key} onClick={() => setCategory(c.key)}
-              className="flex-1 py-2.5 rounded-xl font-game-display text-[8px] tracking-widest transition-all flex items-center justify-center gap-1"
+              className="flex-1 py-2.5 rounded-xl font-display text-[8px] tracking-widest transition-all flex items-center justify-center gap-1"
               style={category === c.key ? {
                 background: "linear-gradient(180deg, hsl(43 70% 50%) 0%, hsl(35 60% 40%) 100%)",
                 color: "hsl(25 40% 8%)",
@@ -195,7 +195,7 @@ export default function ShopPage() {
         {filtered.length === 0 && (
           <div className="text-center py-16">
             <span className="text-5xl block mb-3">🏗️</span>
-            <p className="font-game-card text-sm text-muted-foreground">No items in this category yet!</p>
+            <p className="font-display text-sm text-muted-foreground">No items in this category yet!</p>
           </div>
         )}
       </div>
