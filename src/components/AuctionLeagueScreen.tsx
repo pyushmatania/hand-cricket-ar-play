@@ -645,6 +645,10 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
               </motion.div>
             )}
 
+            {bidPhase === "countdown" && (
+              <AuctioneerCountdown onComplete={() => setBidPhase("sold")} />
+            )}
+
             {bidPhase === "sold" && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-4 relative">
                 {/* Gavel slam animation */}
