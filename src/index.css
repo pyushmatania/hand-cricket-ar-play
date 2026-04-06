@@ -1372,10 +1372,322 @@
   }
   .chrome-pill { @apply currency-pill; }
   .surface-leather { @apply game-card; }
-  .wood-panel, .wood-panel-dark, .glass, .glass-card, .glass-premium, .glass-score, .glass-nav { @apply game-card; }
-  .metal-corners { @apply chrome-brackets; }
-  .rope-separator { @apply divider; }
-  .btn-wood { @apply btn-green; }
+  /* ═══════════════════════════════════════════════════
+     V11 WOODEN KINGDOM — Material System
+     6 tangible 3D materials. No flat surfaces.
+     ═══════════════════════════════════════════════════ */
+
+  /* V11 MATERIAL 1: DARK WOOD PLANK — Universal Panel */
+  .wood-panel, .wood-panel-dark {
+    background:
+      url('/assets/ui/wood-plank-texture.png') repeat,
+      linear-gradient(180deg, #5C3A1E 0%, #3E2410 100%);
+    background-size: 256px 256px, 100% 100%;
+    border: 4px solid #2E1A0E;
+    border-radius: 12px;
+    box-shadow:
+      0 4px 10px rgba(0, 0, 0, 0.50),
+      inset 0 2px 0 rgba(255, 255, 255, 0.12),
+      inset 0 -2px 0 rgba(0, 0, 0, 0.20);
+    position: relative;
+    overflow: visible;
+    transition: all 0.15s ease;
+  }
+  .wood-panel:active, .wood-panel-dark:active {
+    border-color: #1A0A05;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+  .wood-panel:disabled, .wood-panel-dark:disabled,
+  .wood-panel.disabled, .wood-panel-dark.disabled {
+    filter: saturate(0.3) brightness(0.7);
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  /* V11 METAL CORNER BRACKETS */
+  .metal-corners { position: relative; overflow: visible; }
+  .metal-corners::before,
+  .metal-corners::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    z-index: 2;
+    pointer-events: none;
+    background: url('/assets/ui/metal-corner-bracket.png') no-repeat center/contain;
+  }
+  .metal-corners::before { top: -2px; left: -2px; }
+  .metal-corners::after { top: -2px; right: -2px; transform: scaleX(-1); }
+
+  /* Glass aliases → wood panel for V11 */
+  .glass, .glass-card, .glass-premium, .glass-score, .glass-nav {
+    background:
+      url('/assets/ui/wood-plank-texture.png') repeat,
+      linear-gradient(180deg, #5C3A1E 0%, #3E2410 100%);
+    background-size: 256px 256px, 100% 100%;
+    border: 4px solid #2E1A0E;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.50), inset 0 2px 0 rgba(255, 255, 255, 0.12);
+  }
+
+  /* V11 MATERIAL 2: POLISHED WOOD — Premium Surface */
+  .polished-wood {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 30%, transparent 30%),
+      url('/assets/ui/polished-wood-texture.png') repeat,
+      linear-gradient(180deg, #7A5230 0%, #5C3A1E 100%);
+    background-size: 100% 100%, 256px 256px, 100% 100%;
+    border: 3px solid #4A2810;
+    border-radius: 10px;
+    box-shadow:
+      0 4px 10px rgba(0, 0, 0, 0.45),
+      inset 0 2px 0 rgba(255, 255, 255, 0.20),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  /* V11 MATERIAL 3: CRICKET LEATHER — Buttons */
+  .btn-leather {
+    background:
+      url('/assets/ui/leather-texture.png') repeat,
+      linear-gradient(180deg, var(--btn-start, #55FF99) 0%, var(--btn-mid, #4ADE50) 40%, var(--btn-end, #22C55E) 100%);
+    background-size: 256px 256px, 100% 100%;
+    background-blend-mode: overlay;
+    border: 3px solid var(--btn-dark, #0D6B2E);
+    border-bottom: 7px solid var(--btn-dark, #0D6B2E);
+    border-radius: 14px;
+    color: var(--btn-text, #052E16);
+    font-family: 'Bungee', cursive;
+    font-size: 20px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.2);
+    box-shadow:
+      0 7px 0 rgba(0,0,0,0.15),
+      0 10px 20px rgba(0,0,0,0.35),
+      inset 0 2px 0 rgba(255,255,255,0.18);
+    cursor: pointer;
+    transition: all 0.08s ease;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 0 28px;
+  }
+  .btn-leather:active {
+    border-bottom-width: 3px;
+    transform: translateY(4px);
+    box-shadow: 0 3px 0 rgba(0,0,0,0.15), 0 5px 10px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+  .btn-leather:disabled {
+    opacity: 0.45;
+    pointer-events: none;
+    filter: grayscale(0.4);
+  }
+  .btn-leather.gold {
+    --btn-start: #FFE066;
+    --btn-mid: #FFD700;
+    --btn-end: #D4A017;
+    --btn-dark: #8B6914;
+    --btn-text: #3E1A08;
+  }
+  .btn-leather.danger {
+    --btn-start: #FF6B6B;
+    --btn-mid: #EF4444;
+    --btn-end: #CC2222;
+    --btn-dark: #7F1D1D;
+    --btn-text: #FFFFFF;
+  }
+  .btn-leather.secondary {
+    --btn-start: #6B7280;
+    --btn-mid: #4B5563;
+    --btn-end: #374151;
+    --btn-dark: #1F2937;
+    --btn-text: #D1D5DB;
+  }
+
+  /* V11 MATERIAL 4: HAMMERED METAL — Data Display */
+  .metal-panel {
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.015) 0px, transparent 1px, transparent 4px),
+      linear-gradient(180deg, #1E293B 0%, #0F172A 45%, #1E293B 55%, #0F172A 100%);
+    border: 2px solid #1A1A2E;
+    border-radius: 8px;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,0.08),
+      inset 0 -1px 0 rgba(0,0,0,0.25),
+      0 3px 8px rgba(0,0,0,0.40);
+  }
+  .led-number {
+    font-family: 'Bungee', cursive;
+    font-variant-numeric: tabular-nums;
+    color: var(--led-color, #00FF88);
+    text-shadow: 0 0 8px var(--led-glow, rgba(0,255,136,0.6)), 0 0 20px var(--led-glow, rgba(0,255,136,0.3));
+  }
+  .led-batting { --led-color: #00FF88; --led-glow: rgba(0,255,136,0.6); }
+  .led-bowling { --led-color: #00D4FF; --led-glow: rgba(0,212,255,0.6); }
+  .led-currency { --led-color: #FFD700; --led-glow: rgba(255,215,0,0.6); }
+  .led-danger { --led-color: #FF2D7B; --led-glow: rgba(255,45,123,0.6); }
+
+  /* V11 MATERIAL 5: CARVED STONE — Headers */
+  .stone-header {
+    background:
+      url('/assets/ui/wood-plank-texture.png') repeat,
+      linear-gradient(180deg, #555555 0%, #3A3A3A 100%);
+    background-size: 256px 256px, 100% 100%;
+    background-blend-mode: multiply;
+    border: 3px solid #2A2A2A;
+    border-radius: 8px;
+    box-shadow: inset 0 2px 0 rgba(255,255,255,0.06), inset 0 -2px 0 rgba(0,0,0,0.3), 0 4px 10px rgba(0,0,0,0.5);
+    color: #E2E8F0;
+    text-shadow: 0 2px 0 rgba(0,0,0,0.6), 0 -1px 0 rgba(255,255,255,0.08);
+  }
+
+  /* V11 MATERIAL 6: ROPE & CHAIN — Separators */
+  .rope-separator {
+    height: 8px;
+    background: url('/assets/ui/rope-horizontal.png') repeat-x center/auto 8px;
+    border: none;
+    margin: 12px 0;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.3));
+  }
+  .chain-separator {
+    height: 6px;
+    background: repeating-linear-gradient(90deg, #555 0px, #777 2px, #555 4px, #444 6px, #555 8px);
+    border: none;
+    margin: 16px 0;
+    border-radius: 3px;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));
+  }
+
+  /* V11 GLOBAL BACKGROUND — Scalloped Fish-Scale */
+  .game-screen-v11 {
+    background:
+      radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(0,0,0,0.35) 100%),
+      url('/assets/ui/scalloped-tile.png') repeat,
+      var(--team-dark-solid, #0D1229);
+    background-size: cover, 64px 64px, cover;
+    min-height: 100vh;
+    min-height: 100dvh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* V11 TAB SHELF — Wooden Shelf Dock */
+  .tab-shelf {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(72px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    z-index: 100;
+    border-radius: 20px 20px 0 0;
+    border-top: 2px solid #4A2810;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 35%, transparent 35%),
+      url('/assets/ui/polished-wood-texture.png') repeat,
+      linear-gradient(180deg, #7A5230 0%, #5C3A1E 100%);
+    background-size: 100% 100%, 256px 256px, 100% 100%;
+    box-shadow:
+      0 -4px 16px rgba(0,0,0,0.50),
+      0 -1px 0 rgba(0,0,0,0.30),
+      inset 0 2px 0 rgba(255,255,255,0.06);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-around;
+    padding-top: 6px;
+  }
+
+  /* V11 Tab Labels — Carved/Engraved */
+  .tab-label-v11 {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    font-size: 9px;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #8B7355;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.08), 0 -1px 0 rgba(0,0,0,0.15);
+  }
+  .tab-label-v11.active {
+    color: #F5E6D3;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.15), 0 -1px 0 rgba(0,0,0,0.25), 0 0 6px rgba(var(--team-primary-rgb), 0.20);
+  }
+
+  /* V11 Badge on tab objects */
+  @keyframes badge-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+  }
+  .tab-badge-v11 {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #EF4444, #CC2222);
+    border: 1.5px solid #7F1D1D;
+    color: white;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    animation: badge-bounce 1.5s ease-in-out infinite;
+  }
+
+  /* V11 Tap Buttons — 3D Wooden Discs */
+  .tap-button-v11 {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(139,90,43,0.3) 30%, rgba(92,58,30,0.3) 31%, rgba(92,58,30,0.3) 55%, rgba(139,90,43,0.3) 56%),
+      url('/assets/ui/wood-plank-texture.png') repeat,
+      linear-gradient(180deg, #7A5230, #5C3A1E);
+    background-size: 100% 100%, 256px 256px, 100% 100%;
+    border: 3px solid #3E2410;
+    border-bottom: 5px solid #2E1A0E;
+    box-shadow: 0 5px 0 #2E1A0E, 0 8px 15px rgba(0,0,0,0.5), inset 0 2px 0 rgba(255,255,255,0.15), inset 0 -2px 0 rgba(0,0,0,0.20);
+    font-family: 'Bungee', cursive;
+    font-size: 22px;
+    color: #F5E6D3;
+    text-shadow: 0 2px 0 rgba(0,0,0,0.4), 0 3px 6px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.08s ease;
+  }
+  .tap-button-v11:active {
+    border-bottom-width: 2px;
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #2E1A0E, 0 3px 6px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.10);
+  }
+  .tap-button-v11.six {
+    width: 62px;
+    height: 62px;
+    background: linear-gradient(180deg, #FFD700, #D4A017, #8B6914);
+    border-color: #8B6914;
+    border-bottom-color: #6B4F0E;
+    color: #3E1A08;
+    font-size: 26px;
+    box-shadow: 0 5px 0 #6B4F0E, 0 8px 15px rgba(0,0,0,0.5), 0 0 20px rgba(255,215,0,0.20), inset 0 2px 0 rgba(255,255,255,0.25);
+  }
+  .tap-button-v11.def {
+    background: linear-gradient(180deg, #4B5563, #374151, #1F2937);
+    border-color: #1F2937;
+    font-size: 10px;
+    color: #9CA3AF;
+  }
+
+  /* Legacy aliases → V11 */
+  .btn-wood { @apply btn-leather; }
 
   @media (prefers-reduced-motion: reduce) {
     .btn-battle { animation: none; }
