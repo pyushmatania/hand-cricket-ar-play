@@ -58,9 +58,13 @@ export default function CollectionPage() {
   }, [players]);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{
+      background: "linear-gradient(180deg, hsl(222 47% 6%) 0%, hsl(222 47% 4%) 100%)",
+    }}>
       {/* Header */}
-      <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b border-border/50 px-4 pt-3 pb-2">
+      <div className="sticky top-0 z-30 backdrop-blur-xl border-b border-white/[0.06] px-4 pt-3 pb-2"
+        style={{ background: "rgba(13,18,41,0.85)" }}
+      >
         <div className="flex items-center gap-3 mb-2">
           <button onClick={() => navigate(-1)} className="p-1">
             <ChevronLeft className="w-5 h-5 text-foreground" />
@@ -231,9 +235,8 @@ function PlayerDetailOverlay({ player, onClose }: { player: DBPlayer; onClose: (
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.8, y: 40 }}
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-sm rounded-2xl overflow-hidden"
+        className="w-full max-w-sm rounded-2xl overflow-hidden stadium-glass"
         style={{
-          background: "linear-gradient(180deg, hsl(222 30% 12%), hsl(222 35% 6%))",
           border: `2px solid ${rarityColor}`,
           boxShadow: `0 0 30px ${rarityColor}44`,
         }}
