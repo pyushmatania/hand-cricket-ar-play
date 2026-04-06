@@ -162,10 +162,10 @@ export default function EnhancedPostMatch({
   const runRate = stats.totalBalls > 0 ? ((stats.totalRuns / stats.totalBalls) * 6).toFixed(1) : "0.0";
 
   const resultBg = isWin
-    ? "linear-gradient(180deg, hsl(43 40% 6%) 0%, hsl(220 35% 5%) 100%)"
+    ? "linear-gradient(180deg, #2A1F0E 0%, #1A1208 100%)"
     : isLoss
-    ? "linear-gradient(180deg, hsl(4 30% 6%) 0%, hsl(220 35% 5%) 100%)"
-    : "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 35% 5%) 100%)";
+    ? "linear-gradient(180deg, #2D1515 0%, #1A0A0A 100%)"
+    : "linear-gradient(180deg, #1E1E1E 0%, #121212 100%)";
 
   return (
     <AnimatePresence>
