@@ -6,11 +6,10 @@ import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/contexts/AuthContext";
 import handCricketLogo from "@/assets/hand-cricket-logo.png";
 
-/* ── Doc 1 Material Constants ── */
-const LEATHER_BG = "linear-gradient(180deg, hsl(220 20% 10%) 0%, hsl(220 18% 7%) 40%, hsl(222 40% 6%) 100%)";
-const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
-const CONCRETE_CARD = "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)";
-const CHALK_DIVIDER = "repeating-linear-gradient(90deg, hsl(45 30% 80%) 0px, hsl(45 30% 80%) 8px, transparent 8px, transparent 14px)";
+/* ── V11 Wooden Gate Material Constants ── */
+const WOOD_BG = "linear-gradient(180deg, #1A0E05 0%, #0D0704 100%)";
+const WOOD_CARD = "linear-gradient(180deg, #5C3A1E 0%, #3E2410 100%)";
+const ROPE_DIVIDER = "repeating-linear-gradient(90deg, #8B7355 0px, #8B7355 8px, transparent 8px, transparent 14px)";
 
 export default function AuthPage() {
   const navigate = useNavigate();
@@ -58,22 +57,22 @@ export default function AuthPage() {
   };
 
   const inputStyle = {
-    background: "linear-gradient(180deg, hsl(220 12% 9%), hsl(220 12% 7%))",
-    border: "2px solid hsl(220 15% 18%)",
-    borderBottom: "4px solid hsl(220 12% 6%)",
+    background: "linear-gradient(180deg, #3E2410, #5C3A1E)",
+    border: "2px solid #4A2810",
+    boxShadow: "inset 0 2px 4px rgba(0,0,0,0.3)",
     color: "hsl(var(--foreground))",
   };
 
   return (
     <div className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center px-4"
-      style={{ background: LEATHER_BG }}>
-      {/* Leather grain */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: LEATHER_GRAIN, backgroundRepeat: "repeat" }} />
+      style={{ background: WOOD_BG }}>
+      {/* Wood grain overlay */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.04]" style={{ backgroundImage: "url('/assets/ui/wood-plank-texture.png')", backgroundRepeat: "repeat" }} />
       {/* Vignette */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(220 18% 4% / 0.7) 100%)" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, rgba(13,7,4,0.7) 100%)" }} />
       {/* Golden glow */}
       <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-80 h-80 pointer-events-none"
-        style={{ background: "radial-gradient(circle, hsl(43 90% 55% / 0.06) 0%, transparent 70%)" }} />
+        style={{ background: "radial-gradient(circle, rgba(255,215,0,0.06) 0%, transparent 70%)" }} />
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -104,15 +103,15 @@ export default function AuthPage() {
           </motion.p>
         </div>
 
-        {/* Auth Card — Stadium Concrete */}
+        {/* Auth Card — Dark Wood Gate */}
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
           className="rounded-2xl p-6 relative overflow-hidden"
           style={{
-            background: CONCRETE_CARD,
-            border: "2px solid hsl(220 15% 18%)",
-            borderBottom: "5px solid hsl(220 15% 8%)",
-            boxShadow: "0 8px 32px hsl(0 0% 0% / 0.5)",
+            background: WOOD_CARD,
+            border: "3px solid #2E1A0E",
+            borderBottom: "5px solid #1A0E05",
+            boxShadow: "0 6px 12px rgba(0,0,0,0.5), inset 0 2px 0 rgba(255,255,255,0.08), inset 0 -2px 0 rgba(0,0,0,0.3)",
           }}
         >
           {/* Chrome line at top */}
@@ -254,9 +253,9 @@ export default function AuthPage() {
 
             {/* Chalk divider */}
             <div className="flex items-center gap-3 py-1">
-              <div className="flex-1 h-px opacity-20" style={{ background: CHALK_DIVIDER }} />
+              <div className="flex-1 h-px opacity-20" style={{ background: ROPE_DIVIDER }} />
               <span className="text-[8px] font-display tracking-widest" style={{ color: "hsl(220 15% 35%)" }}>OR CONTINUE WITH</span>
-              <div className="flex-1 h-px opacity-20" style={{ background: CHALK_DIVIDER }} />
+              <div className="flex-1 h-px opacity-20" style={{ background: ROPE_DIVIDER }} />
             </div>
 
             {/* Google — Stadium Concrete button */}
@@ -274,7 +273,7 @@ export default function AuthPage() {
               }}
               className="w-full py-3 rounded-2xl font-display text-xs tracking-wider flex items-center justify-center gap-2.5"
               style={{
-                background: CONCRETE_CARD,
+                background: WOOD_CARD,
                 border: "2px solid hsl(220 15% 18%)",
                 borderBottom: "5px solid hsl(220 15% 8%)",
                 color: "hsl(var(--foreground))",

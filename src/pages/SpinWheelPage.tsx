@@ -202,14 +202,14 @@ export default function SpinWheelPage() {
           style={{ background: "linear-gradient(135deg, hsl(35 40% 15%), hsl(35 30% 10%))", border: "1px solid hsl(35 30% 25%)" }}
         >
           <span className="text-xs">🪙</span>
-          <span className="font-display text-xs text-game-gold">{coins ?? "..."}</span>
+          <span className="font-display text-xs text-[#FFD700]">{coins ?? "..."}</span>
         </div>
       </div>
 
       {/* Spin info */}
       <div className="text-center mb-4 space-y-1">
         {hasFreeSpinToday ? (
-          <span className="text-[10px] font-display text-game-gold tracking-wider animate-pulse">🎁 FREE SPIN AVAILABLE!</span>
+          <span className="text-[10px] font-display text-[#FFD700] tracking-wider animate-pulse">🎁 FREE SPIN AVAILABLE!</span>
         ) : (
           <>
             <span className="text-[10px] font-body text-muted-foreground">Cost per spin: {SPIN_COST} 🪙</span>

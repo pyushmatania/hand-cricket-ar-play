@@ -8,10 +8,10 @@ import { supabase } from "@/integrations/supabase/client";
 import TopStatusBar from "@/components/TopStatusBar";
 
 /* ── V10 Material Constants ── */
-const V10_BG = "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 18% 5%) 100%)";
-const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
-const CONCRETE_CARD = "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)";
-const CHALK_DIVIDER = "repeating-linear-gradient(90deg, hsl(220 15% 25%) 0px, hsl(220 15% 25%) 8px, transparent 8px, transparent 14px)";
+const V11_BG = "linear-gradient(180deg, #1A0E05 0%, #0D0704 100%)";
+const WOOD_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
+const V11_CARD = "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)";
+const ROPE_DIVIDER = "repeating-linear-gradient(90deg, #8B7355 0px, #8B7355 8px, transparent 8px, transparent 14px)";
 
 interface BallRecord {
   userMove: string | number;
@@ -163,7 +163,7 @@ export default function MatchHistoryPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden pb-24" style={{ background: "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 18% 5%) 100%)" }}>
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: LEATHER_GRAIN, backgroundRepeat: "repeat" }} />
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: WOOD_GRAIN, backgroundRepeat: "repeat" }} />
       <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(220 18% 4% / 0.7) 100%)" }} />
       <TopStatusBar />
 
@@ -238,7 +238,7 @@ export default function MatchHistoryPage() {
             </div>
           </div>
 
-          <div className="h-px mb-3 opacity-20" style={{ background: CHALK_DIVIDER }} />
+          <div className="h-px mb-3 opacity-20" style={{ background: ROPE_DIVIDER }} />
 
           <div className="grid grid-cols-3 gap-2">
             {[

@@ -6,9 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import TopStatusBar from "@/components/TopStatusBar";
 
 /* ── V10 Material Constants ── */
-const V10_BG = "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 18% 5%) 100%)";
-const V10_CARD = "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)";
-const CHALK_DIVIDER = "repeating-linear-gradient(90deg, hsl(220 15% 25%) 0px, hsl(220 15% 25%) 8px, transparent 8px, transparent 14px)";
+const V11_BG = "linear-gradient(180deg, #1A0E05 0%, #0D0704 100%)";
+const V11_CARD = "linear-gradient(180deg, #5C3A1E 0%, #3E2410 100%)";
+const ROPE_DIVIDER = "repeating-linear-gradient(90deg, #8B7355 0px, #8B7355 8px, transparent 8px, transparent 14px)";
 
 interface Notification {
   id: string;
@@ -110,7 +110,7 @@ export default function NotificationsPage() {
   const groupOrder = ["Today", "Yesterday", "This Week", "Earlier"];
 
   return (
-    <div className="min-h-screen relative overflow-hidden pb-24" style={{ background: V10_BG }}>
+    <div className="min-h-screen relative overflow-hidden pb-24" style={{ background: V11_BG }}>
       {/* Leather grain */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ display: "none" }} />
       <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(220 18% 4% / 0.7) 100%)" }} />
@@ -193,14 +193,14 @@ export default function NotificationsPage() {
         </motion.div>
 
         {/* Chalk divider */}
-        <div className="h-px mb-3 mx-2 opacity-20" style={{ background: CHALK_DIVIDER }} />
+        <div className="h-px mb-3 mx-2 opacity-20" style={{ background: ROPE_DIVIDER }} />
 
         {/* List */}
         {filtered.length === 0 ? (
           <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
             className="rounded-2xl p-10 text-center"
             style={{
-              background: V10_CARD,
+              background: V11_CARD,
               border: "2px solid hsl(220 15% 18%)",
               borderBottom: "5px solid hsl(220 15% 8%)",
               boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
@@ -218,9 +218,9 @@ export default function NotificationsPage() {
             {groupOrder.filter(g => grouped[g]?.length).map(group => (
               <div key={group}>
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="h-px flex-1 opacity-20" style={{ background: CHALK_DIVIDER }} />
+                  <div className="h-px flex-1 opacity-20" style={{ background: ROPE_DIVIDER }} />
                   <span className="font-display text-[8px] tracking-[0.3em]" style={{ color: "hsl(43 70% 50% / 0.5)" }}>{group.toUpperCase()}</span>
-                  <div className="h-px flex-1 opacity-20" style={{ background: CHALK_DIVIDER }} />
+                  <div className="h-px flex-1 opacity-20" style={{ background: ROPE_DIVIDER }} />
                 </div>
                 <div className="space-y-1.5">
                   <AnimatePresence>
@@ -237,7 +237,7 @@ export default function NotificationsPage() {
                           style={{
                             background: !n.read
                               ? `linear-gradient(135deg, hsl(220 15% 14%) 0%, hsl(220 12% 9%) 100%)`
-                              : V10_CARD,
+                              : V11_CARD,
                             border: !n.read ? `2px solid ${meta.accent}50` : "2px solid hsl(220 15% 18%)",
                             borderBottom: !n.read ? `4px solid ${meta.accent}30` : "4px solid hsl(220 15% 8%)",
                             boxShadow: !n.read

@@ -335,7 +335,7 @@ export default function TeamBuilderPage() {
       {/* Overall Rating */}
       <div className="px-4 mb-3 flex items-center justify-center gap-4">
         <div className="text-center">
-          <span className="font-display text-2xl text-game-gold">
+          <span className="font-display text-2xl text-[#FFD700]">
             {filledCount > 0 ? Math.round(slotPlayers.filter(Boolean).reduce((s, p) => s + overallRating(p!), 0) / filledCount) : 0}
           </span>
           <span className="block text-[8px] font-body text-muted-foreground tracking-wider">TEAM OVR</span>

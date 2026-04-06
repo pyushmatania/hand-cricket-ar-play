@@ -16,7 +16,7 @@ import V10Button from "@/components/shared/V10Button";
 
 const ROLE_ORDER = { leader: 0, co_leader: 1, elder: 2, member: 3 };
 const ROLE_LABELS: Record<string, string> = { leader: "👑 Leader", co_leader: "⚔️ Co-Leader", elder: "🛡️ Elder", member: "🏏 Member" };
-const ROLE_COLORS: Record<string, string> = { leader: "text-neon-cyan", co_leader: "text-neon-green", elder: "text-game-gold", member: "text-muted-foreground" };
+const ROLE_COLORS: Record<string, string> = { leader: "text-[#FFD700]", co_leader: "text-[#7CFC00]", elder: "text-game-gold", member: "text-muted-foreground" };
 const CLAN_EMOJIS = ["🏏", "⚡", "🔥", "💎", "🦁", "🐯", "🦅", "🐉", "⭐", "🌟", "👑", "🛡️"];
 const LEVEL_XP = [0, 100, 300, 600, 1000, 1500, 2200, 3000, 4000, 5500];
 
@@ -31,24 +31,24 @@ export default function ClanPage() {
   useEffect(() => { if (!myClan && !loading) { setTab("browse"); fetchAllClans(); } else if (myClan) { setTab("info"); } }, [myClan, loading]);
 
   if (loading) return (
-    <div className="min-h-screen bg-v10-base flex items-center justify-center">
-      <div className="w-8 h-8 border-2 border-neon-cyan border-t-transparent rounded-full animate-spin" />
+    <div className="min-h-screen bg-[#1A0E05] flex items-center justify-center">
+      <div className="w-8 h-8 border-2 border-[#FFD700] border-t-transparent rounded-full animate-spin" />
     </div>
   );
 
   const allTabs = myClan ? (["info", "chat", "donate", "war", "match", "badges", "ranks", "recruit", "browse"] as Tab[]) : (["ranks", "recruit", "browse"] as Tab[]);
 
   return (
-    <div className="min-h-screen bg-v10-base pb-24">
-      <div className="absolute inset-0 bg-gradient-to-b from-v10-base via-v10-base to-v10-deep pointer-events-none" />
+    <div className="min-h-screen bg-[#1A0E05] pb-24">
+      <div className="absolute inset-0 bg-gradient-to-b from-[#1A0E05] via-[#1A0E05] to-[#0D0704] pointer-events-none" />
       <TopBar />
 
       <div className="relative z-10 max-w-lg mx-auto px-4 pt-2">
-        {/* Tabs — scoreboard-metal */}
-        <div className="flex gap-0.5 p-1 scoreboard-metal rounded-2xl mb-4 overflow-x-auto no-scrollbar">
+        {/* Tabs — wood-panel */}
+        <div className="flex gap-0.5 p-1 wood-panel rounded-2xl mb-4 overflow-x-auto no-scrollbar">
           {allTabs.map(t => (
             <button key={t} onClick={() => { setTab(t); if (t === "browse") fetchAllClans(); }}
-              className={`flex-shrink-0 px-2.5 py-2.5 rounded-xl font-display text-[8px] tracking-widest font-bold transition-all ${tab === t ? "bg-neon-cyan/15 text-neon-cyan" : "text-muted-foreground hover:text-foreground"}`}>
+              className={`flex-shrink-0 px-2.5 py-2.5 rounded-xl font-display text-[8px] tracking-widest font-bold transition-all ${tab === t ? "bg-[#FFD700]/15 text-[#FFD700]" : "text-muted-foreground hover:text-foreground"}`}>
               {t.toUpperCase()}
             </button>
           ))}
@@ -118,7 +118,7 @@ function ClanInfo({ clan, myRole, members, onLeave, onPromote, onKick }: {
   return (
     <div className="space-y-3">
       {/* Clan header */}
-      <div className="stadium-glass rounded-2xl p-4 text-center">
+      <div className="wood-panel-dark rounded-2xl p-4 text-center">
         <span className="text-5xl block mb-2">{clan.emoji}</span>
         <h2 className="font-display text-xl font-black text-foreground tracking-wider">{clan.name}</h2>
         <span className="text-[10px] text-muted-foreground font-display tracking-widest">[{clan.tag}]</span>
@@ -126,25 +126,25 @@ function ClanInfo({ clan, myRole, members, onLeave, onPromote, onKick }: {
 
         <div className="flex items-center justify-center gap-6 mt-3">
           <div className="text-center">
-            <span className="font-display text-lg font-black text-neon-cyan neon-text-cyan">Lv.{clan.level}</span>
+            <span className="font-display text-lg font-black text-[#FFD700] neon-text-gold">Lv.{clan.level}</span>
             <span className="text-[8px] text-muted-foreground block font-display tracking-widest">LEVEL</span>
           </div>
           <div className="text-center">
-            <span className="font-display text-lg font-black text-neon-green">{clan.member_count}</span>
+            <span className="font-display text-lg font-black text-[#7CFC00]">{clan.member_count}</span>
             <span className="text-[8px] text-muted-foreground block font-display">/{clan.max_members}</span>
           </div>
         </div>
 
         <div className="mt-2 h-1.5 rounded-full bg-white/5 overflow-hidden">
-          <motion.div className="h-full rounded-full bg-gradient-to-r from-neon-cyan to-neon-green" initial={{ width: 0 }} animate={{ width: `${xpProgress}%` }} />
+          <motion.div className="h-full rounded-full bg-gradient-to-r from-[#FFD700] to-neon-green" initial={{ width: 0 }} animate={{ width: `${xpProgress}%` }} />
         </div>
         <span className="text-[8px] text-muted-foreground font-display tabular-nums">{clan.xp}/{xpForNext} XP</span>
       </div>
 
       {/* Members */}
-      <div className="stadium-glass rounded-2xl p-3">
-        <div className="scoreboard-metal rounded-xl px-3 py-2 mb-3">
-          <h3 className="font-display text-[10px] tracking-widest text-neon-cyan/80 font-bold">MEMBERS ({members.length})</h3>
+      <div className="wood-panel-dark rounded-2xl p-3">
+        <div className="wood-panel rounded-xl px-3 py-2 mb-3">
+          <h3 className="font-display text-[10px] tracking-widest text-[#FFD700]/80 font-bold">MEMBERS ({members.length})</h3>
         </div>
         <div className="space-y-1.5 max-h-[300px] overflow-y-auto">
           {sortedMembers.map(m => (
@@ -160,7 +160,7 @@ function ClanInfo({ clan, myRole, members, onLeave, onPromote, onKick }: {
                   <button onClick={() => {
                     const next = m.role === "member" ? "elder" : m.role === "elder" ? "co_leader" : "member";
                     onPromote(m.id, next);
-                  }} className="text-[8px] px-1.5 py-0.5 rounded bg-neon-cyan/15 text-neon-cyan border border-neon-cyan/20">↑</button>
+                  }} className="text-[8px] px-1.5 py-0.5 rounded bg-[#FFD700]/15 text-[#FFD700] border border-[#FFD700]/20">↑</button>
                   <button onClick={() => onKick(m.id)} className="text-[8px] px-1.5 py-0.5 rounded bg-destructive/15 text-destructive border border-destructive/20">✕</button>
                 </div>
               )}
@@ -214,14 +214,14 @@ function ClanChat({ clanId }: { clanId: string }) {
 
   return (
     <div className="flex flex-col" style={{ height: "calc(100vh - 200px)" }}>
-      <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-1.5 p-3 stadium-glass rounded-2xl mb-2">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-1.5 p-3 wood-panel-dark rounded-2xl mb-2">
         {messages.length === 0 && <p className="text-center text-muted-foreground text-xs py-8 font-body">No messages yet. Say hi! 👋</p>}
         {messages.map(m => {
           const isMine = m.user_id === user?.id;
           return (
             <div key={m.id} className={`flex ${isMine ? "justify-end" : "justify-start"}`}>
-              <div className={`max-w-[75%] px-3 py-1.5 rounded-2xl ${isMine ? "bg-neon-cyan/10 text-neon-cyan border border-neon-cyan/20 rounded-br-sm" : "bg-white/[0.05] text-foreground border border-white/10 rounded-bl-sm"}`}>
-                {!isMine && <span className="text-[9px] font-display text-neon-green font-bold block">{profiles.get(m.user_id) ?? "Player"}</span>}
+              <div className={`max-w-[75%] px-3 py-1.5 rounded-2xl ${isMine ? "bg-[#FFD700]/10 text-[#FFD700] border border-[#FFD700]/20 rounded-br-sm" : "bg-white/[0.05] text-foreground border border-white/10 rounded-bl-sm"}`}>
+                {!isMine && <span className="text-[9px] font-display text-[#7CFC00] font-bold block">{profiles.get(m.user_id) ?? "Player"}</span>}
                 <p className="text-xs font-body">{m.message}</p>
               </div>
             </div>
@@ -230,7 +230,7 @@ function ClanChat({ clanId }: { clanId: string }) {
       </div>
       <div className="flex gap-2">
         <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && send()}
-          placeholder="Type a message..." className="flex-1 px-3 py-2.5 rounded-xl stadium-glass text-xs text-foreground placeholder:text-muted-foreground outline-none font-body border border-white/10 focus:border-neon-cyan/30 transition-colors" />
+          placeholder="Type a message..." className="flex-1 px-3 py-2.5 rounded-xl wood-panel-dark text-xs text-foreground placeholder:text-muted-foreground outline-none font-body border border-white/10 focus:border-[#FFD700]/30 transition-colors" />
         <V10Button variant="primary" size="sm" onClick={send}>SEND</V10Button>
       </div>
     </div>
@@ -260,7 +260,7 @@ function BrowseClans({ clans, onJoin, onCreate, hasClam }: { clans: Clan[]; onJo
         </div>
       )}
       {clans.map(c => (
-        <div key={c.id} className="stadium-glass rounded-2xl p-3 flex items-center gap-3">
+        <div key={c.id} className="wood-panel-dark rounded-2xl p-3 flex items-center gap-3">
           <span className="text-3xl">{c.emoji}</span>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
@@ -306,26 +306,26 @@ function CreateClanForm({ onCreate, onCancel }: { onCreate: (n: string, t: strin
 
   return (
     <div className="space-y-3">
-      <div className="stadium-glass rounded-2xl p-4 space-y-3">
-        <div className="scoreboard-metal rounded-xl px-3 py-2 text-center">
-          <h3 className="font-display text-sm font-black text-neon-cyan tracking-wider neon-text-cyan">CREATE CLAN</h3>
+      <div className="wood-panel-dark rounded-2xl p-4 space-y-3">
+        <div className="wood-panel rounded-xl px-3 py-2 text-center">
+          <h3 className="font-display text-sm font-black text-[#FFD700] tracking-wider neon-text-gold">CREATE CLAN</h3>
         </div>
 
         <div className="flex flex-wrap gap-2 justify-center">
           {CLAN_EMOJIS.map(e => (
             <button key={e} onClick={() => setEmoji(e)}
-              className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg transition-all border ${emoji === e ? "bg-neon-cyan/15 border-neon-cyan/40 scale-110" : "bg-white/[0.03] border-white/10"}`}>
+              className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg transition-all border ${emoji === e ? "bg-[#FFD700]/15 border-[#FFD700]/40 scale-110" : "bg-white/[0.03] border-white/10"}`}>
               {e}
             </button>
           ))}
         </div>
 
         <input value={name} onChange={e => setName(e.target.value)} placeholder="Clan Name"
-          className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm text-foreground placeholder:text-muted-foreground outline-none font-body focus:border-neon-cyan/30 transition-colors" maxLength={20} />
+          className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm text-foreground placeholder:text-muted-foreground outline-none font-body focus:border-[#FFD700]/30 transition-colors" maxLength={20} />
         <input value={tag} onChange={e => setTag(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))} placeholder="TAG (2-6 chars)"
-          className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm text-foreground placeholder:text-muted-foreground outline-none font-display tracking-widest focus:border-neon-cyan/30 transition-colors" maxLength={6} />
+          className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-sm text-foreground placeholder:text-muted-foreground outline-none font-display tracking-widest focus:border-[#FFD700]/30 transition-colors" maxLength={6} />
         <textarea value={desc} onChange={e => setDesc(e.target.value)} placeholder="Description (optional)"
-          className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-foreground placeholder:text-muted-foreground outline-none resize-none font-body focus:border-neon-cyan/30 transition-colors" rows={2} maxLength={100} />
+          className="w-full px-3 py-2.5 rounded-xl bg-white/[0.04] border border-white/10 text-xs text-foreground placeholder:text-muted-foreground outline-none resize-none font-body focus:border-[#FFD700]/30 transition-colors" rows={2} maxLength={100} />
 
         {error && <p className="text-destructive text-[10px] text-center font-display">{error}</p>}
 

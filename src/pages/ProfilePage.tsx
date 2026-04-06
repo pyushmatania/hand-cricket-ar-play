@@ -101,13 +101,13 @@ const getTimeAgo = (dateStr: string) => {
 const formatDate = (dateStr: string) =>
   new Date(dateStr).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
 
-/* ── V10 Stat Row — Stadium Glass ── */
+/* ── V11 Stat Row — Dark Wood Plank ── */
 function StatRow({ icon, label, value, color }: { icon: string; label: string; value: string | number; color?: string }) {
   return (
-    <div className="flex items-center justify-between py-2 border-b border-white/[0.04] last:border-0">
+    <div className="flex items-center justify-between py-2 border-b border-[#2E1A0E]/50 last:border-0">
       <div className="flex items-center gap-2">
         <span className="text-sm">{icon}</span>
-        <span className="text-[9px] text-muted-foreground font-display tracking-wider">{label}</span>
+        <span className="text-[9px] font-display tracking-wider" style={{ color: "#8B7355" }}>{label}</span>
       </div>
       <span className={`font-display text-sm font-black tabular-nums ${color || "text-foreground"}`}>{value}</span>
     </div>
@@ -279,27 +279,31 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden pb-24" style={{
-      background: "linear-gradient(180deg, hsl(222 47% 6%) 0%, hsl(222 47% 4%) 100%)",
+      background: "linear-gradient(180deg, #1A0E05 0%, #0D0704 100%)",
     }}>
       <TopStatusBar />
 
       <div className="relative z-10 max-w-lg mx-auto px-3 pt-3">
 
         {/* ═══════════════════════════════════════════════
-            DOC 1 PLAYER CARD — Floodlight Chrome Frame + Leather
+            V11 PLAYER CARD — Dark Wood Frame + Trophy Cabinet
             ═══════════════════════════════════════════════ */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative rounded-2xl overflow-hidden mb-4 stadium-glass"
+          className="relative rounded-2xl overflow-hidden mb-4"
           style={{
-            border: `2px solid ${tierChrome.border}`,
-            boxShadow: `0 8px 24px hsl(0 0% 0% / 0.5), 0 0 20px ${tierChrome.glow}`,
+            background: "linear-gradient(180deg, #5C3A1E 0%, #3E2410 100%)",
+            border: `3px solid #2E1A0E`,
+            boxShadow: `0 6px 12px rgba(0,0,0,0.5), 0 0 20px ${tierChrome.glow}, inset 0 2px 0 rgba(255,255,255,0.08), inset 0 -2px 0 rgba(0,0,0,0.3)`,
           }}
         >
 
-          {/* Top chrome rank banner */}
-          <div className="relative px-4 py-3 scoreboard-metal">
+          {/* Top rank banner — Hammered Metal */}
+          <div className="relative px-4 py-3" style={{
+            background: "linear-gradient(180deg, #3A3A4A, #1E293B)",
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.3)",
+          }}>
             {/* Chrome rivet corners */}
             {["top-1.5 left-2", "top-1.5 right-2"].map(pos => (
               <div key={pos} className={`absolute ${pos} w-2 h-2 rounded-full`} style={{
@@ -445,8 +449,11 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* 4-stat ribbon — scoreboard paint on concrete */}
-          <div className="grid grid-cols-4 scoreboard-metal">
+          {/* 4-stat ribbon — Hammered Metal chips */}
+          <div className="grid grid-cols-4" style={{
+            background: "linear-gradient(180deg, #3A3A4A, #1E293B)",
+            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.3)",
+          }}>
             {[
               { value: totalWins, label: "WINS", color: "hsl(142 71% 55%)" },
               { value: totalLosses, label: "LOSSES", color: "hsl(4 90% 58%)" },
@@ -521,9 +528,9 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {/* ═══ Tab Switcher — 3D Jersey Mesh ═══ */}
+        {/* ═══ Tab Switcher — Dark Wood Tabs ═══ */}
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="flex gap-1 mb-4 rounded-xl p-1 scoreboard-metal">
+          className="flex gap-1 mb-4 rounded-xl p-1" style={{ background: "linear-gradient(180deg, #3E2410, #2E1A0E)", border: "2px solid #2E1A0E", boxShadow: "0 3px 0 #1A0E05" }}>
           {tabs.map((tab) => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)}
               className="flex-1 py-2.5 rounded-lg font-display text-[8px] font-bold tracking-widest transition-all duration-200 flex items-center justify-center gap-1"
@@ -559,9 +566,9 @@ export default function ProfilePage() {
                     transition={{ delay: 0.1 + i * 0.05 }}
                     className="rounded-xl p-2.5 text-center"
                     style={{
-                      background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
-                      border: "2px solid hsl(222 15% 12%)",
-                      borderBottom: "4px solid hsl(222 12% 8%)",
+                      background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+                      border: "3px solid #2E1A0E",
+                      borderBottom: "4px solid #1A0E05",
                       boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
                     }}>
                     <span className="text-base block mb-0.5">{s.icon}</span>
@@ -576,7 +583,7 @@ export default function ProfilePage() {
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
                   className="rounded-xl p-3 mb-4"
                   style={{
-                    background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                    background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
                     border: "2px solid hsl(207 70% 40% / 0.3)",
                     borderBottom: "4px solid hsl(207 60% 25% / 0.5)",
                     boxShadow: "0 3px 12px hsl(207 90% 50% / 0.1)",
@@ -607,8 +614,8 @@ export default function ProfilePage() {
                       { label: "BEST WIN", value: `+${pvpRecord.biggestWin}`, color: "hsl(142 71% 55%)" },
                     ].map(s => (
                       <div key={s.label} className="rounded-lg p-1.5 text-center" style={{
-                        background: "hsl(222 15% 10%)",
-                        border: "1px solid hsl(222 12% 15%)",
+                        background: "#2E1A0E",
+                        border: "1px solid #3E2410",
                       }}>
                         <span className="text-[5px] font-display text-muted-foreground tracking-widest block">{s.label}</span>
                         <span className="font-display text-sm font-black" style={{ color: s.color }}>{s.value}</span>
@@ -623,7 +630,7 @@ export default function ProfilePage() {
                 <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.28 }}
                   className="rounded-xl p-3 mb-4"
                   style={{
-                    background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                    background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
                     border: "2px solid hsl(43 50% 25% / 0.3)",
                     borderBottom: "4px solid hsl(43 40% 18% / 0.5)",
                     boxShadow: "0 3px 12px hsl(43 90% 50% / 0.08)",
@@ -659,8 +666,8 @@ export default function ProfilePage() {
                   </div>
                   {tournamentStats.bestPlacement && (
                     <div className="rounded-lg p-2 text-center" style={{
-                      background: "hsl(222 15% 10%)",
-                      border: "1px solid hsl(222 12% 15%)",
+                      background: "#2E1A0E",
+                      border: "1px solid #3E2410",
                     }}>
                       <span className="text-[6px] font-display text-muted-foreground tracking-widest block">BEST PLACEMENT</span>
                       <span className="font-display text-[11px] font-bold" style={{
@@ -693,9 +700,9 @@ export default function ProfilePage() {
                     <span className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">BATTING STATS</span>
                   </div>
                   <div className="rounded-xl p-3 mb-4" style={{
-                    background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
-                    border: "2px solid hsl(222 15% 12%)",
-                    borderBottom: "4px solid hsl(222 12% 8%)",
+                    background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+                    border: "3px solid #2E1A0E",
+                    borderBottom: "4px solid #1A0E05",
                   }}>
                     <StatRow icon="🏃" label="Total Runs" value={advancedStats.totalRuns} />
                     <StatRow icon="⚾" label="Total Balls" value={advancedStats.totalBalls} />
@@ -712,9 +719,9 @@ export default function ProfilePage() {
                     <span className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">SHOT DISTRIBUTION</span>
                   </div>
                   <div className="rounded-xl p-3 mb-4" style={{
-                    background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
-                    border: "2px solid hsl(222 15% 12%)",
-                    borderBottom: "4px solid hsl(222 12% 8%)",
+                    background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+                    border: "3px solid #2E1A0E",
+                    borderBottom: "4px solid #1A0E05",
                   }}>
                     <StatRow icon="6️⃣" label="Sixes" value={advancedStats.totalSixes} color="text-[hsl(280_60%_65%)]" />
                     <StatRow icon="4️⃣" label="Fours" value={advancedStats.totalFours} color="text-[hsl(142_71%_55%)]" />
@@ -732,9 +739,9 @@ export default function ProfilePage() {
                     <span className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">PERFORMANCE</span>
                   </div>
                   <div className="rounded-xl p-3 mb-4" style={{
-                    background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
-                    border: "2px solid hsl(222 15% 12%)",
-                    borderBottom: "4px solid hsl(222 12% 8%)",
+                    background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+                    border: "3px solid #2E1A0E",
+                    borderBottom: "4px solid #1A0E05",
                   }}>
                     <StatRow icon="📊" label="Current Streak" value={`${profile?.current_streak || 0} 🔥`} />
                     <StatRow icon="🏆" label="Biggest Win" value={`${advancedStats.highestWinMargin} runs`} color="text-[hsl(142_71%_55%)]" />
@@ -752,9 +759,9 @@ export default function ProfilePage() {
                   <span className="font-display text-[9px] font-bold text-muted-foreground tracking-[0.25em]">⚡ XP HISTORY</span>
                 </div>
                 <div className="rounded-xl p-3 mb-4" style={{
-                  background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
-                  border: "2px solid hsl(222 15% 12%)",
-                  borderBottom: "4px solid hsl(222 12% 8%)",
+                  background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+                  border: "3px solid #2E1A0E",
+                  borderBottom: "4px solid #1A0E05",
                 }}>
                   <XpHistoryFeed />
                 </div>
@@ -770,17 +777,17 @@ export default function ProfilePage() {
               </div>
 
               <div className="rounded-xl p-3 mb-3" style={{
-                background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
-                border: "2px solid hsl(222 15% 12%)",
-                borderBottom: "4px solid hsl(222 12% 8%)",
+                background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+                border: "3px solid #2E1A0E",
+                borderBottom: "4px solid #1A0E05",
               }}>
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-[8px] text-muted-foreground font-display tracking-wider">COMPLETION</span>
                   <span className="font-display text-sm font-black" style={{ color: "hsl(207 90% 60%)" }}>{Math.round((unlockedCount / ACHIEVEMENTS.length) * 100)}%</span>
                 </div>
                 <div className="w-full h-2 rounded-full overflow-hidden" style={{
-                  background: "hsl(222 15% 10%)",
-                  border: "1px solid hsl(222 12% 8%)",
+                  background: "#2E1A0E",
+                  border: "1px solid #2E1A0E",
                   boxShadow: "inset 0 1px 3px hsl(0 0% 0% / 0.5)",
                 }}>
                   <motion.div initial={{ width: 0 }} animate={{ width: `${(unlockedCount / ACHIEVEMENTS.length) * 100}%` }}
@@ -834,7 +841,7 @@ export default function ProfilePage() {
                       transition={{ delay: 0.1 + i * 0.03 }}
                       className="rounded-xl p-3 relative overflow-hidden"
                       style={{
-                        background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
+                        background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
                         border: unlocked ? `2px solid ${a.tier === "legendary" ? "hsl(43 80% 45%)" : a.tier === "gold" ? "hsl(43 90% 55%)" : a.tier === "silver" ? "hsl(210 10% 50%)" : "hsl(25 50% 40%)"}` : "2px solid hsl(222 15% 12%)",
                         borderBottom: unlocked ? `4px solid ${a.tier === "legendary" ? "hsl(43 60% 30%)" : a.tier === "gold" ? "hsl(43 70% 35%)" : a.tier === "silver" ? "hsl(210 10% 35%)" : "hsl(220 15% 18%)"}` : "4px solid hsl(222 12% 8%)",
                         opacity: unlocked ? 1 : 0.5,
@@ -854,8 +861,8 @@ export default function ProfilePage() {
                       {prog && !unlocked && (
                         <div className="mt-2 relative z-10">
                           <div className="w-full h-1.5 rounded-full overflow-hidden" style={{
-                            background: "hsl(222 15% 10%)",
-                            border: "1px solid hsl(222 12% 8%)",
+                            background: "#2E1A0E",
+                            border: "1px solid #2E1A0E",
                           }}>
                             <div className="h-full rounded-full transition-all" style={{
                               width: `${progPct}%`,
@@ -911,9 +918,9 @@ export default function ProfilePage() {
               <motion.button whileTap={{ scale: 0.95 }} onClick={() => navigate("/history")}
                 className="w-full rounded-xl p-3 mb-4 flex items-center justify-between group"
                 style={{
-                  background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
-                  border: "2px solid hsl(222 15% 12%)",
-                  borderBottom: "4px solid hsl(222 12% 8%)",
+                  background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+                  border: "3px solid #2E1A0E",
+                  borderBottom: "4px solid #1A0E05",
                 }}>
                 <div className="flex items-center gap-2">
                   <span className="text-lg">📜</span>
@@ -927,9 +934,9 @@ export default function ProfilePage() {
 
               {matches.length > 0 && (
                 <div className="rounded-xl p-3 mb-4 flex items-center justify-between" style={{
-                  background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
-                  border: "2px solid hsl(222 15% 12%)",
-                  borderBottom: "4px solid hsl(222 12% 8%)",
+                  background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+                  border: "3px solid #2E1A0E",
+                  borderBottom: "4px solid #1A0E05",
                 }}>
                   {[
                     { val: matches.filter(m => m.result === "win").length, label: "WON", color: "hsl(142 71% 55%)" },
@@ -947,9 +954,9 @@ export default function ProfilePage() {
 
               {matches.length === 0 ? (
                 <div className="rounded-xl p-8 text-center" style={{
-                  background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
-                  border: "2px solid hsl(222 15% 12%)",
-                  borderBottom: "4px solid hsl(222 12% 8%)",
+                  background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+                  border: "3px solid #2E1A0E",
+                  borderBottom: "4px solid #1A0E05",
                 }}>
                   <span className="text-3xl block mb-2">🏏</span>
                   <span className="font-display text-xs font-bold text-muted-foreground tracking-wider">NO MATCHES YET</span>
@@ -971,22 +978,22 @@ export default function ProfilePage() {
                         transition={{ delay: i * 0.04 }}
                         className="rounded-xl relative overflow-hidden cursor-pointer"
                         style={{
-                          background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
-                          border: "2px solid hsl(222 15% 12%)",
-                          borderBottom: "4px solid hsl(222 12% 8%)",
+                          background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+                          border: "3px solid #2E1A0E",
+                          borderBottom: "4px solid #1A0E05",
                           borderLeft: `3px solid ${resultColor}`,
                         }}
                         onClick={() => setExpandedMatch(isExpanded ? null : m.id)}>
                         <div className="p-3 flex items-center gap-3 relative z-10">
                           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style={{
-                            background: "hsl(222 15% 12%)",
-                            border: "1px solid hsl(222 12% 15%)",
+                            background: "#3E2410",
+                            border: "1px solid #3E2410",
                           }}>{modeIcon}</div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
                               <span className="font-display text-[10px] font-bold tracking-wider" style={{ color: resultColor }}>{m.result.toUpperCase()}</span>
                               <span className="text-[7px] text-muted-foreground font-display px-1.5 py-0.5 rounded" style={{
-                                background: "hsl(222 15% 12%)",
+                                background: "#3E2410",
                               }}>{m.mode.toUpperCase()}</span>
                               {m.result !== "draw" && <span className="text-[7px] opacity-70 font-display" style={{ color: resultColor }}>by {margin}</span>}
                             </div>
@@ -1008,16 +1015,16 @@ export default function ProfilePage() {
                               <div className="px-3 pb-3 pt-1 relative z-10" style={{ borderTop: "1px solid hsl(222 15% 15%)" }}>
                                 <div className="grid grid-cols-2 gap-2 mb-3">
                                   <div className="rounded-lg p-2 text-center" style={{
-                                    background: "hsl(222 15% 10%)",
-                                    border: "1px solid hsl(222 12% 15%)",
+                                    background: "#2E1A0E",
+                                    border: "1px solid #3E2410",
                                   }}>
                                     <span className="text-[7px] text-muted-foreground font-display tracking-widest block">YOU</span>
                                     <span className="font-display text-lg font-black" style={{ color: "hsl(43 100% 60%)" }}>{m.user_score}</span>
                                     <span className="text-[7px] text-muted-foreground block">RR {runRate}</span>
                                   </div>
                                   <div className="rounded-lg p-2 text-center" style={{
-                                    background: "hsl(222 15% 10%)",
-                                    border: "1px solid hsl(222 12% 15%)",
+                                    background: "#2E1A0E",
+                                    border: "1px solid #3E2410",
                                   }}>
                                     <span className="text-[7px] text-muted-foreground font-display tracking-widest block">AI</span>
                                     <span className="font-display text-lg font-black" style={{ color: "hsl(168 80% 55%)" }}>{m.ai_score}</span>
@@ -1026,8 +1033,8 @@ export default function ProfilePage() {
                                 </div>
                                 {ballStats && (
                                   <div className="rounded-lg p-2 mb-3" style={{
-                                    background: "hsl(222 15% 10%)",
-                                    border: "1px solid hsl(222 12% 15%)",
+                                    background: "#2E1A0E",
+                                    border: "1px solid #3E2410",
                                   }}>
                                     <span className="text-[7px] text-muted-foreground font-display tracking-widest block mb-2">BATTING BREAKDOWN</span>
                                     <div className="grid grid-cols-4 gap-1.5">
@@ -1051,8 +1058,8 @@ export default function ProfilePage() {
                                 )}
                                 {m.innings_data && Array.isArray(m.innings_data) && m.innings_data.length > 0 && (
                                   <div className="rounded-lg p-2 mb-3" style={{
-                                    background: "hsl(222 15% 10%)",
-                                    border: "1px solid hsl(222 12% 15%)",
+                                    background: "#2E1A0E",
+                                    border: "1px solid #3E2410",
                                   }}>
                                     <span className="text-[7px] text-muted-foreground font-display tracking-widest block mb-2">BALL-BY-BALL</span>
                                     <div className="flex flex-wrap gap-1">
@@ -1104,9 +1111,9 @@ export default function ProfilePage() {
           {activeTab === "friends" && (
             <motion.div key="friends" initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 10 }} transition={{ duration: 0.2 }}>
               <div className="rounded-xl p-3 mb-4 flex items-center justify-between" style={{
-                background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
-                border: "2px solid hsl(222 15% 12%)",
-                borderBottom: "4px solid hsl(222 12% 8%)",
+                background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+                border: "3px solid #2E1A0E",
+                borderBottom: "4px solid #1A0E05",
               }}>
                 <div>
                   <span className="text-[8px] text-muted-foreground font-display tracking-widest block">YOUR INVITE CODE</span>
@@ -1126,9 +1133,9 @@ export default function ProfilePage() {
 
               {user && (
                 <div className="rounded-xl p-3 mb-4" style={{
-                  background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
-                  border: "2px solid hsl(222 15% 12%)",
-                  borderBottom: "4px solid hsl(222 12% 8%)",
+                  background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+                  border: "3px solid #2E1A0E",
+                  borderBottom: "4px solid #1A0E05",
                 }}>
                   <span className="text-[8px] text-muted-foreground font-display tracking-widest block mb-1">PLAYER ID</span>
                   <span className="font-display text-[11px] font-bold text-foreground">{user.email}</span>
@@ -1137,9 +1144,9 @@ export default function ProfilePage() {
 
               {friends.length === 0 ? (
                 <div className="rounded-xl p-8 text-center" style={{
-                  background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
-                  border: "2px solid hsl(222 15% 12%)",
-                  borderBottom: "4px solid hsl(222 12% 8%)",
+                  background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+                  border: "3px solid #2E1A0E",
+                  borderBottom: "4px solid #1A0E05",
                 }}>
                   <span className="text-3xl block mb-2">👥</span>
                   <span className="font-display text-xs font-bold text-muted-foreground tracking-wider">NO FRIENDS YET</span>
@@ -1180,9 +1187,9 @@ export default function ProfilePage() {
                         transition={{ delay: i * 0.05 }}
                         className="rounded-xl p-3 flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-transform"
                         style={{
-                          background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
-                          border: "2px solid hsl(222 15% 12%)",
-                          borderBottom: "4px solid hsl(222 12% 8%)",
+                          background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+                          border: "3px solid #2E1A0E",
+                          borderBottom: "4px solid #1A0E05",
                         }}
                         onClick={() => setSelectedFriend(f)}>
                         <V10PlayerAvatar avatarUrl={f.avatar_url} avatarIndex={f.avatar_index ?? 0} size="sm" />
