@@ -306,15 +306,29 @@ export default function BattlePassPage() {
   useEffect(() => {
     if (!user) return;
     const load = async () => {
-      const { data } = await supabase
-        .from("profiles")
-        .select("xp, coins, has_premium_pass")
-        .eq("user_id", user.id)
-        .single();
-      if (data) {
-        setCurrentXp(data.xp ?? 0);
-        setCoins(data.coins ?? 0);
-        setIsPremium(!!(data as any).has_premium_pass);
+      const [profileRes, claimsRes] = await Promise.all([
+        supabase
+          .from("profiles")
+          .select("xp, coins, has_premium_pass")
+          .eq("user_id", user.id)
+          .single(),
+        supabase
+          .from("battle_pass_claims" as any)
+          .select("tier, track")
+          .eq("user_id", user.id)
+          .eq("season_label", SEASON_LABEL),
+      ]);
+      if (profileRes.data) {
+        setCurrentXp(profileRes.data.xp ?? 0);
+        setCoins(profileRes.data.coins ?? 0);
+        setIsPremium(!!(profileRes.data as any).has_premium_pass);
+      }
+      if (claimsRes.data) {
+        const set = new Set<string>();
+        (claimsRes.data as any[]).forEach((c: any) => {
+          set.add(`${c.track}-${c.tier}`);
+        });
+        setClaimed(set);
       }
     };
     load();
