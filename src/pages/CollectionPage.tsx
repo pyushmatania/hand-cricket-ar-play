@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import stoneCollectionImg from "@/assets/ui/stone-collection.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePlayers, IPL_TEAMS, DBPlayer, overallRating, statToDiamonds, roleLabel } from "@/hooks/usePlayers";
 import { useUserCards, UPGRADE_COSTS, useUpgradeCard } from "@/hooks/useUserCards";
