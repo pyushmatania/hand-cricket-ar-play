@@ -73,8 +73,8 @@ export default function DressingRoom({
         {/* Bench */}
         <div className="absolute bottom-[15%] left-[5%] w-[50%] h-[8%] rounded"
           style={{
-            background: "linear-gradient(180deg, hsl(25 40% 30%) 0%, hsl(25 35% 20%) 100%)",
-            borderBottom: "3px solid hsl(25 30% 15%)",
+            background: "linear-gradient(180deg, hsl(25 40% 30%) 0%, hsl(220 15% 14%) 100%)",
+            borderBottom: "3px solid hsl(220 12% 10%)",
           }} />
 
         {/* Cricket bat leaning */}
@@ -93,7 +93,7 @@ export default function DressingRoom({
         <div className="absolute top-[10%] left-[25%] w-16 h-12 rounded border"
           style={{
             background: "hsl(0 0% 95%)",
-            borderColor: "hsl(25 15% 25%)",
+            borderColor: "hsl(220 15% 18%)",
             opacity: 0.15,
           }} />
       </div>
@@ -112,7 +112,7 @@ export default function DressingRoom({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -5 }}
             className="mt-2 flex items-center gap-1.5 px-3 py-1 rounded-full"
-            style={{ background: "hsl(25 20% 15% / 0.8)", border: "1px solid hsl(220 15% 20%)" }}
+            style={{ background: "hsl(220 12% 11% / 0.8)", border: "1px solid hsl(220 15% 20%)" }}
           >
             <span className="text-sm">{currentAnim.emoji}</span>
             <span className="text-[8px] font-display tracking-wider text-muted-foreground">{currentAnim.label}</span>
@@ -123,7 +123,7 @@ export default function DressingRoom({
       {/* Player name plate */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-1.5 rounded-xl"
         style={{
-          background: "linear-gradient(180deg, hsl(25 20% 15%) 0%, hsl(220 12% 8%) 100%)",
+          background: "linear-gradient(180deg, hsl(220 12% 11%) 0%, hsl(220 12% 8%) 100%)",
           border: "1px solid hsl(220 15% 18%)",
         }}>
         <span className="font-display text-[10px] font-bold tracking-wider" style={{ color: teamColor }}>{playerName}</span>

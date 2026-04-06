@@ -199,7 +199,7 @@ export default function PlayerCard({ player, size = "md", showStats = true, dela
           <div
             className="w-8 h-8 rounded-lg flex items-center justify-center"
             style={{
-              background: `linear-gradient(180deg, ${frame.border}, hsl(25 40% 15%))`,
+              background: `linear-gradient(180deg, ${frame.border}, hsl(220 12% 10%))`,
               border: "2px solid hsl(35 60% 45%)",
               boxShadow: "0 2px 0 hsl(220 12% 8%)",
             }}

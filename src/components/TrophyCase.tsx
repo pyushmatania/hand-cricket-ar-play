@@ -198,7 +198,7 @@ function TrophyDetail({
         className="relative w-72 rounded-2xl overflow-hidden"
         style={{
           background: "linear-gradient(180deg, hsl(220 15% 16%), hsl(220 12% 10%))",
-          border: "3px solid hsl(25 35% 12%)",
+          border: "3px solid hsl(220 12% 9%)",
           boxShadow: "inset 0 2px 0 hsl(35 45% 35%), 0 12px 40px hsl(0 0% 0% / 0.6)",
         }}
       >

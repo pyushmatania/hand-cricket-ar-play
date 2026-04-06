@@ -939,7 +939,7 @@ export default function LeaderboardPage() {
                         const podiumColors = [
                           { border: "hsl(210 10% 70%)", glow: "0 0 16px hsl(210 10% 70% / 0.2)", bg: "linear-gradient(180deg, hsl(210 10% 20%) 0%, hsl(210 10% 14%) 100%)" },
                           { border: "hsl(43 80% 50%)", glow: "0 0 30px hsl(43 90% 50% / 0.3)", bg: "linear-gradient(180deg, hsl(43 30% 18%) 0%, hsl(43 25% 12%) 100%)" },
-                          { border: "hsl(25 60% 50%)", glow: "0 0 12px hsl(25 60% 50% / 0.15)", bg: "linear-gradient(180deg, hsl(25 30% 18%) 0%, hsl(25 25% 12%) 100%)" },
+                          { border: "hsl(25 60% 50%)", glow: "0 0 12px hsl(25 60% 50% / 0.15)", bg: "linear-gradient(180deg, hsl(25 30% 18%) 0%, hsl(220 12% 9%) 100%)" },
                         ];
                         const crownSize = ["text-xl", "text-3xl", "text-lg"];
                         const crowns = ["🥈", "👑", "🥉"];

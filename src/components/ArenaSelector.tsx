@@ -62,7 +62,7 @@ export default function ArenaSelector({ currentTierIndex, selectedArenaId, onSel
                     loading="lazy"
                   />
                   <div className="absolute inset-0"
-                    style={{ background: "linear-gradient(180deg, transparent 30%, hsl(25 30% 8% / 0.9) 100%)" }}
+                    style={{ background: "linear-gradient(180deg, transparent 30%, hsl(220 15% 6% / 0.9) 100%)" }}
                   />
 
                   {!arena.unlocked && (

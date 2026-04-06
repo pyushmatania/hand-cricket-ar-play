@@ -145,7 +145,7 @@ export default function ShopItemCard({
 
       {/* 3D bottom edge */}
       <div className="h-1" style={{
-        background: "linear-gradient(180deg, hsl(220 15% 6%), hsl(25 15% 5%))",
+        background: "linear-gradient(180deg, hsl(220 15% 6%), hsl(220 12% 4%))",
       }} />
     </motion.div>
   );

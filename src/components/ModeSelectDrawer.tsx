@@ -319,7 +319,7 @@ export default function ModeSelectDrawer({ open, onOpenChange }: ModeSelectDrawe
                 borderRadius: "14px",
                 background: "hsl(220 12% 9%)",
                 border: "1.5px solid hsl(220 15% 16%)",
-                borderBottom: "3px solid hsl(25 12% 8%)",
+                borderBottom: "3px solid hsl(220 12% 6%)",
               }}
             >
               <span className="font-body text-xs text-muted-foreground">

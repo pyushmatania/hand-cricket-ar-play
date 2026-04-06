@@ -121,7 +121,7 @@ export default function AuthPage() {
           {/* Tab Switcher — Jersey Mesh */}
           <div className="flex gap-1 mb-6 rounded-xl p-1"
             style={{
-              background: "linear-gradient(180deg, hsl(220 12% 10%), hsl(25 12% 10%))",
+              background: "linear-gradient(180deg, hsl(220 12% 10%), hsl(220 12% 8%))",
               border: "1px solid hsl(220 15% 14%)",
             }}>
             {[

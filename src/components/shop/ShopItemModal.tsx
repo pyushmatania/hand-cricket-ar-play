@@ -63,7 +63,7 @@ export default function ShopItemModal({
           style={{
             background: "linear-gradient(180deg, hsl(220 12% 12%) 0%, hsl(220 15% 8%) 100%)",
             border: `2px solid ${rs.border}`,
-            boxShadow: `${rs.glow}, 0 8px 0 hsl(25 25% 6%), 0 12px 30px rgba(0,0,0,0.6)`,
+            boxShadow: `${rs.glow}, 0 8px 0 hsl(220 12% 5%), 0 12px 30px rgba(0,0,0,0.6)`,
           }}
         >
           {/* Chrome rarity bar */}
@@ -167,7 +167,7 @@ export default function ShopItemModal({
           </div>
 
           {/* 3D bottom edge */}
-          <div className="h-1" style={{ background: "hsl(25 20% 5%)" }} />
+          <div className="h-1" style={{ background: "hsl(220 12% 4%)" }} />
         </motion.div>
       </motion.div>
     </AnimatePresence>

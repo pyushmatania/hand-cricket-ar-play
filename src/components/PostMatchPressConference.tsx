@@ -32,7 +32,7 @@ const THEME_CONFIG = {
     ambient: "📸 Camera flashes",
   },
   gully: {
-    bg: "linear-gradient(180deg, hsl(25 30% 14%) 0%, hsl(220 15% 7%) 100%)",
+    bg: "linear-gradient(180deg, hsl(220 12% 10%) 0%, hsl(220 15% 7%) 100%)",
     label: "GULLY CELEBRATION",
     winnerQuotes: [
       "Bhai ne kya batting ki! Legend hai legend!",

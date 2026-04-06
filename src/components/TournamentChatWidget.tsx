@@ -182,7 +182,7 @@ export default function TournamentChat({ tournamentId }: TournamentChatProps) {
                 </span>
               </div>
               <motion.button whileTap={{ scale: 0.8 }} onClick={toggleOpen}>
-                <X className="w-4 h-4" style={{ color: "hsl(25 15% 50%)" }} />
+                <X className="w-4 h-4" style={{ color: "hsl(220 15% 45%)" }} />
               </motion.button>
             </div>
 
@@ -209,7 +209,7 @@ export default function TournamentChat({ tournamentId }: TournamentChatProps) {
                           : "hsl(220 15% 14%)",
                         border: isMe
                           ? "1px solid hsl(217 60% 45% / 0.3)"
-                          : "1px solid hsl(25 18% 24%)",
+                          : "1px solid hsl(220 15% 18%)",
                       }}
                     >
                       {!isMe && (

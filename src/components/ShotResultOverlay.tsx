@@ -50,7 +50,7 @@ function WoodenSignboard({ children }: { children: React.ReactNode }) {
       <div
         className="relative px-10 py-5 rounded-xl"
         style={{
-          background: "linear-gradient(180deg, hsl(30 50% 32%), hsl(25 45% 22%))",
+          background: "linear-gradient(180deg, hsl(30 50% 32%), hsl(220 15% 14%))",
           border: "4px solid hsl(220 12% 12%)",
           boxShadow:
             "inset 0 2px 0 hsl(35 50% 42%), inset 0 -3px 0 hsl(220 12% 10%), 0 8px 30px hsl(0 0% 0% / 0.6), 0 0 60px hsl(43 96% 56% / 0.2)",

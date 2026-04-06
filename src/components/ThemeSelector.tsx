@@ -93,7 +93,7 @@ export default function ThemeSelector({ currentTierIndex, selectedThemeId, onSel
                   {/* Cracks texture */}
                   {theme.ground.hasCracks && (
                     <div className="absolute inset-0 opacity-15" style={{
-                      backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 8px, hsl(25 20% 30% / 0.5) 8px, hsl(25 20% 30% / 0.5) 9px)",
+                      backgroundImage: "repeating-linear-gradient(45deg, transparent, transparent 8px, hsl(220 15% 25% / 0.5) 8px, hsl(220 15% 25% / 0.5) 9px)",
                     }} />
                   )}
 
@@ -109,7 +109,7 @@ export default function ThemeSelector({ currentTierIndex, selectedThemeId, onSel
                   {/* Lock overlay */}
                   {!isUnlocked && (
                     <div className="absolute inset-0 flex items-center justify-center"
-                      style={{ background: "hsl(25 20% 10% / 0.7)", backdropFilter: "blur(2px)" }}
+                      style={{ background: "hsl(220 12% 8% / 0.7)", backdropFilter: "blur(2px)" }}
                     >
                       <Lock className="w-4 h-4 text-muted-foreground" />
                     </div>

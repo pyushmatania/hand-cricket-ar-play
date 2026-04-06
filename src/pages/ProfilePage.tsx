@@ -836,7 +836,7 @@ export default function ProfilePage() {
                       style={{
                         background: "linear-gradient(180deg, hsl(222 20% 14%), hsl(222 18% 10%))",
                         border: unlocked ? `2px solid ${a.tier === "legendary" ? "hsl(43 80% 45%)" : a.tier === "gold" ? "hsl(43 90% 55%)" : a.tier === "silver" ? "hsl(210 10% 50%)" : "hsl(25 50% 40%)"}` : "2px solid hsl(222 15% 12%)",
-                        borderBottom: unlocked ? `4px solid ${a.tier === "legendary" ? "hsl(43 60% 30%)" : a.tier === "gold" ? "hsl(43 70% 35%)" : a.tier === "silver" ? "hsl(210 10% 35%)" : "hsl(25 40% 25%)"}` : "4px solid hsl(222 12% 8%)",
+                        borderBottom: unlocked ? `4px solid ${a.tier === "legendary" ? "hsl(43 60% 30%)" : a.tier === "gold" ? "hsl(43 70% 35%)" : a.tier === "silver" ? "hsl(210 10% 35%)" : "hsl(220 15% 18%)"}` : "4px solid hsl(222 12% 8%)",
                         opacity: unlocked ? 1 : 0.5,
                         filter: unlocked ? "none" : "grayscale(0.5)",
                         boxShadow: unlocked ? `0 0 12px ${a.tier === "legendary" ? "hsl(43 80% 50% / 0.2)" : "transparent"}` : "none",

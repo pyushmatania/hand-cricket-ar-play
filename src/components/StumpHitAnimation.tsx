@@ -27,7 +27,7 @@ export default function StumpHitAnimation({ show, onComplete }: StumpHitAnimatio
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 z-[70] flex items-center justify-center"
-        style={{ background: "radial-gradient(circle, hsl(25 30% 6% / 0.95), hsl(222 40% 3% / 0.98))" }}
+        style={{ background: "radial-gradient(circle, hsl(220 12% 5% / 0.95), hsl(222 40% 3% / 0.98))" }}
       >
         {/* Stumps */}
         <div className="relative" style={{ width: 160, height: 200 }}>

@@ -715,7 +715,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
               className="px-6 py-3 rounded-xl font-display text-[11px] tracking-wider"
               style={{
                 background: "linear-gradient(180deg, hsl(220 15% 14%) 0%, hsl(220 12% 9%) 100%)",
-                border: "1.5px solid hsl(25 18% 25%)",
+                border: "1.5px solid hsl(220 15% 18%)",
                 borderBottom: "4px solid hsl(220 12% 6%)",
                 color: "hsl(25 30% 70%)",
               }}>

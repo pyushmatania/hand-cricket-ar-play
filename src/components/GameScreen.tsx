@@ -592,7 +592,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
 
       {/* ── TOP BAR ── always visible as overlay */}
       <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-3 pt-3 pb-2 pointer-events-auto"
-        style={{ background: "linear-gradient(to bottom, hsl(25 15% 8% / 0.85) 0%, transparent 100%)" }}>
+        style={{ background: "linear-gradient(to bottom, hsl(220 12% 6% / 0.85) 0%, transparent 100%)" }}>
         <motion.button
           whileTap={{ scale: 0.9 }}
           onClick={onHome}
