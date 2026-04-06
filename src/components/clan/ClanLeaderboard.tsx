@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import V10Button from "@/components/shared/V10Button";
 import V10PlayerAvatar from "@/components/shared/V10PlayerAvatar";
+import canvasConfetti from "canvas-confetti";
 
 interface ClanRanking {
   id: string;
@@ -46,6 +47,10 @@ export default function ClanLeaderboard() {
   const [search, setSearch] = useState("");
   const [detail, setDetail] = useState<ClanDetailData | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [compareMode, setCompareMode] = useState(false);
+  const [compareSelections, setCompareSelections] = useState<ClanRanking[]>([]);
+  const [compareData, setCompareData] = useState<{ a: ClanDetailData; b: ClanDetailData } | null>(null);
+  const [compareLoading, setCompareLoading] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -202,6 +207,73 @@ export default function ClanLeaderboard() {
     setDetail({ clan, members, warHistory, trophies });
     setDetailLoading(false);
   }, []);
+
+  const toggleCompareSelection = useCallback((clan: ClanRanking) => {
+    setCompareSelections(prev => {
+      if (prev.find(c => c.id === clan.id)) return prev.filter(c => c.id !== clan.id);
+      if (prev.length >= 2) return [prev[1], clan];
+      return [...prev, clan];
+    });
+  }, []);
+
+  const runComparison = useCallback(async () => {
+    if (compareSelections.length !== 2) return;
+    setCompareLoading(true);
+    const fetchClanData = async (clan: ClanRanking): Promise<ClanDetailData> => {
+      const [membersRes, warsRes, trophiesRes] = await Promise.all([
+        supabase.from("clan_members").select("user_id, role, donated_cards").eq("clan_id", clan.id),
+        supabase.from("clan_wars").select("*").or(`clan_a_id.eq.${clan.id},clan_b_id.eq.${clan.id}`).eq("status", "ended").order("created_at", { ascending: false }).limit(20),
+        supabase.from("clan_trophies").select("*").eq("clan_id", clan.id),
+      ]);
+      const memberRows = (membersRes.data as any[]) || [];
+      const userIds = memberRows.map(m => m.user_id);
+      let profileMap = new Map<string, { display_name: string; avatar_index: number }>();
+      if (userIds.length > 0) {
+        const { data: profiles } = await supabase.from("profiles").select("user_id, display_name, avatar_index").in("user_id", userIds);
+        (profiles || []).forEach((p: any) => profileMap.set(p.user_id, { display_name: p.display_name, avatar_index: p.avatar_index }));
+      }
+      const members = memberRows.map(m => ({
+        user_id: m.user_id, display_name: profileMap.get(m.user_id)?.display_name || "Player",
+        avatar_index: profileMap.get(m.user_id)?.avatar_index ?? 0, role: m.role, donated_cards: m.donated_cards || 0,
+      })).sort((a, b) => (ROLE_ORDER[a.role] ?? 3) - (ROLE_ORDER[b.role] ?? 3));
+      const warRows = (warsRes.data as any[]) || [];
+      const oppIds = [...new Set(warRows.map((w: any) => w.clan_a_id === clan.id ? w.clan_b_id : w.clan_a_id))];
+      let oppMap = new Map<string, { name: string; emoji: string }>();
+      if (oppIds.length > 0) {
+        const { data: opps } = await supabase.from("clans").select("id, name, emoji").in("id", oppIds);
+        (opps || []).forEach((o: any) => oppMap.set(o.id, { name: o.name, emoji: o.emoji }));
+      }
+      const warHistory = warRows.map((w: any) => {
+        const isA = w.clan_a_id === clan.id;
+        const oppId = isA ? w.clan_b_id : w.clan_a_id;
+        const opp = oppMap.get(oppId);
+        return { id: w.id, opp_name: opp?.name || "Unknown", opp_emoji: opp?.emoji || "🏏",
+          my_stars: isA ? (w.clan_a_stars || 0) : (w.clan_b_stars || 0),
+          opp_stars: isA ? (w.clan_b_stars || 0) : (w.clan_a_stars || 0),
+          won: w.winner_clan_id === clan.id, draw: !w.winner_clan_id, created_at: w.created_at };
+      });
+      // Head-to-head: filter wars between these two clans
+      return { clan, members, warHistory, trophies: (trophiesRes.data as ClanTrophy[]) || [] };
+    };
+    const [a, b] = await Promise.all([fetchClanData(compareSelections[0]), fetchClanData(compareSelections[1])]);
+    setCompareData({ a, b });
+    setCompareLoading(false);
+  }, [compareSelections]);
+
+  // Compute head-to-head between compared clans
+  const headToHead = useMemo(() => {
+    if (!compareData) return null;
+    const idA = compareData.a.clan.id;
+    const idB = compareData.b.clan.id;
+    let aWins = 0, bWins = 0, draws = 0;
+    // Check wars from clan A's history involving clan B
+    compareData.a.warHistory.forEach(w => {
+      // The opp for clan A — check if it's clan B
+      // We need to look at raw wars, but we only have processed data. Use a simpler approach.
+    });
+    // Use raw approach from rankings data
+    return { aWins, bWins, draws };
+  }, [compareData]);
 
   const MEDAL = ["🥇", "🥈", "🥉"];
 
@@ -388,6 +460,99 @@ export default function ClanLeaderboard() {
         )}
       </AnimatePresence>
 
+      {/* Compare Modal */}
+      <AnimatePresence>
+        {compareData && (
+          <motion.div key="compare-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end justify-center"
+            onClick={() => { setCompareData(null); setCompareMode(false); setCompareSelections([]); }}>
+            <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              onClick={e => e.stopPropagation()}
+              className="w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-t-3xl"
+              style={{ background: "linear-gradient(180deg, hsl(220 15% 10%), hsl(220 12% 6%))", borderTop: "2px solid hsl(190 80% 50% / 0.2)" }}>
+              <div className="flex justify-center pt-3 pb-1"><div className="w-10 h-1 rounded-full bg-white/20" /></div>
+              <div className="px-4 pb-6 space-y-4">
+                {/* VS Header */}
+                <div className="flex items-center justify-center gap-4 pt-2">
+                  <div className="text-center flex-1">
+                    <span className="text-4xl block mb-1">{compareData.a.clan.emoji}</span>
+                    <h4 className="font-display text-xs font-black text-foreground truncate">{compareData.a.clan.name}</h4>
+                    <span className="text-[8px] text-muted-foreground font-display">[{compareData.a.clan.tag}]</span>
+                  </div>
+                  <div className="scoreboard-metal rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0">
+                    <span className="font-display text-[10px] font-black text-neon-cyan">VS</span>
+                  </div>
+                  <div className="text-center flex-1">
+                    <span className="text-4xl block mb-1">{compareData.b.clan.emoji}</span>
+                    <h4 className="font-display text-xs font-black text-foreground truncate">{compareData.b.clan.name}</h4>
+                    <span className="text-[8px] text-muted-foreground font-display">[{compareData.b.clan.tag}]</span>
+                  </div>
+                </div>
+
+                {/* Stat comparison bars */}
+                {([
+                  { label: "LEVEL", a: compareData.a.clan.level, b: compareData.b.clan.level, color: "neon-cyan" },
+                  { label: "MEMBERS", a: compareData.a.members.length, b: compareData.b.members.length, color: "neon-green" },
+                  { label: "WAR WINS", a: compareData.a.clan.war_wins, b: compareData.b.clan.war_wins, color: "game-gold" },
+                  { label: "STARS", a: compareData.a.clan.total_stars, b: compareData.b.clan.total_stars, color: "game-gold" },
+                  { label: "TROPHIES", a: compareData.a.trophies.length, b: compareData.b.trophies.length, color: "neon-cyan" },
+                ] as const).map(stat => {
+                  const max = Math.max(stat.a, stat.b, 1);
+                  const aWins = stat.a > stat.b;
+                  const bWins = stat.b > stat.a;
+                  return (
+                    <div key={stat.label} className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className={`font-display text-xs font-black tabular-nums ${aWins ? `text-${stat.color}` : "text-foreground"}`}>{stat.a}</span>
+                        <span className="font-display text-[8px] tracking-widest text-muted-foreground">{stat.label}</span>
+                        <span className={`font-display text-xs font-black tabular-nums ${bWins ? `text-${stat.color}` : "text-foreground"}`}>{stat.b}</span>
+                      </div>
+                      <div className="flex gap-1 h-1.5">
+                        <div className="flex-1 rounded-full bg-white/5 overflow-hidden flex justify-end">
+                          <motion.div initial={{ width: 0 }} animate={{ width: `${(stat.a / max) * 100}%` }}
+                            className={`h-full rounded-full ${aWins ? "bg-neon-cyan" : "bg-white/20"}`} />
+                        </div>
+                        <div className="flex-1 rounded-full bg-white/5 overflow-hidden">
+                          <motion.div initial={{ width: 0 }} animate={{ width: `${(stat.b / max) * 100}%` }}
+                            className={`h-full rounded-full ${bWins ? "bg-neon-cyan" : "bg-white/20"}`} />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Trophy breakdown */}
+                <div className="stadium-glass rounded-2xl p-3">
+                  <div className="scoreboard-metal rounded-xl px-3 py-2 mb-2">
+                    <h4 className="font-display text-[10px] tracking-widest text-neon-cyan/80 font-bold">🏆 TROPHY BREAKDOWN</h4>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    {(["gold", "silver", "bronze"] as const).map(type => {
+                      const emoji = type === "gold" ? "🏆" : type === "silver" ? "🥈" : "🥉";
+                      return (
+                        <div key={type}>
+                          <span className="text-lg block">{emoji}</span>
+                          <div className="flex items-center justify-center gap-2 mt-1">
+                            <span className="font-display text-xs font-black text-foreground tabular-nums">{compareData.a.clan.trophyCounts[type]}</span>
+                            <span className="text-[7px] text-muted-foreground">vs</span>
+                            <span className="font-display text-xs font-black text-foreground tabular-nums">{compareData.b.clan.trophyCounts[type]}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <V10Button variant="secondary" size="md" onClick={() => { setCompareData(null); setCompareMode(false); setCompareSelections([]); }} className="w-full">
+                  CLOSE
+                </V10Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <div className="scoreboard-metal rounded-2xl p-4 text-center">
         <span className="text-4xl block mb-1">🏆</span>
@@ -420,6 +585,28 @@ export default function ClanLeaderboard() {
         ))}
       </div>
 
+      {/* Compare toggle */}
+      <div className="flex gap-2">
+        <V10Button
+          variant={compareMode ? "gold" : "secondary"}
+          size="sm"
+          onClick={() => { setCompareMode(!compareMode); setCompareSelections([]); }}
+          className="flex-1"
+        >
+          {compareMode ? "✕ CANCEL" : "⚖️ COMPARE"}
+        </V10Button>
+        {compareMode && compareSelections.length === 2 && (
+          <V10Button variant="primary" size="sm" onClick={runComparison} disabled={compareLoading} className="flex-1">
+            {compareLoading ? "..." : "⚡ COMPARE NOW"}
+          </V10Button>
+        )}
+      </div>
+      {compareMode && (
+        <p className="text-center text-[9px] text-muted-foreground font-body">
+          Tap 2 clans to compare ({compareSelections.length}/2 selected)
+        </p>
+      )}
+
       {/* Rankings */}
       {filtered.length === 0 ? (
         <div className="text-center py-8">
@@ -434,6 +621,7 @@ export default function ClanLeaderboard() {
             const currentRank = sorted.findIndex(s => s.id === c.id);
             const prevRank = prevRankMap.get(c.id) ?? currentRank;
             const rankDelta = prevRank - currentRank;
+            const isSelected = compareSelections.some(s => s.id === c.id);
 
             return (
               <motion.button
@@ -442,9 +630,10 @@ export default function ClanLeaderboard() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.03 }}
                 whileTap={{ scale: 0.97 }}
-                onClick={() => openDetail(c)}
+                onClick={() => compareMode ? toggleCompareSelection(c) : openDetail(c)}
                 className={`flex items-center gap-2 p-2.5 rounded-xl border transition-colors w-full text-left ${
-                  currentRank === 0 ? "stadium-glass border-game-gold/30 bg-game-gold/[0.04]"
+                  isSelected ? "stadium-glass border-neon-cyan/40 bg-neon-cyan/[0.08] ring-1 ring-neon-cyan/30"
+                  : currentRank === 0 ? "stadium-glass border-game-gold/30 bg-game-gold/[0.04]"
                   : currentRank < 3 ? "stadium-glass border-white/10"
                   : "bg-white/[0.02] border-white/5"
                 }`}

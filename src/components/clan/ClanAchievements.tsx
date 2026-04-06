@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { useClan } from "@/hooks/useClan";
 import V10Button from "@/components/shared/V10Button";
+import canvasConfetti from "canvas-confetti";
 
 /* ── Achievement Definitions ── */
 interface AchievementDef {
@@ -57,6 +58,8 @@ export default function ClanAchievements({ clanId }: { clanId: string }) {
   const [stats, setStats] = useState<ClanStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>("all");
+  const [newlyUnlockedIds, setNewlyUnlockedIds] = useState<string[]>([]);
+  const [celebrationAchievement, setCelebrationAchievement] = useState<AchievementDef | null>(null);
 
   useEffect(() => {
     loadData();
@@ -127,6 +130,16 @@ export default function ClanAchievements({ clanId }: { clanId: string }) {
         newlyUnlocked.forEach(id => next.add(id));
         return next;
       });
+      setNewlyUnlockedIds(newlyUnlocked);
+      // Trigger celebration sequence
+      const firstDef = ACHIEVEMENTS.find(a => a.id === newlyUnlocked[0]);
+      if (firstDef) {
+        setCelebrationAchievement(firstDef);
+        setTimeout(() => {
+          canvasConfetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ["#00e5ff", "#76ff03", "#ffd700"] });
+        }, 300);
+        setTimeout(() => setCelebrationAchievement(null), 3500);
+      }
     }
 
     setLoading(false);
@@ -147,6 +160,63 @@ export default function ClanAchievements({ clanId }: { clanId: string }) {
 
   return (
     <div className="space-y-3">
+      {/* Achievement unlock celebration */}
+      <AnimatePresence>
+        {celebrationAchievement && (
+          <motion.div
+            key="celebration"
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8, y: -20 }}
+            className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+          >
+            <motion.div
+              initial={{ y: 30, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 300 }}
+              className="bg-gradient-to-b from-game-gold/20 to-transparent backdrop-blur-md rounded-3xl p-8 text-center border border-game-gold/30 shadow-2xl"
+            >
+              <motion.span
+                className="text-7xl block mb-3"
+                animate={{ scale: [1, 1.3, 1], rotate: [0, -10, 10, 0] }}
+                transition={{ duration: 0.8, repeat: 1 }}
+              >
+                {celebrationAchievement.emoji}
+              </motion.span>
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="font-display text-xs tracking-[0.3em] text-game-gold/80 font-bold mb-1"
+              >
+                ACHIEVEMENT UNLOCKED
+              </motion.p>
+              <motion.h3
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7 }}
+                className="font-display text-lg font-black text-foreground tracking-wider"
+              >
+                {celebrationAchievement.title}
+              </motion.h3>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.9 }}
+                className="text-xs text-muted-foreground font-body mt-1"
+              >
+                {celebrationAchievement.description}
+              </motion.p>
+              {newlyUnlockedIds.length > 1 && (
+                <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}
+                  className="text-[9px] text-game-gold font-display mt-2">
+                  +{newlyUnlockedIds.length - 1} more unlocked!
+                </motion.p>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <div className="scoreboard-metal rounded-2xl p-4 text-center">
         <span className="text-4xl block mb-1">🎖️</span>
         <h3 className="font-display text-sm font-black text-neon-cyan tracking-wider neon-text-cyan">CLAN ACHIEVEMENTS</h3>
