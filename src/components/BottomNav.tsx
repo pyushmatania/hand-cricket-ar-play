@@ -327,8 +327,8 @@ export default function BottomNav() {
               {/* Icon — lifted when active */}
               <motion.div
                 animate={{
-                  y: isActive ? (item.center ? -14 : -10) : 0,
-                  scale: isActive ? 1.1 : 1,
+                  y: item.center ? -18 : (isActive ? -10 : 0),
+                  scale: isActive ? (item.center ? 1.15 : 1.1) : 1,
                 }}
                 transition={{ type: "spring", stiffness: 400, damping: 18 }}
                 className="relative"
