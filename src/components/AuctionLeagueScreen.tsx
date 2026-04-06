@@ -60,7 +60,66 @@ interface BidHistoryEntry {
 }
 
 type Phase = "loading" | "auction" | "review" | "knockout" | "match" | "results";
-type BidPhase = "waiting" | "your_bid" | "ai_counter" | "your_counter" | "sold";
+type BidPhase = "waiting" | "your_bid" | "ai_counter" | "your_counter" | "countdown" | "sold";
+
+/* ── Auctioneer Countdown Component ── */
+function AuctioneerCountdown({ onComplete }: { onComplete: () => void }) {
+  const [step, setStep] = useState(0);
+  const LINES = [
+    { text: "Going once…", color: "hsl(43 90% 60%)", scale: 1 },
+    { text: "Going twice…", color: "hsl(35 90% 55%)", scale: 1.1 },
+    { text: "SOLD!", color: "hsl(0 80% 58%)", scale: 1.4 },
+  ];
+
+  useEffect(() => {
+    if (step < LINES.length - 1) {
+      const t = setTimeout(() => setStep(s => s + 1), 900);
+      return () => clearTimeout(t);
+    } else {
+      const t = setTimeout(onComplete, 600);
+      return () => clearTimeout(t);
+    }
+  }, [step, onComplete]);
+
+  const line = LINES[step];
+
+  return (
+    <div className="text-center py-6 relative">
+      {/* Dramatic spotlight */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        animate={{ opacity: [0.3, 0.6, 0.3] }}
+        transition={{ repeat: Infinity, duration: 1.5 }}
+        style={{
+          background: "radial-gradient(ellipse at 50% 40%, hsl(43 90% 55% / 0.08), transparent 60%)",
+        }}
+      />
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={step}
+          initial={{ scale: 0.3, opacity: 0, y: 20, rotateX: -30 }}
+          animate={{ scale: line.scale, opacity: 1, y: 0, rotateX: 0 }}
+          exit={{ scale: 0.8, opacity: 0, y: -15 }}
+          transition={{ type: "spring", damping: 10, stiffness: 200 }}
+          className="font-display text-3xl tracking-wider"
+          style={{
+            color: line.color,
+            textShadow: `0 4px 0 hsl(220 15% 5%), 0 0 30px ${line.color.replace(")", " / 0.4)")}, 0 0 60px ${line.color.replace(")", " / 0.2)")}`,
+          }}
+        >
+          {line.text}
+        </motion.div>
+      </AnimatePresence>
+      {/* Pulsing underline */}
+      <motion.div
+        className="mx-auto mt-3 h-[2px] rounded-full"
+        animate={{ width: ["20%", "60%", "20%"], opacity: [0.3, 0.7, 0.3] }}
+        transition={{ repeat: Infinity, duration: 1.2 }}
+        style={{ background: `linear-gradient(90deg, transparent, ${line.color}, transparent)` }}
+      />
+    </div>
+  );
+}
 
 export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps) {
   const { soundEnabled, hapticsEnabled } = useSettings();
