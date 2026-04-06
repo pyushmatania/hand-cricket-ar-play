@@ -53,12 +53,7 @@ function formatTime(seconds: number): string {
   return `${s}s`;
 }
 
-const CRICKET_CHEST: Record<string, { icon: string; label: string; color: string }> = {
-  bronze:  { icon: "🎾", label: "Tennis Ball", color: "#CD7F32" },
-  silver:  { icon: "🏏", label: "Red Ball",    color: "#00D4FF" },
-  gold:    { icon: "🏆", label: "Trophy",      color: "#FFD700" },
-  diamond: { icon: "💎", label: "Crystal Bat",  color: "#A855F7" },
-};
+// Removed CRICKET_CHEST — now using getChestTier() from lib/chests for 3D images
 
 const MAIN_MODES = [
   { id: "tap", icon: "⚡", label: "TAP", sub: "Quick Play", color: "#4ADE50" },
@@ -235,6 +230,13 @@ export default function HomePage() {
         nextArenaName={nextArena.name}
         nextTrophies={nextArena.trophies}
         progress={arenaProgress}
+        arenaKey={
+          currentArena.name.toLowerCase().includes("gully") ? "gully" :
+          currentArena.name.toLowerCase().includes("school") ? "school" :
+          currentArena.name.toLowerCase().includes("ipl") ? "ipl" :
+          currentArena.name.toLowerCase().includes("international") ? "international" :
+          currentArena.name.toLowerCase().includes("world") ? "worldcup" : "default"
+        }
       />
 
       {/* ═══ C: STATS BAR + BATTLE BUTTON ═══ */}
@@ -448,7 +450,7 @@ function StatPill({ label, value, color }: { label: string; value: string; color
 }
 
 function ChestSlot({ chest, onTap, tick }: { chest: UserChest | null; onTap: (c: UserChest | null) => void; tick: number }) {
-  const chestInfo = chest ? CRICKET_CHEST[chest.chest_tier] || CRICKET_CHEST.bronze : null;
+  const tier = chest ? getChestTier(chest.chest_tier) : null;
   const isReady = chest && (chest.status === "ready" || (chest.status === "unlocking" && chestTimeRemaining(chest) <= 0));
   const isUnlocking = chest?.status === "unlocking" && chestTimeRemaining(chest) > 0;
   const remaining = isUnlocking ? chestTimeRemaining(chest) : 0;
@@ -475,53 +477,50 @@ function ChestSlot({ chest, onTap, tick }: { chest: UserChest | null; onTap: (c:
         width: 78,
         height: 96,
         borderRadius: 16,
-        borderColor: isReady ? chestInfo?.color : undefined,
-        boxShadow: isReady ? `0 0 24px ${chestInfo?.color}40, 0 4px 12px rgba(0,0,0,0.4)` : undefined,
+        borderColor: isReady ? tier?.color : undefined,
+        boxShadow: isReady ? `0 0 24px ${tier?.color}40, 0 4px 12px rgba(0,0,0,0.4)` : undefined,
       }}
     >
-      {/* Ready state: conic light rays */}
       {isReady && (
         <motion.div
           animate={{ rotate: [0, 360] }}
           transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
           className="absolute inset-0 pointer-events-none overflow-hidden rounded-[14px]"
           style={{
-            background: `conic-gradient(from 0deg, transparent 0%, ${chestInfo?.color}15 10%, transparent 20%, ${chestInfo?.color}15 30%, transparent 40%, ${chestInfo?.color}15 50%, transparent 60%, ${chestInfo?.color}15 70%, transparent 80%, ${chestInfo?.color}15 90%, transparent 100%)`,
+            background: `conic-gradient(from 0deg, transparent 0%, ${tier?.color}15 10%, transparent 20%, ${tier?.color}15 30%, transparent 40%, ${tier?.color}15 50%, transparent 60%, ${tier?.color}15 70%, transparent 80%, ${tier?.color}15 90%, transparent 100%)`,
           }}
         />
       )}
 
-      {/* Unlocking: SVG arc timer */}
       {isUnlocking && (
         <svg className="absolute inset-0 w-full h-full pointer-events-none -rotate-90" viewBox="0 0 78 96">
           <rect x="2" y="2" width="74" height="92" rx="14" ry="14" fill="none"
-            stroke={chestInfo?.color || "#475569"}
+            stroke={tier?.color || "#475569"}
             strokeWidth="2"
             strokeDasharray={`${progressPct * 3.32} 332`}
             strokeLinecap="round"
             opacity="0.5"
-            style={{ filter: `drop-shadow(0 0 4px ${chestInfo?.color}40)` }}
+            style={{ filter: `drop-shadow(0 0 4px ${tier?.color}40)` }}
           />
         </svg>
       )}
 
-      {/* Chest icon */}
-      <motion.span
+      {/* Chest 3D image */}
+      <motion.img
+        src={tier?.image}
+        alt={tier?.name}
         animate={isReady ? { y: [-3, 3, -3], scale: [1, 1.08, 1] } : isUnlocking ? { rotateZ: [-2, 2, -2] } : {}}
         transition={{ duration: isReady ? 1.5 : 2, repeat: Infinity, ease: "easeInOut" }}
-        className="text-[28px] relative z-10"
+        className="w-10 h-10 object-contain relative z-10"
         style={{
           filter: isUnlocking
             ? `brightness(0.5) saturate(0.3) drop-shadow(0 2px 4px rgba(0,0,0,0.5))`
             : isReady
-              ? `drop-shadow(0 0 12px ${chestInfo?.color}80)`
+              ? `drop-shadow(0 0 12px ${tier?.color}80)`
               : `drop-shadow(0 2px 6px rgba(0,0,0,0.5))`,
         }}
-      >
-        {chestInfo?.icon}
-      </motion.span>
+      />
 
-      {/* Sparkles for ready */}
       {isReady && [0, 1, 2, 3].map(s => (
         <motion.div
           key={s}
@@ -529,15 +528,14 @@ function ChestSlot({ chest, onTap, tick }: { chest: UserChest | null; onTap: (c:
           transition={{ duration: 1.2, repeat: Infinity, delay: s * 0.3 }}
           className="absolute w-1 h-1 rounded-full pointer-events-none"
           style={{
-            background: s % 2 === 0 ? "#FFD700" : (chestInfo?.color || "#fff"),
+            background: s % 2 === 0 ? "#FFD700" : (tier?.color || "#fff"),
             left: `${18 + s * 18}%`,
             top: "25%",
-            boxShadow: `0 0 6px ${chestInfo?.color}`,
+            boxShadow: `0 0 6px ${tier?.color}`,
           }}
         />
       ))}
 
-      {/* Lock icon for unlocking */}
       {isUnlocking && (
         <motion.div
           animate={{ rotateZ: [-5, 5, -5] }}
@@ -548,16 +546,15 @@ function ChestSlot({ chest, onTap, tick }: { chest: UserChest | null; onTap: (c:
         </motion.div>
       )}
 
-      {/* Bottom label */}
       <div className="absolute bottom-0 inset-x-0 py-1 text-center z-10" style={{
         background: "linear-gradient(0deg, rgba(0,0,0,0.7), transparent)",
         borderRadius: "0 0 14px 14px",
       }}>
         <span className="text-[8px] font-bold block font-display" style={{
-          color: isReady ? "#FFD700" : isUnlocking ? (chestInfo?.color || "#475569") : "#94A3B8",
+          color: isReady ? "#FFD700" : isUnlocking ? (tier?.color || "#475569") : "#94A3B8",
           textShadow: isReady ? "0 0 8px rgba(255,215,0,0.5)" : "none",
         }}>
-          {isReady ? "OPEN!" : isUnlocking ? formatTime(remaining) : chestInfo?.label}
+          {isReady ? "OPEN!" : isUnlocking ? formatTime(remaining) : tier?.name.split(" ")[0]}
         </span>
       </div>
     </motion.button>

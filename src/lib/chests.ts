@@ -1,10 +1,4 @@
-import chestBronze from "@/assets/chest-bronze.png";
-import chestSilver from "@/assets/chest-silver.png";
-import chestGold from "@/assets/chest-gold.png";
-import chestPlatinum from "@/assets/chest-platinum.png";
-import chestDiamond from "@/assets/chest-diamond.png";
-import chestChampion from "@/assets/chest-champion.png";
-import chestWar from "@/assets/chest-war.png";
+import { CHEST_IMAGES } from "@/assets/chests";
 
 export interface ChestTier {
   id: string;
@@ -19,7 +13,7 @@ export const CHEST_TIERS: ChestTier[] = [
   {
     id: "bronze",
     name: "Bronze Chest",
-    image: chestBronze,
+    image: CHEST_IMAGES.bronze,
     color: "hsl(28 60% 50%)",
     glowColor: "hsl(28 70% 45% / 0.4)",
     borderColor: "hsl(28 40% 30%)",
@@ -27,7 +21,7 @@ export const CHEST_TIERS: ChestTier[] = [
   {
     id: "silver",
     name: "Silver Chest",
-    image: chestSilver,
+    image: CHEST_IMAGES.silver,
     color: "hsl(210 15% 65%)",
     glowColor: "hsl(210 20% 60% / 0.4)",
     borderColor: "hsl(210 10% 40%)",
@@ -35,42 +29,26 @@ export const CHEST_TIERS: ChestTier[] = [
   {
     id: "gold",
     name: "Gold Chest",
-    image: chestGold,
+    image: CHEST_IMAGES.gold,
     color: "hsl(45 100% 50%)",
     glowColor: "hsl(45 100% 50% / 0.5)",
     borderColor: "hsl(35 70% 35%)",
   },
   {
-    id: "platinum",
-    name: "Platinum Chest",
-    image: chestPlatinum,
-    color: "hsl(210 60% 65%)",
-    glowColor: "hsl(210 80% 60% / 0.5)",
-    borderColor: "hsl(210 40% 40%)",
-  },
-  {
     id: "diamond",
     name: "Diamond Chest",
-    image: chestDiamond,
+    image: CHEST_IMAGES.diamond,
     color: "hsl(195 90% 55%)",
     glowColor: "hsl(195 100% 60% / 0.5)",
     borderColor: "hsl(200 50% 35%)",
   },
   {
-    id: "champion",
-    name: "Champion Chest",
-    image: chestChampion,
-    color: "hsl(0 70% 55%)",
-    glowColor: "hsl(45 100% 50% / 0.5)",
-    borderColor: "hsl(35 80% 40%)",
-  },
-  {
-    id: "war",
-    name: "War Chest",
-    image: chestWar,
-    color: "hsl(220 15% 40%)",
-    glowColor: "hsl(25 60% 40% / 0.4)",
-    borderColor: "hsl(220 15% 20%)",
+    id: "mythic",
+    name: "Mythic Chest",
+    image: CHEST_IMAGES.mythic,
+    color: "hsl(280 80% 60%)",
+    glowColor: "hsl(280 90% 65% / 0.5)",
+    borderColor: "hsl(280 50% 40%)",
   },
 ];
 
