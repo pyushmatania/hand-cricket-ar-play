@@ -220,8 +220,12 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden pb-24" style={{
-      background: "linear-gradient(180deg, hsl(222 47% 6%) 0%, hsl(222 47% 4%) 100%)",
+      background: "linear-gradient(180deg, #1A0F06 0%, #12080A 100%)",
     }}>
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{
+        backgroundImage: `url('/assets/ui/wood-plank-texture.png')`,
+        backgroundSize: "300px",
+      }} />
       <TopStatusBar />
 
       <div className="relative z-10 max-w-lg mx-auto px-4 pt-4 space-y-4">
