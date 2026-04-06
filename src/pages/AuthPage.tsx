@@ -6,11 +6,10 @@ import { lovable } from "@/integrations/lovable";
 import { useAuth } from "@/contexts/AuthContext";
 import handCricketLogo from "@/assets/hand-cricket-logo.png";
 
-/* ── Doc 1 Material Constants ── */
-const LEATHER_BG = "linear-gradient(180deg, hsl(220 20% 10%) 0%, hsl(220 18% 7%) 40%, hsl(222 40% 6%) 100%)";
-const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
-const CONCRETE_CARD = "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)";
-const CHALK_DIVIDER = "repeating-linear-gradient(90deg, hsl(45 30% 80%) 0px, hsl(45 30% 80%) 8px, transparent 8px, transparent 14px)";
+/* ── V11 Wooden Gate Material Constants ── */
+const WOOD_BG = "linear-gradient(180deg, #1A0E05 0%, #0D0704 100%)";
+const WOOD_CARD = "linear-gradient(180deg, #5C3A1E 0%, #3E2410 100%)";
+const ROPE_DIVIDER = "repeating-linear-gradient(90deg, #8B7355 0px, #8B7355 8px, transparent 8px, transparent 14px)";
 
 export default function AuthPage() {
   const navigate = useNavigate();
