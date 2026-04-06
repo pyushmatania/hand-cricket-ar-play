@@ -7,9 +7,9 @@ import { useDailyLogin } from "@/hooks/useDailyLogin";
 import TopStatusBar from "@/components/TopStatusBar";
 
 /* ── V10 Material Constants ── */
-const V10_BG = "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 18% 5%) 100%)";
-const V10_CARD = "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)";
-const CHALK_DIVIDER = "repeating-linear-gradient(90deg, hsl(220 15% 25%) 0px, hsl(220 15% 25%) 8px, transparent 8px, transparent 14px)";
+const V11_BG = "linear-gradient(180deg, #1A0E05 0%, #0D0704 100%)";
+const V11_CARD = "linear-gradient(180deg, #5C3A1E 0%, #3E2410 100%)";
+const ROPE_DIVIDER = "repeating-linear-gradient(90deg, #8B7355 0px, #8B7355 8px, transparent 8px, transparent 14px)";
 
 /* ──── Reward Calendar Data (28-day cycle) ──── */
 interface DayReward {
@@ -72,7 +72,7 @@ function ChestOpenOverlay({ reward, onClose }: { reward: DayReward; onClose: () 
         transition={{ type: "spring", stiffness: 300, damping: 15 }}
         className="rounded-3xl p-8 text-center max-w-[280px] w-full relative overflow-hidden"
         style={{
-          background: V10_CARD,
+          background: V11_CARD,
           border: `2px solid ${color}50`,
           borderBottom: `5px solid ${color}30`,
           boxShadow: `0 8px 40px ${color}40, 0 4px 12px rgba(0,0,0,0.4)`,
@@ -179,7 +179,7 @@ export default function DailyRewardsPage() {
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden pb-24" style={{ background: V10_BG }}>
+    <div className="min-h-screen relative overflow-hidden pb-24" style={{ background: V11_BG }}>
       {/* Leather grain */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ display: "none" }} />
       {/* Vignette */}
@@ -229,7 +229,7 @@ export default function DailyRewardsPage() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
           className="rounded-2xl p-4 mb-4"
           style={{
-            background: V10_CARD,
+            background: V11_CARD,
             border: "2px solid hsl(43 50% 35% / 0.3)",
             borderBottom: "5px solid hsl(220 15% 8%)",
             boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
@@ -307,7 +307,7 @@ export default function DailyRewardsPage() {
         </motion.div>
 
         {/* Chalk divider */}
-        <div className="h-px mb-3 mx-2 opacity-20" style={{ background: CHALK_DIVIDER }} />
+        <div className="h-px mb-3 mx-2 opacity-20" style={{ background: ROPE_DIVIDER }} />
 
         {/* ═══ Calendar Grid — Stadium Concrete Day Cards ═══ */}
         {weeks.map((week, wi) => (
@@ -318,7 +318,7 @@ export default function DailyRewardsPage() {
                 style={{ color: currentWeek === wi + 1 ? "hsl(43 90% 55%)" : "hsl(220 15% 35%)" }}>
                 WEEK {wi + 1}
               </span>
-              <div className="flex-1 h-px opacity-20" style={{ background: CHALK_DIVIDER }} />
+              <div className="flex-1 h-px opacity-20" style={{ background: ROPE_DIVIDER }} />
               {wi + 1 < currentWeek && <span className="text-[8px]">✅</span>}
             </div>
 
@@ -433,7 +433,7 @@ export default function DailyRewardsPage() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}
           className="rounded-2xl p-4 mb-4"
           style={{
-            background: V10_CARD,
+            background: V11_CARD,
             border: "2px solid hsl(4 50% 30% / 0.3)",
             borderBottom: "5px solid hsl(220 15% 8%)",
             boxShadow: "0 3px 8px hsl(0 0% 0% / 0.3)",
