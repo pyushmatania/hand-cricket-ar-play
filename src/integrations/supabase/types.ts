@@ -263,6 +263,53 @@ export type Database = {
           },
         ]
       }
+      clan_recruitment: {
+        Row: {
+          active: boolean
+          auto_join: boolean
+          clan_id: string
+          created_at: string
+          description: string
+          id: string
+          min_level: number
+          min_trophies: number
+          posted_by: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          auto_join?: boolean
+          clan_id: string
+          created_at?: string
+          description?: string
+          id?: string
+          min_level?: number
+          min_trophies?: number
+          posted_by: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          auto_join?: boolean
+          clan_id?: string
+          created_at?: string
+          description?: string
+          id?: string
+          min_level?: number
+          min_trophies?: number
+          posted_by?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clan_recruitment_clan_id_fkey"
+            columns: ["clan_id"]
+            isOneToOne: true
+            referencedRelation: "clans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clan_trophies: {
         Row: {
           clan_id: string
