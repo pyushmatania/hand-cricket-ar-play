@@ -35,6 +35,16 @@ const ROUNDS: Round[] = [
 ];
 
 type Phase = "lobby" | "storm" | "batting" | "result" | "eliminated" | "champion";
+type LobbyTab = "info" | "leaderboard";
+
+interface LeaderboardEntry {
+  user_id: string;
+  display_name: string;
+  best_placement: number;
+  total_runs: number;
+  games_played: number;
+  champions: number;
+}
 
 interface CricketRoyaleScreenProps {
   onHome: () => void;
@@ -131,6 +141,9 @@ function RoundSummaryStrip({ scores }: { scores: number[] }) {
 
 export default function CricketRoyaleScreen({ onHome }: CricketRoyaleScreenProps) {
   const [phase, setPhase] = useState<Phase>("lobby");
+  const [lobbyTab, setLobbyTab] = useState<LobbyTab>("info");
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [lbLoading, setLbLoading] = useState(false);
   const [currentRound, setCurrentRound] = useState(0);
   const [totalScore, setTotalScore] = useState(0);
   const [roundScores, setRoundScores] = useState<number[]>([]);
@@ -142,6 +155,56 @@ export default function CricketRoyaleScreen({ onHome }: CricketRoyaleScreenProps
   const roundRef = useRef(currentRound);
   const savedRef = useRef(false);
   roundRef.current = currentRound;
+
+  // Fetch leaderboard
+  useEffect(() => {
+    if (lobbyTab !== "leaderboard" || leaderboard.length > 0) return;
+    setLbLoading(true);
+    (async () => {
+      // Get all royale games, join with profiles for display_name
+      const { data } = await supabase
+        .from("cricket_royale_games")
+        .select("user_id, placement, total_runs, status")
+        .order("created_at", { ascending: false })
+        .limit(500);
+
+      if (!data || data.length === 0) { setLbLoading(false); return; }
+
+      // Aggregate per user
+      const map = new Map<string, { best: number; runs: number; games: number; champs: number }>();
+      for (const g of data) {
+        const prev = map.get(g.user_id) || { best: 999, runs: 0, games: 0, champs: 0 };
+        map.set(g.user_id, {
+          best: Math.min(prev.best, g.placement ?? 999),
+          runs: prev.runs + g.total_runs,
+          games: prev.games + 1,
+          champs: prev.champs + (g.status === "champion" ? 1 : 0),
+        });
+      }
+
+      // Get display names
+      const userIds = [...map.keys()];
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("user_id, display_name")
+        .in("user_id", userIds);
+
+      const nameMap = new Map((profiles || []).map((p: any) => [p.user_id, p.display_name]));
+      const entries: LeaderboardEntry[] = [...map.entries()].map(([uid, s]) => ({
+        user_id: uid,
+        display_name: nameMap.get(uid) || "Player",
+        best_placement: s.best,
+        total_runs: s.runs,
+        games_played: s.games,
+        champions: s.champs,
+      }));
+
+      // Sort by champions desc, then best placement asc, then total runs desc
+      entries.sort((a, b) => b.champions - a.champions || a.best_placement - b.best_placement || b.total_runs - a.total_runs);
+      setLeaderboard(entries.slice(0, 50));
+      setLbLoading(false);
+    })();
+  }, [lobbyTab, leaderboard.length]);
 
   const round = ROUNDS[currentRound] || ROUNDS[0];
   const targetScore = Math.round(round.overs * 6 * round.targetMultiplier);
@@ -303,47 +366,126 @@ export default function CricketRoyaleScreen({ onHome }: CricketRoyaleScreenProps
           {/* ── LOBBY ── */}
           {phase === "lobby" && (
             <motion.div key="lobby" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="flex-1 flex flex-col items-center justify-center gap-6">
-              <motion.span className="text-7xl" animate={{ rotate: [0, 5, -5, 0] }}
+              className="flex-1 flex flex-col items-center gap-4 pt-2 overflow-y-auto">
+              <motion.span className="text-5xl" animate={{ rotate: [0, 5, -5, 0] }}
                 transition={{ duration: 2, repeat: Infinity }}>🏟️</motion.span>
               <div className="text-center">
-                <h1 className="font-display text-3xl font-black tracking-wider text-foreground mb-2"
+                <h1 className="font-display text-2xl font-black tracking-wider text-foreground mb-1"
                   style={{ textShadow: "0 3px 0 hsl(220 18% 6%)" }}>CRICKET ROYALE</h1>
-                <p className="font-body text-xs text-muted-foreground max-w-[260px] mx-auto">
-                  Survive 5 rounds of shrinking overs. Beat the target each round or get eliminated. Last one standing wins!
+                <p className="font-body text-[10px] text-muted-foreground max-w-[260px] mx-auto">
+                  Survive 5 rounds. Beat the target or get eliminated.
                 </p>
               </div>
 
-              {/* Round preview */}
-              <div className="w-full space-y-1.5">
-                {ROUNDS.map((r, i) => (
-                  <motion.div key={i}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.08 }}
-                    className="flex items-center gap-3 px-3 py-2.5 rounded-xl"
+              {/* Tab switcher */}
+              <div className="flex gap-1 p-1 rounded-xl w-full"
+                style={{ background: "linear-gradient(180deg, hsl(220 12% 8%), hsl(220 15% 6%))", border: "1px solid hsl(220 15% 14%)" }}>
+                {(["info", "leaderboard"] as LobbyTab[]).map(tab => (
+                  <button key={tab} onClick={() => setLobbyTab(tab)}
+                    className="flex-1 py-2 rounded-lg font-display text-[10px] tracking-wider transition-all"
                     style={{
-                      background: "linear-gradient(135deg, hsl(220 15% 12%), hsl(220 12% 8%))",
-                      border: "1px solid hsl(220 15% 16%)",
-                      borderLeft: `3px solid ${r.stormColor}`,
-                      borderBottom: "3px solid hsl(220 15% 6%)",
+                      background: lobbyTab === tab ? "linear-gradient(180deg, hsl(220 15% 16%), hsl(220 12% 12%))" : "transparent",
+                      color: lobbyTab === tab ? "hsl(43 90% 60%)" : "hsl(220 15% 45%)",
+                      border: lobbyTab === tab ? "1px solid hsl(220 15% 22%)" : "1px solid transparent",
+                      borderBottom: lobbyTab === tab ? "3px solid hsl(220 15% 8%)" : "3px solid transparent",
                     }}>
-                    <span className="text-lg">{r.stormEmoji}</span>
-                    <div className="flex-1">
-                      <span className="font-display text-[9px] tracking-wider text-foreground/80">ROUND {r.number}</span>
-                      <p className="text-[8px] font-body text-muted-foreground">{r.overs} over{r.overs > 1 ? "s" : ""} • {r.stormEvent}</p>
-                    </div>
-                    <div className="text-right">
-                      <span className="font-display text-[9px]" style={{ color: r.stormColor }}>
-                        {Math.round(r.overs * 6 * r.targetMultiplier)}
-                      </span>
-                      <span className="text-[7px] font-body text-muted-foreground block">target</span>
-                    </div>
-                  </motion.div>
+                    {tab === "info" ? "⚡ ROUNDS" : "🏆 LEADERBOARD"}
+                  </button>
                 ))}
               </div>
 
-              <GameButton variant="primary" size="lg" bounce onClick={handleStart} className="w-full">
+              {lobbyTab === "info" ? (
+                <>
+                  {/* Round preview */}
+                  <div className="w-full space-y-1.5">
+                    {ROUNDS.map((r, i) => (
+                      <motion.div key={i}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: i * 0.08 }}
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl"
+                        style={{
+                          background: "linear-gradient(135deg, hsl(220 15% 12%), hsl(220 12% 8%))",
+                          border: "1px solid hsl(220 15% 16%)",
+                          borderLeft: `3px solid ${r.stormColor}`,
+                          borderBottom: "3px solid hsl(220 15% 6%)",
+                        }}>
+                        <span className="text-lg">{r.stormEmoji}</span>
+                        <div className="flex-1">
+                          <span className="font-display text-[9px] tracking-wider text-foreground/80">ROUND {r.number}</span>
+                          <p className="text-[8px] font-body text-muted-foreground">{r.overs} over{r.overs > 1 ? "s" : ""} • {r.stormEvent}</p>
+                        </div>
+                        <div className="text-right">
+                          <span className="font-display text-[9px]" style={{ color: r.stormColor }}>
+                            {Math.round(r.overs * 6 * r.targetMultiplier)}
+                          </span>
+                          <span className="text-[7px] font-body text-muted-foreground block">target</span>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                /* Leaderboard */
+                <div className="w-full space-y-1.5 min-h-[200px]">
+                  {lbLoading ? (
+                    <div className="flex items-center justify-center py-12">
+                      <motion.span animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }} className="text-2xl inline-block">⏳</motion.span>
+                    </div>
+                  ) : leaderboard.length === 0 ? (
+                    <div className="text-center py-12">
+                      <span className="text-3xl block mb-2">🏜️</span>
+                      <p className="font-body text-xs text-muted-foreground">No games played yet. Be the first!</p>
+                    </div>
+                  ) : (
+                    leaderboard.map((entry, i) => {
+                      const isMe = entry.user_id === user?.id;
+                      const medal = i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : null;
+                      return (
+                        <motion.div key={entry.user_id}
+                          initial={{ opacity: 0, x: -15 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.04 }}
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl"
+                          style={{
+                            background: isMe
+                              ? "linear-gradient(135deg, hsl(43 30% 12%), hsl(220 12% 8%))"
+                              : "linear-gradient(135deg, hsl(220 15% 12%), hsl(220 12% 8%))",
+                            border: isMe ? "1.5px solid hsl(43 60% 35%)" : "1px solid hsl(220 15% 16%)",
+                            borderBottom: isMe ? "3px solid hsl(43 50% 20%)" : "3px solid hsl(220 15% 6%)",
+                          }}>
+                          <div className="w-6 text-center shrink-0">
+                            {medal ? <span className="text-sm">{medal}</span> : (
+                              <span className="font-display text-[10px] text-muted-foreground">{i + 1}</span>
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-display text-[10px] tracking-wider truncate" style={{ color: isMe ? "hsl(43 90% 60%)" : "hsl(220 15% 80%)" }}>
+                              {entry.display_name} {isMe ? "(YOU)" : ""}
+                            </p>
+                            <div className="flex gap-2 mt-0.5">
+                              <span className="text-[8px] font-body text-muted-foreground">
+                                👑 {entry.champions}
+                              </span>
+                              <span className="text-[8px] font-body text-muted-foreground">
+                                🏏 {entry.games_played}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <p className="font-display text-[11px] font-bold" style={{ color: entry.champions > 0 ? "hsl(43 90% 55%)" : "hsl(220 15% 65%)" }}>
+                              {entry.total_runs}
+                            </p>
+                            <span className="text-[7px] font-body text-muted-foreground">runs</span>
+                          </div>
+                        </motion.div>
+                      );
+                    })
+                  )}
+                </div>
+              )}
+
+              <GameButton variant="primary" size="lg" bounce onClick={handleStart} className="w-full mt-auto">
                 ⚡ DROP IN
               </GameButton>
             </motion.div>
