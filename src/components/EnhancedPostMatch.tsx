@@ -66,29 +66,34 @@ function getStarRating(result: string, playerScore: number, opponentScore: numbe
 }
 
 const CONFETTI_COLORS = [
-  "hsl(43 96% 56%)", "hsl(142 71% 45%)", "hsl(4 90% 58%)",
-  "hsl(280 70% 55%)", "hsl(200 80% 55%)", "hsl(320 70% 60%)",
+  "#FFD700", "#4CAF50", "#FF6B35", "#A855F7", "#00D4FF", "#FFF",
 ];
 
 function ConfettiParticles() {
   return (
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
-      {[...Array(30)].map((_, i) => {
+      {[...Array(50)].map((_, i) => {
         const size = 4 + Math.random() * 6;
-        const isCircle = Math.random() > 0.5;
+        const isCircle = Math.random() > 0.6;
+        const isStar = !isCircle && Math.random() > 0.5;
         return (
           <motion.div
             key={i}
             initial={{ y: -20, x: `${Math.random() * 100}%`, opacity: 1, rotate: 0, scale: 1 }}
-            animate={{ y: "110vh", rotate: 360 * (Math.random() > 0.5 ? 2 : -2), scale: [1, 0.8, 1] }}
+            animate={{
+              y: "110vh",
+              rotate: 360 * (Math.random() > 0.5 ? 2 : -2),
+              x: `${Math.random() * 100}%`,
+            }}
             transition={{ duration: 2.5 + Math.random() * 3, delay: Math.random() * 2, repeat: Infinity, ease: "linear" }}
             className="absolute"
             style={{
               left: `${Math.random() * 100}%`,
               width: size,
               height: isCircle ? size : size * 1.5,
-              borderRadius: isCircle ? "50%" : "2px",
+              borderRadius: isCircle ? "50%" : isStar ? "2px" : "1px",
               background: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+              boxShadow: `0 0 4px ${CONFETTI_COLORS[i % CONFETTI_COLORS.length]}40`,
             }}
           />
         );
