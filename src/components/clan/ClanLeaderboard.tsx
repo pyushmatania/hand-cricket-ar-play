@@ -460,6 +460,99 @@ export default function ClanLeaderboard() {
         )}
       </AnimatePresence>
 
+      {/* Compare Modal */}
+      <AnimatePresence>
+        {compareData && (
+          <motion.div key="compare-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-end justify-center"
+            onClick={() => { setCompareData(null); setCompareMode(false); setCompareSelections([]); }}>
+            <motion.div initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              onClick={e => e.stopPropagation()}
+              className="w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-t-3xl"
+              style={{ background: "linear-gradient(180deg, hsl(220 15% 10%), hsl(220 12% 6%))", borderTop: "2px solid hsl(190 80% 50% / 0.2)" }}>
+              <div className="flex justify-center pt-3 pb-1"><div className="w-10 h-1 rounded-full bg-white/20" /></div>
+              <div className="px-4 pb-6 space-y-4">
+                {/* VS Header */}
+                <div className="flex items-center justify-center gap-4 pt-2">
+                  <div className="text-center flex-1">
+                    <span className="text-4xl block mb-1">{compareData.a.clan.emoji}</span>
+                    <h4 className="font-display text-xs font-black text-foreground truncate">{compareData.a.clan.name}</h4>
+                    <span className="text-[8px] text-muted-foreground font-display">[{compareData.a.clan.tag}]</span>
+                  </div>
+                  <div className="scoreboard-metal rounded-full w-10 h-10 flex items-center justify-center flex-shrink-0">
+                    <span className="font-display text-[10px] font-black text-neon-cyan">VS</span>
+                  </div>
+                  <div className="text-center flex-1">
+                    <span className="text-4xl block mb-1">{compareData.b.clan.emoji}</span>
+                    <h4 className="font-display text-xs font-black text-foreground truncate">{compareData.b.clan.name}</h4>
+                    <span className="text-[8px] text-muted-foreground font-display">[{compareData.b.clan.tag}]</span>
+                  </div>
+                </div>
+
+                {/* Stat comparison bars */}
+                {([
+                  { label: "LEVEL", a: compareData.a.clan.level, b: compareData.b.clan.level, color: "neon-cyan" },
+                  { label: "MEMBERS", a: compareData.a.members.length, b: compareData.b.members.length, color: "neon-green" },
+                  { label: "WAR WINS", a: compareData.a.clan.war_wins, b: compareData.b.clan.war_wins, color: "game-gold" },
+                  { label: "STARS", a: compareData.a.clan.total_stars, b: compareData.b.clan.total_stars, color: "game-gold" },
+                  { label: "TROPHIES", a: compareData.a.trophies.length, b: compareData.b.trophies.length, color: "neon-cyan" },
+                ] as const).map(stat => {
+                  const max = Math.max(stat.a, stat.b, 1);
+                  const aWins = stat.a > stat.b;
+                  const bWins = stat.b > stat.a;
+                  return (
+                    <div key={stat.label} className="space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className={`font-display text-xs font-black tabular-nums ${aWins ? `text-${stat.color}` : "text-foreground"}`}>{stat.a}</span>
+                        <span className="font-display text-[8px] tracking-widest text-muted-foreground">{stat.label}</span>
+                        <span className={`font-display text-xs font-black tabular-nums ${bWins ? `text-${stat.color}` : "text-foreground"}`}>{stat.b}</span>
+                      </div>
+                      <div className="flex gap-1 h-1.5">
+                        <div className="flex-1 rounded-full bg-white/5 overflow-hidden flex justify-end">
+                          <motion.div initial={{ width: 0 }} animate={{ width: `${(stat.a / max) * 100}%` }}
+                            className={`h-full rounded-full ${aWins ? "bg-neon-cyan" : "bg-white/20"}`} />
+                        </div>
+                        <div className="flex-1 rounded-full bg-white/5 overflow-hidden">
+                          <motion.div initial={{ width: 0 }} animate={{ width: `${(stat.b / max) * 100}%` }}
+                            className={`h-full rounded-full ${bWins ? "bg-neon-cyan" : "bg-white/20"}`} />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                {/* Trophy breakdown */}
+                <div className="stadium-glass rounded-2xl p-3">
+                  <div className="scoreboard-metal rounded-xl px-3 py-2 mb-2">
+                    <h4 className="font-display text-[10px] tracking-widest text-neon-cyan/80 font-bold">🏆 TROPHY BREAKDOWN</h4>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    {(["gold", "silver", "bronze"] as const).map(type => {
+                      const emoji = type === "gold" ? "🏆" : type === "silver" ? "🥈" : "🥉";
+                      return (
+                        <div key={type}>
+                          <span className="text-lg block">{emoji}</span>
+                          <div className="flex items-center justify-center gap-2 mt-1">
+                            <span className="font-display text-xs font-black text-foreground tabular-nums">{compareData.a.clan.trophyCounts[type]}</span>
+                            <span className="text-[7px] text-muted-foreground">vs</span>
+                            <span className="font-display text-xs font-black text-foreground tabular-nums">{compareData.b.clan.trophyCounts[type]}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <V10Button variant="secondary" size="md" onClick={() => { setCompareData(null); setCompareMode(false); setCompareSelections([]); }} className="w-full">
+                  CLOSE
+                </V10Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Header */}
       <div className="scoreboard-metal rounded-2xl p-4 text-center">
         <span className="text-4xl block mb-1">🏆</span>
