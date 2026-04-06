@@ -12,11 +12,15 @@ export default {
     },
     extend: {
       fontFamily: {
-        /* V8 Typography — 3 fonts, 3 roles */
+        /* V10 Typography — 3 fonts, 3 roles */
         display: ["Bungee", "sans-serif"],           /* HERO: scores, titles, popups, buttons */
         "game-title": ["Rajdhani", "sans-serif"],    /* UI: nav, stats, cards, sub-headings */
         "game-body": ["Outfit", "sans-serif"],       /* BODY: descriptions, chat, tooltips */
-        /* V8 aliases */
+        /* V10 aliases */
+        "v10-display": ["Bungee", "sans-serif"],
+        "v10-ui": ["Rajdhani", "sans-serif"],
+        "v10-body": ["Outfit", "sans-serif"],
+        /* V8 compat aliases */
         "v8-display": ["Bungee", "sans-serif"],
         "v8-ui": ["Rajdhani", "sans-serif"],
         "v8-body": ["Outfit", "sans-serif"],
@@ -65,14 +69,14 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        /* V8 Neon Colors */
+        /* V10 Core Colors */
         "neon-green": "hsl(var(--neon-green))",
         "neon-cyan": "hsl(var(--neon-cyan))",
         "neon-pink": "hsl(var(--neon-pink))",
         "neon-gold": "hsl(var(--neon-gold))",
         "neon-orange": "hsl(var(--neon-orange))",
         "neon-purple": "hsl(var(--neon-purple))",
-        /* V8 Cricket */
+        /* Cricket */
         "cricket-red": "hsl(var(--cricket-red))",
         "cricket-willow": "hsl(var(--cricket-willow))",
         "cricket-grass": "hsl(var(--cricket-grass))",
@@ -126,8 +130,10 @@ export default {
         "game-card": "0 8px 24px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06)",
         "game-button": "0 7px 0 rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,0,0.35)",
         "game-button-pressed": "0 3px 0 rgba(0,0,0,0.15), 0 5px 10px rgba(0,0,0,0.25)",
-        "game-glow-green": "0 0 20px rgba(0,255,136,0.4), 0 0 60px rgba(0,255,136,0.2)",
+        "game-glow-green": "0 0 20px rgba(74,222,80,0.4), 0 0 60px rgba(74,222,80,0.2)",
         "game-glow-gold": "0 0 20px rgba(255,215,0,0.4), 0 0 60px rgba(255,215,0,0.2)",
+        "game-glow-cyan": "0 0 20px rgba(0,212,255,0.4), 0 0 60px rgba(0,212,255,0.2)",
+        "game-glow-pink": "0 0 20px rgba(255,45,123,0.4), 0 0 60px rgba(255,45,123,0.2)",
         "stadium-glass": "0 8px 28px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.07)",
       },
       keyframes: {
@@ -165,6 +171,12 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-7px)" },
         },
+        "spring-pop": {
+          "0%": { transform: "scale(1)" },
+          "30%": { transform: "scale(0.90)" },
+          "60%": { transform: "scale(1.02)" },
+          "100%": { transform: "scale(1)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -175,6 +187,7 @@ export default {
         "scale-in": "scale-in 0.2s ease-out",
         "bounce-in": "bounce-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)",
         "float": "float 4.5s ease-in-out infinite",
+        "spring-pop": "spring-pop 0.2s cubic-bezier(0.34,1.56,0.64,1)",
       },
     },
   },
