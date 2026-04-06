@@ -535,7 +535,7 @@ export default function LeaderboardPage() {
                 🏆
               </div>
               <div>
-                <img src={stoneLeaderboardImg} alt="Leaderboard" style={{ height: 28, width: "auto", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.6))" }} />
+                <StoneHeader src={stoneLeaderboardImg} alt="Leaderboard" height={28} />
                 <span className="font-display text-[8px] text-muted-foreground tracking-[0.2em]">COMPETE & CLIMB</span>
               </div>
             </div>

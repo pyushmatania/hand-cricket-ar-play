@@ -173,7 +173,7 @@ export default function FriendsPage() {
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-4 flex items-center gap-3">
           <div className="w-11 h-11 rounded-2xl flex items-center justify-center text-xl wood-panel-dark border border-[#FFD700]/20">👥</div>
           <div>
-            <img src={stoneFriendsImg} alt="Friends" style={{ height: 28, width: "auto", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.6))" }} />
+            <StoneHeader src={stoneFriendsImg} alt="Friends" height={28} />
             <span className="font-display text-[8px] text-muted-foreground tracking-[0.2em]">PLAY TOGETHER</span>
           </div>
         </motion.div>

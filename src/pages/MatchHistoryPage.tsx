@@ -182,7 +182,7 @@ export default function MatchHistoryPage() {
             ←
           </motion.button>
           <div className="flex-1">
-            <img src={stoneMatchHistoryImg} alt="Match History" style={{ height: 30, width: "auto", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.6))" }} />
+            <StoneHeader src={stoneMatchHistoryImg} alt="Match History" height={30} />
             <span className="text-[9px] text-muted-foreground font-display tracking-[0.2em]">{matches.length} MATCHES PLAYED</span>
           </div>
           {/* Best score badge */}
