@@ -708,6 +708,205 @@ export default function ClanWars({ clan, myRole }: ClanWarsProps) {
             </div>
           </motion.div>
         )}
+
+        {/* ─── WAR RESULTS ─── */}
+        {warPhase === "war_results" && resultWar && (
+          <motion.div key="war_results" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="space-y-4">
+            <button onClick={() => { setWarPhase("overview"); setResultWar(null); }}
+              className="text-[9px] font-display text-muted-foreground hover:text-foreground transition-colors">← BACK</button>
+
+            {(() => {
+              const rIsA = resultWar.clan_a_id === clan.id;
+              const rMyStars = rIsA ? resultWar.clan_a_stars : resultWar.clan_b_stars;
+              const rOppStars = rIsA ? resultWar.clan_b_stars : resultWar.clan_a_stars;
+              const rMyScore = rIsA ? resultWar.clan_a_score : resultWar.clan_b_score;
+              const rOppScore = rIsA ? resultWar.clan_b_score : resultWar.clan_a_score;
+              const won = resultWar.winner_clan_id === clan.id;
+              const draw = !resultWar.winner_clan_id;
+              const xpEarned = won ? 200 : draw ? 100 : 50;
+
+              // Find MVP (highest total stars from our clan's attacks)
+              const myClansAttacks = resultAttacks.filter(a => a.clan_id === clan.id);
+              const oppClansAttacks = resultAttacks.filter(a => a.clan_id !== clan.id);
+              const mvp = myClansAttacks.length > 0
+                ? myClansAttacks.reduce((best, a) => a.stars_earned > best.stars_earned ? a : a.stars_earned === best.stars_earned && a.score > best.score ? a : best)
+                : null;
+
+              return (
+                <>
+                  {/* Result banner */}
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ type: "spring", damping: 12 }}
+                    className="text-center py-6 rounded-2xl relative overflow-hidden"
+                    style={{
+                      background: won
+                        ? "linear-gradient(180deg, hsl(142 30% 12%), hsl(220 12% 6%))"
+                        : draw
+                          ? "linear-gradient(180deg, hsl(43 30% 12%), hsl(220 12% 6%))"
+                          : "linear-gradient(180deg, hsl(0 30% 12%), hsl(220 12% 6%))",
+                      border: won
+                        ? "2px solid hsl(142 60% 40% / 0.4)"
+                        : draw
+                          ? "2px solid hsl(43 60% 40% / 0.4)"
+                          : "2px solid hsl(0 50% 40% / 0.4)",
+                      borderBottom: "5px solid hsl(220 15% 5%)",
+                    }}>
+                    <motion.span
+                      className="text-5xl block mb-2"
+                      animate={{ scale: [1, 1.1, 1] }}
+                      transition={{ repeat: Infinity, duration: 2 }}
+                    >
+                      {won ? "🏆" : draw ? "🤝" : "💔"}
+                    </motion.span>
+                    <h2 className="font-display text-2xl font-black tracking-wider"
+                      style={{
+                        color: won ? "hsl(142 71% 55%)" : draw ? "hsl(43 90% 55%)" : "hsl(0 70% 58%)",
+                        textShadow: "0 3px 0 hsl(220 18% 6%)",
+                      }}>
+                      {won ? "VICTORY!" : draw ? "DRAW" : "DEFEAT"}
+                    </h2>
+                    <p className="text-[9px] font-body text-muted-foreground mt-1">
+                      +{xpEarned} Clan XP earned
+                    </p>
+                  </motion.div>
+
+                  {/* Scoreboard */}
+                  <div className="scoreboard-metal rounded-2xl p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="text-center flex-1">
+                        <span className="text-lg block">{clan.emoji}</span>
+                        <p className="font-display text-[9px] text-foreground/70 truncate">{clan.name}</p>
+                        <p className="font-display text-3xl font-black text-foreground tabular-nums mt-1">{rMyStars}</p>
+                        <div className="flex justify-center gap-0.5 mt-0.5">
+                          {[...Array(Math.min(rMyStars || 0, 15))].map((_, i) => <span key={i} className="text-[8px]">⭐</span>)}
+                        </div>
+                        <p className="text-[8px] font-body text-muted-foreground tabular-nums mt-1">{rMyScore || 0} runs</p>
+                      </div>
+                      <div className="px-3">
+                        <span className="font-display text-lg text-muted-foreground/40">VS</span>
+                      </div>
+                      <div className="text-center flex-1">
+                        <span className="text-lg block">{resultOppClan?.emoji || "🏏"}</span>
+                        <p className="font-display text-[9px] text-foreground/70 truncate">{resultOppClan?.name || "Opponent"}</p>
+                        <p className="font-display text-3xl font-black text-foreground tabular-nums mt-1">{rOppStars}</p>
+                        <div className="flex justify-center gap-0.5 mt-0.5">
+                          {[...Array(Math.min(rOppStars || 0, 15))].map((_, i) => <span key={i} className="text-[8px]">⭐</span>)}
+                        </div>
+                        <p className="text-[8px] font-body text-muted-foreground tabular-nums mt-1">{rOppScore || 0} runs</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* MVP */}
+                  {mvp && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                      className="rounded-xl p-3 text-center"
+                      style={{
+                        background: "linear-gradient(135deg, hsl(43 30% 12%), hsl(220 12% 8%))",
+                        border: "2px solid hsl(43 60% 40% / 0.3)",
+                        borderBottom: "4px solid hsl(43 40% 18%)",
+                        boxShadow: "0 3px 12px hsl(43 90% 55% / 0.1)",
+                      }}>
+                      <span className="text-[8px] font-display tracking-[0.2em] text-muted-foreground">⭐ MVP ATTACKER ⭐</span>
+                      <div className="flex items-center justify-center gap-3 mt-2">
+                        <span className="text-2xl">🏅</span>
+                        <div>
+                          <p className="font-display text-sm" style={{ color: "hsl(43 90% 55%)" }}>
+                            {mvp.display_name || "Player"}
+                          </p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-[9px] font-body text-muted-foreground tabular-nums">
+                              {mvp.score} runs
+                            </span>
+                            <span className="text-[9px]">
+                              {"⭐".repeat(mvp.stars_earned)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* XP Earned Card */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="rounded-xl p-3"
+                    style={{
+                      background: "linear-gradient(180deg, hsl(220 15% 12%), hsl(220 12% 8%))",
+                      border: "1px solid hsl(220 15% 18%)",
+                      borderBottom: "3px solid hsl(220 15% 6%)",
+                    }}>
+                    <span className="text-[8px] font-display tracking-[0.2em] text-muted-foreground block mb-2">REWARDS</span>
+                    <div className="flex items-center justify-around">
+                      <div className="text-center">
+                        <motion.span
+                          className="font-display text-xl font-black block"
+                          style={{ color: "hsl(207 90% 60%)" }}
+                          animate={{ scale: [1, 1.15, 1] }}
+                          transition={{ delay: 0.5, duration: 0.5 }}
+                        >
+                          +{xpEarned}
+                        </motion.span>
+                        <span className="text-[7px] font-display tracking-widest text-muted-foreground">CLAN XP</span>
+                      </div>
+                      <div className="w-px h-8 bg-white/10" />
+                      <div className="text-center">
+                        <span className="font-display text-xl font-black block" style={{ color: "hsl(142 71% 55%)" }}>
+                          {myClansAttacks.length}
+                        </span>
+                        <span className="text-[7px] font-display tracking-widest text-muted-foreground">ATTACKS</span>
+                      </div>
+                      <div className="w-px h-8 bg-white/10" />
+                      <div className="text-center">
+                        <span className="font-display text-xl font-black block" style={{ color: "hsl(43 90% 55%)" }}>
+                          {rMyStars || 0}
+                        </span>
+                        <span className="text-[7px] font-display tracking-widest text-muted-foreground">STARS</span>
+                      </div>
+                    </div>
+                  </motion.div>
+
+                  {/* Attack log */}
+                  {myClansAttacks.length > 0 && (
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
+                      className="stadium-glass rounded-xl p-3">
+                      <span className="text-[8px] font-display tracking-[0.2em] text-muted-foreground block mb-2">OUR ATTACKS</span>
+                      <div className="space-y-1.5">
+                        {myClansAttacks.map(a => (
+                          <div key={a.id} className="flex items-center justify-between px-2 py-1.5 rounded-lg bg-white/[0.03] border border-white/5">
+                            <div className="flex items-center gap-2">
+                              <span className="text-[10px]">{PITCH_TYPES.find(p => p.id === a.pitch_type)?.emoji || "🟢"}</span>
+                              <div>
+                                <p className="font-display text-[9px] text-foreground">{a.display_name || "Player"}</p>
+                                <p className="text-[7px] font-body text-muted-foreground tabular-nums">{a.score}/{a.target_score}</p>
+                              </div>
+                            </div>
+                            <div className="flex gap-0.5">
+                              {[1, 2, 3].map(s => (
+                                <span key={s} className={`text-xs ${s <= a.stars_earned ? "" : "opacity-20"}`}>⭐</span>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+
+                  <V10Button variant="secondary" size="md" onClick={() => { setWarPhase("overview"); setResultWar(null); }} className="w-full">
+                    ← BACK TO WARS
+                  </V10Button>
+                </>
+              );
+            })()}
+          </motion.div>
+        )}
       </AnimatePresence>
     </div>
   );
