@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import stoneTeamBuilderImg from "@/assets/ui/stone-teambuilder.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, Save, Users, Zap, RotateCcw } from "lucide-react";
@@ -190,7 +191,7 @@ export default function TeamBuilderPage() {
           <ChevronLeft className="w-5 h-5 text-foreground" />
         </button>
         <div className="flex-1">
-          <h1 className="font-display text-lg text-foreground tracking-wide">TEAM BUILDER</h1>
+          <img src={stoneTeamBuilderImg} alt="TEAM BUILDER" style={{ height: 30, width: "auto", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.6))" }} />
           <span className="text-[9px] font-body text-muted-foreground">{filledCount}/11 players</span>
         </div>
         <motion.button whileTap={{ scale: 0.9 }} onClick={handleSave}

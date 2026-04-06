@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
+import stoneLuckySpinImg from "@/assets/ui/stone-luckyspin.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -197,7 +198,7 @@ export default function SpinWheelPage() {
         <button onClick={() => navigate(-1)} className="p-1">
           <ChevronLeft className="w-5 h-5 text-foreground" />
         </button>
-        <h1 className="font-display text-lg text-foreground tracking-wide">LUCKY SPIN</h1>
+        <img src={stoneLuckySpinImg} alt="LUCKY SPIN" style={{ height: 28, width: "auto", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.6))" }} />
         <div className="ml-auto flex items-center gap-1 px-2.5 py-1 rounded-full"
           style={{ background: "linear-gradient(135deg, hsl(35 40% 15%), hsl(35 30% 10%))", border: "1px solid hsl(35 30% 25%)" }}
         >

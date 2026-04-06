@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import stoneLeaderboardImg from "@/assets/ui/stone-leaderboard.png";
 import ScrollHint from "@/components/shared/ScrollHint";
 import { motion, AnimatePresence } from "framer-motion";
 import ShareButton from "@/components/share/ShareButton";
@@ -533,7 +534,7 @@ export default function LeaderboardPage() {
                 🏆
               </div>
               <div>
-                <h1 className="font-display text-lg text-foreground" style={{ textShadow: "0 2px 4px rgba(0,0,0,0.5)" }}>Leaderboard</h1>
+                <img src={stoneLeaderboardImg} alt="Leaderboard" style={{ height: 28, width: "auto", filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.6))" }} />
                 <span className="font-display text-[8px] text-muted-foreground tracking-[0.2em]">COMPETE & CLIMB</span>
               </div>
             </div>
