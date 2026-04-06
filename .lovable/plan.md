@@ -1,89 +1,136 @@
 
-# V8 SUPERCELL DESIGN BIBLE — 10-Phase Implementation
+# V10 ULTIMATE REBUILD — 10-Phase Plan
 
-This is a complete visual, material, and interaction overhaul based on the V8 spec. Supersedes V7. Uses AI image generation for all key assets.
+Based on CricketClash V10 Part 1 (Ultimate Rebuild Bible) + Part 2 (Secondary Screens + Cosmetics + Assets).
 
 ---
 
-## Phase 1: V8 Global Design System Foundation
-**What:** Replace V7 tokens with V8's complete system in `index.css` and `tailwind.config.ts`. Add the 7-layer background stack (`game-screen` class), update fonts to use Bungee (display), Rajdhani (UI), Outfit (body). Define spacing tokens, all CSS variables from the V8 color palette (--bg-void through --border-team). Add cricket-specific tokens (--cricket-red, --cricket-willow, --cricket-grass, --cricket-white, --stump-gold).
+## Phase 1: Design DNA + Materials + Typography
+**Scope:** Replace all V8 tokens with V10's definitive system.
+- Update `index.css` with V10 color foundation (#4ADE50 Cricket Green, #FFD700 Trophy Gold, #00D4FF Stadium Cyan, #FF2D7B Neon Pink, #FF6B35 Neon Orange, #A855F7 Neon Purple)
+- Update `tailwind.config.ts` with all V10 tokens
+- Add 3 fonts: Bungee (display), Rajdhani 600/700 (UI), Outfit 400/500 (body)
+- Implement 5 V10 material classes: Stadium Glass, Scoreboard Metal, Pitch Turf, Holo Chrome, Cricket Leather
+- Add text effects: Neon Glow, 3D Extrusion, Gradient Fill
+- Add V10 animation timing system + screen shake profiles
+- Generate cricket leather texture asset via AI
 
 **Files:** `index.css`, `tailwind.config.ts`, `index.html`
 
 ---
 
-## Phase 2: V8 5 Material Classes
-**What:** Replace V7's 4 materials with V8's 5: Stadium Glass (`.stadium-glass`), Pitch Turf (`.pitch-turf`), Scoreboard Metal (`.scoreboard-metal`), Holo Chrome (`.holo-chrome`), Cricket Leather (`.cricket-leather` — NEW). Each material has hover/active/disabled states, team accent stripe, edge light bleed. Generate AI texture images for cricket-grid pattern, noise grain, and leather seam texture.
+## Phase 2: Component Library (Buttons + Avatar + Shared)
+**Scope:** Build V10's shared component system.
+- V10 Button System: Primary (green gradient + 6px depth bar + press physics), BATTLE (68px, crossed bats, idle pulse, sparkle), Secondary, Danger, Icon, Currency
+- PlayerAvatar rebuild: rounded-square 28% radius, team gradient border, XP ring SVG, level badge, online indicator
+- CurrencyPill, CardFrame, Badge, GameProgressBar updates
+- GameToggle component (3D Cricket Leather switch)
 
-**Files:** `index.css`, generate 3 texture assets
-
----
-
-## Phase 3: V8 Component Library — Buttons & Avatar
-**What:** Create reusable V8 button components: `.btn-primary` (green gradient, 6px bottom bar, press sink animation, shine sweep), `.btn-secondary` (stadium glass), `.btn-danger` (pink gradient), `.btn-icon` (circle), `.btn-currency-add` (+). Rebuild `PlayerAvatar` with V8 spec: rounded-square 28% radius, gradient team border, XP ring SVG, level badge, online indicator. 
-
-**Files:** New `src/components/v8/V8Button.tsx`, `src/components/v8/V8Avatar.tsx`, `index.css` (button animations)
+**Files:** `src/components/shared/GameButton.tsx`, `src/components/PlayerAvatar.tsx`, shared components
 
 ---
 
-## Phase 4: V8 Home Screen — Top Identity Bar + Chest Banners
-**What:** Delete current HomePage top bar. Rebuild with V8 spec: Stadium Glass bar, V8Avatar (72px), player name (Rajdhani Bold 16px), clan name, trophy chip (scoreboard-metal pill with gold trophy), currency chips (scoreboard-metal pills with spinning coin/gem + add buttons), settings/bell icon buttons. Fade bottom edge with mask-image. Two chest banners below: Free Chest (warm gradient, bouncing chest icon, golden pulse) and Wicket Chest (cool gradient, progress bar).
+## Phase 3: BattleHub (New Home Screen) + Stadium Pitch Hero
+**Scope:** Replace HomePage with the merged BattleHub.
+- Create `BattleHub.tsx` (replaces HomePage + PlayPage)
+- Create `StadiumPitchHero.tsx` — 3/4 perspective pitch scene (replaces floating islands)
+- Generate 7 arena-specific stadium pitch images via AI (Gully, School, District, Ranji, IPL, International, World Cup)
+- Top Identity Bar (76px, Stadium Glass, avatar + name + currency chips)
+- Chest Banner Row (Free Chest + Wicket Chest)
+- Stats bar + BATTLE button with V10 spec (cricket leather, sparkles, shine sweep)
+- Update App.tsx routing
 
-**Files:** `src/pages/HomePage.tsx` (top section)
-
----
-
-## Phase 5: V8 Home Screen — Arena Title + 3D Floating Island
-**What:** Arena title in Bungee with team-primary glow + 7 progression dots. Generate 7 unique AI island images (Gully Grounds, School Playground, District Stadium, Ranji Stadium, IPL Arena, International Ground, World Cup). Each island has its own style per V8 spec. Island bobs 7px over 4.5s. Swipeable arena carousel. Stats overlay strip below island.
-
-**Files:** `src/pages/HomePage.tsx`, generate 7 island images
-
----
-
-## Phase 6: V8 Home Screen — BATTLE Button + Stats Bar + Mode Cards
-**What:** Rebuild BATTLE button per V8 spec: 68px tall, 26px Bungee text, crossed-bats icon, idle pulse (15→45→15px glow), shine sweep every 4s, sparkle dots, arena badge pill. Stats bar ABOVE button (scoreboard-metal strip: MATCHES | WINS | WIN%). Three mode cards (TAP/PVP/AR) as Stadium Glass cards with team accent stripes, animated icons, and chrome brackets.
-
-**Files:** `src/pages/HomePage.tsx`
+**Files:** `src/pages/BattleHub.tsx`, `src/components/StadiumPitchHero.tsx`, new assets
 
 ---
 
-## Phase 7: V8 Home Screen — Chest Slots + Secondary Modes
-**What:** 4 chest slots per V8 spec: Empty (dashed border, ghost outline), Locked (padlock, desaturated), Unlocking (circular SVG timer ring, cyan accent), Ready (gold border, bouncing chest, conic-gradient light rays, "OPEN!" text). Secondary modes list with Stadium Glass cards and team accent left borders. Arena progress bar with pitch-turf material.
+## Phase 4: Navigation (BottomNav + TopBar) + Mode Grids
+**Scope:** Full rebuild of navigation + mode selection.
+- BottomNav: Stadium Glass, SVG icons (replace emojis), 68px + safe-area, center Battle tab circle, neon-green active indicator, musical scale tab sounds
+- TopBar: Stadium Glass, avatar + name + clan + currency pills
+- PrimaryModeGrid: 2x2 grid (TAP, AR, PVP, TOURNAMENT) with mode gradients
+- SecondaryModeList: 8 compact horizontal cards
+- ChestSlotRow: 4 states (Empty, Locked, Unlocking, Ready)
 
-**Files:** `src/pages/HomePage.tsx`
-
----
-
-## Phase 8: V8 Living Particles + 7-Layer Background
-**What:** Replace V7 CSS particles with V8's full particle system: 25-35 dust motes, team-colored at 12-22% opacity, sine-wave horizontal drift, 10-18s lifespan. Implement all 7 background layers: void base, stadium gradient wash (team-colored floodlight spill), cricket pitch grid pattern, film grain noise, atmospheric haze, radial vignette, living particles. Generate cricket-grid.png and noise256.png textures via AI.
-
-**Files:** `src/pages/HomePage.tsx`, `index.css`, generate texture assets
+**Files:** `src/components/BottomNav.tsx`, `src/components/layout/TopBar.tsx`, new mode components
 
 ---
 
-## Phase 9: V8 Animation Bible + Interaction Polish
-**What:** Implement V8 animation timing/easing system. Screen shake profiles (Feather/Light/Medium/Heavy/Earthquake). Button press physics (translateY + shadow shrink on press, 80ms). Staggered section entrances with spring physics. Neon text glow library (green/cyan/pink/gold/purple). Shimmer sweep animation on idle buttons. Trophy spin animation (rotateY 6s). Gem prismatic hue-rotate. All hover/active/disabled states per V8 material specs.
+## Phase 5: Gameplay Screen Rebuild (Hybrid Pitch + Tap UI + Scoreboard)
+**Scope:** Full rebuild of the core gameplay experience.
+- Hybrid view: 3D pitch background from batsman perspective
+- Tap Mode: 7 circular buttons (0-6) in semi-circle pitch zones, Stadium Glass, 3D press
+- Scoreboard: Scoreboard Metal bar, LED-style numbers, team logos, target info, momentum sparkline
+- Ball Tracker: colored circles per ball result
+- Bowler delivery animation sequence
 
-**Files:** `index.css`, `src/pages/HomePage.tsx`
-
----
-
-## Phase 10: V8 Bottom Tab Bar + Final Polish
-**What:** Rebuild BottomNav per V8 spec: Stadium Glass material, 68px + safe-area, rounded top (22px), 5 tabs (Shop/Collection/Battle/Clan/Rankings), active tab has neon-green pill indicator + filled icon + upward glow. Each tab has pitch-varied tap sound. Final responsive sizing pass, performance optimization (reduce-motion support), and comprehensive visual QA.
-
-**Files:** `src/components/BottomNav.tsx`, `index.css`
+**Files:** `src/components/GameScreen.tsx`, `src/components/TapGameScreen.tsx`, `src/components/TapPlayingUI.tsx`, `src/components/ScoreBoard.tsx`
 
 ---
 
-### NOT in this plan (future):
-- VS/Pre-match screen animation sequence (Ch 6)
-- Lobby/Matchmaking UX (Ch 7)
-- Match/Gameplay screen rebuild (Ch 8)
-- Player Cards & Collection screen (Ch 9)
-- Chest opening ceremony (Ch 10)
-- Shop, Clan, Tournament, Profile screen rebuilds (Ch 11-15)
-- Scoring popups (Ch 16)
-- Sound design integration (Ch 17)
-- Haptic feedback system (Ch 18)
+## Phase 6: Scoring Popups (FOUR/SIX/OUT Choreography)
+**Scope:** Frame-by-frame popup animations per V10 intensity hierarchy.
+- FOUR!: 68px orange, slide-in from right, speed lines, shockwave, bat crack + crowd roar
+- SIX!: 92px green gradient, slam down, screen shake (6 jolts), confetti (80+), fireworks (3), text disintegration
+- OUT!: 76px pink cracked, explode from center, stump shatter, vignette intensify, context-dependent crowd
+- Dot Ball / Single: minimal popups
+- CelebrationEffects, StumpHitAnimation, CanvasFireworks rebuilds
 
-**Shall I start with Phase 1?**
+**Files:** `src/components/ShotResultOverlay.tsx`, `src/components/CelebrationEffects.tsx`, `src/components/StumpHitAnimation.tsx`, `src/components/CanvasFireworks.tsx`
+
+---
+
+## Phase 7: VS Screen + Lobby + Post-Match
+**Scope:** Full rebuild of match flow screens.
+- VS Screen: Diagonal energy seam, massive characters, VS 108px Bungee + 3D extrusion, frame-by-frame entrance choreography
+- Lobby/WaitingRoom: Team-colored side + dark opponent silhouette, heartbeat audio, MATCH FOUND flash sequence
+- Post-Match: VICTORY (gold glow + confetti + fireworks + fanfare) vs DEFEAT (muted pink + dark vignette + somber)
+- TrophyCeremony enhancements
+
+**Files:** `src/components/VSIntroScreen.tsx`, `src/components/WaitingRoom.tsx`, `src/components/EnhancedPostMatch.tsx`, `src/components/TrophyCeremony.tsx`
+
+---
+
+## Phase 8: Cards + Collection + Chest Opening
+**Scope:** Full rebuild of card system and chest ceremony.
+- PlayerCard: Pointed arch shield shape, character fills top 55%, rarity glow bar, ribbon name banner, 6-stat diamond grid, rarity borders (Common→Mythic)
+- CollectionPage: Horizontal rows like Clash Royale, 80px per row
+- ChestReveal: Quilted diamond background, velvet pillow pedestal, tap-to-shake-crack-burst-cards sequence, legendary dramatic pause
+- Generate card frame assets + chest assets via AI
+
+**Files:** `src/components/PlayerCard.tsx`, `src/components/CollectionPlayerCard.tsx`, `src/pages/CollectionPage.tsx`, `src/components/shop/ChestReveal.tsx`
+
+---
+
+## Phase 9: Secondary Screens (Part 2)
+**Scope:** Reskin/rebuild all secondary screens per V10 Part 2.
+- ShopPage: Featured chest carousel, daily deals, item grid, purchase modal
+- ProfilePage: Hero banner, stats chips, trophy cabinet, cosmetics carousel
+- ClanPage: 5 tabs (Info, Chat, Donate, War, Browse)
+- BattlePassPage: Horizontal 60-tier track, free vs premium, diamond marker
+- LeaderboardPage: Top 3 podium, rivalry card, weekly challenges
+- SettingsPage, FriendsPage, DailyRewardsPage, SpinWheelPage, MatchHistoryPage, NotificationsPage, TeamBuilderPage
+- OnboardingTutorial: 6-step guided interactive experience
+
+**Files:** All secondary page files + related components
+
+---
+
+## Phase 10: Sound + Haptics + 3D Assets + Polish
+**Scope:** Complete sensory layer + asset generation + final polish.
+- Rebuild `src/lib/sounds.ts` with 85+ Web Audio API SFX (frequencies, durations, volumes per V10 spec)
+- Map 85+ haptic interactions (iOS UIImpactFeedback + Android equivalents)
+- Generate remaining 3D assets via AI: characters (CSK batsman, MI bowler, RCB all-rounder), chest set (7 tiers), card frames (5 rarities), tab bar icons, trophies, bat skins, spin wheel pointer, daily reward icons
+- Splash Screen enhancement: cricket ball arc, floodlight beams, flash exit
+- Performance pass: reduce-motion support, particle budgets, lazy loading
+- Cosmetics system update per V10 (bat skins, VS effects, avatar frames, button styles)
+
+**Files:** `src/lib/sounds.ts`, `src/components/SplashScreen.tsx`, asset generation, cosmetics files
+
+---
+
+### Total Scope
+- **35+ full rebuilds**, 15+ reskins, 5 new files, 2 deletions
+- **40+ AI-generated 3D assets**
+- **85+ sound effects**, 85+ haptic mappings
+- Every surface uses 1 of 5 materials, every interaction = visual + sound + haptic
