@@ -101,13 +101,13 @@ const getTimeAgo = (dateStr: string) => {
 const formatDate = (dateStr: string) =>
   new Date(dateStr).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
 
-/* ── V10 Stat Row — Stadium Glass ── */
+/* ── V11 Stat Row — Dark Wood Plank ── */
 function StatRow({ icon, label, value, color }: { icon: string; label: string; value: string | number; color?: string }) {
   return (
-    <div className="flex items-center justify-between py-2 border-b border-white/[0.04] last:border-0">
+    <div className="flex items-center justify-between py-2 border-b border-[#2E1A0E]/50 last:border-0">
       <div className="flex items-center gap-2">
         <span className="text-sm">{icon}</span>
-        <span className="text-[9px] text-muted-foreground font-display tracking-wider">{label}</span>
+        <span className="text-[9px] font-display tracking-wider" style={{ color: "#8B7355" }}>{label}</span>
       </div>
       <span className={`font-display text-sm font-black tabular-nums ${color || "text-foreground"}`}>{value}</span>
     </div>
