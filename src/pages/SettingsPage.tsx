@@ -10,6 +10,7 @@ import { SYSTEM_VOICE_PERSONAS, speakWithSystemPersona } from "@/lib/systemVoice
 import { BUTTON_STYLES } from "@/lib/cosmetics";
 import { supabase } from "@/integrations/supabase/client";
 import { speakElevenLabs } from "@/lib/elevenLabsAudio";
+import { setSoundEnabled, setHapticsEnabled } from "@/lib/sounds";
 
 const COMMENTARY_VOICES = [
   { id: "nPczCjzI2devNBz1zQrb", name: "Brian", desc: "Deep authoritative broadcaster", emoji: "🎙️" },
@@ -119,6 +120,10 @@ export default function SettingsPage() {
   const [previewingVoice, setPreviewingVoice] = useState<string | null>(null);
   const [selectedButtonStyle, setSelectedButtonStyle] = useState<string>("classic");
   const [versionTaps, setVersionTaps] = useState(0);
+
+  // Sync sound/haptics toggles to the Web Audio SFX engine
+  useEffect(() => { setSoundEnabled(settings.soundEnabled); }, [settings.soundEnabled]);
+  useEffect(() => { setHapticsEnabled(settings.hapticsEnabled); }, [settings.hapticsEnabled]);
 
   // Load current button style
   useEffect(() => {
