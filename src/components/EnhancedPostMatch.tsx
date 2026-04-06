@@ -12,7 +12,7 @@ import WagonWheel from "./WagonWheel";
 import TrophyCeremony from "./TrophyCeremony";
 import type { BallResult } from "@/hooks/useHandCricket";
 import victoryTrophy from "@/assets/victory-trophy.png";
-import GameButton from "./shared/GameButton";
+import V10Button from "./shared/V10Button";
 import ShareButton from "./share/ShareButton";
 import MatchShareCard from "./share/MatchShareCard";
 import LevelUpModal, { type MatchRewards } from "./LevelUpModal";
@@ -56,7 +56,6 @@ function computeStats(ballHistory: BallResult[]) {
   return { sixes, fours, threes, twos, singles, dots, biggestShot, totalBalls, strikeRate, boundaryPct, battingBalls, bestPartnership, totalRuns };
 }
 
-/* ── Star Rating ── */
 function getStarRating(result: string, playerScore: number, opponentScore: number, strikeRate: number): number {
   if (result === "loss") return strikeRate > 100 ? 1 : 0;
   if (result === "draw") return 2;
@@ -66,7 +65,6 @@ function getStarRating(result: string, playerScore: number, opponentScore: numbe
   return 1;
 }
 
-/* ── Confetti Particle ── */
 const CONFETTI_COLORS = [
   "hsl(43 96% 56%)", "hsl(142 71% 45%)", "hsl(4 90% 58%)",
   "hsl(280 70% 55%)", "hsl(200 80% 55%)", "hsl(320 70% 60%)",
@@ -82,17 +80,8 @@ function ConfettiParticles() {
           <motion.div
             key={i}
             initial={{ y: -20, x: `${Math.random() * 100}%`, opacity: 1, rotate: 0, scale: 1 }}
-            animate={{
-              y: "110vh",
-              rotate: 360 * (Math.random() > 0.5 ? 2 : -2),
-              scale: [1, 0.8, 1],
-            }}
-            transition={{
-              duration: 2.5 + Math.random() * 3,
-              delay: Math.random() * 2,
-              repeat: Infinity,
-              ease: "linear",
-            }}
+            animate={{ y: "110vh", rotate: 360 * (Math.random() > 0.5 ? 2 : -2), scale: [1, 0.8, 1] }}
+            transition={{ duration: 2.5 + Math.random() * 3, delay: Math.random() * 2, repeat: Infinity, ease: "linear" }}
             className="absolute"
             style={{
               left: `${Math.random() * 100}%`,
@@ -137,7 +126,6 @@ export default function EnhancedPostMatch({
     } else {
       if (soundEnabled) SFX.gameStart();
     }
-    // Cascade rewards after delay
     const t = setTimeout(() => setShowRewards(true), 1200);
     return () => { stopMusic(); clearTimeout(t); };
   }, [isWin, isLoss, soundEnabled, crowdEnabled]);
@@ -169,10 +157,10 @@ export default function EnhancedPostMatch({
   const runRate = stats.totalBalls > 0 ? ((stats.totalRuns / stats.totalBalls) * 6).toFixed(1) : "0.0";
 
   const resultBg = isWin
-    ? "linear-gradient(180deg, hsl(43 40% 8%) 0%, hsl(220 30% 6%) 100%)"
+    ? "linear-gradient(180deg, hsl(43 40% 6%) 0%, hsl(220 35% 5%) 100%)"
     : isLoss
-    ? "linear-gradient(180deg, hsl(4 30% 8%) 0%, hsl(220 30% 6%) 100%)"
-    : "linear-gradient(180deg, hsl(220 20% 12%) 0%, hsl(220 30% 6%) 100%)";
+    ? "linear-gradient(180deg, hsl(4 30% 6%) 0%, hsl(220 35% 5%) 100%)"
+    : "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 35% 5%) 100%)";
 
   return (
     <AnimatePresence>
@@ -184,10 +172,9 @@ export default function EnhancedPostMatch({
           className="fixed inset-0 z-[70] flex flex-col overflow-y-auto"
           style={{ background: resultBg }}
         >
-          {/* Confetti for wins */}
           {isWin && <ConfettiParticles />}
 
-          {/* Radial glow behind result text */}
+          {/* Radial glow */}
           <div
             className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[300px] pointer-events-none"
             style={{
@@ -207,7 +194,6 @@ export default function EnhancedPostMatch({
               transition={{ type: "spring", damping: 12 }}
               className="text-center pt-10 mb-2"
             >
-              {/* Trophy / Emoji */}
               {isWin ? (
                 <div className="mb-3">
                   <TrophyCeremony playerName={playerName} stars={stars} />
@@ -223,7 +209,6 @@ export default function EnhancedPostMatch({
                 </motion.span>
               )}
 
-              {/* VICTORY / DEFEAT text — Doc 1: Bungee Shade 48px */}
               <motion.h1
                 initial={{ scale: 0.3, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -240,7 +225,6 @@ export default function EnhancedPostMatch({
                 {isWin ? "VICTORY!" : isLoss ? "DEFEAT" : "TIED!"}
               </motion.h1>
 
-              {/* Margin text */}
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -269,34 +253,26 @@ export default function EnhancedPostMatch({
                   animate={{ rotateY: 0 }}
                   transition={{ delay: 0.9 + s * 0.15, type: "spring" }}
                   className="text-3xl"
-                  style={{
-                    filter: s <= stars ? "drop-shadow(0 0 8px hsl(43 96% 56% / 0.6))" : "grayscale(1) opacity(0.25)",
-                  }}
+                  style={{ filter: s <= stars ? "drop-shadow(0 0 8px hsl(43 96% 56% / 0.6))" : "grayscale(1) opacity(0.25)" }}
                 >
                   ⭐
                 </motion.span>
               ))}
             </motion.div>
 
-            {/* ── SCORECARD ── */}
+            {/* ── SCORECARD — scoreboard-metal ── */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="rounded-2xl p-4 mb-4"
-              style={{
-                background: "linear-gradient(180deg, hsl(220 25% 14%), hsl(220 30% 10%))",
-                border: "2px solid hsl(43 50% 30% / 0.3)",
-                boxShadow: "inset 0 1px 0 hsl(220 20% 22%), 0 4px 12px rgba(0,0,0,0.4)",
-              }}
+              className="rounded-2xl p-4 mb-4 scoreboard-metal"
             >
               <div className="flex items-center justify-center gap-1 mb-3">
                 <span className="text-xs">🏏</span>
                 <span className="font-display text-[9px] font-bold text-foreground/40 tracking-[0.3em]">SCORECARD</span>
               </div>
 
-              {/* Player row */}
-              <div className="flex items-center justify-between py-3 border-b border-border/20">
+              <div className="flex items-center justify-between py-3 border-b border-white/10">
                 <div className="flex items-center gap-2">
                   {isWin && <span className="text-sm">🏆</span>}
                   <span className="font-display text-sm font-black text-foreground">{playerName}</span>
@@ -308,7 +284,6 @@ export default function EnhancedPostMatch({
                 </div>
               </div>
 
-              {/* Opponent row */}
               <div className="flex items-center justify-between py-3">
                 <div className="flex items-center gap-2">
                   {isLoss && <span className="text-sm">🏆</span>}
@@ -321,7 +296,7 @@ export default function EnhancedPostMatch({
               </div>
             </motion.div>
 
-            {/* ── STATS GRID ── */}
+            {/* ── STATS GRID — stadium-glass cards ── */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -339,12 +314,7 @@ export default function EnhancedPostMatch({
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ delay: 0.55 + i * 0.06 }}
-                  className="rounded-xl p-2.5 text-center"
-                  style={{
-                    background: "hsl(220 25% 12%)",
-                    border: "1.5px solid hsl(220 20% 20%)",
-                    boxShadow: "inset 0 1px 0 hsl(220 20% 18%)",
-                  }}
+                  className="rounded-xl p-2.5 text-center stadium-glass"
                 >
                   <span className="text-sm block">{s.icon}</span>
                   <span className="font-score text-lg font-black block leading-none" style={{ color: s.color }}>{s.value}</span>
@@ -353,16 +323,12 @@ export default function EnhancedPostMatch({
               ))}
             </motion.div>
 
-            {/* ── SHOT DISTRIBUTION ── */}
+            {/* ── SHOT DISTRIBUTION — stadium-glass ── */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.6 }}
-              className="rounded-2xl p-3 mb-4"
-              style={{
-                background: "hsl(220 25% 10%)",
-                border: "1.5px solid hsl(220 20% 18%)",
-              }}
+              className="rounded-2xl p-3 mb-4 stadium-glass"
             >
               <span className="font-display text-[8px] font-bold text-foreground/25 tracking-[0.2em] block mb-2 text-center">SHOT DISTRIBUTION</span>
               <div className="flex items-end justify-center gap-3">
@@ -393,21 +359,17 @@ export default function EnhancedPostMatch({
               </div>
             </motion.div>
 
-            {/* ── WAGON WHEEL ── */}
+            {/* ── WAGON WHEEL — stadium-glass ── */}
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.7 }}
-              className="rounded-2xl p-3 mb-4"
-              style={{
-                background: "hsl(220 25% 10%)",
-                border: "1.5px solid hsl(220 20% 18%)",
-              }}
+              className="rounded-2xl p-3 mb-4 stadium-glass"
             >
               <WagonWheel ballHistory={ballHistory} isBatting={true} compact />
             </motion.div>
 
-            {/* ── PLAYER OF THE MATCH — Gold-chrome card ── */}
+            {/* ── PLAYER OF THE MATCH — scoreboard-metal frame ── */}
             <motion.div
               initial={{ y: 20, opacity: 0, rotateY: 90 }}
               animate={{ y: 0, opacity: 1, rotateY: 0 }}
@@ -418,23 +380,18 @@ export default function EnhancedPostMatch({
                 boxShadow: "0 0 40px hsl(43 96% 56% / 0.15), 0 8px 24px rgba(0,0,0,0.5)",
               }}
             >
-              <div className="rounded-[13px] p-5 text-center" style={{
-                background: "linear-gradient(180deg, hsl(43 30% 10%) 0%, hsl(220 25% 7%) 100%)",
-              }}>
-                {/* Trophy icon with glow */}
+              <div className="rounded-[13px] p-5 text-center scoreboard-metal">
                 <motion.div
                   animate={{ y: [0, -3, 0] }}
                   transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                   className="relative inline-block"
                 >
                   <span className="text-5xl block" style={{ filter: "drop-shadow(0 0 16px hsl(43 96% 56% / 0.5))" }}>🏅</span>
-                  {/* Radial glow behind icon */}
                   <div className="absolute inset-0 -m-4 rounded-full" style={{
                     background: "radial-gradient(circle, hsl(43 96% 56% / 0.12) 0%, transparent 70%)",
                   }} />
                 </motion.div>
 
-                {/* Label with chrome line accents */}
                 <div className="flex items-center justify-center gap-2 my-2">
                   <div className="h-px flex-1 max-w-[40px]" style={{ background: "linear-gradient(90deg, transparent, hsl(43 80% 50%))" }} />
                   <span className="font-display text-[8px] font-bold tracking-[0.35em]" style={{
@@ -445,7 +402,6 @@ export default function EnhancedPostMatch({
                   <div className="h-px flex-1 max-w-[40px]" style={{ background: "linear-gradient(270deg, transparent, hsl(43 80% 50%))" }} />
                 </div>
 
-                {/* Name with 3D gold treatment */}
                 <motion.p
                   initial={{ scale: 0.8 }}
                   animate={{ scale: 1 }}
@@ -461,14 +417,13 @@ export default function EnhancedPostMatch({
                   {isWin ? playerName : isLoss ? opponentName : "Shared!"}
                 </motion.p>
 
-                {/* Key stat line */}
                 <span className="font-body text-[9px] text-foreground/30 tracking-wider mt-1 block">
                   {stats.strikeRate > 150 ? "🔥 Explosive innings" : stats.sixes > 2 ? "💥 Power hitting" : "🎯 Solid performance"}
                 </span>
               </div>
             </motion.div>
 
-            {/* ── REWARDS CASCADE ── */}
+            {/* ── REWARDS CASCADE — stadium-glass ── */}
             <AnimatePresence>
               {showRewards && matchRewards && (
                 <motion.div
@@ -476,16 +431,11 @@ export default function EnhancedPostMatch({
                   animate={{ y: 0, opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
                   transition={{ type: "spring", damping: 12 }}
-                  className="rounded-2xl p-4 mb-6"
-                  style={{
-                    background: "linear-gradient(180deg, hsl(220 25% 14%), hsl(220 30% 10%))",
-                    border: "2px solid hsl(43 50% 30% / 0.25)",
-                    boxShadow: "0 0 20px hsl(43 96% 56% / 0.06)",
-                  }}
+                  className="rounded-2xl p-4 mb-6 stadium-glass"
+                  style={{ border: "2px solid hsl(43 50% 30% / 0.2)" }}
                 >
                   <span className="font-display text-[8px] font-bold tracking-[0.3em] text-foreground/30 block text-center mb-3">MATCH REWARDS</span>
                   <div className="flex items-center justify-center gap-6">
-                    {/* XP */}
                     <motion.div
                       initial={{ x: -20, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
@@ -502,7 +452,6 @@ export default function EnhancedPostMatch({
                       </div>
                     </motion.div>
 
-                    {/* Coins */}
                     <motion.div
                       initial={{ x: 20, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
@@ -520,7 +469,6 @@ export default function EnhancedPostMatch({
                     </motion.div>
                   </div>
 
-                  {/* Streak bonus badge */}
                   {matchRewards.streakBonus && (
                     <motion.div
                       initial={{ scale: 0 }}
@@ -543,9 +491,9 @@ export default function EnhancedPostMatch({
             </AnimatePresence>
           </div>
 
-          {/* ── BOTTOM ACTION BUTTONS ── Doc 1: PLAY AGAIN / SCORECARD / HOME */}
+          {/* ── BOTTOM ACTION BUTTONS — V10Button ── */}
           <div className="sticky bottom-0 p-4 pb-8 flex flex-col gap-2"
-            style={{ background: "linear-gradient(to top, hsl(220 30% 6%), hsl(220 30% 6% / 0.95), transparent)" }}>
+            style={{ background: "linear-gradient(to top, hsl(220 35% 5%), hsl(220 35% 5% / 0.95), transparent)" }}>
             <div className="flex gap-2">
               <ShareButton
                 title={`${isWin ? "🏆 Victory" : isLoss ? "Defeat" : "🤝 Tie"} — ${playerScore} vs ${opponentScore}`}
@@ -567,15 +515,14 @@ export default function EnhancedPostMatch({
                   />
                 )}
               />
-              <GameButton variant="gold" size="lg" bounce onClick={handleClose} className="flex-[2]">
+              <V10Button variant="gold" size="lg" onClick={handleClose} className="flex-[2]">
                 ▶ PLAY AGAIN
-              </GameButton>
+              </V10Button>
             </div>
           </div>
         </motion.div>
       )}
 
-      {/* Level Up / Rank Up Modal */}
       {showLevelUp && matchRewards && (
         <LevelUpModal
           rewards={matchRewards}

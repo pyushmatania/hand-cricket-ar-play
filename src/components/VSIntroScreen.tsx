@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import PlayerAvatar from "@/components/PlayerAvatar";
+import V10PlayerAvatar from "@/components/shared/V10PlayerAvatar";
 import { SFX } from "@/lib/sounds";
 import vsBatsman from "@/assets/vs-batsman.png";
 import vsBowler from "@/assets/vs-bowler.png";
@@ -29,9 +29,9 @@ export default function VSIntroScreen({
   const [stage, setStage] = useState<"enter" | "vs" | "flash" | "done">("enter");
 
   useEffect(() => {
-    try { SFX.ceremonyHorn(); } catch { /* Intentionally ignored - non-critical */ }
+    try { SFX.ceremonyHorn(); } catch { /* Intentionally ignored */ }
     const t1 = setTimeout(() => setStage("vs"), 800);
-    const t2 = setTimeout(() => { try { SFX.gameStart(); } catch { /* Intentionally ignored - non-critical */ } setStage("flash"); }, 2400);
+    const t2 = setTimeout(() => { try { SFX.gameStart(); } catch { /* Intentionally ignored */ } setStage("flash"); }, 2400);
     const t3 = setTimeout(() => { setStage("done"); onComplete(); }, 3400);
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
   }, [onComplete]);
@@ -45,40 +45,40 @@ export default function VSIntroScreen({
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[60] flex flex-col items-center justify-center overflow-hidden"
         >
-          {/* ── Diagonal Split Background ── */}
+          {/* ── V10 Diagonal Split Background ── */}
           <div className="absolute inset-0">
-            {/* Player side — team blue */}
+            {/* Player side — deep navy-blue */}
             <div
               className="absolute inset-0"
               style={{
-                background: "linear-gradient(135deg, hsl(217 80% 45%) 0%, hsl(217 70% 22%) 100%)",
+                background: "linear-gradient(135deg, hsl(217 80% 42%) 0%, hsl(220 50% 12%) 100%)",
                 clipPath: "polygon(0 0, 62% 0, 38% 100%, 0 100%)",
               }}
             />
-            {/* Opponent side — team red */}
+            {/* Opponent side — deep crimson */}
             <div
               className="absolute inset-0"
               style={{
-                background: "linear-gradient(225deg, hsl(4 80% 45%) 0%, hsl(4 70% 20%) 100%)",
+                background: "linear-gradient(225deg, hsl(4 75% 42%) 0%, hsl(4 50% 12%) 100%)",
                 clipPath: "polygon(62% 0, 100% 0, 100% 100%, 38% 100%)",
               }}
             />
-            {/* Diagonal gold slash */}
+            {/* V10 gold diagonal slash with glow */}
             <motion.div
               initial={{ opacity: 0, scaleX: 0 }}
               animate={{ opacity: stage !== "enter" ? 1 : 0, scaleX: 1 }}
               transition={{ duration: 0.4 }}
               className="absolute inset-0"
               style={{
-                background: "linear-gradient(153deg, transparent 47.5%, hsl(43 100% 65% / 0.7) 49%, hsl(43 100% 85% / 1) 50%, hsl(43 100% 65% / 0.7) 51%, transparent 52.5%)",
+                background: "linear-gradient(153deg, transparent 47%, hsl(43 100% 65% / 0.8) 49%, hsl(43 100% 90% / 1) 50%, hsl(43 100% 65% / 0.8) 51%, transparent 53%)",
               }}
             />
-            {/* Subtle jersey mesh texture */}
-            <div className="absolute inset-0 opacity-[0.04]" style={{
-              backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.1) 2px, rgba(255,255,255,0.1) 3px)",
+            {/* Stadium-glass frost overlay */}
+            <div className="absolute inset-0 opacity-[0.03]" style={{
+              backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255,255,255,0.08) 2px, rgba(255,255,255,0.08) 3px)",
             }} />
-            {/* Stadium vignette */}
-            <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.7) 100%)" }} />
+            {/* Vignette */}
+            <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center, transparent 25%, rgba(0,0,0,0.75) 100%)" }} />
           </div>
 
           {/* ── Impact Flash ── */}
@@ -88,18 +88,14 @@ export default function VSIntroScreen({
             className="absolute inset-0 bg-white pointer-events-none z-30"
           />
 
-          {/* ── Game Type Banner ── */}
+          {/* ── Game Type Banner — scoreboard-metal ── */}
           <motion.div
             initial={{ opacity: 0, y: -30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
             className="absolute top-10 left-1/2 -translate-x-1/2 z-20"
           >
-            <div className="px-5 py-2 rounded-xl" style={{
-              background: "linear-gradient(180deg, hsl(30 40% 22%), hsl(25 35% 14%))",
-              border: "2px solid hsl(25 30% 12%)",
-              boxShadow: "inset 0 1px 0 hsl(35 40% 30%), 0 4px 0 hsl(25 30% 10%), 0 6px 20px rgba(0,0,0,0.5)",
-            }}>
+            <div className="px-5 py-2 rounded-xl scoreboard-metal">
               <span className="font-display text-[10px] font-bold tracking-[0.3em]" style={{ color: "hsl(43 96% 56%)" }}>{gameLabel}</span>
             </div>
           </motion.div>
@@ -123,7 +119,7 @@ export default function VSIntroScreen({
               />
             </motion.div>
 
-            {/* ── Golden 3D VS Badge — Center ── */}
+            {/* ── V10 Golden VS Badge — Center ── */}
             <motion.div
               initial={{ scale: 0, y: -200, rotate: -25 }}
               animate={stage !== "enter"
@@ -138,22 +134,22 @@ export default function VSIntroScreen({
                 animate={{ rotate: 360 }}
                 transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
                 className="absolute -inset-10 rounded-full"
-                style={{ border: "2px dashed hsl(43 96% 56% / 0.25)" }}
+                style={{ border: "2px dashed hsl(43 96% 56% / 0.2)" }}
               />
-              {/* Outer glow ring */}
+              {/* Outer glow */}
               <div className="absolute -inset-3 rounded-full" style={{
                 background: `radial-gradient(circle, ${vsEffect.glowColor} 0%, transparent 70%)`,
                 opacity: 0.4,
               }} />
-              {/* 3D VS Coin — 80px per Doc 1 */}
+              {/* 3D VS Coin — scoreboard-metal feel */}
               <div
                 className="w-20 h-20 rounded-full flex items-center justify-center relative"
                 style={{
                   background: "conic-gradient(from 0deg, hsl(43 100% 65%), hsl(35 90% 50%), hsl(43 100% 60%), hsl(45 100% 70%), hsl(43 100% 65%))",
-                  border: "4px solid hsl(25 50% 18%)",
+                  border: "4px solid hsl(220 30% 15%)",
                   boxShadow: `
-                    0 6px 0 hsl(25 50% 12%),
-                    0 8px 0 hsl(25 40% 8%),
+                    0 6px 0 hsl(220 30% 8%),
+                    0 8px 0 hsl(220 25% 5%),
                     0 12px 40px rgba(0,0,0,0.7),
                     0 0 60px ${vsEffect.glowColor},
                     inset 0 2px 4px hsl(45 100% 80% / 0.4)
@@ -164,15 +160,15 @@ export default function VSIntroScreen({
                   className="font-display text-[32px] font-black"
                   style={{
                     color: "hsl(220 25% 10%)",
-                    textShadow: "0 2px 0 hsl(43 100% 70% / 0.5), 0 -1px 0 hsl(25 50% 15%)",
-                    WebkitTextStroke: "1.5px hsl(25 50% 15%)",
+                    textShadow: "0 2px 0 hsl(43 100% 70% / 0.5), 0 -1px 0 hsl(220 30% 15%)",
+                    WebkitTextStroke: "1.5px hsl(220 30% 15%)",
                   }}
                 >
                   VS
                 </span>
               </div>
 
-              {/* Fire / impact particles */}
+              {/* Fire particles */}
               {stage === "vs" && [...Array(10)].map((_, i) => (
                 <motion.div
                   key={i}
@@ -210,7 +206,7 @@ export default function VSIntroScreen({
             </motion.div>
           </div>
 
-          {/* ── Player Info Pills — bottom ── */}
+          {/* ── Player Info Pills — stadium-glass ── */}
           <div className="absolute bottom-20 left-0 right-0 z-20 flex justify-between px-3 gap-2">
             {/* Player pill */}
             <motion.div
@@ -219,12 +215,10 @@ export default function VSIntroScreen({
               transition={{ delay: 0.6, type: "spring", damping: 14 }}
               className="flex-1"
             >
-              <div className="rounded-xl px-3 py-2.5 flex items-center gap-2" style={{
-                background: "linear-gradient(180deg, hsl(220 30% 16%), hsl(220 25% 10%))",
-                border: "2px solid hsl(217 60% 35% / 0.5)",
-                boxShadow: "0 3px 0 hsl(220 25% 8%), 0 4px 12px rgba(0,0,0,0.4)",
+              <div className="rounded-xl px-3 py-2.5 flex items-center gap-2 stadium-glass" style={{
+                border: "2px solid hsl(217 60% 35% / 0.4)",
               }}>
-                <PlayerAvatar avatarIndex={playerAvatarIndex} size="sm" className="border-primary/40" />
+                <V10PlayerAvatar level={1} xpProgress={0.5} size="sm" />
                 <div className="flex flex-col min-w-0">
                   <span className="font-display text-[11px] font-black text-foreground tracking-wider truncate">
                     {playerName.toUpperCase()}
@@ -241,10 +235,8 @@ export default function VSIntroScreen({
               transition={{ delay: 0.7, type: "spring", damping: 14 }}
               className="flex-1"
             >
-              <div className="rounded-xl px-3 py-2.5 flex items-center gap-2 justify-end" style={{
-                background: "linear-gradient(180deg, hsl(220 30% 16%), hsl(220 25% 10%))",
-                border: "2px solid hsl(4 60% 35% / 0.5)",
-                boxShadow: "0 3px 0 hsl(220 25% 8%), 0 4px 12px rgba(0,0,0,0.4)",
+              <div className="rounded-xl px-3 py-2.5 flex items-center gap-2 justify-end stadium-glass" style={{
+                border: "2px solid hsl(4 60% 35% / 0.4)",
               }}>
                 <div className="flex flex-col items-end min-w-0">
                   <span className="font-display text-[11px] font-black text-foreground tracking-wider truncate">
@@ -252,7 +244,7 @@ export default function VSIntroScreen({
                   </span>
                   <span className="text-[7px] font-display font-bold tracking-widest" style={{ color: "hsl(4 90% 58%)" }}>BOWLER</span>
                 </div>
-                <PlayerAvatar avatarIndex={opponentAvatarIndex} size="sm" className="border-destructive/40" />
+                <V10PlayerAvatar level={1} xpProgress={0.3} size="sm" />
               </div>
             </motion.div>
           </div>

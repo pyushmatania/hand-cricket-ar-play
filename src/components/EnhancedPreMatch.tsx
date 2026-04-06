@@ -11,7 +11,7 @@ import {
 } from "@/lib/commentaryDuo";
 import charBatsman from "@/assets/char-batsman.png";
 import charBowler from "@/assets/char-bowler.png";
-import GameButton from "./shared/GameButton";
+import V10Button from "./shared/V10Button";
 
 interface RivalryStats {
   myWins: number; theirWins: number; totalGames: number;
@@ -109,9 +109,9 @@ export default function EnhancedPreMatch({
           className="fixed inset-0 z-[70] flex flex-col overflow-hidden cursor-pointer"
           onClick={handleTap}
         >
-          {/* Dark cinematic background */}
+          {/* V10 Dark cinematic background */}
           <div className="absolute inset-0" style={{
-            background: "linear-gradient(180deg, hsl(220 30% 6%) 0%, hsl(220 25% 10%) 50%, hsl(220 20% 5%) 100%)",
+            background: "linear-gradient(180deg, hsl(220 35% 5%) 0%, hsl(220 30% 8%) 50%, hsl(220 25% 4%) 100%)",
           }} />
 
           {/* Animated stadium lights */}
@@ -124,7 +124,6 @@ export default function EnhancedPreMatch({
                 background: "conic-gradient(from 0deg, transparent, hsl(43 96% 56% / 0.03), transparent, hsl(142 71% 45% / 0.02), transparent, transparent, transparent, transparent)",
               }}
             />
-            {/* Gold sparkles */}
             {[...Array(10)].map((_, i) => (
               <motion.div
                 key={i}
@@ -144,7 +143,7 @@ export default function EnhancedPreMatch({
           {/* Content */}
           <div className="relative z-10 flex-1 flex flex-col">
             <AnimatePresence mode="wait">
-              {/* ── VS PAGE — Diagonal Split Jumbotron ── */}
+              {/* ── VS PAGE — Diagonal Split with stadium-glass frame ── */}
               {page.id === "vs" && (
                 <motion.div
                   key="vs"
@@ -153,18 +152,18 @@ export default function EnhancedPreMatch({
                   exit={{ opacity: 0 }}
                   className="flex-1 flex flex-col items-center justify-center px-4"
                 >
-                  <div className="relative w-full max-w-sm aspect-[3/4] rounded-2xl overflow-hidden" style={{
-                    border: "3px solid hsl(43 60% 35% / 0.4)",
+                  <div className="relative w-full max-w-sm aspect-[3/4] rounded-2xl overflow-hidden stadium-glass" style={{
+                    border: "3px solid hsl(43 60% 35% / 0.3)",
                     boxShadow: "0 0 40px hsl(43 96% 56% / 0.08), 0 8px 32px rgba(0,0,0,0.5)",
                   }}>
                     {/* Left half — team blue */}
                     <div className="absolute inset-0" style={{
-                      background: "linear-gradient(135deg, hsl(217 70% 40%) 0%, hsl(217 60% 18%) 100%)",
+                      background: "linear-gradient(135deg, hsl(217 70% 38%) 0%, hsl(217 60% 15%) 100%)",
                       clipPath: "polygon(0 0, 55% 0, 40% 100%, 0 100%)",
                     }} />
                     {/* Right half — team red */}
                     <div className="absolute inset-0" style={{
-                      background: "linear-gradient(225deg, hsl(4 70% 40%) 0%, hsl(4 60% 18%) 100%)",
+                      background: "linear-gradient(225deg, hsl(4 70% 38%) 0%, hsl(4 60% 15%) 100%)",
                       clipPath: "polygon(55% 0, 100% 0, 100% 100%, 40% 100%)",
                     }} />
                     {/* Gold diagonal slash */}
@@ -192,7 +191,7 @@ export default function EnhancedPreMatch({
                       <img src={charBowler} alt="Opponent" className="w-full h-auto" style={{ filter: "drop-shadow(0 0 20px hsl(4 70% 50% / 0.5))" }} />
                     </motion.div>
 
-                    {/* VS badge center */}
+                    {/* VS badge center — scoreboard-metal coin */}
                     <motion.div
                       initial={{ scale: 0, rotate: -30 }}
                       animate={{ scale: 1, rotate: 0 }}
@@ -201,13 +200,13 @@ export default function EnhancedPreMatch({
                     >
                       <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{
                         background: "conic-gradient(from 0deg, hsl(43 100% 65%), hsl(35 90% 45%), hsl(43 100% 60%), hsl(45 100% 70%), hsl(43 100% 65%))",
-                        border: "4px solid hsl(25 50% 16%)",
-                        boxShadow: "0 5px 0 hsl(25 50% 10%), 0 0 40px hsl(43 96% 56% / 0.5), inset 0 2px 4px hsl(45 100% 80% / 0.3)",
+                        border: "4px solid hsl(220 30% 14%)",
+                        boxShadow: "0 5px 0 hsl(220 30% 8%), 0 0 40px hsl(43 96% 56% / 0.5), inset 0 2px 4px hsl(45 100% 80% / 0.3)",
                       }}>
                         <span className="font-display text-2xl font-black" style={{
                           color: "hsl(220 25% 10%)",
                           textShadow: "0 1px 0 hsl(43 100% 70% / 0.5)",
-                          WebkitTextStroke: "1.5px hsl(25 50% 15%)",
+                          WebkitTextStroke: "1.5px hsl(220 30% 15%)",
                         }}>VS</span>
                       </div>
                     </motion.div>
@@ -252,7 +251,7 @@ export default function EnhancedPreMatch({
                 </motion.div>
               )}
 
-              {/* ── TOSS PAGE ── */}
+              {/* ── TOSS PAGE — stadium-glass card ── */}
               {page.id === "toss" && (
                 <motion.div
                   key="toss"
@@ -278,13 +277,9 @@ export default function EnhancedPreMatch({
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.8 }}
-                    className="mt-4 px-5 py-2.5 rounded-xl"
+                    className="mt-4 px-5 py-2.5 rounded-xl stadium-glass"
                     style={{
-                      background: battingFirst === tossWinner
-                        ? "linear-gradient(180deg, hsl(142 50% 20%), hsl(142 40% 12%))"
-                        : "linear-gradient(180deg, hsl(217 50% 20%), hsl(217 40% 12%))",
                       border: `2px solid ${battingFirst === tossWinner ? "hsl(142 50% 30%)" : "hsl(217 50% 30%)"}`,
-                      boxShadow: "0 3px 0 hsl(220 25% 8%), 0 4px 12px rgba(0,0,0,0.4)",
                     }}
                   >
                     <span className="font-display text-sm font-bold tracking-wider" style={{
@@ -332,7 +327,7 @@ export default function EnhancedPreMatch({
               )}
             </AnimatePresence>
 
-            {/* Commentary bubbles */}
+            {/* Commentary bubbles — stadium-glass */}
             <div className="px-4 pb-2 space-y-1.5">
               {page.lines.map((line, i) => {
                 const comm = duo.find(c => c.name === line.commentatorId) || duo[0];
@@ -343,9 +338,8 @@ export default function EnhancedPreMatch({
                     initial={{ opacity: 0, x: isFirst ? -20 : 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 + i * 0.4 }}
-                    className="flex items-start gap-2 rounded-xl px-3 py-2"
+                    className="flex items-start gap-2 rounded-xl px-3 py-2 stadium-glass"
                     style={{
-                      background: isFirst ? "hsl(142 40% 15% / 0.3)" : "hsl(43 40% 15% / 0.3)",
                       border: `1.5px solid ${isFirst ? "hsl(142 40% 25% / 0.3)" : "hsl(43 40% 25% / 0.3)"}`,
                     }}
                   >
