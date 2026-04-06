@@ -481,9 +481,16 @@ export default function ClanLeaderboard() {
                     <span className="font-display text-xs font-bold text-foreground truncate">{c.name}</span>
                     <span className="text-[7px] text-muted-foreground font-display">[{c.tag}]</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[8px] text-muted-foreground font-display tabular-nums">
+                  <div className="flex items-center gap-1.5 text-[8px] text-muted-foreground font-display tabular-nums">
                     <span>Lv.{c.level}</span>
                     <span>👥 {c.member_count}</span>
+                    {(c.trophyCounts.gold > 0 || c.trophyCounts.silver > 0 || c.trophyCounts.bronze > 0) && (
+                      <span className="flex items-center gap-0.5 ml-0.5">
+                        {c.trophyCounts.gold > 0 && <span className="text-[7px]">🏆{c.trophyCounts.gold}</span>}
+                        {c.trophyCounts.silver > 0 && <span className="text-[7px]">🥈{c.trophyCounts.silver}</span>}
+                        {c.trophyCounts.bronze > 0 && <span className="text-[7px]">🥉{c.trophyCounts.bronze}</span>}
+                      </span>
+                    )}
                   </div>
                 </div>
 
