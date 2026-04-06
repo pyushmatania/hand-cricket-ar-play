@@ -121,6 +121,10 @@ export default function SettingsPage() {
   const [selectedButtonStyle, setSelectedButtonStyle] = useState<string>("classic");
   const [versionTaps, setVersionTaps] = useState(0);
 
+  // Sync sound/haptics toggles to the Web Audio SFX engine
+  useEffect(() => { setSoundEnabled(settings.soundEnabled); }, [settings.soundEnabled]);
+  useEffect(() => { setHapticsEnabled(settings.hapticsEnabled); }, [settings.hapticsEnabled]);
+
   // Load current button style
   useEffect(() => {
     if (!user) return;
