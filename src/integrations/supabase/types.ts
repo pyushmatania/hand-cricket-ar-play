@@ -263,6 +263,47 @@ export type Database = {
           },
         ]
       }
+      clan_trophies: {
+        Row: {
+          clan_id: string
+          created_at: string
+          id: string
+          rank: number
+          season_label: string
+          total_stars: number
+          trophy_type: string
+          war_wins: number
+        }
+        Insert: {
+          clan_id: string
+          created_at?: string
+          id?: string
+          rank: number
+          season_label: string
+          total_stars?: number
+          trophy_type?: string
+          war_wins?: number
+        }
+        Update: {
+          clan_id?: string
+          created_at?: string
+          id?: string
+          rank?: number
+          season_label?: string
+          total_stars?: number
+          trophy_type?: string
+          war_wins?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clan_trophies_clan_id_fkey"
+            columns: ["clan_id"]
+            isOneToOne: false
+            referencedRelation: "clans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clan_wars: {
         Row: {
           battle_end_at: string | null
