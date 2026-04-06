@@ -191,7 +191,7 @@ export default function SpinWheelPage() {
   const sliceAngle = 360 / SLICES.length;
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center">
+    <div className="min-h-screen flex flex-col items-center" style={{ background: "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 18% 5%) 100%)" }}>
       {/* Header */}
       <div className="w-full px-4 pt-3 pb-2 flex items-center gap-3">
         <button onClick={() => navigate(-1)} className="p-1">
