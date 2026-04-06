@@ -1536,6 +1536,7 @@
   .led-batting { --led-color: #00FF88; --led-glow: rgba(0,255,136,0.6); }
   .led-bowling { --led-color: #00D4FF; --led-glow: rgba(0,212,255,0.6); }
   .led-currency { --led-color: #FFD700; --led-glow: rgba(255,215,0,0.6); }
+  .led-timer { --led-color: #FFFFFF; --led-glow: rgba(255,255,255,0.6); }
   .led-danger { --led-color: #FF2D7B; --led-glow: rgba(255,45,123,0.6); }
 
   /* V11 MATERIAL 5: CARVED STONE — Headers */
