@@ -17,10 +17,21 @@ interface ClanRanking {
   prev_stars: number;
 }
 
+interface ClanTrophy {
+  id: string;
+  season_label: string;
+  rank: number;
+  trophy_type: string;
+  war_wins: number;
+  total_stars: number;
+  created_at: string;
+}
+
 interface ClanDetailData {
   clan: ClanRanking;
   members: { user_id: string; display_name: string; role: string; avatar_index: number; donated_cards: number }[];
   warHistory: { id: string; opp_name: string; opp_emoji: string; my_stars: number; opp_stars: number; won: boolean; draw: boolean; created_at: string }[];
+  trophies: ClanTrophy[];
 }
 
 const ROLE_LABELS: Record<string, string> = { leader: "👑 Leader", co_leader: "⚔️ Co-Leader", elder: "🛡️ Elder", member: "🏏 Member" };
@@ -116,20 +127,22 @@ export default function ClanLeaderboard() {
 
   const openDetail = useCallback(async (clan: ClanRanking) => {
     setDetailLoading(true);
-    setDetail({ clan, members: [], warHistory: [] });
+    setDetail({ clan, members: [], warHistory: [], trophies: [] });
 
-    // Fetch members + profiles in parallel with war history
-    const [membersRes, warsRes] = await Promise.all([
+    // Fetch members, wars, and trophies in parallel
+    const [membersRes, warsRes, trophiesRes] = await Promise.all([
       supabase.from("clan_members").select("user_id, role, donated_cards").eq("clan_id", clan.id),
       supabase.from("clan_wars").select("*")
         .or(`clan_a_id.eq.${clan.id},clan_b_id.eq.${clan.id}`)
         .eq("status", "ended")
         .order("created_at", { ascending: false })
         .limit(20),
+      supabase.from("clan_trophies").select("*").eq("clan_id", clan.id).order("created_at", { ascending: false }),
     ]);
 
     const memberRows = (membersRes.data as any[]) || [];
     const warRows = (warsRes.data as any[]) || [];
+    const trophies: ClanTrophy[] = (trophiesRes.data as any[]) || [];
 
     // Fetch profiles for members
     const userIds = memberRows.map(m => m.user_id);
@@ -171,7 +184,7 @@ export default function ClanLeaderboard() {
       };
     });
 
-    setDetail({ clan, members, warHistory });
+    setDetail({ clan, members, warHistory, trophies });
     setDetailLoading(false);
   }, []);
 
@@ -251,6 +264,47 @@ export default function ClanLeaderboard() {
                       <p className="font-display text-[7px] tracking-widest text-game-gold/70">⭐ STARS</p>
                     </div>
                   </div>
+
+                  {/* Trophy Cabinet */}
+                  {detail.trophies.length > 0 && (
+                    <div className="stadium-glass rounded-2xl p-3">
+                      <div className="scoreboard-metal rounded-xl px-3 py-2 mb-3">
+                        <h4 className="font-display text-[10px] tracking-widest text-neon-cyan/80 font-bold">🏆 TROPHY CABINET ({detail.trophies.length})</h4>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        {detail.trophies.slice(0, 9).map((t, ti) => {
+                          const trophyEmoji = t.trophy_type === "gold" ? "🏆" : t.trophy_type === "silver" ? "🥈" : "🥉";
+                          const borderColor = t.trophy_type === "gold" ? "border-game-gold/40" : t.trophy_type === "silver" ? "border-white/30" : "border-orange-600/30";
+                          const bgColor = t.trophy_type === "gold" ? "bg-game-gold/[0.06]" : t.trophy_type === "silver" ? "bg-white/[0.04]" : "bg-orange-600/[0.04]";
+                          return (
+                            <motion.div
+                              key={t.id}
+                              initial={{ scale: 0, rotate: -15 }}
+                              animate={{ scale: 1, rotate: 0 }}
+                              transition={{ delay: ti * 0.08, type: "spring", stiffness: 300 }}
+                              className={`text-center py-3 px-1 rounded-xl border ${borderColor} ${bgColor}`}
+                            >
+                              <span className="text-2xl block mb-1">{trophyEmoji}</span>
+                              <p className="font-display text-[7px] font-bold text-foreground tracking-wider truncate">
+                                {t.trophy_type.toUpperCase()}
+                              </p>
+                              <p className="text-[6px] text-muted-foreground font-body truncate mt-0.5">
+                                {t.season_label}
+                              </p>
+                              <p className="text-[6px] text-game-gold/70 font-display tabular-nums mt-0.5">
+                                {t.war_wins}W · {t.total_stars}⭐
+                              </p>
+                            </motion.div>
+                          );
+                        })}
+                      </div>
+                      {detail.trophies.length > 9 && (
+                        <p className="text-center text-[8px] text-muted-foreground mt-2 font-body">
+                          +{detail.trophies.length - 9} more trophies
+                        </p>
+                      )}
+                    </div>
+                  )}
 
                   {/* Members */}
                   <div className="stadium-glass rounded-2xl p-3">

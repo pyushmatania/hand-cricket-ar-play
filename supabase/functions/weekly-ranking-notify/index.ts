@@ -1,4 +1,7 @@
-import { corsHeaders } from "@supabase/supabase-js/cors";
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 Deno.serve(async (req) => {
@@ -52,6 +55,31 @@ Deno.serve(async (req) => {
     const rankMap = new Map<string, number>();
     ranked.forEach((c, i) => rankMap.set(c.id, i + 1));
 
+    // === Award seasonal trophies to top 3 ===
+    const now = new Date();
+    const weekNum = Math.ceil(
+      ((now.getTime() - new Date(now.getFullYear(), 0, 1).getTime()) / 86400000 + 1) / 7
+    );
+    const seasonLabel = `Season W${weekNum} ${now.getFullYear()}`;
+    const trophyTypes = ["gold", "silver", "bronze"];
+
+    const top3 = ranked.filter(c => c.wins > 0).slice(0, 3);
+    if (top3.length > 0) {
+      const trophies = top3.map((c, i) => ({
+        clan_id: c.id,
+        season_label: seasonLabel,
+        rank: i + 1,
+        trophy_type: trophyTypes[i],
+        war_wins: c.wins,
+        total_stars: c.stars,
+      }));
+
+      // Upsert (ignore conflicts for idempotency)
+      for (const t of trophies) {
+        await supabase.from("clan_trophies").upsert(t, { onConflict: "clan_id,season_label" });
+      }
+    }
+
     // Find all clan members to notify
     const { data: members } = await supabase.from("clan_members").select("user_id, clan_id");
     if (!members?.length) {
@@ -61,18 +89,25 @@ Deno.serve(async (req) => {
     }
 
     // Build notifications
+    const trophyEmojis: Record<string, string> = { gold: "🏆", silver: "🥈", bronze: "🥉" };
     const notifications = members.map((m: any) => {
       const rank = rankMap.get(m.clan_id) || 0;
       const clanInfo = ranked.find(c => c.id === m.clan_id);
       const clanName = clanInfo?.name || "Your clan";
       const emoji = clanInfo?.emoji || "🏏";
 
+      // Add trophy info if top 3
+      const trophyIdx = top3.findIndex(c => c.id === m.clan_id);
+      const trophySuffix = trophyIdx >= 0
+        ? ` ${trophyEmojis[trophyTypes[trophyIdx]]} ${trophyTypes[trophyIdx].toUpperCase()} trophy earned!`
+        : "";
+
       return {
         user_id: m.user_id,
         type: "weekly_ranking",
-        title: "📊 Weekly Rankings Updated",
-        message: `${emoji} ${clanName} is ranked #${rank} this week with ${clanInfo?.wins || 0} war wins and ${clanInfo?.stars || 0}⭐!`,
-        data: { clan_id: m.clan_id, rank, wins: clanInfo?.wins || 0, stars: clanInfo?.stars || 0 },
+        title: trophyIdx >= 0 ? `${trophyEmojis[trophyTypes[trophyIdx]]} Season Trophy Awarded!` : "📊 Weekly Rankings Updated",
+        message: `${emoji} ${clanName} is ranked #${rank} this week with ${clanInfo?.wins || 0} war wins and ${clanInfo?.stars || 0}⭐!${trophySuffix}`,
+        data: { clan_id: m.clan_id, rank, wins: clanInfo?.wins || 0, stars: clanInfo?.stars || 0, trophy: trophyIdx >= 0 ? trophyTypes[trophyIdx] : null },
       };
     });
 
@@ -86,7 +121,7 @@ Deno.serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ message: `Sent ${inserted} weekly ranking notifications`, clans: ranked.length }),
+      JSON.stringify({ message: `Sent ${inserted} weekly ranking notifications, awarded ${top3.length} trophies`, clans: ranked.length, season: seasonLabel }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err: any) {
