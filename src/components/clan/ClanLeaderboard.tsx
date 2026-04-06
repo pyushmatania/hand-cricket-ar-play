@@ -585,6 +585,28 @@ export default function ClanLeaderboard() {
         ))}
       </div>
 
+      {/* Compare toggle */}
+      <div className="flex gap-2">
+        <V10Button
+          variant={compareMode ? "gold" : "secondary"}
+          size="sm"
+          onClick={() => { setCompareMode(!compareMode); setCompareSelections([]); }}
+          className="flex-1"
+        >
+          {compareMode ? "✕ CANCEL" : "⚖️ COMPARE"}
+        </V10Button>
+        {compareMode && compareSelections.length === 2 && (
+          <V10Button variant="primary" size="sm" onClick={runComparison} disabled={compareLoading} className="flex-1">
+            {compareLoading ? "..." : "⚡ COMPARE NOW"}
+          </V10Button>
+        )}
+      </div>
+      {compareMode && (
+        <p className="text-center text-[9px] text-muted-foreground font-body">
+          Tap 2 clans to compare ({compareSelections.length}/2 selected)
+        </p>
+      )}
+
       {/* Rankings */}
       {filtered.length === 0 ? (
         <div className="text-center py-8">
@@ -599,6 +621,7 @@ export default function ClanLeaderboard() {
             const currentRank = sorted.findIndex(s => s.id === c.id);
             const prevRank = prevRankMap.get(c.id) ?? currentRank;
             const rankDelta = prevRank - currentRank;
+            const isSelected = compareSelections.some(s => s.id === c.id);
 
             return (
               <motion.button
@@ -607,7 +630,7 @@ export default function ClanLeaderboard() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.03 }}
                 whileTap={{ scale: 0.97 }}
-                onClick={() => openDetail(c)}
+                onClick={() => compareMode ? toggleCompareSelection(c) : openDetail(c)}
                 className={`flex items-center gap-2 p-2.5 rounded-xl border transition-colors w-full text-left ${
                   currentRank === 0 ? "stadium-glass border-game-gold/30 bg-game-gold/[0.04]"
                   : currentRank < 3 ? "stadium-glass border-white/10"
