@@ -17,10 +17,21 @@ interface ClanRanking {
   prev_stars: number;
 }
 
+interface ClanTrophy {
+  id: string;
+  season_label: string;
+  rank: number;
+  trophy_type: string;
+  war_wins: number;
+  total_stars: number;
+  created_at: string;
+}
+
 interface ClanDetailData {
   clan: ClanRanking;
   members: { user_id: string; display_name: string; role: string; avatar_index: number; donated_cards: number }[];
   warHistory: { id: string; opp_name: string; opp_emoji: string; my_stars: number; opp_stars: number; won: boolean; draw: boolean; created_at: string }[];
+  trophies: ClanTrophy[];
 }
 
 const ROLE_LABELS: Record<string, string> = { leader: "👑 Leader", co_leader: "⚔️ Co-Leader", elder: "🛡️ Elder", member: "🏏 Member" };
