@@ -18,6 +18,7 @@ import JumbotronZoom from "./JumbotronZoom";
 import PostMatchPressConference from "./PostMatchPressConference";
 import LobbyChat from "./LobbyChat";
 import EmotePicker, { type EmoteId } from "./EmotePicker";
+import { getTeamCharacter } from "@/lib/teamCharacters";
 import EmoteBubble from "./EmoteBubble";
 import { pickConfiguredMatchCommentators, type Commentator } from "@/lib/commentaryDuo";
 import { useSettings } from "@/contexts/SettingsContext";
@@ -2247,6 +2248,8 @@ export default function MultiplayerScreen({ onHome }: Props) {
           playerAvatarIndex={myAvatarIndex}
           opponentAvatarIndex={opponentAvatarIndex}
           gameType={currentGame?.game_type}
+          playerCharacter={getTeamCharacter(null)}
+          opponentCharacter={getTeamCharacter(null)}
           onComplete={() => {
             setShowVSIntro(false);
             if (multiplayerCeremoniesEnabled && pvpPreMatchShownRef.current) {
