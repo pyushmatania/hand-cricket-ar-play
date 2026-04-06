@@ -26,14 +26,13 @@ function BatsmanCharacter({ lastRuns }: BatsmanCharacterProps) {
     ? "idle"
     : lastRuns === "OUT" ? "OUT" : String(Math.abs(lastRuns as number));
 
-  const shotAnim = key !== "idle" ? shotAnimations[key] || shotAnimations["1"] : undefined;
+  const shotAnim = key !== "idle" ? (shotAnimations[key] || shotAnimations["1"]) : undefined;
 
   return (
     <motion.div
       className="absolute z-[5] pointer-events-none"
       style={{ bottom: "22%", left: "50%", transform: "translateX(-50%)" }}
-      variants={idleVariants}
-      animate={shotAnim ? shotAnim : "idle"}
+      animate={shotAnim || idleAnim}
       key={key === "idle" ? "idle" : `shot-${Date.now()}`}
     >
       <img
