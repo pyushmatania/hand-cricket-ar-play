@@ -15,6 +15,7 @@ interface ClanRanking {
   total_stars: number;
   prev_wins: number;
   prev_stars: number;
+  trophyCounts: { gold: number; silver: number; bronze: number };
 }
 
 interface ClanTrophy {
