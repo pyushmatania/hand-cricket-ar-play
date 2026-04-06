@@ -53,12 +53,7 @@ function formatTime(seconds: number): string {
   return `${s}s`;
 }
 
-const CRICKET_CHEST: Record<string, { icon: string; label: string; color: string }> = {
-  bronze:  { icon: "🎾", label: "Tennis Ball", color: "#CD7F32" },
-  silver:  { icon: "🏏", label: "Red Ball",    color: "#00D4FF" },
-  gold:    { icon: "🏆", label: "Trophy",      color: "#FFD700" },
-  diamond: { icon: "💎", label: "Crystal Bat",  color: "#A855F7" },
-};
+// Removed CRICKET_CHEST — now using getChestTier() from lib/chests for 3D images
 
 const MAIN_MODES = [
   { id: "tap", icon: "⚡", label: "TAP", sub: "Quick Play", color: "#4ADE50" },
@@ -235,6 +230,13 @@ export default function HomePage() {
         nextArenaName={nextArena.name}
         nextTrophies={nextArena.trophies}
         progress={arenaProgress}
+        arenaKey={
+          currentArena.name.toLowerCase().includes("gully") ? "gully" :
+          currentArena.name.toLowerCase().includes("school") ? "school" :
+          currentArena.name.toLowerCase().includes("ipl") ? "ipl" :
+          currentArena.name.toLowerCase().includes("international") ? "international" :
+          currentArena.name.toLowerCase().includes("world") ? "worldcup" : "default"
+        }
       />
 
       {/* ═══ C: STATS BAR + BATTLE BUTTON ═══ */}
