@@ -378,7 +378,7 @@ function OutPopup({ onComplete }: { onComplete: () => void }) {
   const [stage, setStage] = useState<"appear" | "vibrate" | "explode" | "reveal">("appear");
 
   useEffect(() => {
-    try { SFX.wicketFall(); } catch {}
+    try { SFX.wicket(); } catch {}
     const t1 = setTimeout(() => setStage("vibrate"), 200);
     const t2 = setTimeout(() => {
       setStage("explode");
