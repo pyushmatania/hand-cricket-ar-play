@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import stoneShopImg from "@/assets/ui/stone-shop.png";
 import StoneHeader from "@/components/shared/StoneHeader";
 import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -127,7 +126,7 @@ export default function ShopPage() {
               ←
             </motion.button>
             <div>
-              <StoneHeader src={stoneShopImg} alt="SHOP" height={32} />
+              <StoneHeader text="SHOP" />
               <span className="text-[9px] text-[#94A3B8] font-display tracking-[0.2em]">WOODEN MARKETPLACE</span>
             </div>
           </div>

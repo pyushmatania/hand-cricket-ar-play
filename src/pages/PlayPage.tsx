@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import stoneSelectModeImg from "@/assets/ui/stone-selectmode.png";
 import StoneHeader from "@/components/shared/StoneHeader";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -91,7 +90,7 @@ export default function PlayPage() {
               style={{ background: "linear-gradient(180deg, hsl(43 90% 55%) 0%, hsl(35 60% 35%) 100%)" }}
             />
             <div>
-              <StoneHeader src={stoneSelectModeImg} alt="Select Mode" height={28} />
+              <StoneHeader text="SELECT MODE" />
               <p className="text-[9px] text-muted-foreground font-display tracking-[0.2em]">
                 CHOOSE YOUR ARENA & GAME TYPE
               </p>

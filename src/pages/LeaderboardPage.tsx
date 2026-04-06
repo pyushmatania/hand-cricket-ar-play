@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import stoneLeaderboardImg from "@/assets/ui/stone-leaderboard.png";
 import StoneHeader from "@/components/shared/StoneHeader";
 import ScrollHint from "@/components/shared/ScrollHint";
 import { motion, AnimatePresence } from "framer-motion";
@@ -535,7 +534,7 @@ export default function LeaderboardPage() {
                 🏆
               </div>
               <div>
-                <StoneHeader src={stoneLeaderboardImg} alt="Leaderboard" height={28} />
+                <StoneHeader text="LEADERBOARD" />
                 <span className="font-display text-[8px] text-muted-foreground tracking-[0.2em]">COMPETE & CLIMB</span>
               </div>
             </div>
