@@ -65,14 +65,14 @@ export default function AuthPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden flex flex-col items-center justify-center px-4"
-      style={{ background: LEATHER_BG }}>
-      {/* Leather grain */}
-      <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: LEATHER_GRAIN, backgroundRepeat: "repeat" }} />
+      style={{ background: WOOD_BG }}>
+      {/* Wood grain overlay */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.04]" style={{ backgroundImage: "url('/assets/ui/wood-plank-texture.png')", backgroundRepeat: "repeat" }} />
       {/* Vignette */}
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(220 18% 4% / 0.7) 100%)" }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 30%, rgba(13,7,4,0.7) 100%)" }} />
       {/* Golden glow */}
       <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-80 h-80 pointer-events-none"
-        style={{ background: "radial-gradient(circle, hsl(43 90% 55% / 0.06) 0%, transparent 70%)" }} />
+        style={{ background: "radial-gradient(circle, rgba(255,215,0,0.06) 0%, transparent 70%)" }} />
 
       <motion.div
         initial={{ opacity: 0, y: 30 }}
