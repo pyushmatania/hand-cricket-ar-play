@@ -19,6 +19,7 @@ import { useEquippedCosmetics } from "@/hooks/useEquippedCosmetics";
 import TournamentFixtureCard from "./TournamentFixtureCard";
 import TournamentChatWidget from "./TournamentChatWidget";
 import { rollWeather, type Weather } from "@/lib/weather";
+import V10Button from "./shared/V10Button";
 
 type Round = {
   round: number;
@@ -85,9 +86,7 @@ export default function TournamentScreen({ onHome }: Props) {
 
   useEffect(() => { startTournament(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const startRound = () => {
-    setPhase("config");
-  };
+  const startRound = () => { setPhase("config"); };
 
   const handleOverSelect = (config: MatchConfig) => {
     setMatchConfig(config);
@@ -176,14 +175,15 @@ export default function TournamentScreen({ onHome }: Props) {
 
   return (
     <div className="fixed inset-0 bg-background flex flex-col overflow-hidden">
-      <div className="absolute inset-0 stadium-gradient pointer-events-none" />
-      <div className="absolute inset-0 vignette pointer-events-none" />
-      <div className="absolute inset-x-0 bottom-0 h-48 bg-[radial-gradient(ellipse_at_center,hsl(142_71%_45%/0.12),hsl(142_71%_45%/0.04)_55%,transparent_70%)] pointer-events-none" />
+      {/* V10 Background */}
+      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 10%, hsl(217 30% 12%) 0%, hsl(220 20% 6%) 60%)" }} />
+      <div className="absolute inset-x-0 bottom-0 h-48 bg-[radial-gradient(ellipse_at_center,hsl(142_71%_45%/0.08),transparent_70%)] pointer-events-none" />
 
       {/* Top bar */}
       <div className="relative z-10 flex items-center justify-between px-4 pt-4 pb-2">
-        <motion.button whileTap={{ scale: 0.9 }} onClick={onHome} className="w-9 h-9 rounded-xl glass-premium flex items-center justify-center text-sm">←</motion.button>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full glass-card">
+        <motion.button whileTap={{ scale: 0.9 }} onClick={onHome}
+          className="w-9 h-9 rounded-xl stadium-glass flex items-center justify-center text-sm text-foreground">←</motion.button>
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-full scoreboard-metal">
           <div className="w-2 h-2 rounded-full bg-secondary animate-pulse" />
           <span className="font-display text-[9px] tracking-[0.2em] text-secondary font-bold">TOURNAMENT</span>
           <span className="text-[7px] font-display text-muted-foreground">R{currentRound + 1}/5</span>
@@ -240,19 +240,17 @@ export default function TournamentScreen({ onHome }: Props) {
             </div>
 
             {!eliminated && (
-              <motion.button whileTap={{ scale: 0.95 }} onClick={startRound}
-                className="w-full py-3.5 bg-gradient-to-r from-secondary to-secondary/70 text-secondary-foreground font-display font-black text-sm rounded-2xl tracking-wider shadow-[0_0_25px_hsl(45_93%_58%/0.2)] border border-secondary/30">
+              <V10Button variant="battle" size="battle" glow onClick={startRound} className="w-full">
                 ⚔️ FIGHT {opp.name.toUpperCase()}
-              </motion.button>
+              </V10Button>
             )}
 
             {eliminated && (
               <div className="text-center space-y-2">
                 <p className="font-display text-sm text-out-red font-bold">ELIMINATED — {winsCount}/5 rounds won</p>
-                <motion.button whileTap={{ scale: 0.95 }} onClick={startTournament}
-                  className="w-full py-3 bg-gradient-to-r from-primary to-primary/70 text-primary-foreground font-display font-bold rounded-2xl shadow-[0_0_20px_hsl(217_91%_60%/0.2)] border border-primary/30">
+                <V10Button variant="primary" size="lg" glow onClick={startTournament} className="w-full">
                   🔄 RESTART TOURNAMENT
-                </motion.button>
+                </V10Button>
               </div>
             )}
           </motion.div>
@@ -261,11 +259,11 @@ export default function TournamentScreen({ onHome }: Props) {
         {/* CONFIG: Over selector */}
         {phase === "config" && (
           <div className="mt-4">
-            <div className="glass-premium rounded-xl p-2.5 flex items-center gap-3 mb-3">
+            <div className="stadium-glass rounded-xl p-2.5 flex items-center gap-3 mb-3">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-secondary/20 to-secondary/10 border border-secondary/25 flex items-center justify-center text-lg">{opp.emoji}</div>
               <div className="flex-1">
                 <span className="font-display text-[10px] font-bold text-foreground tracking-wider">vs {opp.name}</span>
-                <span className="text-[8px] text-muted-foreground block">Round {currentRound + 1}/5</span>
+                <span className="text-[8px] text-muted-foreground block font-body">Round {currentRound + 1}/5</span>
               </div>
             </div>
             <OverSelector playerXP={playerXP} onSelect={handleOverSelect} />
@@ -287,12 +285,11 @@ export default function TournamentScreen({ onHome }: Props) {
         {/* PLAYING — uses TapPlayingUI */}
         {phase === "playing" && (
           <>
-            {/* Opponent banner */}
-            <div className="glass-premium rounded-xl p-2.5 flex items-center gap-3">
+            <div className="stadium-glass rounded-xl p-2.5 flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-secondary/20 to-secondary/10 border border-secondary/25 flex items-center justify-center text-lg">{opp.emoji}</div>
               <div className="flex-1">
                 <span className="font-display text-[10px] font-bold text-foreground tracking-wider">vs {opp.name}</span>
-                <span className="text-[8px] text-muted-foreground block">Round {currentRound + 1}/5</span>
+                <span className="text-[8px] text-muted-foreground block font-body">Round {currentRound + 1}/5</span>
               </div>
             </div>
 
@@ -339,7 +336,7 @@ export default function TournamentScreen({ onHome }: Props) {
             <h2 className="font-display text-2xl font-black text-foreground tracking-wider">
               {game.result === "win" ? `BEAT ${opp.name.toUpperCase()}!` : `${opp.name.toUpperCase()} WINS`}
             </h2>
-            <div className="glass-premium rounded-2xl p-4 w-full max-w-xs text-center">
+            <div className="stadium-glass rounded-2xl p-4 w-full max-w-xs text-center">
               <span className="font-display text-lg text-secondary font-black">{game.userScore}/{game.userWickets}</span>
               <span className="text-muted-foreground mx-2">vs</span>
               <span className="font-display text-lg text-accent font-black">{game.aiScore}/{game.aiWickets}</span>
@@ -349,24 +346,22 @@ export default function TournamentScreen({ onHome }: Props) {
               <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-center space-y-3">
                 <motion.span animate={{ rotate: [0, 10, -10, 0] }} transition={{ duration: 1, repeat: Infinity }} className="text-6xl block">🏆</motion.span>
                 <h3 className="font-display text-xl font-black text-secondary" style={{ textShadow: "0 0 20px hsl(45 93% 58% / 0.3)" }}>TOURNAMENT CHAMPION!</h3>
-                <motion.button whileTap={{ scale: 0.95 }} onClick={() => startTournament()}
-                  className="w-full py-3 bg-gradient-to-r from-secondary to-secondary/70 text-secondary-foreground font-display font-bold rounded-2xl shadow-[0_0_20px_hsl(45_93%_58%/0.2)]">
+                <V10Button variant="gold" size="lg" glow onClick={() => startTournament()} className="w-full">
                   🔄 PLAY AGAIN
-                </motion.button>
+                </V10Button>
               </motion.div>
             ) : game.result === "win" ? (
-              <motion.button whileTap={{ scale: 0.95 }} onClick={advanceRound}
-                className="w-full max-w-xs py-3.5 bg-gradient-to-r from-secondary to-secondary/70 text-secondary-foreground font-display font-black rounded-2xl tracking-wider shadow-[0_0_20px_hsl(45_93%_58%/0.2)] border border-secondary/30">
+              <V10Button variant="gold" size="lg" glow onClick={advanceRound} className="w-full max-w-xs">
                 ⚔️ NEXT ROUND →
-              </motion.button>
+              </V10Button>
             ) : (
               <div className="flex gap-3 w-full max-w-xs">
-                <motion.button whileTap={{ scale: 0.95 }} onClick={startTournament}
-                  className="flex-1 py-3.5 bg-gradient-to-r from-primary to-primary/70 text-primary-foreground font-display font-bold rounded-2xl shadow-[0_0_15px_hsl(217_91%_60%/0.2)]">
+                <V10Button variant="primary" size="md" glow onClick={startTournament} className="flex-1">
                   🔄 RETRY
-                </motion.button>
-                <motion.button whileTap={{ scale: 0.95 }} onClick={onHome}
-                  className="flex-1 py-3.5 glass-premium text-foreground font-display font-bold rounded-2xl border border-primary/10">HOME</motion.button>
+                </V10Button>
+                <V10Button variant="secondary" size="md" onClick={onHome} className="flex-1">
+                  HOME
+                </V10Button>
               </div>
             )}
           </motion.div>
