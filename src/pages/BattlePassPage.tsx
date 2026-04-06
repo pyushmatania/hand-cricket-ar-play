@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+import stoneBattlePassImg from "@/assets/ui/stone-battlepass.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { Crown, Lock, Clock, Gift } from "lucide-react";
