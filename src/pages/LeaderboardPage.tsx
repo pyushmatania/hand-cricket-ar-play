@@ -497,8 +497,8 @@ export default function LeaderboardPage() {
     { key: "network", label: "NETWORK", icon: "🕸️" },
   ];
 
-  const V10_BG = "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 18% 5%) 100%)";
-  const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
+  const V10_BG = "linear-gradient(180deg, #1A0F06 0%, #12080A 100%)";
+  const LEATHER_GRAIN = `url('/assets/ui/leather-texture.png')`;
   const CONCRETE_CARD = "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)";
   const CHALK_BORDER = "2px dashed hsl(43 30% 30% / 0.25)";
 
