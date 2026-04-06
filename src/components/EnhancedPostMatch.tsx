@@ -271,7 +271,13 @@ export default function EnhancedPostMatch({
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="rounded-2xl p-4 mb-4 scoreboard-metal"
+              className="rounded-2xl p-4 mb-4"
+              style={{
+                background: "linear-gradient(180deg, #5C3A1E, #3E2410)",
+                border: "3px solid #2E1A0E",
+                borderBottom: "5px solid #2E1A0E",
+                boxShadow: "inset 0 2px 0 rgba(255,255,255,0.08), 0 6px 20px rgba(0,0,0,0.5)",
+              }}
             >
               <div className="flex items-center justify-center gap-1 mb-3">
                 <span className="text-xs">🏏</span>
