@@ -1111,3 +1111,20 @@ function WarTimer({ endTime }: { endTime: string }) {
     </span>
   );
 }
+
+/* ─── War Result Sounds (fires once on mount) ─── */
+function WarResultSounds({ won, draw, soundEnabled, hapticsEnabled }: { won: boolean; draw: boolean; soundEnabled: boolean; hapticsEnabled: boolean }) {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (won) {
+        if (soundEnabled) { SFX.crowdEruption(); setTimeout(() => SFX.victoryAnthem(), 300); }
+        if (hapticsEnabled) { Haptics.success(); setTimeout(() => Haptics.victoryAnthem(), 500); }
+      } else if (!draw) {
+        if (soundEnabled) { SFX.crowdGroan(); setTimeout(() => SFX.loss(), 400); }
+        if (hapticsEnabled) Haptics.error();
+      }
+    }, 200);
+    return () => clearTimeout(timer);
+  }, []);
+  return null;
+}
