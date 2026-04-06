@@ -6,6 +6,8 @@ import { useHandCricket, type Move, type MatchConfig } from "@/hooks/useHandCric
 import { SFX, Haptics } from "@/lib/sounds";
 import { useSettings } from "@/contexts/SettingsContext";
 import V10Button from "@/components/shared/V10Button";
+import CanvasFireworks from "@/components/CanvasFireworks";
+import TrophyCeremony from "@/components/TrophyCeremony";
 import type { Clan } from "@/hooks/useClan";
 
 /* ─── Constants ─── */
@@ -734,6 +736,19 @@ export default function ClanWars({ clan, myRole }: ClanWarsProps) {
 
               return (
                 <>
+                  {/* Victory confetti & trophy */}
+                  {won && <CanvasFireworks type="win" duration={4000} />}
+                  {won && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3, type: "spring", damping: 10 }}
+                      className="flex justify-center py-2"
+                    >
+                      <TrophyCeremony playerName={clan.name} stars={Math.min(rMyStars || 0, 3)} />
+                    </motion.div>
+                  )}
+
                   {/* Result banner */}
                   <motion.div
                     initial={{ scale: 0.8, opacity: 0 }}
