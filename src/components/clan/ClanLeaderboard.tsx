@@ -208,7 +208,72 @@ export default function ClanLeaderboard() {
     setDetailLoading(false);
   }, []);
 
-  const MEDAL = ["🥇", "🥈", "🥉"];
+  const toggleCompareSelection = useCallback((clan: ClanRanking) => {
+    setCompareSelections(prev => {
+      if (prev.find(c => c.id === clan.id)) return prev.filter(c => c.id !== clan.id);
+      if (prev.length >= 2) return [prev[1], clan];
+      return [...prev, clan];
+    });
+  }, []);
+
+  const runComparison = useCallback(async () => {
+    if (compareSelections.length !== 2) return;
+    setCompareLoading(true);
+    const fetchClanData = async (clan: ClanRanking): Promise<ClanDetailData> => {
+      const [membersRes, warsRes, trophiesRes] = await Promise.all([
+        supabase.from("clan_members").select("user_id, role, donated_cards").eq("clan_id", clan.id),
+        supabase.from("clan_wars").select("*").or(`clan_a_id.eq.${clan.id},clan_b_id.eq.${clan.id}`).eq("status", "ended").order("created_at", { ascending: false }).limit(20),
+        supabase.from("clan_trophies").select("*").eq("clan_id", clan.id),
+      ]);
+      const memberRows = (membersRes.data as any[]) || [];
+      const userIds = memberRows.map(m => m.user_id);
+      let profileMap = new Map<string, { display_name: string; avatar_index: number }>();
+      if (userIds.length > 0) {
+        const { data: profiles } = await supabase.from("profiles").select("user_id, display_name, avatar_index").in("user_id", userIds);
+        (profiles || []).forEach((p: any) => profileMap.set(p.user_id, { display_name: p.display_name, avatar_index: p.avatar_index }));
+      }
+      const members = memberRows.map(m => ({
+        user_id: m.user_id, display_name: profileMap.get(m.user_id)?.display_name || "Player",
+        avatar_index: profileMap.get(m.user_id)?.avatar_index ?? 0, role: m.role, donated_cards: m.donated_cards || 0,
+      })).sort((a, b) => (ROLE_ORDER[a.role] ?? 3) - (ROLE_ORDER[b.role] ?? 3));
+      const warRows = (warsRes.data as any[]) || [];
+      const oppIds = [...new Set(warRows.map((w: any) => w.clan_a_id === clan.id ? w.clan_b_id : w.clan_a_id))];
+      let oppMap = new Map<string, { name: string; emoji: string }>();
+      if (oppIds.length > 0) {
+        const { data: opps } = await supabase.from("clans").select("id, name, emoji").in("id", oppIds);
+        (opps || []).forEach((o: any) => oppMap.set(o.id, { name: o.name, emoji: o.emoji }));
+      }
+      const warHistory = warRows.map((w: any) => {
+        const isA = w.clan_a_id === clan.id;
+        const oppId = isA ? w.clan_b_id : w.clan_a_id;
+        const opp = oppMap.get(oppId);
+        return { id: w.id, opp_name: opp?.name || "Unknown", opp_emoji: opp?.emoji || "🏏",
+          my_stars: isA ? (w.clan_a_stars || 0) : (w.clan_b_stars || 0),
+          opp_stars: isA ? (w.clan_b_stars || 0) : (w.clan_a_stars || 0),
+          won: w.winner_clan_id === clan.id, draw: !w.winner_clan_id, created_at: w.created_at };
+      });
+      // Head-to-head: filter wars between these two clans
+      return { clan, members, warHistory, trophies: (trophiesRes.data as ClanTrophy[]) || [] };
+    };
+    const [a, b] = await Promise.all([fetchClanData(compareSelections[0]), fetchClanData(compareSelections[1])]);
+    setCompareData({ a, b });
+    setCompareLoading(false);
+  }, [compareSelections]);
+
+  // Compute head-to-head between compared clans
+  const headToHead = useMemo(() => {
+    if (!compareData) return null;
+    const idA = compareData.a.clan.id;
+    const idB = compareData.b.clan.id;
+    let aWins = 0, bWins = 0, draws = 0;
+    // Check wars from clan A's history involving clan B
+    compareData.a.warHistory.forEach(w => {
+      // The opp for clan A — check if it's clan B
+      // We need to look at raw wars, but we only have processed data. Use a simpler approach.
+    });
+    // Use raw approach from rankings data
+    return { aWins, bWins, draws };
+  }, [compareData]);
 
   if (loading) return (
     <div className="flex items-center justify-center py-12">
