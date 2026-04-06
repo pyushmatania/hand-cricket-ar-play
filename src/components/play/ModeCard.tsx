@@ -51,7 +51,7 @@ export default function ModeCard({ mode, index, onSelect }: ModeCardProps) {
           borderRadius: "16px",
           border: `2px solid hsl(${mode.borderHue} 30% 30% / 0.5)`,
           borderBottom: `5px solid hsl(${mode.borderHue} 25% 18%)`,
-          background: "linear-gradient(135deg, hsl(28 22% 15% / 0.9) 0%, hsl(220 12% 8% / 0.95) 100%)",
+          background: "linear-gradient(135deg, hsl(220 12% 11% / 0.9) 0%, hsl(220 12% 8% / 0.95) 100%)",
           boxShadow: isPressed
             ? `0 1px 0 hsl(220 18% 7%), 0 0 25px ${mode.glowHsl}`
             : `0 4px 0 hsl(220 18% 7%), 0 6px 20px rgba(0,0,0,0.3)`,
