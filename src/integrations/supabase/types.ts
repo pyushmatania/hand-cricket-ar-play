@@ -125,6 +125,33 @@ export type Database = {
           },
         ]
       }
+      battle_pass_claims: {
+        Row: {
+          created_at: string
+          id: string
+          season_label: string
+          tier: number
+          track: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          season_label: string
+          tier: number
+          track?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          season_label?: string
+          tier?: number
+          track?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       challenge_progress: {
         Row: {
           challenge_id: string
