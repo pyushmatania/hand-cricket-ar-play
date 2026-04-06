@@ -1534,7 +1534,7 @@
   /* V11 MATERIAL 5: CARVED STONE — Headers */
   .stone-header {
     background:
-      url('/assets/ui/wood-plank-texture.png') repeat,
+      url('/assets/ui/stone-texture.png') repeat,
       linear-gradient(180deg, #555555 0%, #3A3A3A 100%);
     background-size: 256px 256px, 100% 100%;
     background-blend-mode: multiply;
