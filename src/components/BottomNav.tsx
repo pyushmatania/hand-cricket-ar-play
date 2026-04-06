@@ -354,18 +354,48 @@ export default function BottomNav() {
                   isCenter={!!item.center}
                 />
 
-                {/* Battle pulse ring */}
-                {item.center && isActive && (
-                  <motion.div
-                    animate={{
-                      boxShadow: [
-                        "0 0 0 0px rgba(255,180,50,0.4)",
-                        "0 0 0 8px rgba(255,180,50,0)",
-                      ],
-                    }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full pointer-events-none z-20"
-                  />
+                {/* Battle golden pulse rings — always visible for center */}
+                {item.center && (
+                  <>
+                    {/* Outer expanding ring */}
+                    <motion.div
+                      animate={{
+                        scale: [1, 1.8],
+                        opacity: [0.6, 0],
+                      }}
+                      transition={{ duration: 1.8, repeat: Infinity, ease: "easeOut" }}
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none z-10"
+                      style={{
+                        width: 54,
+                        height: 54,
+                        border: "3px solid rgba(255,200,50,0.5)",
+                      }}
+                    />
+                    {/* Inner expanding ring (offset timing) */}
+                    <motion.div
+                      animate={{
+                        scale: [1, 1.6],
+                        opacity: [0.5, 0],
+                      }}
+                      transition={{ duration: 1.8, repeat: Infinity, ease: "easeOut", delay: 0.6 }}
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none z-10"
+                      style={{
+                        width: 54,
+                        height: 54,
+                        border: "2px solid rgba(255,180,50,0.4)",
+                      }}
+                    />
+                    {/* Static golden glow circle behind icon */}
+                    <div
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full pointer-events-none z-0"
+                      style={{
+                        width: 62,
+                        height: 62,
+                        background: "radial-gradient(circle, rgba(255,200,50,0.18) 0%, rgba(255,160,30,0.08) 50%, transparent 70%)",
+                        boxShadow: "0 0 16px 4px rgba(255,180,50,0.15)",
+                      }}
+                    />
+                  </>
                 )}
               </motion.div>
 
