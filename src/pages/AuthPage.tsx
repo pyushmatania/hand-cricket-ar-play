@@ -103,15 +103,15 @@ export default function AuthPage() {
           </motion.p>
         </div>
 
-        {/* Auth Card — Stadium Concrete */}
+        {/* Auth Card — Dark Wood Gate */}
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
           className="rounded-2xl p-6 relative overflow-hidden"
           style={{
-            background: CONCRETE_CARD,
-            border: "2px solid hsl(220 15% 18%)",
-            borderBottom: "5px solid hsl(220 15% 8%)",
-            boxShadow: "0 8px 32px hsl(0 0% 0% / 0.5)",
+            background: WOOD_CARD,
+            border: "3px solid #2E1A0E",
+            borderBottom: "5px solid #1A0E05",
+            boxShadow: "0 6px 12px rgba(0,0,0,0.5), inset 0 2px 0 rgba(255,255,255,0.08), inset 0 -2px 0 rgba(0,0,0,0.3)",
           }}
         >
           {/* Chrome line at top */}
