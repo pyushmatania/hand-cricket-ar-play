@@ -126,13 +126,13 @@ const SORT_OPTIONS = [
 ];
 
 const RAGE_TITLES = [
-  { title: "🏆 Comeback King", desc: "Highest best streak", stat: (e: LeaderEntry) => e.best_streak, label: "streak", color: "from-neon-green/10 to-transparent" },
+  { title: "🏆 Comeback King", desc: "Highest best streak", stat: (e: LeaderEntry) => e.best_streak, label: "streak", color: "from-[#7CFC00]/10 to-transparent" },
   { title: "🦆 Duck Master", desc: "Most losses", stat: (e: LeaderEntry) => e.losses, label: "losses", color: "from-secondary/10 to-transparent" },
   { title: "🏳️ Rage Quitter", desc: "Most abandoned matches", stat: (e: LeaderEntry) => e.abandons, label: "abandons", color: "from-out-red/10 to-transparent" },
   { title: "🏏 The Grinder", desc: "Most matches played", stat: (e: LeaderEntry) => e.total_matches, label: "matches", color: "from-primary/10 to-transparent" },
   { title: "💯 Big Hitter", desc: "Highest score ever", stat: (e: LeaderEntry) => e.high_score, label: "runs", color: "from-score-gold/10 to-transparent" },
   { title: "🤝 Peacemaker", desc: "Most draws", stat: (e: LeaderEntry) => e.draws, label: "draws", color: "from-accent/10 to-transparent" },
-  { title: "🎯 Hitman", desc: "Best win rate (10+ matches)", stat: (e: LeaderEntry) => e.total_matches >= 10 ? Math.round((e.wins / e.total_matches) * 100) : 0, label: "win%", color: "from-neon-green/10 to-transparent" },
+  { title: "🎯 Hitman", desc: "Best win rate (10+ matches)", stat: (e: LeaderEntry) => e.total_matches >= 10 ? Math.round((e.wins / e.total_matches) * 100) : 0, label: "win%", color: "from-[#7CFC00]/10 to-transparent" },
   { title: "😵 Bottler", desc: "Worst win rate (10+ matches)", stat: (e: LeaderEntry) => e.total_matches >= 10 ? Math.round((e.losses / e.total_matches) * 100) : 0, label: "loss%", color: "from-out-red/10 to-transparent" },
   { title: "🔥 Run Machine", desc: "Most total wins", stat: (e: LeaderEntry) => e.wins, label: "wins", color: "from-secondary/10 to-transparent" },
   { title: "🪨 The Wall", desc: "Fewest abandons (10+ matches)", stat: (e: LeaderEntry) => e.total_matches >= 10 ? e.total_matches - e.abandons : 0, label: "completed", color: "from-primary/10 to-transparent" },
@@ -497,8 +497,8 @@ export default function LeaderboardPage() {
     { key: "network", label: "NETWORK", icon: "🕸️" },
   ];
 
-  const V10_BG = "linear-gradient(180deg, hsl(220 20% 8%) 0%, hsl(220 18% 5%) 100%)";
-  const LEATHER_GRAIN = "url(\"data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='6' height='6' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E\")";
+  const V11_BG = "linear-gradient(180deg, #1A0E05 0%, #0D0704 100%)";
+  const WOOD_GRAIN = "none";
   const CONCRETE_CARD = "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)";
   const CHALK_BORDER = "2px dashed hsl(43 30% 30% / 0.25)";
 
@@ -508,7 +508,7 @@ export default function LeaderboardPage() {
     >
       {/* Leather grain */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
-        style={{ backgroundImage: LEATHER_GRAIN, backgroundRepeat: "repeat" }} />
+        style={{ backgroundImage: WOOD_GRAIN, backgroundRepeat: "repeat" }} />
       {/* Vignette */}
       <div className="absolute inset-0 pointer-events-none"
         style={{ background: "radial-gradient(ellipse at center, transparent 30%, hsl(220 18% 4% / 0.7) 100%)" }} />
