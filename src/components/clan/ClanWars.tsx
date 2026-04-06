@@ -40,8 +40,9 @@ function getParScore(pitch: typeof PITCH_TYPES[0], field: typeof FIELD_PLACEMENT
 
 /* ─── Types ─── */
 interface ClanWarsProps { clan: Clan; myRole: string; }
-type WarPhase = "overview" | "search" | "defense" | "attack_select" | "attacking" | "attack_result" | "war_log" | "war_results";
+type WarPhase = "overview" | "search" | "defense" | "attack_select" | "attacking" | "attack_result" | "war_log" | "war_results" | "war_history";
 interface AttackRecord { id: string; attacker_id: string; clan_id: string; score: number; stars_earned: number; target_score: number; pitch_type: string; field_placement: string; created_at: string; display_name?: string; }
+interface WarHistoryStats { totalWars: number; wins: number; losses: number; draws: number; totalStars: number; mvpCount: number; totalRuns: number; bestWarStars: number; winRate: number; }
 
 export default function ClanWars({ clan, myRole }: ClanWarsProps) {
   const { user } = useAuth();
@@ -62,6 +63,8 @@ export default function ClanWars({ clan, myRole }: ClanWarsProps) {
   const [resultWar, setResultWar] = useState<any>(null);
   const [resultAttacks, setResultAttacks] = useState<AttackRecord[]>([]);
   const [resultOppClan, setResultOppClan] = useState<Clan | null>(null);
+  const [historyStats, setHistoryStats] = useState<WarHistoryStats | null>(null);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
   /* ─── Load wars ─── */
   useEffect(() => {
@@ -104,6 +107,63 @@ export default function ClanWars({ clan, myRole }: ClanWarsProps) {
     const { data: opp } = await supabase.from("clans").select("*").eq("id", oppId).single();
     if (opp) setOpponentClan(opp as unknown as Clan);
   };
+
+  /* ─── Load war history stats ─── */
+  const loadWarHistory = useCallback(async () => {
+    setHistoryLoading(true);
+    setWarPhase("war_history");
+
+    // Fetch ALL ended wars for this clan (not just last 10)
+    const { data: allWars } = await supabase.from("clan_wars").select("*")
+      .or(`clan_a_id.eq.${clan.id},clan_b_id.eq.${clan.id}`)
+      .eq("status", "ended")
+      .order("created_at", { ascending: false });
+
+    const endedWars = (allWars as any[]) || [];
+    let wins = 0, losses = 0, draws = 0, totalStars = 0, bestWarStars = 0;
+
+    endedWars.forEach((w: any) => {
+      const wIsA = w.clan_a_id === clan.id;
+      const wMyStars = wIsA ? w.clan_a_stars : w.clan_b_stars;
+      totalStars += wMyStars || 0;
+      if (wMyStars > bestWarStars) bestWarStars = wMyStars;
+      if (w.winner_clan_id === clan.id) wins++;
+      else if (w.winner_clan_id === null) draws++;
+      else losses++;
+    });
+
+    // Calculate MVP count: wars where our user had highest stars in the clan
+    let mvpCount = 0;
+    let totalRuns = 0;
+    if (user && endedWars.length > 0) {
+      const warIds = endedWars.map(w => w.id);
+      const { data: allAtks } = await supabase.from("war_attacks").select("*")
+        .in("war_id", warIds).eq("clan_id", clan.id);
+      const atkList = (allAtks as any[]) || [];
+
+      totalRuns = atkList.filter(a => a.attacker_id === user.id).reduce((sum, a) => sum + (a.score || 0), 0);
+
+      // Group attacks by war_id and find MVP per war
+      const byWar = new Map<string, any[]>();
+      atkList.forEach(a => {
+        if (!byWar.has(a.war_id)) byWar.set(a.war_id, []);
+        byWar.get(a.war_id)!.push(a);
+      });
+      byWar.forEach((attacks) => {
+        const best = attacks.reduce((top: any, a: any) =>
+          (a.stars_earned > (top?.stars_earned || 0) || (a.stars_earned === (top?.stars_earned || 0) && a.score > (top?.score || 0))) ? a : top
+        , null);
+        if (best?.attacker_id === user.id) mvpCount++;
+      });
+    }
+
+    const totalWars = endedWars.length;
+    setHistoryStats({
+      totalWars, wins, losses, draws, totalStars, mvpCount, totalRuns, bestWarStars,
+      winRate: totalWars > 0 ? Math.round((wins / totalWars) * 100) : 0,
+    });
+    setHistoryLoading(false);
+  }, [clan.id, user]);
 
   /* ─── Search for war ─── */
   const handleSearchWar = useCallback(async () => {
@@ -316,11 +376,14 @@ export default function ClanWars({ clan, myRole }: ClanWarsProps) {
                 {/* Action buttons */}
                 <div className="flex gap-2">
                   <V10Button variant="secondary" size="md" onClick={() => setWarPhase("war_log")} className="flex-1">
-                    📋 WAR LOG
+                    📋 LOG
+                  </V10Button>
+                  <V10Button variant="secondary" size="md" onClick={loadWarHistory} className="flex-1">
+                    📊 STATS
                   </V10Button>
                   {attacksRemaining > 0 ? (
                     <V10Button variant="danger" size="md" glow onClick={() => setWarPhase("attack_select")} className="flex-1">
-                      ⚔️ ATTACK ({attacksRemaining} left)
+                      ⚔️ ATTACK ({attacksRemaining})
                     </V10Button>
                   ) : (
                     <div className="flex-1 py-3 rounded-xl bg-white/[0.03] border border-white/5 text-center">
@@ -370,6 +433,10 @@ export default function ClanWars({ clan, myRole }: ClanWarsProps) {
                 {myRole === "member" || myRole === "elder" ? (
                   <p className="text-[9px] font-body text-muted-foreground italic">Only leaders can start wars</p>
                 ) : null}
+
+                <V10Button variant="secondary" size="md" onClick={loadWarHistory} className="w-full mt-2">
+                  📊 WAR HISTORY & STATS
+                </V10Button>
 
                 {/* Past wars */}
                 {wars.filter((w: any) => w.status === "ended").length > 0 && (
@@ -920,6 +987,99 @@ export default function ClanWars({ clan, myRole }: ClanWarsProps) {
                 </>
               );
             })()}
+          </motion.div>
+        )}
+
+        {/* ─── WAR HISTORY STATS ─── */}
+        {warPhase === "war_history" && (
+          <motion.div key="war_history" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} className="space-y-3">
+            {historyLoading ? (
+              <div className="flex items-center justify-center py-16">
+                <div className="w-6 h-6 border-2 border-neon-cyan border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : historyStats ? (
+              <>
+                {/* Header */}
+                <div className="scoreboard-metal rounded-2xl p-4 text-center">
+                  <span className="text-4xl block mb-2">📊</span>
+                  <h3 className="font-display text-sm font-black text-neon-cyan tracking-wider neon-text-cyan">WAR HISTORY</h3>
+                  <p className="text-[9px] font-body text-muted-foreground mt-1">{clan.name} — Lifetime Stats</p>
+                </div>
+
+                {/* Win/Loss/Draw */}
+                <div className="stadium-glass rounded-2xl p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-display text-[9px] tracking-widest text-muted-foreground">RECORD</span>
+                    <span className="font-display text-[9px] tabular-nums text-foreground">{historyStats.totalWars} wars</span>
+                  </div>
+                  <div className="flex items-center gap-2 justify-center">
+                    <div className="flex-1 text-center py-3 rounded-xl bg-neon-green/10 border border-neon-green/20">
+                      <p className="font-display text-2xl font-black text-neon-green tabular-nums">{historyStats.wins}</p>
+                      <p className="font-display text-[8px] tracking-widest text-neon-green/70">WINS</p>
+                    </div>
+                    <div className="flex-1 text-center py-3 rounded-xl bg-destructive/10 border border-destructive/20">
+                      <p className="font-display text-2xl font-black text-destructive tabular-nums">{historyStats.losses}</p>
+                      <p className="font-display text-[8px] tracking-widest text-destructive/70">LOSSES</p>
+                    </div>
+                    <div className="flex-1 text-center py-3 rounded-xl bg-white/[0.04] border border-white/10">
+                      <p className="font-display text-2xl font-black text-muted-foreground tabular-nums">{historyStats.draws}</p>
+                      <p className="font-display text-[8px] tracking-widest text-muted-foreground/70">DRAWS</p>
+                    </div>
+                  </div>
+
+                  {/* Win rate bar */}
+                  {historyStats.totalWars > 0 && (
+                    <div className="mt-3">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-[8px] font-display text-muted-foreground">WIN RATE</span>
+                        <span className="text-[8px] font-display text-neon-cyan tabular-nums">{historyStats.winRate}%</span>
+                      </div>
+                      <div className="h-2 rounded-full bg-white/5 overflow-hidden">
+                        <motion.div
+                          className="h-full rounded-full bg-gradient-to-r from-neon-green to-neon-cyan"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${historyStats.winRate}%` }}
+                          transition={{ duration: 1, ease: "easeOut" }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Key stats grid */}
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="stadium-glass rounded-xl p-3 text-center">
+                    <span className="text-2xl block mb-1">⭐</span>
+                    <p className="font-display text-xl font-black text-game-gold tabular-nums">{historyStats.totalStars}</p>
+                    <p className="font-display text-[7px] tracking-widest text-muted-foreground">TOTAL STARS</p>
+                  </div>
+                  <div className="stadium-glass rounded-xl p-3 text-center">
+                    <span className="text-2xl block mb-1">🏆</span>
+                    <p className="font-display text-xl font-black text-neon-cyan tabular-nums">{historyStats.mvpCount}</p>
+                    <p className="font-display text-[7px] tracking-widest text-muted-foreground">MVP AWARDS</p>
+                  </div>
+                  <div className="stadium-glass rounded-xl p-3 text-center">
+                    <span className="text-2xl block mb-1">🏏</span>
+                    <p className="font-display text-xl font-black text-foreground tabular-nums">{historyStats.totalRuns}</p>
+                    <p className="font-display text-[7px] tracking-widest text-muted-foreground">YOUR RUNS</p>
+                  </div>
+                  <div className="stadium-glass rounded-xl p-3 text-center">
+                    <span className="text-2xl block mb-1">🌟</span>
+                    <p className="font-display text-xl font-black text-game-gold tabular-nums">{historyStats.bestWarStars}</p>
+                    <p className="font-display text-[7px] tracking-widest text-muted-foreground">BEST WAR ⭐</p>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-12">
+                <span className="text-4xl block mb-2">🏰</span>
+                <p className="text-muted-foreground text-xs font-body">No war history yet</p>
+              </div>
+            )}
+
+            <V10Button variant="secondary" size="md" onClick={() => setWarPhase("overview")} className="w-full">
+              ← BACK TO WARS
+            </V10Button>
           </motion.div>
         )}
       </AnimatePresence>
