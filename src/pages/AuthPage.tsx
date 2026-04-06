@@ -253,9 +253,9 @@ export default function AuthPage() {
 
             {/* Chalk divider */}
             <div className="flex items-center gap-3 py-1">
-              <div className="flex-1 h-px opacity-20" style={{ background: CHALK_DIVIDER }} />
+              <div className="flex-1 h-px opacity-20" style={{ background: ROPE_DIVIDER }} />
               <span className="text-[8px] font-display tracking-widest" style={{ color: "hsl(220 15% 35%)" }}>OR CONTINUE WITH</span>
-              <div className="flex-1 h-px opacity-20" style={{ background: CHALK_DIVIDER }} />
+              <div className="flex-1 h-px opacity-20" style={{ background: ROPE_DIVIDER }} />
             </div>
 
             {/* Google — Stadium Concrete button */}
@@ -273,7 +273,7 @@ export default function AuthPage() {
               }}
               className="w-full py-3 rounded-2xl font-display text-xs tracking-wider flex items-center justify-center gap-2.5"
               style={{
-                background: CONCRETE_CARD,
+                background: WOOD_CARD,
                 border: "2px solid hsl(220 15% 18%)",
                 borderBottom: "5px solid hsl(220 15% 8%)",
                 color: "hsl(var(--foreground))",
