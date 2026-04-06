@@ -1,11 +1,7 @@
 import { motion } from "framer-motion";
 import { DBPlayer, statToDiamonds, overallRating, roleLabel } from "@/hooks/usePlayers";
 import { Zap } from "lucide-react";
-import { CARD_FRAMES } from "@/assets/cards";
 import { TEAM_STAR_ART, TEAM_BOWLER_ART } from "@/assets/players";
-
-/* ── Player image map for Mythic/Legendary cards ── */
-const PLAYER_IMAGES: Record<string, string> = {};
 
 import dhoniImg from "@/assets/players/dhoni.jpg";
 import kohliImg from "@/assets/players/kohli.jpg";
@@ -23,230 +19,145 @@ import buttlerImg from "@/assets/players/buttler.jpg";
 import chahalImg from "@/assets/players/chahal.jpg";
 import pantImg from "@/assets/players/pant.jpg";
 
-Object.assign(PLAYER_IMAGES, {
+const PLAYER_IMAGES: Record<string, string> = {
   dhoni: dhoniImg, kohli: kohliImg, rohit: rohitImg, bumrah: bumrahImg, russell: russellImg,
   rashid: rashidImg, hardik: hardikImg, sky: skyImg, klrahul: klrahulImg, jadeja: jadejaImg,
   abd: abdImg, warner: warnerImg, buttler: buttlerImg, chahal: chahalImg, pant: pantImg,
-});
-
-/* ── Rarity frame styles ── */
-const RARITY_FRAME: Record<string, { border: string; glow: string; bg: string; diamond: string }> = {
-  common: {
-    border: "hsl(220 10% 35%)",
-    glow: "none",
-    bg: "linear-gradient(180deg, hsl(222 30% 14%), hsl(222 35% 8%))",
-    diamond: "hsl(220 10% 50%)",
-  },
-  rare: {
-    border: "hsl(210 60% 45%)",
-    glow: "0 0 12px hsl(210 70% 50% / 0.3)",
-    bg: "linear-gradient(180deg, hsl(215 30% 14%), hsl(215 35% 8%))",
-    diamond: "hsl(210 70% 55%)",
-  },
-  epic: {
-    border: "hsl(270 50% 50%)",
-    glow: "0 0 16px hsl(270 60% 55% / 0.35)",
-    bg: "linear-gradient(180deg, hsl(270 20% 14%), hsl(270 25% 8%))",
-    diamond: "hsl(270 60% 60%)",
-  },
-  legendary: {
-    border: "hsl(35 80% 50%)",
-    glow: "0 0 20px hsl(35 90% 50% / 0.4)",
-    bg: "linear-gradient(180deg, hsl(35 30% 14%), hsl(35 35% 8%))",
-    diamond: "hsl(35 80% 55%)",
-  },
-  mythic: {
-    border: "hsl(280 80% 60%)",
-    glow: "0 0 24px hsl(280 90% 65% / 0.5), 0 0 40px hsl(180 80% 50% / 0.2)",
-    bg: "linear-gradient(180deg, hsl(280 25% 12%), hsl(220 30% 8%))",
-    diamond: "hsl(280 80% 65%)",
-  },
 };
 
-function DiamondDots({ filled, total = 5, color }: { filled: number; total?: number; color: string }) {
-  return (
-    <div className="flex gap-0.5">
-      {Array.from({ length: total }).map((_, i) => (
-        <span key={i} className="text-[8px] leading-none" style={{ color: i < filled ? color : "hsl(220 10% 25%)" }}>◆</span>
-      ))}
-    </div>
-  );
-}
+/* ── V11 Wooden Kingdom Collection Row ── */
+const RARITY_STYLE: Record<string, { border: string; glow: string; diamond: string; barColor: string }> = {
+  common: { border: "#2E1A0E", glow: "none", diamond: "#6B7280", barColor: "#6B7280" },
+  rare: { border: "#2563EB", glow: "0 0 10px rgba(37,99,235,0.2)", diamond: "#3B82F6", barColor: "#2563EB" },
+  epic: { border: "#A855F7", glow: "0 0 14px rgba(168,85,247,0.25)", diamond: "#A855F7", barColor: "#A855F7" },
+  legendary: { border: "#FFD700", glow: "0 0 18px rgba(255,215,0,0.3)", diamond: "#FFD700", barColor: "#FFD700" },
+  mythic: { border: "#A855F7", glow: "0 0 24px rgba(168,85,247,0.4), 0 0 40px rgba(0,212,255,0.15)", diamond: "#A855F7", barColor: "#A855F7" },
+};
 
 interface CollectionPlayerCardProps {
   player: DBPlayer;
   size?: "sm" | "md";
   onTap?: (player: DBPlayer) => void;
   delay?: number;
+  cardLevel?: number;
+  cardCount?: number;
 }
 
-export default function CollectionPlayerCard({ player, size = "sm", onTap, delay = 0 }: CollectionPlayerCardProps) {
+export default function CollectionPlayerCard({ player, size = "sm", onTap, delay = 0, cardLevel, cardCount }: CollectionPlayerCardProps) {
   const rarity = player.rarity || "common";
-  const frame = RARITY_FRAME[rarity];
-  const frameImg = CARD_FRAMES[rarity];
+  const rs = RARITY_STYLE[rarity] || RARITY_STYLE.common;
   const rating = overallRating(player);
   const role = roleLabel(player.role);
 
-  const stats = [
-    { label: "PWR", value: player.power },
-    { label: "TEC", value: player.technique },
-    { label: "PAC", value: player.pace_spin },
-    { label: "ACC", value: player.accuracy },
-    { label: "AGI", value: player.agility },
-    { label: "CLU", value: player.clutch },
-  ];
-
-  const isSm = size === "sm";
-  const cardW = isSm ? "w-[104px]" : "w-40";
-
+  /* Horizontal row layout for collection */
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      whileTap={onTap ? { scale: 0.95 } : undefined}
+      initial={{ opacity: 0, x: -12 }}
+      animate={{ opacity: 1, x: 0 }}
+      whileTap={onTap ? { scale: 0.97 } : undefined}
       onClick={() => onTap?.(player)}
-      transition={{ delay, duration: 0.35, type: "spring", stiffness: 120 }}
-      className={`relative ${cardW} ${onTap ? "cursor-pointer" : ""}`}
+      transition={{ delay, duration: 0.3, type: "spring", stiffness: 140 }}
+      className={`relative rounded-xl overflow-hidden ${onTap ? "cursor-pointer" : ""}`}
+      style={{
+        background: "linear-gradient(90deg, #3E2410 0%, #2E1A0E 70%, transparent 100%)",
+        border: `2px solid ${rs.border}`,
+        boxShadow: `0 4px 8px rgba(0,0,0,0.5), ${rs.glow}, inset 0 1px 0 rgba(255,255,255,0.06)`,
+      }}
     >
-      <div
-        className="relative overflow-hidden rounded-xl"
-        style={{
-          background: frame.bg,
-          border: `2px solid ${frame.border}`,
-          boxShadow: `0 4px 8px rgba(0,0,0,0.5), ${frame.glow}`,
-        }}
-      >
+      {/* Rarity glow bar - left edge */}
+      <div className="absolute left-0 top-0 bottom-0 w-[3px]" style={{
+        background: rs.barColor,
+        boxShadow: `0 0 6px ${rs.barColor}66`,
+      }} />
+
+      <div className="flex items-center gap-3 px-3 py-2.5 pl-4">
         {/* Rating badge */}
-        <div className="absolute top-1 left-1 z-20">
-          <div
-            className="w-7 h-7 rounded-md flex items-center justify-center"
-            style={{
-              background: `linear-gradient(180deg, ${frame.border}, hsl(222 30% 10%))`,
-              border: `1.5px solid ${frame.diamond}`,
-            }}
-          >
-            <span className="font-display text-[10px] font-black" style={{ color: frame.diamond }}>{rating}</span>
-          </div>
+        <div
+          className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+          style={{
+            background: `linear-gradient(135deg, ${rs.border}, #2E1A0E)`,
+            border: `2px solid ${rs.diamond}`,
+            boxShadow: `0 2px 0 #1A0E06`,
+          }}
+        >
+          <span className="font-display text-xs font-black" style={{ color: rs.diamond }}>{rating}</span>
         </div>
 
-        {/* Role badge */}
-        <div className="absolute top-1 right-1 z-20">
-          <div className="px-1.5 py-0.5 rounded text-[7px] font-display font-bold"
-            style={{ background: `${frame.border}88`, color: "white" }}
-          >
-            {role}
-          </div>
-        </div>
-
-        {/* Player image or fallback */}
-        <div className={`${isSm ? "h-20" : "h-32"} flex items-center justify-center relative overflow-hidden`}>
+        {/* Player image (small circular thumbnail) */}
+        <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 border-2" style={{ borderColor: `${rs.border}88` }}>
           {player.thumbnail_url && PLAYER_IMAGES[player.thumbnail_url] ? (
-            <img
-              src={PLAYER_IMAGES[player.thumbnail_url]}
-              alt={player.name}
-              className="w-full h-full object-cover object-top"
-              loading="lazy"
-              width={512}
-              height={704}
-            />
-          ) : player.ipl_team && (() => {
-            const teamKey = player.ipl_team!.toLowerCase();
-            const isBowlerRole = player.role === "bowler" || player.role === "all_rounder";
-            const art = isBowlerRole ? (TEAM_BOWLER_ART[teamKey] || TEAM_STAR_ART[teamKey]) : TEAM_STAR_ART[teamKey];
-            return art;
-          })() ? (
-            <img
-              src={(() => {
-                const teamKey = player.ipl_team!.toLowerCase();
-                const isBowlerRole = player.role === "bowler" || player.role === "all_rounder";
-                return isBowlerRole ? (TEAM_BOWLER_ART[teamKey] || TEAM_STAR_ART[teamKey]) : TEAM_STAR_ART[teamKey];
-              })()}
-              alt={player.name}
-              className="w-full h-full object-cover object-top opacity-60"
-              loading="lazy"
-            />
+            <img src={PLAYER_IMAGES[player.thumbnail_url]} alt={player.name} className="w-full h-full object-cover" loading="lazy" />
           ) : (
-            <>
-              <div className="absolute inset-0 opacity-5 flex items-center justify-center">
-                <span className="font-display text-[48px] font-black">{player.short_name?.[0] || player.name[0]}</span>
-              </div>
-              <div className="text-4xl">
-                {player.role === "bowler" ? "🏏" : player.role === "wk_batsman" ? "🧤" : "🏏"}
-              </div>
-            </>
+            <div className="w-full h-full flex items-center justify-center" style={{ background: "#1A0E06" }}>
+              <span className="text-lg">{player.role === "bowler" ? "🏏" : "🧤"}</span>
+            </div>
           )}
         </div>
 
-        {/* Rarity Frame Overlay */}
-        {frameImg && (
-          <img
-            src={frameImg}
-            alt={`${rarity} frame`}
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none z-[15] mix-blend-screen opacity-50"
-          />
-        )}
-
-        <div className="px-2 py-1 text-center" style={{ background: `${frame.border}44` }}>
-          <p className="font-display text-[9px] font-black text-white truncate leading-tight"
-            style={{ textShadow: "0 1px 2px rgba(0,0,0,0.5)" }}
+        {/* Name + role */}
+        <div className="flex-1 min-w-0">
+          <p className="font-display text-[11px] font-black text-white truncate leading-tight"
+            style={{ textShadow: "0 1px 2px rgba(0,0,0,0.5)", letterSpacing: "1px" }}
           >
             {(player.short_name || player.name).toUpperCase()}
           </p>
-          <p className="text-[7px] text-muted-foreground font-body">{player.ipl_team} • {player.country}</p>
+          <div className="flex items-center gap-2 mt-0.5">
+            <span className="text-[8px] font-display tracking-wider" style={{ color: rs.diamond }}>{role}</span>
+            {player.ipl_team && (
+              <span className="text-[7px] text-[#94A3B8]">{player.ipl_team}</span>
+            )}
+          </div>
+          {/* Card level indicator */}
+          {cardLevel !== undefined && cardLevel > 0 && (
+            <div className="flex items-center gap-1.5 mt-0.5">
+              <span className="text-[7px] font-display" style={{ color: "#FFD700" }}>LVL {cardLevel}</span>
+              {cardCount !== undefined && (
+                <span className="text-[7px] text-[#94A3B8]">• {cardCount} cards</span>
+              )}
+            </div>
+          )}
         </div>
 
-        {/* Stats */}
-        {!isSm && (
-          <div className="px-2 pb-2 pt-1 space-y-0.5">
-            {stats.map((s) => (
-              <div key={s.label} className="flex items-center justify-between">
-                <span className="text-[7px] text-muted-foreground font-body w-8">{s.label}</span>
-                <DiamondDots filled={statToDiamonds(s.value)} color={frame.diamond} />
-                <span className="text-[7px] font-display text-foreground w-5 text-right">{s.value}</span>
-              </div>
-            ))}
+        {/* Mini stat diamonds (top 2 stats) */}
+        <div className="flex flex-col gap-0.5 shrink-0">
+          <div className="flex items-center gap-1">
+            <span className="text-[7px] text-[#94A3B8] w-4">PWR</span>
+            <div className="flex gap-px">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <span key={i} className="text-[6px]" style={{ color: i < statToDiamonds(player.power) ? rs.diamond : "rgba(100,100,100,0.25)" }}>◆</span>
+              ))}
+            </div>
           </div>
-        )}
+          <div className="flex items-center gap-1">
+            <span className="text-[7px] text-[#94A3B8] w-4">TEC</span>
+            <div className="flex gap-px">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <span key={i} className="text-[6px]" style={{ color: i < statToDiamonds(player.technique) ? rs.diamond : "rgba(100,100,100,0.25)" }}>◆</span>
+              ))}
+            </div>
+          </div>
+        </div>
 
         {/* Special ability indicator */}
-        {player.special_ability_name && isSm && (
-          <div className="flex items-center justify-center pb-1.5 gap-0.5">
-            <Zap className="w-2.5 h-2.5" style={{ color: frame.diamond }} />
-            <span className="text-[6px] font-body truncate max-w-[70px]" style={{ color: frame.diamond }}>
-              {player.special_ability_name}
-            </span>
-          </div>
+        {player.special_ability_name && (
+          <Zap className="w-3.5 h-3.5 shrink-0" style={{ color: rs.diamond }} />
         )}
       </div>
 
-      {/* Holographic shimmer for Legendary & Mythic */}
+      {/* Legendary/Mythic shimmer */}
       {(rarity === "legendary" || rarity === "mythic") && (
-        <motion.div
-          className="absolute inset-0 rounded-xl pointer-events-none overflow-hidden"
-          style={{ zIndex: 30 }}
-        >
+        <motion.div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 20 }}>
           <motion.div
             animate={{ x: ["-120%", "120%"] }}
-            transition={{ duration: rarity === "mythic" ? 2 : 2.8, repeat: Infinity, repeatDelay: rarity === "mythic" ? 1 : 2, ease: "easeInOut" }}
-            className="absolute inset-0"
+            transition={{ duration: rarity === "mythic" ? 2 : 3, repeat: Infinity, repeatDelay: rarity === "mythic" ? 1 : 2, ease: "easeInOut" }}
+            className="absolute inset-0 w-[50%]"
             style={{
-              width: "60%",
               background: rarity === "mythic"
-                ? "linear-gradient(105deg, transparent 30%, hsl(280 90% 70% / 0.25) 45%, hsl(180 80% 60% / 0.3) 50%, hsl(320 90% 70% / 0.25) 55%, transparent 70%)"
-                : "linear-gradient(105deg, transparent 30%, hsl(35 90% 60% / 0.2) 45%, hsl(50 100% 80% / 0.35) 50%, hsl(35 90% 60% / 0.2) 55%, transparent 70%)",
+                ? "linear-gradient(105deg, transparent 30%, rgba(168,85,247,0.2) 45%, rgba(0,212,255,0.25) 50%, rgba(168,85,247,0.2) 55%, transparent 70%)"
+                : "linear-gradient(105deg, transparent 30%, rgba(255,215,0,0.15) 45%, rgba(255,255,200,0.3) 50%, rgba(255,215,0,0.15) 55%, transparent 70%)",
             }}
           />
         </motion.div>
-      )}
-
-      {/* Mythic pulse */}
-      {rarity === "mythic" && (
-        <motion.div
-          animate={{ opacity: [0.3, 0.7, 0.3] }}
-          transition={{ duration: 2.5, repeat: Infinity }}
-          className="absolute inset-0 rounded-xl pointer-events-none"
-          style={{ border: "2px solid hsl(280 80% 60% / 0.4)" }}
-        />
       )}
     </motion.div>
   );

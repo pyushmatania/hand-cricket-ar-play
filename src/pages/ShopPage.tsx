@@ -107,40 +107,45 @@ export default function ShopPage() {
   const filtered = category === "all" ? items : items.filter(i => i.category === category);
 
   return (
-    <div className="min-h-screen relative overflow-hidden pb-24"
-      style={{
-        background: "linear-gradient(180deg, hsl(222 47% 6%) 0%, hsl(222 47% 4%) 100%)",
-      }}
-    >
-
+    <div className="min-h-screen relative overflow-hidden pb-24 fish-scale-bg">
       <TopStatusBar />
 
       <div className="relative z-10 max-w-lg mx-auto px-4 pt-4">
-        {/* Header - Floodlight Chrome */}
+        {/* Stone Header */}
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">
             <motion.button whileTap={{ scale: 0.9 }} onClick={() => navigate(-1)}
-              className="w-10 h-10 rounded-xl flex items-center justify-center font-body text-sm text-foreground active:scale-95 transition-transform scoreboard-metal"
+              className="w-10 h-10 rounded-xl flex items-center justify-center font-body text-sm text-[#F5E6D3] active:scale-95 transition-transform"
+              style={{
+                background: "linear-gradient(180deg, #3E2410, #2E1A0E)",
+                border: "2px solid #5C3A1E",
+                boxShadow: "0 4px 0 #1A0E06",
+              }}
             >
               ←
             </motion.button>
             <div>
-              <h1 className="font-display text-lg text-foreground" style={{ textShadow: "0 2px 0 hsl(220 18% 6%)" }}>
-                Shop
-              </h1>
-              <span className="text-[9px] text-muted-foreground font-display tracking-[0.2em]">CUSTOMIZE YOUR STYLE</span>
+              <h1 className="stone-header text-lg">SHOP</h1>
+              <span className="text-[9px] text-[#94A3B8] font-display tracking-[0.2em]">WOODEN MARKETPLACE</span>
             </div>
           </div>
           <CurrencyPill icon="🪙" value={coins} showPlus={false} />
         </div>
 
-        {/* Category tabs - Stadium Concrete + Jersey Mesh */}
-        <div className="flex gap-1 mb-5 rounded-2xl p-1 scoreboard-metal">
+        {/* Category tabs - Dark Wood buttons */}
+        <div className="flex gap-1 mb-5 rounded-xl p-1" style={{
+          background: "linear-gradient(180deg, #2E1A0E, #1A0E06)",
+          border: "2px solid #3E2410",
+        }}>
           {CATEGORIES.map(c => (
             <button key={c.key} onClick={() => setCategory(c.key)}
-              className={`flex-1 py-2.5 rounded-xl font-display text-[8px] tracking-widest transition-all flex items-center justify-center gap-1 ${
-                category === c.key ? "bg-neon-green text-background font-bold" : "text-muted-foreground"
-              }`}
+              className="flex-1 py-2.5 rounded-lg font-display text-[8px] tracking-widest transition-all flex items-center justify-center gap-1"
+              style={{
+                background: category === c.key ? "linear-gradient(180deg, #22C55E, #16A34A)" : "transparent",
+                color: category === c.key ? "white" : "#94A3B8",
+                border: category === c.key ? "2px solid #22C55E" : "2px solid transparent",
+                boxShadow: category === c.key ? "0 3px 0 #15803D" : "none",
+              }}
             >
               <span className="text-sm">{c.icon}</span>
               {c.label}
@@ -148,10 +153,8 @@ export default function ShopPage() {
           ))}
         </div>
 
-        {/* Chalk divider */}
-        <div className="h-px mb-4 mx-2 opacity-20"
-          style={{ background: "repeating-linear-gradient(90deg, hsl(45 30% 80%) 0px, hsl(45 30% 80%) 8px, transparent 8px, transparent 14px)" }}
-        />
+        {/* Rope divider */}
+        <div className="rope-separator mb-4" />
 
         {/* Items grid */}
         <div className="grid grid-cols-2 gap-3">
@@ -174,7 +177,7 @@ export default function ShopPage() {
         {filtered.length === 0 && (
           <div className="text-center py-16">
             <span className="text-5xl block mb-3">🏗️</span>
-            <p className="font-display text-sm text-muted-foreground">No items in this category yet!</p>
+            <p className="font-display text-sm text-[#94A3B8]">No items in this category yet!</p>
           </div>
         )}
       </div>
