@@ -572,7 +572,7 @@ export default function SettingsPage() {
           className="rounded-2xl p-5 text-center mb-4"
           style={{
             ...cardStyle,
-            borderBottom: "5px solid hsl(25 25% 10%)",
+            borderBottom: "5px solid hsl(220 15% 8%)",
           }}
         >
           <span className="text-3xl block mb-2">🏏</span>

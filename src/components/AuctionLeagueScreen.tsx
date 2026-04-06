@@ -277,7 +277,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
       <div className="fixed inset-0 bg-background flex flex-col overflow-hidden">
         {/* Background */}
         <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 50% 20%, hsl(280 40% 12%) 0%, hsl(25 15% 6%) 70%)" }} />
+          <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 50% 20%, hsl(280 40% 12%) 0%, hsl(220 12% 5%) 70%)" }} />
         </div>
 
         {/* Top bar */}
@@ -316,7 +316,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
             style={{
               borderRadius: "20px",
               padding: "20px",
-              background: `linear-gradient(135deg, hsl(220 12% 10%) 0%, hsl(25 15% 9%) 100%)`,
+              background: `linear-gradient(135deg, hsl(220 12% 10%) 0%, hsl(220 12% 7%) 100%)`,
               border: `2px solid ${RARITY_COLORS[currentPlayer.rarity || "common"]}`,
               borderBottom: `5px solid ${RARITY_COLORS[currentPlayer.rarity || "common"]}80`,
               boxShadow: `0 8px 30px ${RARITY_COLORS[currentPlayer.rarity || "common"]}30`,
@@ -360,7 +360,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
             </div>
 
             {/* Overall */}
-            <div className="text-center py-2 rounded-xl" style={{ background: "hsl(25 15% 18%)" }}>
+            <div className="text-center py-2 rounded-xl" style={{ background: "hsl(220 15% 14%)" }}>
               <span className="font-display text-[9px] text-muted-foreground tracking-wider">OVERALL </span>
               <span className="font-display text-lg" style={{ color: RARITY_COLORS[currentPlayer.rarity || "common"] }}>
                 {overall}
@@ -477,7 +477,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
     return (
       <div className="fixed inset-0 bg-background flex flex-col overflow-hidden">
         <div className="absolute inset-0 pointer-events-none"
-          style={{ background: "radial-gradient(ellipse at 50% 30%, hsl(142 30% 10%) 0%, hsl(25 15% 6%) 70%)" }} />
+          style={{ background: "radial-gradient(ellipse at 50% 30%, hsl(142 30% 10%) 0%, hsl(220 12% 5%) 70%)" }} />
 
         <div className="relative z-10 flex items-center justify-between px-4 pt-4 pb-2">
           <motion.button whileTap={{ scale: 0.9 }} onClick={onHome}
@@ -517,7 +517,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
           </div>
         </div>
 
-        <div className="fixed bottom-0 inset-x-0 p-4 z-20" style={{ background: "linear-gradient(transparent, hsl(25 15% 6%))" }}>
+        <div className="fixed bottom-0 inset-x-0 p-4 z-20" style={{ background: "linear-gradient(transparent, hsl(220 12% 5%))" }}>
           <motion.button whileTap={{ scale: 0.95 }} onClick={handleStartKnockout}
             className="w-full py-4 rounded-xl font-display text-base tracking-wider"
             style={{
@@ -539,7 +539,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
     return (
       <div className="fixed inset-0 bg-background flex flex-col items-center justify-center">
         <div className="absolute inset-0 pointer-events-none"
-          style={{ background: "radial-gradient(ellipse at 50% 40%, hsl(0 40% 12%) 0%, hsl(25 15% 6%) 70%)" }} />
+          style={{ background: "radial-gradient(ellipse at 50% 40%, hsl(0 40% 12%) 0%, hsl(220 12% 5%) 70%)" }} />
 
         <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
           className="relative z-10 text-center">
@@ -588,7 +588,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
     return (
       <div className="fixed inset-0 bg-background flex flex-col overflow-hidden">
         <div className="absolute inset-0 pointer-events-none"
-          style={{ background: `radial-gradient(ellipse at 50% 20%, ${isBatting ? "hsl(217 30% 12%)" : "hsl(0 30% 12%)"} 0%, hsl(25 15% 6%) 70%)` }} />
+          style={{ background: `radial-gradient(ellipse at 50% 20%, ${isBatting ? "hsl(217 30% 12%)" : "hsl(0 30% 12%)"} 0%, hsl(220 12% 5%) 70%)` }} />
 
         {/* HUD */}
         <div className="relative z-10 flex items-center justify-between px-4 pt-4 pb-2">
@@ -626,7 +626,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
             Ball {knockoutBalls}/{MATCH_BALLS}
           </p>
           {/* Progress bar */}
-          <div className="mx-auto w-48 h-1.5 rounded-full mt-2" style={{ background: "hsl(25 15% 18%)" }}>
+          <div className="mx-auto w-48 h-1.5 rounded-full mt-2" style={{ background: "hsl(220 15% 14%)" }}>
             <div className="h-full rounded-full transition-all duration-300"
               style={{
                 width: `${(knockoutBalls / MATCH_BALLS) * 100}%`,
@@ -687,8 +687,8 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
       <div className="fixed inset-0 bg-background flex flex-col items-center justify-center">
         <div className="absolute inset-0 pointer-events-none"
           style={{ background: isChampion
-            ? "radial-gradient(ellipse at 50% 40%, hsl(43 50% 15%) 0%, hsl(25 15% 6%) 70%)"
-            : "radial-gradient(ellipse at 50% 40%, hsl(0 30% 10%) 0%, hsl(25 15% 6%) 70%)"
+            ? "radial-gradient(ellipse at 50% 40%, hsl(43 50% 15%) 0%, hsl(220 12% 5%) 70%)"
+            : "radial-gradient(ellipse at 50% 40%, hsl(0 30% 10%) 0%, hsl(220 12% 5%) 70%)"
           }} />
 
         <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
@@ -714,7 +714,7 @@ export default function AuctionLeagueScreen({ onHome }: AuctionLeagueScreenProps
             <motion.button whileTap={{ scale: 0.95 }} onClick={onHome}
               className="px-6 py-3 rounded-xl font-display text-[11px] tracking-wider"
               style={{
-                background: "linear-gradient(180deg, hsl(220 15% 14%) 0%, hsl(25 15% 12%) 100%)",
+                background: "linear-gradient(180deg, hsl(220 15% 14%) 0%, hsl(220 12% 9%) 100%)",
                 border: "1.5px solid hsl(25 18% 25%)",
                 borderBottom: "4px solid hsl(220 12% 6%)",
                 color: "hsl(25 30% 70%)",

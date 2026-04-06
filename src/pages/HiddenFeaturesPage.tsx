@@ -92,7 +92,7 @@ export default function HiddenFeaturesPage() {
                   style={{
                     background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
                     border: "2px solid hsl(220 15% 18%)",
-                    borderBottom: "5px solid hsl(25 25% 10%)",
+                    borderBottom: "5px solid hsl(220 15% 8%)",
                   }}
                 >
                   {/* Category header */}
@@ -166,7 +166,7 @@ export default function HiddenFeaturesPage() {
           <motion.button
             className="fixed bottom-24 right-4 z-20 px-4 py-2 rounded-xl font-display text-[8px] tracking-widest"
             style={{
-              background: "hsl(25 15% 12%)",
+              background: "hsl(220 12% 9%)",
               border: "1px solid hsl(220 15% 18%)",
               color: "hsl(220 15% 50%)",
             }}

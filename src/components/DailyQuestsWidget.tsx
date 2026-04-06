@@ -51,7 +51,7 @@ export default function DailyQuestsWidget() {
                   : "linear-gradient(135deg, hsl(220 12% 10%), hsl(220 12% 8%))",
                 border: isComplete
                   ? "1px solid hsl(142 40% 25%)"
-                  : "1px solid hsl(25 15% 20%)",
+                  : "1px solid hsl(220 15% 16%)",
               }}
             >
               {/* Icon */}

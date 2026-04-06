@@ -22,7 +22,7 @@ export default function TopBar({ coins = 1250, gems = 45, runs = 3800 }: TopBarP
           style={{
             background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
             borderBottom: "2px solid hsl(220 15% 18%)",
-            boxShadow: "0 4px 0 hsl(25 20% 6%), 0 4px 16px rgba(0,0,0,0.5), inset 0 -1px 0 rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+            boxShadow: "0 4px 0 hsl(220 15% 5%), 0 4px 16px rgba(0,0,0,0.5), inset 0 -1px 0 rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
           }}>
           {/* Player avatar + level */}
           <button
@@ -34,7 +34,7 @@ export default function TopBar({ coins = 1250, gems = 45, runs = 3800 }: TopBarP
                 background: CONCRETE_CARD,
                 border: "2px solid hsl(35 40% 45%)",
                 borderBottom: "3px solid hsl(35 30% 30%)",
-                boxShadow: "0 2px 0 hsl(25 20% 6%), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.15)",
+                boxShadow: "0 2px 0 hsl(220 15% 5%), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.15)",
               }}>
               🏏
             </div>
@@ -61,7 +61,7 @@ export default function TopBar({ coins = 1250, gems = 45, runs = 3800 }: TopBarP
               background: CONCRETE_CARD,
               border: "2px solid hsl(220 15% 18%)",
               borderBottom: "3px solid hsl(220 15% 6%)",
-              boxShadow: "0 2px 0 hsl(25 20% 6%), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+              boxShadow: "0 2px 0 hsl(220 15% 5%), 0 2px 4px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
             }}
           >
             <Settings className="w-4 h-4 text-muted-foreground" />

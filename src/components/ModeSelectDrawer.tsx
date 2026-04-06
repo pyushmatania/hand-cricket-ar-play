@@ -25,7 +25,7 @@ const QUICK_PLAY = [
 
 const TOURNAMENTS = [
   { id: "tournament", label: "TOURNAMENT", desc: "5-Round Bracket", emoji: "🏆", color: "hsl(43 90% 55%)", badge: null, minRank: null },
-  { id: "ipl", label: "IPL SEASON", desc: "Full Franchise", emoji: "🏟️", color: "hsl(25 90% 55%)", badge: null, minRank: null },
+  { id: "ipl", label: "IPL SEASON", desc: "Full Franchise", emoji: "🏟️", color: "hsl(19 100% 60%)", badge: null, minRank: null },
   { id: "worldcup", label: "WORLD CUP", desc: "10 Nations", emoji: "🌍", color: "hsl(217 80% 55%)", badge: "NEW", minRank: null },
   { id: "ashes", label: "THE ASHES", desc: "Best of 5 Tests", emoji: "🏺", color: "hsl(35 70% 50%)", badge: "NEW", minRank: null },
   { id: "knockout", label: "KNOCKOUT CUP", desc: "8-Team Bracket", emoji: "🥊", color: "hsl(0 70% 55%)", badge: "NEW", minRank: "silver" },
@@ -220,7 +220,7 @@ export default function ModeSelectDrawer({ open, onOpenChange }: ModeSelectDrawe
       <DrawerContent
         className="border-t-0 rounded-t-3xl max-h-[85vh] pb-6"
         style={{
-          background: "linear-gradient(180deg, hsl(28 30% 15%) 0%, hsl(25 25% 8%) 100%)",
+          background: "linear-gradient(180deg, hsl(28 30% 15%) 0%, hsl(220 15% 7%) 100%)",
           borderTop: "2px solid hsl(43 50% 35%)",
         }}
       >
@@ -317,8 +317,8 @@ export default function ModeSelectDrawer({ open, onOpenChange }: ModeSelectDrawe
               className="w-full flex items-center justify-center gap-2 py-3"
               style={{
                 borderRadius: "14px",
-                background: "hsl(25 15% 12%)",
-                border: "1.5px solid hsl(25 15% 20%)",
+                background: "hsl(220 12% 9%)",
+                border: "1.5px solid hsl(220 15% 16%)",
                 borderBottom: "3px solid hsl(25 12% 8%)",
               }}
             >

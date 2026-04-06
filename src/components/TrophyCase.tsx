@@ -137,8 +137,8 @@ function WoodenShelf({ children }: { children: React.ReactNode }) {
       <div
         className="relative h-4 rounded-md mx-1"
         style={{
-          background: "linear-gradient(180deg, hsl(30 45% 28%), hsl(25 40% 18%))",
-          border: "2px solid hsl(25 35% 14%)",
+          background: "linear-gradient(180deg, hsl(30 45% 28%), hsl(220 15% 14%))",
+          border: "2px solid hsl(220 12% 10%)",
           boxShadow:
             "inset 0 1px 0 hsl(35 45% 38%), inset 0 -1px 0 hsl(220 15% 8%), 0 4px 8px hsl(0 0% 0% / 0.4)",
         }}
@@ -197,7 +197,7 @@ function TrophyDetail({
         onClick={(e) => e.stopPropagation()}
         className="relative w-72 rounded-2xl overflow-hidden"
         style={{
-          background: "linear-gradient(180deg, hsl(30 45% 25%), hsl(25 40% 14%))",
+          background: "linear-gradient(180deg, hsl(30 45% 25%), hsl(220 12% 10%))",
           border: "3px solid hsl(25 35% 12%)",
           boxShadow: "inset 0 2px 0 hsl(35 45% 35%), 0 12px 40px hsl(0 0% 0% / 0.6)",
         }}
@@ -448,7 +448,7 @@ export default function TrophyCase() {
                 className="px-4 py-2 text-center"
                 style={{
                   background: "linear-gradient(90deg, hsl(30 45% 22%), hsl(35 50% 28%), hsl(30 45% 22%))",
-                  borderBottom: "2px solid hsl(25 35% 14%)",
+                  borderBottom: "2px solid hsl(220 12% 10%)",
                   boxShadow: "inset 0 1px 0 hsl(35 45% 38%)",
                 }}
               >

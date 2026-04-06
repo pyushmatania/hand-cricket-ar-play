@@ -194,7 +194,7 @@ const MODE_COLORS: Record<string, string> = {
   daily: "hsl(35 90% 55%)",
   multiplayer: "hsl(0 84% 60%)",
   tournament: "hsl(280 70% 60%)",
-  ipl: "hsl(25 90% 55%)",
+  ipl: "hsl(19 100% 60%)",
   royale: "hsl(0 70% 55%)",
   auction: "hsl(43 90% 55%)",
   worldcup: "hsl(217 80% 60%)",

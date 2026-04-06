@@ -59,7 +59,7 @@ export default function DRSReview({ active, dismissalType, outcome, onComplete }
               style={{
                 background: 'linear-gradient(180deg, hsl(220 15% 12%), hsl(220 12% 8%))',
                 border: '2px solid hsl(220 15% 18%)',
-                boxShadow: '0 2px 0 hsl(25 20% 6%), 0 4px 20px rgba(0,0,0,0.6)',
+                boxShadow: '0 2px 0 hsl(220 15% 5%), 0 4px 20px rgba(0,0,0,0.6)',
               }}
             >
               <div className="w-2 h-2 rounded-full bg-out-red animate-pulse" />

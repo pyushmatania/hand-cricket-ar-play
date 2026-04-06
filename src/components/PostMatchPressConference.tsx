@@ -32,7 +32,7 @@ const THEME_CONFIG = {
     ambient: "📸 Camera flashes",
   },
   gully: {
-    bg: "linear-gradient(180deg, hsl(25 30% 14%) 0%, hsl(25 25% 8%) 100%)",
+    bg: "linear-gradient(180deg, hsl(25 30% 14%) 0%, hsl(220 15% 7%) 100%)",
     label: "GULLY CELEBRATION",
     winnerQuotes: [
       "Bhai ne kya batting ki! Legend hai legend!",
@@ -122,14 +122,14 @@ export default function PostMatchPressConference({
 
       <motion.div
         className="w-full max-w-[360px] rounded-2xl overflow-hidden"
-        style={{ background: config.bg, border: "2px solid hsl(220 15% 18%)", borderBottom: "5px solid hsl(25 25% 10%)" }}
+        style={{ background: config.bg, border: "2px solid hsl(220 15% 18%)", borderBottom: "5px solid hsl(220 15% 8%)" }}
         initial={{ scale: 0.8, y: 30 }}
         animate={{ scale: 1, y: 0 }}
         transition={{ type: "spring", damping: 20 }}
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="px-4 py-3 text-center" style={{ borderBottom: "1px solid hsl(25 20% 20%)" }}>
+        <div className="px-4 py-3 text-center" style={{ borderBottom: "1px solid hsl(220 15% 16%)" }}>
           <span className="font-display text-[7px] tracking-[0.3em] text-muted-foreground">{config.label}</span>
         </div>
 
@@ -185,7 +185,7 @@ export default function PostMatchPressConference({
         {/* Tap to skip */}
         <motion.div
           className="px-4 py-2 text-center"
-          style={{ borderTop: "1px solid hsl(25 20% 20%)" }}
+          style={{ borderTop: "1px solid hsl(220 15% 16%)" }}
           animate={{ opacity: [0.3, 0.7, 0.3] }}
           transition={{ duration: 2, repeat: Infinity }}
         >

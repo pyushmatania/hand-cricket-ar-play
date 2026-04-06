@@ -318,7 +318,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
 
   const CONCRETE_CARD = "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)";
   const CHROME_BORDER = "2px solid hsl(220 15% 18%)";
-  const CARD_SHADOW = "0 4px 0 hsl(25 20% 6%), 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)";
+  const CARD_SHADOW = "0 4px 0 hsl(220 15% 5%), 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)";
 
   return (
     <AnimatePresence>
@@ -336,14 +336,14 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
           exit={{ opacity: 0, scale: 0.9, y: 30 }}
           className="w-full max-w-md max-h-[85vh] overflow-y-auto rounded-3xl"
           style={{
-            background: "linear-gradient(180deg, hsl(28 30% 16%) 0%, hsl(25 25% 10%) 100%)",
+            background: "linear-gradient(180deg, hsl(28 30% 16%) 0%, hsl(220 15% 8%) 100%)",
             border: CHROME_BORDER,
-            boxShadow: "0 8px 0 hsl(25 20% 6%), 0 12px 40px rgba(0,0,0,0.6), inset 0 1px 0 hsl(35 40% 40% / 0.1)",
+            boxShadow: "0 8px 0 hsl(220 15% 5%), 0 12px 40px rgba(0,0,0,0.6), inset 0 1px 0 hsl(35 40% 40% / 0.1)",
           }}
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header with rank */}
-          <div className="p-4" style={{ borderBottom: "1px solid hsl(25 20% 18%)" }}>
+          <div className="p-4" style={{ borderBottom: "1px solid hsl(220 15% 14%)" }}>
             <div className="flex items-center gap-3">
               <PlayerAvatar avatarUrl={fp.avatar_url} avatarIndex={fp.avatar_index ?? 0} size="md" />
               <div className="flex-1 min-w-0">
@@ -360,7 +360,7 @@ export default function FriendStatsModal({ friend, onClose, onChallenge }: Props
               </div>
               <motion.button whileTap={{ scale: 0.9 }} onClick={onClose}
                 className="w-8 h-8 rounded-xl flex items-center justify-center text-muted-foreground text-sm"
-                style={{ background: CONCRETE_CARD, border: CHROME_BORDER, boxShadow: "0 2px 0 hsl(25 20% 6%)" }}>✕</motion.button>
+                style={{ background: CONCRETE_CARD, border: CHROME_BORDER, boxShadow: "0 2px 0 hsl(220 15% 5%)" }}>✕</motion.button>
             </div>
 
             {/* XP / Coins / Rank strip */}

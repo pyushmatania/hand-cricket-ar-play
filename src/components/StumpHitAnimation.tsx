@@ -160,7 +160,7 @@ export default function StumpHitAnimation({ show, onComplete }: StumpHitAnimatio
             <span className="font-display text-4xl tracking-wider"
               style={{
                 color: "hsl(43 90% 55%)",
-                textShadow: "0 4px 0 hsl(25 40% 12%), 0 0 30px hsl(43 90% 55% / 0.5)",
+                textShadow: "0 4px 0 hsl(220 12% 9%), 0 0 30px hsl(43 90% 55% / 0.5)",
               }}
             >
               HOWZAT! 🏏

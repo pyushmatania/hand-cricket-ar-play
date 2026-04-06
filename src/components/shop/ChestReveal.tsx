@@ -164,7 +164,7 @@ export default function ChestReveal({ itemName, itemEmoji, rarity, onComplete }:
               style={{
                 background: "linear-gradient(180deg, hsl(220 15% 14%) 0%, hsl(220 12% 9%) 100%)",
                 border: `2px solid ${chest.borderColor}`,
-                boxShadow: `0 4px 0 hsl(25 20% 6%), 0 0 20px ${chest.glowColor}`,
+                boxShadow: `0 4px 0 hsl(220 15% 5%), 0 0 20px ${chest.glowColor}`,
               }}
             >
               <p className="font-display text-2xl text-foreground" style={{ textShadow: "0 2px 0 hsl(220 18% 7%)" }}>

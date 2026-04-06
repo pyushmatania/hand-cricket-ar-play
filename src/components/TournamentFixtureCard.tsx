@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 
 const TEAM_COLORS: Record<number, { left: string; right: string }> = {
-  0: { left: "hsl(217 80% 45%)", right: "hsl(28 60% 45%)" },
+  0: { left: "hsl(217 80% 45%)", right: "hsl(19 80% 45%)" },
   1: { left: "hsl(217 80% 45%)", right: "hsl(210 15% 55%)" },
   2: { left: "hsl(217 80% 45%)", right: "hsl(45 90% 45%)" },
   3: { left: "hsl(217 80% 45%)", right: "hsl(0 65% 50%)" },

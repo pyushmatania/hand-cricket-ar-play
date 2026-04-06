@@ -601,7 +601,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
             background: "linear-gradient(180deg, hsl(220 15% 12%), hsl(220 12% 8%))",
             border: "2px solid hsl(220 15% 18%)",
             borderBottom: "3px solid hsl(220 15% 6%)",
-            boxShadow: "0 2px 0 hsl(25 20% 6%), 0 2px 8px rgba(0,0,0,0.5)",
+            boxShadow: "0 2px 0 hsl(220 15% 5%), 0 2px 8px rgba(0,0,0,0.5)",
           }}
         >
           ←
@@ -610,7 +610,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
           style={{
             background: "linear-gradient(180deg, hsl(220 15% 12%), hsl(220 12% 8%))",
             border: "2px solid hsl(220 15% 18%)",
-            boxShadow: "0 2px 0 hsl(25 20% 6%), 0 2px 8px rgba(0,0,0,0.4)",
+            boxShadow: "0 2px 0 hsl(220 15% 5%), 0 2px 8px rgba(0,0,0,0.4)",
           }}>
           <div className="w-1.5 h-1.5 rounded-full bg-out-red animate-pulse" />
           <span className="font-display text-[9px] tracking-[0.2em] text-foreground font-bold">AR CRICKET</span>
@@ -656,7 +656,7 @@ export default function GameScreen({ onHome }: GameScreenProps) {
             style={{
               background: "linear-gradient(180deg, hsl(220 15% 12%), hsl(220 12% 8%))",
               border: "2px solid hsl(220 15% 18%)",
-              boxShadow: "0 4px 0 hsl(25 20% 6%), 0 6px 20px rgba(0,0,0,0.6)",
+              boxShadow: "0 4px 0 hsl(220 15% 5%), 0 6px 20px rgba(0,0,0,0.6)",
             }}
           >
             <p className="text-[7px] font-display font-bold text-muted-foreground tracking-widest px-1">FILTER</p>
@@ -1046,7 +1046,7 @@ function ImmersiveScoreStrip({ game, playerName = "You", aiName = "Rohit AI", we
         background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
         border: "2px solid hsl(220 15% 18%)",
         borderBottom: "4px solid hsl(220 15% 6%)",
-        boxShadow: "0 4px 0 hsl(25 20% 6%), 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+        boxShadow: "0 4px 0 hsl(220 15% 5%), 0 4px 16px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
       }}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">

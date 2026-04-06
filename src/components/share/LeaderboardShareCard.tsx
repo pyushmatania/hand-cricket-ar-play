@@ -20,7 +20,7 @@ const LeaderboardShareCard = forwardRef<HTMLDivElement, LeaderboardShareCardProp
   const isTop3 = rank <= 3;
   const medal = rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : "🏅";
   const headerGradient = isTop3
-    ? "linear-gradient(90deg, hsl(43 96% 56%), hsl(25 90% 55%))"
+    ? "linear-gradient(90deg, hsl(43 96% 56%), hsl(19 100% 60%))"
     : "linear-gradient(90deg, hsl(217 91% 60%), hsl(168 80% 50%))";
 
   return (

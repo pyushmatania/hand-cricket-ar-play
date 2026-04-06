@@ -22,7 +22,7 @@ export default function CurrencyPill({
         className
       )}
       style={{
-        background: "linear-gradient(180deg, hsl(28 40% 22%), hsl(25 45% 14%))",
+        background: "linear-gradient(180deg, hsl(28 40% 22%), hsl(220 12% 10%))",
         border: "2px solid hsl(25 35% 10%)",
         boxShadow: "0 2px 4px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 30% 35% / 0.25)",
       }}

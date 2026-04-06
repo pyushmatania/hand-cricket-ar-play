@@ -43,8 +43,8 @@ export default function DressingRoom({
   return (
     <div className="relative w-full h-full min-h-[300px] rounded-2xl overflow-hidden"
       style={{
-        background: "linear-gradient(180deg, hsl(220 15% 9%) 0%, hsl(25 25% 8%) 100%)",
-        border: "2px solid hsl(25 20% 20%)",
+        background: "linear-gradient(180deg, hsl(220 15% 9%) 0%, hsl(220 15% 7%) 100%)",
+        border: "2px solid hsl(220 15% 16%)",
       }}>
       {/* Locker background */}
       <div className="absolute inset-0 pointer-events-none">
@@ -112,7 +112,7 @@ export default function DressingRoom({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -5 }}
             className="mt-2 flex items-center gap-1.5 px-3 py-1 rounded-full"
-            style={{ background: "hsl(25 20% 15% / 0.8)", border: "1px solid hsl(25 20% 25%)" }}
+            style={{ background: "hsl(25 20% 15% / 0.8)", border: "1px solid hsl(220 15% 20%)" }}
           >
             <span className="text-sm">{currentAnim.emoji}</span>
             <span className="text-[8px] font-display tracking-wider text-muted-foreground">{currentAnim.label}</span>

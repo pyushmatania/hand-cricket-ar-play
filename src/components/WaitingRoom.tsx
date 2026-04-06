@@ -112,15 +112,15 @@ export default function WaitingRoom({ roomCode, playerName, playerAvatarIndex = 
             className="w-16 h-16 rounded-full flex items-center justify-center"
             style={{
               background: "linear-gradient(180deg, hsl(45 100% 60%), hsl(35 90% 40%))",
-              border: "3px solid hsl(25 50% 20%)",
-              boxShadow: "0 4px 0 hsl(25 50% 15%), 0 8px 20px rgba(0,0,0,0.5)",
+              border: "3px solid hsl(220 15% 16%)",
+              boxShadow: "0 4px 0 hsl(220 12% 11%), 0 8px 20px rgba(0,0,0,0.5)",
             }}
           >
             <span
               className="font-display text-2xl font-black text-white"
               style={{
-                textShadow: "0 2px 0 hsl(25 50% 20%), 0 4px 8px rgba(0,0,0,0.4)",
-                WebkitTextStroke: "1.5px hsl(25 50% 15%)",
+                textShadow: "0 2px 0 hsl(220 15% 16%), 0 4px 8px rgba(0,0,0,0.4)",
+                WebkitTextStroke: "1.5px hsl(220 12% 11%)",
               }}
             >
               VS

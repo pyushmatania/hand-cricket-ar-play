@@ -210,7 +210,7 @@ export default function MatchHistoryPage() {
           <div className="flex items-center gap-4 mb-3">
             <div className="relative w-16 h-16 flex-shrink-0">
               <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-                <circle cx="18" cy="18" r="15.5" fill="none" stroke="hsl(25 15% 20%)" strokeWidth="3" />
+                <circle cx="18" cy="18" r="15.5" fill="none" stroke="hsl(220 15% 16%)" strokeWidth="3" />
                 <circle cx="18" cy="18" r="15.5" fill="none" stroke="hsl(122,39%,49%)" strokeWidth="3"
                   strokeDasharray={`${summary.winRate * 0.975} 97.5`} strokeLinecap="round" />
               </svg>
@@ -265,7 +265,7 @@ export default function MatchHistoryPage() {
           <div className="flex gap-1 rounded-2xl p-1"
             style={{
               background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 10%) 100%)",
-              border: "1px solid hsl(25 20% 22% / 0.6)",
+              border: "1px solid hsl(220 15% 18% / 0.6)",
             }}>
             {(["all", "win", "loss", "draw"] as FilterType[]).map(f => {
               const isActive = resultFilter === f;
@@ -517,12 +517,12 @@ export default function MatchHistoryPage() {
                                       const isVisible = !isReplaying || bi <= replayBall;
                                       const isCurrentReplay = isReplaying && bi === replayBall;
                                       let color = "hsl(var(--muted-foreground))";
-                                      let bg = "hsl(25 15% 14%)";
+                                      let bg = "hsl(220 12% 10%)";
                                       if (isOut) { color = "hsl(4,90%,65%)"; bg = "hsl(4,90%,58%,0.2)"; }
                                       else if (r === 6) { color = "hsl(207,90%,60%)"; bg = "hsl(207,90%,54%,0.2)"; }
                                       else if (r === 4) { color = "hsl(122,70%,55%)"; bg = "hsl(122,39%,49%,0.2)"; }
                                       else if (r >= 2) { color = "hsl(51,100%,60%)"; bg = "hsl(51,100%,50%,0.2)"; }
-                                      else if (r === 1) { color = "hsl(var(--foreground) / 0.7)"; bg = "hsl(25 15% 18%)"; }
+                                      else if (r === 1) { color = "hsl(var(--foreground) / 0.7)"; bg = "hsl(220 15% 14%)"; }
 
                                       return (
                                         <motion.div key={bi}

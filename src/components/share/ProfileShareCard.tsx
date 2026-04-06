@@ -66,7 +66,7 @@ const ProfileShareCard = forwardRef<HTMLDivElement, ProfileShareCardProps>(({
             { label: "WINS", value: wins, color: "hsl(122 39% 49%)" },
             { label: "WIN RATE", value: `${winRate}%`, color: "hsl(43 96% 56%)" },
             { label: "HIGH SCORE", value: highScore, color: "hsl(280 70% 55%)" },
-            { label: "BEST STREAK", value: `${bestStreak}🔥`, color: "hsl(25 90% 55%)" },
+            { label: "BEST STREAK", value: `${bestStreak}🔥`, color: "hsl(19 100% 60%)" },
             { label: "LOSSES", value: losses, color: "hsl(4 90% 58%)" },
           ].map((s) => (
             <div

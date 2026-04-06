@@ -583,7 +583,7 @@ export default function LeaderboardPage() {
                   } : {
                     background: "transparent",
                     border: "2px solid transparent",
-                    color: "hsl(25 20% 40%)",
+                    color: "hsl(220 15% 35%)",
                   }}>
                   {opt.icon} {opt.label}
                 </button>
@@ -657,7 +657,7 @@ export default function LeaderboardPage() {
                 })()}
               </div>
               {tourneyLeaders.length === 0 ? (
-                <div className="rounded-2xl p-8 text-center" style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(220 15% 18%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
+                <div className="rounded-2xl p-8 text-center" style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(220 15% 18%)", borderBottom: "5px solid hsl(220 15% 8%)" }}>
                   <span className="text-4xl block mb-3">🏅</span>
                   <p className="font-display text-sm font-bold text-foreground">No tournament results yet</p>
                   <p className="text-[10px] text-muted-foreground mt-1">Play World Cup, Ashes, or Knockout to appear here!</p>
@@ -673,13 +673,13 @@ export default function LeaderboardPage() {
                       style={{
                         background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
                         border: isMe ? "2px solid hsl(207 90% 54% / 0.4)" : i < 3 ? `2px solid hsl(43 80% 50% / ${0.4 - i * 0.1})` : "2px solid hsl(220 15% 18%)",
-                        borderBottom: "5px solid hsl(25 25% 10%)",
+                        borderBottom: "5px solid hsl(220 15% 8%)",
                         boxShadow: i === 0 ? "0 0 20px hsl(43 90% 50% / 0.15)" : isMe ? "0 0 16px hsl(207 90% 54% / 0.1)" : undefined,
                       }}>
                       <div className="w-9 h-9 rounded-xl flex items-center justify-center font-display font-black text-sm"
                         style={{
-                          background: i === 0 ? "hsl(43 80% 50% / 0.15)" : i === 1 ? "hsl(210 10% 70% / 0.15)" : i === 2 ? "hsl(25 60% 50% / 0.15)" : "hsl(25 15% 13%)",
-                          color: i === 0 ? "hsl(43 90% 55%)" : i === 1 ? "hsl(210 10% 75%)" : i === 2 ? "hsl(25 60% 55%)" : "hsl(220 15% 50%)",
+                          background: i === 0 ? "hsl(43 80% 50% / 0.15)" : i === 1 ? "hsl(210 10% 70% / 0.15)" : i === 2 ? "hsl(25 60% 50% / 0.15)" : "hsl(220 12% 10%)",
+                          color: i === 0 ? "hsl(43 90% 55%)" : i === 1 ? "hsl(210 10% 75%)" : i === 2 ? "hsl(19 100% 60%)" : "hsl(220 15% 50%)",
                         }}>
                         {i < 3 ? getBadge(i + 1) : `#${i + 1}`}
                       </div>
@@ -709,7 +709,7 @@ export default function LeaderboardPage() {
             <motion.div key="seasons" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-3">
               {!viewingArchive ? (
                 <>
-                  <div className="rounded-xl p-3" style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(220 15% 18%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
+                  <div className="rounded-xl p-3" style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(220 15% 18%)", borderBottom: "5px solid hsl(220 15% 8%)" }}>
                     <div className="flex items-center justify-between mb-2">
                       <button onClick={() => setSeasonWeeksAgo(w => w + 1)} className="w-8 h-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors" style={{ background: "hsl(220 12% 8%)", border: "1px solid hsl(220 15% 16%)" }}>◀</button>
                       <div className="text-center">
@@ -729,7 +729,7 @@ export default function LeaderboardPage() {
                     )}
                   </div>
                   {seasonEntries.length === 0 ? (
-                    <div className="rounded-2xl p-8 text-center" style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(220 15% 18%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
+                    <div className="rounded-2xl p-8 text-center" style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(220 15% 18%)", borderBottom: "5px solid hsl(220 15% 8%)" }}>
                       <span className="text-4xl block mb-3">📅</span>
                       <p className="font-display text-sm font-bold text-foreground">No matches this week</p>
                       <p className="text-[10px] text-muted-foreground mt-1">Play matches to climb the weekly leaderboard!</p>
@@ -745,13 +745,13 @@ export default function LeaderboardPage() {
                             style={{
                               background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
                               border: isMe ? "2px solid hsl(207 90% 54% / 0.4)" : "2px solid hsl(220 15% 18%)",
-                              borderBottom: "5px solid hsl(25 25% 10%)",
+                              borderBottom: "5px solid hsl(220 15% 8%)",
                               boxShadow: isMe ? "0 0 16px hsl(207 90% 54% / 0.1)" : undefined,
                             }}>
                             <div className="w-9 h-9 rounded-xl flex items-center justify-center font-display font-black text-sm"
                               style={{
-                                background: i === 0 ? "hsl(43 80% 50% / 0.15)" : i === 1 ? "hsl(210 10% 70% / 0.15)" : i === 2 ? "hsl(25 60% 50% / 0.15)" : "hsl(25 15% 13%)",
-                                color: i === 0 ? "hsl(43 90% 55%)" : i === 1 ? "hsl(210 10% 75%)" : i === 2 ? "hsl(25 60% 55%)" : "hsl(220 15% 50%)",
+                                background: i === 0 ? "hsl(43 80% 50% / 0.15)" : i === 1 ? "hsl(210 10% 70% / 0.15)" : i === 2 ? "hsl(25 60% 50% / 0.15)" : "hsl(220 12% 10%)",
+                                color: i === 0 ? "hsl(43 90% 55%)" : i === 1 ? "hsl(210 10% 75%)" : i === 2 ? "hsl(19 100% 60%)" : "hsl(220 15% 50%)",
                               }}>
                               {i < 3 ? getBadge(i + 1) : `#${i + 1}`}
                             </div>
@@ -774,7 +774,7 @@ export default function LeaderboardPage() {
                     <div className="mt-4">
                       <div style={{ borderBottom: CHALK_BORDER }} className="mb-3" />
                       <div className="flex items-center gap-2 mb-2">
-                        <div className="w-1 h-4 rounded-full" style={{ background: "hsl(25 20% 40%)" }} />
+                        <div className="w-1 h-4 rounded-full" style={{ background: "hsl(220 15% 35%)" }} />
                         <span className="font-display text-[9px] font-bold text-muted-foreground tracking-widest">SEASON ARCHIVES</span>
                       </div>
                       <div className="space-y-1.5">
@@ -798,7 +798,7 @@ export default function LeaderboardPage() {
                     style={{ background: "hsl(220 12% 8%)", border: "1px solid hsl(220 15% 16%)" }}>
                     ← BACK TO SEASONS
                   </button>
-                  <div className="rounded-xl p-3 text-center" style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(220 15% 18%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
+                  <div className="rounded-xl p-3 text-center" style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(220 15% 18%)", borderBottom: "5px solid hsl(220 15% 8%)" }}>
                     <span className="text-2xl block mb-1">🏛️</span>
                     <span className="font-display text-[10px] font-bold tracking-widest" style={{ color: "hsl(43 90% 55%)" }}>{viewingArchive}</span>
                   </div>
@@ -811,10 +811,10 @@ export default function LeaderboardPage() {
                           style={{
                             background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
                             border: isMe ? "2px solid hsl(207 90% 54% / 0.4)" : "2px solid hsl(220 15% 18%)",
-                            borderBottom: "5px solid hsl(25 25% 10%)",
+                            borderBottom: "5px solid hsl(220 15% 8%)",
                           }}>
                           <div className="w-9 h-9 rounded-xl flex items-center justify-center font-display font-black text-sm"
-                            style={{ background: "hsl(25 15% 13%)", color: "hsl(220 15% 50%)" }}>
+                            style={{ background: "hsl(220 12% 10%)", color: "hsl(220 15% 50%)" }}>
                             {entry.rank <= 3 ? getBadge(entry.rank) : `#${entry.rank}`}
                           </div>
                           <div className="flex-1 min-w-0">
@@ -838,7 +838,7 @@ export default function LeaderboardPage() {
           {mainTab === "rivalry" && (
             <motion.div key="rivalry" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="space-y-2">
               {rivalFriends.length === 0 ? (
-                <div className="rounded-2xl p-8 text-center" style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(220 15% 18%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
+                <div className="rounded-2xl p-8 text-center" style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(220 15% 18%)", borderBottom: "5px solid hsl(220 15% 8%)" }}>
                   <span className="text-4xl block mb-3">⚔️</span>
                   <p className="font-display text-sm font-bold text-foreground">Add friends to see rivalries!</p>
                   <p className="text-[10px] text-muted-foreground mt-1">Play multiplayer against friends to build H2H stats</p>
@@ -865,7 +865,7 @@ export default function LeaderboardPage() {
                 return (
                   <motion.div key={rt.title} initial={{ opacity: 0, x: -15 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.06 }}
                     className="rounded-xl p-4 relative overflow-hidden"
-                    style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(220 15% 18%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
+                    style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(220 15% 18%)", borderBottom: "5px solid hsl(220 15% 8%)" }}>
                     <div className="absolute top-0 right-0 w-24 h-24 rounded-bl-full pointer-events-none"
                       style={{ background: "radial-gradient(circle at top right, hsl(43 90% 55% / 0.06), transparent 70%)" }} />
                     <div className="flex items-center gap-3 mb-2">
@@ -920,7 +920,7 @@ export default function LeaderboardPage() {
           {(mainTab === "global" || mainTab === "friends") && (
             <motion.div key={`${mainTab}-${sortBy}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} transition={{ duration: 0.2 }}>
               {activeList.length === 0 ? (
-                <div className="rounded-2xl p-8 text-center" style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(220 15% 18%)", borderBottom: "5px solid hsl(25 25% 10%)" }}>
+                <div className="rounded-2xl p-8 text-center" style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)", border: "2px solid hsl(220 15% 18%)", borderBottom: "5px solid hsl(220 15% 8%)" }}>
                   <span className="text-4xl block mb-3">{mainTab === "friends" ? "👥" : "🏟️"}</span>
                   <p className="font-display text-sm font-bold text-foreground">{mainTab === "friends" ? "Add friends to see rankings!" : "No players yet"}</p>
                   <p className="text-[10px] text-muted-foreground mt-1">{mainTab === "friends" ? "Go to the Friends tab to add players" : "Be the first to play!"}</p>
@@ -1016,7 +1016,7 @@ export default function LeaderboardPage() {
                           style={{
                             background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
                             border: isMe ? "2px solid hsl(207 90% 54% / 0.4)" : "2px solid hsl(220 15% 18%)",
-                            borderBottom: "5px solid hsl(25 25% 10%)",
+                            borderBottom: "5px solid hsl(220 15% 8%)",
                             boxShadow: isMe ? "0 0 16px hsl(207 90% 54% / 0.15)" : "0 4px 16px rgba(0,0,0,0.3)",
                           }}>
                           {/* Rank number */}
@@ -1071,7 +1071,7 @@ export default function LeaderboardPage() {
             style={{
               background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
               border: "2px solid hsl(207 90% 54% / 0.3)",
-              borderBottom: "5px solid hsl(25 25% 10%)",
+              borderBottom: "5px solid hsl(220 15% 8%)",
               boxShadow: "0 0 16px hsl(207 90% 54% / 0.12)",
             }}>
             <div className="w-12 h-12 rounded-xl flex items-center justify-center text-lg"
@@ -1129,7 +1129,7 @@ export default function LeaderboardPage() {
             style={{
               background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 8%) 100%)",
               border: "2px solid hsl(4 80% 50% / 0.3)",
-              borderBottom: "6px solid hsl(25 25% 8%)",
+              borderBottom: "6px solid hsl(220 15% 7%)",
               boxShadow: "0 0 40px hsl(4 90% 50% / 0.15)",
             }}
           >

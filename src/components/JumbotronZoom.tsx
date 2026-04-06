@@ -41,7 +41,7 @@ export default function JumbotronZoom({
       {/* Stadium background (blurred, out of focus) */}
       <div className="absolute inset-0"
         style={{
-          background: "linear-gradient(180deg, hsl(220 30% 8%) 0%, hsl(25 20% 6%) 60%, hsl(122 20% 8%) 100%)",
+          background: "linear-gradient(180deg, hsl(220 30% 8%) 0%, hsl(220 15% 5%) 60%, hsl(122 20% 8%) 100%)",
           filter: "blur(8px)",
         }} />
 

@@ -61,7 +61,7 @@ export default function ShopItemModal({
           onClick={e => e.stopPropagation()}
           className="w-full max-w-sm rounded-3xl overflow-hidden"
           style={{
-            background: "linear-gradient(180deg, hsl(28 30% 16%) 0%, hsl(25 25% 10%) 100%)",
+            background: "linear-gradient(180deg, hsl(28 30% 16%) 0%, hsl(220 15% 8%) 100%)",
             border: `2px solid ${rs.border}`,
             boxShadow: `${rs.glow}, 0 8px 0 hsl(25 25% 6%), 0 12px 30px rgba(0,0,0,0.6)`,
           }}

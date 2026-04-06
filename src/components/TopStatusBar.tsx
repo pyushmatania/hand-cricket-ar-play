@@ -69,7 +69,7 @@ export default function TopStatusBar() {
               style={{
                 background: CONCRETE_CARD,
                 border: "2.5px solid hsl(35 40% 45%)",
-                boxShadow: "0 3px 0 hsl(25 20% 6%), 0 2px 8px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.15)",
+                boxShadow: "0 3px 0 hsl(220 15% 5%), 0 2px 8px rgba(0,0,0,0.5), inset 0 1px 0 hsl(35 40% 40% / 0.15)",
               }}>
               <span className="text-lg">{user ? "🏏" : "👤"}</span>
             </div>
@@ -92,8 +92,8 @@ export default function TopStatusBar() {
             </span>
             <div className="relative w-16 h-[6px] rounded-full overflow-hidden"
               style={{
-                background: "linear-gradient(to bottom, hsl(220 12% 8%), hsl(25 15% 14%))",
-                border: "1px solid hsl(25 20% 18%)",
+                background: "linear-gradient(to bottom, hsl(220 12% 8%), hsl(220 12% 10%))",
+                border: "1px solid hsl(220 15% 14%)",
                 boxShadow: "inset 0 1px 3px rgba(0,0,0,0.5)",
               }}>
               <motion.div
@@ -143,7 +143,7 @@ export default function TopStatusBar() {
             background: CONCRETE_CARD,
             border: CHROME_BORDER,
             borderBottom: "3px solid hsl(220 15% 6%)",
-            boxShadow: "0 3px 0 hsl(25 20% 6%), 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+            boxShadow: "0 3px 0 hsl(220 15% 5%), 0 2px 8px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
           }}
         >
           <motion.span
@@ -169,8 +169,8 @@ export default function TopStatusBar() {
             border: CHROME_BORDER,
             borderBottom: "3px solid hsl(220 15% 6%)",
             boxShadow: unreadCount > 0
-              ? "0 3px 0 hsl(25 20% 6%), 0 2px 10px hsl(0 84% 60% / 0.15), inset 0 1px 0 hsl(35 40% 40% / 0.08)"
-              : "0 3px 0 hsl(25 20% 6%), 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+              ? "0 3px 0 hsl(220 15% 5%), 0 2px 10px hsl(0 84% 60% / 0.15), inset 0 1px 0 hsl(35 40% 40% / 0.08)"
+              : "0 3px 0 hsl(220 15% 5%), 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
           }}
         >
           <motion.span
@@ -204,7 +204,7 @@ export default function TopStatusBar() {
             background: CONCRETE_CARD,
             border: CHROME_BORDER,
             borderBottom: "3px solid hsl(220 15% 6%)",
-            boxShadow: "0 3px 0 hsl(25 20% 6%), 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
+            boxShadow: "0 3px 0 hsl(220 15% 5%), 0 2px 6px rgba(0,0,0,0.3), inset 0 1px 0 hsl(35 40% 40% / 0.08)",
           }}
         >
           <span className="text-base opacity-60">⚙️</span>

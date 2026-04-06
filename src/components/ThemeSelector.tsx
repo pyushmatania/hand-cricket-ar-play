@@ -71,10 +71,10 @@ export default function ThemeSelector({ currentTierIndex, selectedThemeId, onSel
                   border: selected
                     ? "2.5px solid hsl(43 90% 55%)"
                     : isUnlocked
-                      ? "2px solid hsl(25 20% 25%)"
-                      : "2px solid hsl(25 15% 18%)",
+                      ? "2px solid hsl(220 15% 20%)"
+                      : "2px solid hsl(220 15% 14%)",
                   boxShadow: selected
-                    ? "0 0 18px hsl(43 90% 50% / 0.35), 0 5px 0 hsl(25 40% 10%)"
+                    ? "0 0 18px hsl(43 90% 50% / 0.35), 0 5px 0 hsl(220 12% 8%)"
                     : "0 5px 0 hsl(220 18% 6%)",
                   opacity: isUnlocked ? 1 : 0.5,
                   cursor: isUnlocked ? "pointer" : "not-allowed",
@@ -130,7 +130,7 @@ export default function ThemeSelector({ currentTierIndex, selectedThemeId, onSel
 
                 {/* Info section */}
                 <div className="px-2.5 py-2"
-                  style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(25 15% 12%) 100%)" }}
+                  style={{ background: "linear-gradient(180deg, hsl(220 15% 12%) 0%, hsl(220 12% 9%) 100%)" }}
                 >
                   {/* Theme name */}
                   <span className="text-[11px] font-display font-bold text-foreground block leading-tight truncate">
@@ -144,7 +144,7 @@ export default function ThemeSelector({ currentTierIndex, selectedThemeId, onSel
                   <div className="flex items-center gap-1.5 flex-wrap">
                     {/* Crowd */}
                     <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded"
-                      style={{ background: "hsl(25 15% 20%)" }}
+                      style={{ background: "hsl(220 15% 16%)" }}
                     >
                       <Users className="w-2.5 h-2.5 text-muted-foreground" />
                       <span className="text-[7px] font-body text-foreground/60">
@@ -153,7 +153,7 @@ export default function ThemeSelector({ currentTierIndex, selectedThemeId, onSel
                     </div>
                     {/* Weather */}
                     <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded"
-                      style={{ background: "hsl(25 15% 20%)" }}
+                      style={{ background: "hsl(220 15% 16%)" }}
                     >
                       <Cloud className="w-2.5 h-2.5 text-muted-foreground" />
                       <span className="text-[7px] font-body text-foreground/60">
@@ -162,7 +162,7 @@ export default function ThemeSelector({ currentTierIndex, selectedThemeId, onSel
                     </div>
                     {/* Commentary tone */}
                     <div className="flex items-center gap-0.5 px-1.5 py-0.5 rounded"
-                      style={{ background: "hsl(25 15% 20%)" }}
+                      style={{ background: "hsl(220 15% 16%)" }}
                     >
                       <Mic className="w-2.5 h-2.5" style={{ color: TONE_COLOR[theme.commentary.tone] || "hsl(0 0% 50%)" }} />
                       <span className="text-[7px] font-body capitalize" style={{ color: TONE_COLOR[theme.commentary.tone] || "hsl(0 0% 60%)" }}>
@@ -181,7 +181,7 @@ export default function ThemeSelector({ currentTierIndex, selectedThemeId, onSel
                     {/* Noise meter — tiny bar */}
                     <div className="ml-auto flex items-center gap-0.5">
                       <span className="text-[6px] text-muted-foreground font-body">🔊</span>
-                      <div className="w-8 h-1 rounded-full overflow-hidden" style={{ background: "hsl(25 15% 20%)" }}>
+                      <div className="w-8 h-1 rounded-full overflow-hidden" style={{ background: "hsl(220 15% 16%)" }}>
                         <div className="h-full rounded-full" style={{
                           width: `${theme.crowd.noise}%`,
                           background: theme.crowd.noise > 70

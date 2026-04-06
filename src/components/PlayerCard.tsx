@@ -102,12 +102,12 @@ const RARITY_FRAME: Record<string, { border: string; glow: string; bg: string }>
   common: {
     border: "hsl(28 30% 25%)",
     glow: "none",
-    bg: "linear-gradient(180deg, hsl(28 35% 28%), hsl(25 40% 18%))",
+    bg: "linear-gradient(180deg, hsl(28 35% 28%), hsl(220 15% 14%))",
   },
   rare: {
     border: "hsl(210 60% 40%)",
     glow: "0 0 12px hsl(210 70% 50% / 0.3)",
-    bg: "linear-gradient(180deg, hsl(28 35% 28%), hsl(25 40% 18%))",
+    bg: "linear-gradient(180deg, hsl(28 35% 28%), hsl(220 15% 14%))",
   },
   epic: {
     border: "hsl(270 50% 45%)",
@@ -117,7 +117,7 @@ const RARITY_FRAME: Record<string, { border: string; glow: string; bg: string }>
   legendary: {
     border: "hsl(35 80% 45%)",
     glow: "0 0 20px hsl(35 90% 50% / 0.4)",
-    bg: "linear-gradient(180deg, hsl(28 40% 22%), hsl(25 45% 14%))",
+    bg: "linear-gradient(180deg, hsl(28 40% 22%), hsl(220 12% 10%))",
   },
   mythic: {
     border: "hsl(280 80% 60%)",
@@ -201,7 +201,7 @@ export default function PlayerCard({ player, size = "md", showStats = true, dela
             style={{
               background: `linear-gradient(180deg, ${frame.border}, hsl(25 40% 15%))`,
               border: "2px solid hsl(35 60% 45%)",
-              boxShadow: "0 2px 0 hsl(25 40% 10%)",
+              boxShadow: "0 2px 0 hsl(220 12% 8%)",
             }}
           >
             <span className="font-display text-[10px] font-black text-game-gold">{player.rating}</span>

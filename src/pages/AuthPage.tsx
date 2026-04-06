@@ -58,7 +58,7 @@ export default function AuthPage() {
   };
 
   const inputStyle = {
-    background: "linear-gradient(180deg, hsl(220 12% 9%), hsl(25 15% 9%))",
+    background: "linear-gradient(180deg, hsl(220 12% 9%), hsl(220 12% 7%))",
     border: "2px solid hsl(220 15% 18%)",
     borderBottom: "4px solid hsl(220 12% 6%)",
     color: "hsl(var(--foreground))",
@@ -121,8 +121,8 @@ export default function AuthPage() {
           {/* Tab Switcher — Jersey Mesh */}
           <div className="flex gap-1 mb-6 rounded-xl p-1"
             style={{
-              background: "linear-gradient(180deg, hsl(25 15% 14%), hsl(25 12% 10%))",
-              border: "1px solid hsl(25 20% 18%)",
+              background: "linear-gradient(180deg, hsl(220 12% 10%), hsl(25 12% 10%))",
+              border: "1px solid hsl(220 15% 14%)",
             }}>
             {[
               { key: true, label: "SIGN IN", icon: "⚡" },

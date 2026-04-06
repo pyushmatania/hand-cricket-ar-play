@@ -129,7 +129,7 @@ export default function TournamentChat({ tournamentId }: TournamentChatProps) {
         onClick={toggleOpen}
         className="fixed bottom-24 right-4 z-50 w-12 h-12 rounded-full flex items-center justify-center"
         style={{
-          background: "linear-gradient(180deg, hsl(25 20% 18%), hsl(25 18% 12%))",
+          background: "linear-gradient(180deg, hsl(220 15% 14%), hsl(220 12% 9%))",
           border: "2px solid hsl(43 50% 35%)",
           boxShadow: "0 4px 16px hsl(0 0% 0% / 0.4), 0 0 20px hsl(43 90% 55% / 0.1)",
         }}
@@ -163,7 +163,7 @@ export default function TournamentChat({ tournamentId }: TournamentChatProps) {
             className="fixed bottom-20 right-3 left-3 z-50 rounded-2xl overflow-hidden flex flex-col"
             style={{
               maxHeight: "60vh",
-              background: "linear-gradient(180deg, hsl(220 12% 10%), hsl(25 15% 9%))",
+              background: "linear-gradient(180deg, hsl(220 12% 10%), hsl(220 12% 7%))",
               border: "2px solid hsl(43 50% 30% / 0.3)",
               boxShadow: "0 8px 32px hsl(0 0% 0% / 0.5)",
             }}
@@ -171,7 +171,7 @@ export default function TournamentChat({ tournamentId }: TournamentChatProps) {
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3"
               style={{
-                background: "linear-gradient(180deg, hsl(25 20% 18%), hsl(220 12% 10%))",
+                background: "linear-gradient(180deg, hsl(220 15% 14%), hsl(220 12% 10%))",
                 borderBottom: "1px solid hsl(220 15% 18%)",
               }}
             >
@@ -230,7 +230,7 @@ export default function TournamentChat({ tournamentId }: TournamentChatProps) {
             {/* Input */}
             <div className="flex items-center gap-2 px-3 py-2"
               style={{
-                background: "hsl(25 18% 12%)",
+                background: "hsl(220 12% 9%)",
                 borderTop: "1px solid hsl(220 15% 16%)",
               }}
             >

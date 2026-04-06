@@ -200,7 +200,7 @@ function ModeIcon({ id }: { id: string }) {
             animate={{ scale: [0.9, 1.1, 0.9] }}
             transition={{ duration: 1.2, repeat: Infinity }}
             className="absolute text-[7px] font-display font-bold tracking-wider"
-            style={{ bottom: 4, color: "hsl(25 90% 55%)", textShadow: "0 0 6px hsl(25 90% 55% / 0.5)" }}
+            style={{ bottom: 4, color: "hsl(19 100% 60%)", textShadow: "0 0 6px hsl(25 90% 55% / 0.5)" }}
           >IPL</motion.span>
         </div>
       );
