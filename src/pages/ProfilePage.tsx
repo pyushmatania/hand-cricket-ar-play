@@ -466,7 +466,7 @@ export default function ProfilePage() {
               { value: Math.max(profile?.high_score || 0, pvpRecord?.highScore || 0), label: "HIGH", color: "hsl(43 100% 60%)" },
             ].map((s, i) => (
               <div key={s.label} className="text-center py-3" style={{
-                borderLeft: i > 0 ? "1px solid hsl(222 15% 15%)" : undefined,
+                borderLeft: i > 0 ? "1px solid #5C3A1E" : undefined,
               }}>
                 <span className="font-display text-xl font-black block leading-none" style={{ color: s.color }}>{s.value}</span>
                 <span className="text-[6px] text-muted-foreground font-display font-bold tracking-[0.15em]">{s.label}</span>
