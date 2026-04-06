@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import stoneDailyRewardsImg from "@/assets/ui/stone-dailyrewards.png";
 import { SFX, Haptics } from "@/lib/sounds";
 import engines from "@/engines/EngineManager";
 import { motion, AnimatePresence } from "framer-motion";
