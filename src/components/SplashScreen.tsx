@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import splashBg from "@/assets/splash-stadium-bg.jpg";
 import handCricketLogo from "@/assets/hand-cricket-logo.png";
+import { SFX, Haptics } from "@/lib/sounds";
 
 interface SplashScreenProps {
   onComplete: () => void;
@@ -13,9 +14,17 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
 
   useEffect(() => {
     const timers = [
-      setTimeout(() => setPhase(1), 300),
+      setTimeout(() => {
+        setPhase(1);
+        SFX.splashAmbience();
+        Haptics.splashAmbience();
+      }, 300),
       setTimeout(() => setPhase(2), 1000),
-      setTimeout(() => setPhase(3), 3200),
+      setTimeout(() => {
+        setPhase(3);
+        SFX.splashComplete();
+        Haptics.splashComplete();
+      }, 3200),
       setTimeout(() => onComplete(), 3700),
     ];
     return () => timers.forEach(clearTimeout);
@@ -55,6 +64,76 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
             style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 40%, rgba(0,0,0,0.4) 100%)" }}
           />
 
+          {/* Floodlight beam sweeps */}
+          <AnimatePresence>
+            {phase >= 1 && (
+              <>
+                <motion.div
+                  initial={{ opacity: 0, rotate: -15 }}
+                  animate={{ opacity: [0, 0.15, 0.08, 0.12, 0.06], rotate: [-15, 5, -8, 3, -5] }}
+                  transition={{ duration: 3, ease: "easeInOut" }}
+                  className="absolute pointer-events-none"
+                  style={{
+                    top: "-20%",
+                    left: "10%",
+                    width: "30%",
+                    height: "140%",
+                    background: "linear-gradient(180deg, rgba(255,255,255,0.3) 0%, rgba(255,215,0,0.05) 40%, transparent 70%)",
+                    transformOrigin: "top center",
+                    filter: "blur(20px)",
+                  }}
+                />
+                <motion.div
+                  initial={{ opacity: 0, rotate: 15 }}
+                  animate={{ opacity: [0, 0.12, 0.06, 0.1, 0.05], rotate: [15, -5, 8, -3, 5] }}
+                  transition={{ duration: 3, ease: "easeInOut", delay: 0.3 }}
+                  className="absolute pointer-events-none"
+                  style={{
+                    top: "-20%",
+                    right: "10%",
+                    width: "30%",
+                    height: "140%",
+                    background: "linear-gradient(180deg, rgba(255,255,255,0.25) 0%, rgba(74,222,80,0.03) 40%, transparent 70%)",
+                    transformOrigin: "top center",
+                    filter: "blur(25px)",
+                  }}
+                />
+              </>
+            )}
+          </AnimatePresence>
+
+          {/* Cricket ball arc animation */}
+          <AnimatePresence>
+            {phase >= 1 && phase < 3 && (
+              <motion.div
+                initial={{ x: "-10vw", y: "80vh", scale: 0.4, opacity: 0 }}
+                animate={{
+                  x: ["−10vw", "30vw", "60vw", "110vw"],
+                  y: ["80vh", "20vh", "15vh", "60vh"],
+                  scale: [0.4, 0.8, 0.9, 0.5],
+                  opacity: [0, 0.7, 0.8, 0],
+                }}
+                transition={{ duration: 2.2, ease: "easeInOut", delay: 0.5 }}
+                className="absolute pointer-events-none z-20"
+                style={{ width: 24, height: 24 }}
+              >
+                <div
+                  className="w-full h-full rounded-full"
+                  style={{
+                    background: "radial-gradient(circle at 35% 35%, #e03030 0%, #c0201a 50%, #8b1510 100%)",
+                    boxShadow: "0 0 12px rgba(255,60,40,0.5), 0 0 4px rgba(255,200,100,0.3)",
+                  }}
+                >
+                  {/* Seam line */}
+                  <div
+                    className="absolute top-1/2 left-0 w-full h-px -translate-y-1/2"
+                    style={{ background: "rgba(255,255,255,0.4)", transform: "rotate(20deg) translateY(-50%)" }}
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Logo */}
           <AnimatePresence>
             {phase >= 1 && (
@@ -66,7 +145,9 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
                 style={{ marginTop: "-15%" }}
               >
                 {/* Golden glow behind logo */}
-                <div
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1], opacity: [0.25, 0.35, 0.25] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                   className="absolute w-80 h-48 pointer-events-none"
                   style={{
                     background: "radial-gradient(ellipse, rgba(255,215,0,0.25) 0%, rgba(255,215,0,0.08) 40%, transparent 70%)",
@@ -111,7 +192,6 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
                       boxShadow: "0 0 12px rgba(74,222,80,0.5)",
                     }}
                   >
-                    {/* Glowing dot at leading edge */}
                     <div
                       className="absolute right-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full"
                       style={{
@@ -128,6 +208,19 @@ export default function SplashScreen({ onComplete }: SplashScreenProps) {
                   </span>
                 </div>
               </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Flash exit transition */}
+          <AnimatePresence>
+            {phase >= 3 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 0.8, 0] }}
+                transition={{ duration: 0.5 }}
+                className="absolute inset-0 pointer-events-none z-50"
+                style={{ background: "white" }}
+              />
             )}
           </AnimatePresence>
         </motion.div>
