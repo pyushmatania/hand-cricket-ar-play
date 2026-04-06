@@ -161,8 +161,14 @@ function ChestSlot({
 }) {
   if (!chest) {
     return (
-      <div className="aspect-square rounded-xl border-2 border-dashed border-border/30 flex items-center justify-center opacity-40">
-        <Plus className="w-4 h-4 text-muted-foreground" />
+      <div
+        className="aspect-square rounded-xl flex items-center justify-center opacity-40"
+        style={{
+          background: "linear-gradient(180deg, #3A2A1A, #2E1A0E)",
+          border: "2px dashed #5C3A1E",
+        }}
+      >
+        <Plus className="w-4 h-4" style={{ color: "#8B7355" }} />
       </div>
     );
   }
