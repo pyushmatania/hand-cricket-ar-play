@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
+import stoneLuckySpinImg from "@/assets/ui/stone-luckyspin.png";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
