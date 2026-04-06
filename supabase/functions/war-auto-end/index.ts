@@ -94,6 +94,32 @@ Deno.serve(async (req) => {
         }
       }
 
+      // Send MVP notification
+      const { data: warAttacks } = await supabase
+        .from("war_attacks")
+        .select("attacker_id, clan_id, score, stars_earned")
+        .eq("war_id", war.id);
+
+      if (warAttacks && warAttacks.length > 0) {
+        // Find MVP per clan (highest stars, then score as tiebreaker)
+        const clanIds = [war.clan_a_id, war.clan_b_id];
+        for (const cid of clanIds) {
+          const clanAttacks = warAttacks.filter((a: any) => a.clan_id === cid);
+          if (clanAttacks.length === 0) continue;
+          const mvp = clanAttacks.reduce((best: any, a: any) =>
+            a.stars_earned > best.stars_earned ? a : a.stars_earned === best.stars_earned && a.score > best.score ? a : best
+          );
+          // Insert notification for MVP
+          await supabase.from("notifications").insert({
+            user_id: mvp.attacker_id,
+            type: "war_mvp",
+            title: "🏅 War MVP!",
+            message: `You were the MVP attacker with ${mvp.stars_earned}⭐ and ${mvp.score} runs!`,
+            data: { war_id: war.id, clan_id: cid, stars: mvp.stars_earned, score: mvp.score },
+          });
+        }
+      }
+
       processed++;
     }
 
