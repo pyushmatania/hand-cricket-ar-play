@@ -87,11 +87,16 @@ function SectionHeader({ icon, title, expanded, onToggle, accentColor }: {
     <motion.button
       whileTap={{ scale: 0.98 }}
       onClick={onToggle}
-      className="w-full flex items-center gap-3 rounded-2xl p-3 scoreboard-metal border-b-[4px] transition-all"
-      style={{ borderColor: "hsl(222 47% 8%)" }}
+      className="w-full flex items-center gap-3 rounded-2xl p-3 transition-all"
+      style={{
+        background: "linear-gradient(180deg, #3E2410, #2E1A0E)",
+        border: "2px solid #5C3A1E",
+        borderBottom: "4px solid #2E1A0E",
+        boxShadow: "0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(245,230,211,0.06)",
+      }}
     >
-      <div className="w-10 h-10 rounded-xl flex items-center justify-center stadium-glass"
-        style={{ border: `1px solid ${accentColor}40` }}>
+      <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+        style={{ background: `${accentColor}18`, border: `1px solid ${accentColor}30` }}>
         <span className="text-xl">{icon}</span>
       </div>
       <span className="flex-1 text-left font-display text-xs tracking-[0.2em]" style={{ color: accentColor }}>{title}</span>
