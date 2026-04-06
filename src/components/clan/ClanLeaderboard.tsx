@@ -129,18 +129,20 @@ export default function ClanLeaderboard() {
     setDetailLoading(true);
     setDetail({ clan, members: [], warHistory: [], trophies: [] });
 
-    // Fetch members + profiles in parallel with war history
-    const [membersRes, warsRes] = await Promise.all([
+    // Fetch members, wars, and trophies in parallel
+    const [membersRes, warsRes, trophiesRes] = await Promise.all([
       supabase.from("clan_members").select("user_id, role, donated_cards").eq("clan_id", clan.id),
       supabase.from("clan_wars").select("*")
         .or(`clan_a_id.eq.${clan.id},clan_b_id.eq.${clan.id}`)
         .eq("status", "ended")
         .order("created_at", { ascending: false })
         .limit(20),
+      supabase.from("clan_trophies").select("*").eq("clan_id", clan.id).order("created_at", { ascending: false }),
     ]);
 
     const memberRows = (membersRes.data as any[]) || [];
     const warRows = (warsRes.data as any[]) || [];
+    const trophies: ClanTrophy[] = (trophiesRes.data as any[]) || [];
 
     // Fetch profiles for members
     const userIds = memberRows.map(m => m.user_id);
@@ -182,7 +184,7 @@ export default function ClanLeaderboard() {
       };
     });
 
-    setDetail({ clan, members, warHistory });
+    setDetail({ clan, members, warHistory, trophies });
     setDetailLoading(false);
   }, []);
 
