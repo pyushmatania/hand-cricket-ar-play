@@ -1,7 +1,7 @@
 /**
  * Team Lineup Walkout — Cinematic player introduction
  * Players walk in from left/right with spotlight tracking.
- * Now pulls equipped cosmetics for avatar display.
+ * Uses 3D character illustrations from assets/characters.
  * Duration: ~3.5s total
  */
 
@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import { SFX } from "@/lib/sounds";
 import { useSettings } from "@/contexts/SettingsContext";
 import { getAvatarPreset } from "@/lib/avatars";
+import { CHARACTERS } from "@/assets/characters";
 
 const FRAME_RING_STYLES: Record<string, { ring: string; glow: string }> = {
   "Bronze Ring": { ring: "hsl(25 70% 45%)", glow: "hsl(25 70% 45% / 0.4)" },
@@ -29,6 +30,9 @@ interface TeamLineupWalkoutProps {
   playerFrame?: string | null;
   playerEmoji?: string;
   opponentEmoji?: string;
+  /** Character illustration key: 'batsman' | 'bowler' | 'allrounder' | 'keeper' | 'captain' */
+  playerCharacter?: string;
+  opponentCharacter?: string;
   onComplete: () => void;
 }
 
@@ -42,6 +46,8 @@ export default function TeamLineupWalkout({
   playerFrame,
   playerEmoji,
   opponentEmoji = "🤖",
+  playerCharacter,
+  opponentCharacter,
   onComplete,
 }: TeamLineupWalkoutProps) {
   const [phase, setPhase] = useState<"walk" | "face" | "done">("walk");
@@ -49,6 +55,10 @@ export default function TeamLineupWalkout({
   const preset = getAvatarPreset(playerAvatarIndex);
   const resolvedPlayerEmoji = playerEmoji || preset.emoji;
   const frameStyle = playerFrame ? FRAME_RING_STYLES[playerFrame] : null;
+
+  // Resolve character illustration images
+  const playerCharImg = playerCharacter ? CHARACTERS[playerCharacter] : CHARACTERS.batsman;
+  const opponentCharImg = opponentCharacter ? CHARACTERS[opponentCharacter] : CHARACTERS.bowler;
 
   useEffect(() => {
     if (soundEnabled) SFX.gameStart();
@@ -80,32 +90,71 @@ export default function TeamLineupWalkout({
           />
 
           <SpotlightCone />
-
-          {/* Moving spotlight tracking player (left side) */}
           <TrackingSpotlight side="left" phase={phase} />
-          {/* Moving spotlight tracking opponent (right side) */}
           <TrackingSpotlight side="right" phase={phase} />
 
-          {/* Player silhouette (walks in from left) */}
-          <WalkoutAvatar
-            side="left"
-            phase={phase}
-            name={playerName}
-            emoji={resolvedPlayerEmoji}
-            avatarUrl={playerAvatarUrl}
-            avatarPresetGradient={preset.gradient}
-            frame={frameStyle}
-            teamColor="hsl(217 91% 55%)"
-          />
+          {/* Player character illustration (left) */}
+          <motion.div
+            initial={{ x: "-120%", opacity: 0 }}
+            animate={{
+              x: phase === "face" ? "0%" : "-30%",
+              opacity: 1,
+            }}
+            transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute bottom-[15%] left-[5%] flex flex-col items-center"
+          >
+            <motion.img
+              src={playerCharImg}
+              alt={playerName}
+              className="w-36 h-auto max-h-[45vh] object-contain"
+              style={{ filter: "drop-shadow(0 0 24px hsl(217 80% 50% / 0.5))" }}
+              animate={phase === "face" ? { y: [0, -3, 0] } : {}}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            />
+            {/* Name plate */}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={phase === "face" ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.2, duration: 0.4 }}
+              className="mt-2 px-3 py-1 rounded-sm stadium-glass"
+              style={{ border: "1px solid hsl(217 60% 50% / 0.3)" }}
+            >
+              <span className="text-[10px] font-display font-bold tracking-[0.2em] text-foreground">
+                {playerName.toUpperCase()}
+              </span>
+            </motion.div>
+          </motion.div>
 
-          {/* Opponent silhouette (walks in from right) */}
-          <WalkoutAvatar
-            side="right"
-            phase={phase}
-            name={opponentName}
-            emoji={opponentEmoji}
-            teamColor="hsl(0 75% 55%)"
-          />
+          {/* Opponent character illustration (right) */}
+          <motion.div
+            initial={{ x: "120%", opacity: 0 }}
+            animate={{
+              x: phase === "face" ? "0%" : "30%",
+              opacity: 1,
+            }}
+            transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute bottom-[15%] right-[5%] flex flex-col items-center"
+          >
+            <motion.img
+              src={opponentCharImg}
+              alt={opponentName}
+              className="w-36 h-auto max-h-[45vh] object-contain"
+              style={{ filter: "drop-shadow(0 0 24px hsl(4 80% 50% / 0.5))", transform: "scaleX(-1)" }}
+              animate={phase === "face" ? { y: [0, -3, 0] } : {}}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={phase === "face" ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: 0.2, duration: 0.4 }}
+              className="mt-2 px-3 py-1 rounded-sm stadium-glass"
+              style={{ border: "1px solid hsl(4 60% 50% / 0.3)" }}
+            >
+              <span className="text-[10px] font-display font-bold tracking-[0.2em] text-foreground">
+                {opponentName.toUpperCase()}
+              </span>
+            </motion.div>
+          </motion.div>
 
           {/* VS flash when they face off */}
           <motion.div
@@ -167,101 +216,5 @@ function TrackingSpotlight({ side, phase }: { side: "left" | "right"; phase: str
         filter: "blur(15px)",
       }}
     />
-  );
-}
-
-interface WalkoutAvatarProps {
-  side: "left" | "right";
-  phase: string;
-  name: string;
-  emoji: string;
-  avatarUrl?: string | null;
-  avatarPresetGradient?: string;
-  frame?: { ring: string; glow: string } | null;
-  teamColor: string;
-}
-
-/** Parse Tailwind gradient class like "from-[hsl(...)] to-[hsl(...)]" into CSS */
-function parseTwGradient(tw: string): string {
-  const fromMatch = tw.match(/from-\[([^\]]+)\]/);
-  const toMatch = tw.match(/to-\[([^\]]+)\]/);
-  if (fromMatch && toMatch) {
-    return `linear-gradient(135deg, ${fromMatch[1]}, ${toMatch[1]})`;
-  }
-  return "";
-}
-
-function WalkoutAvatar({ side, phase, name, emoji, avatarUrl, avatarPresetGradient, frame, teamColor }: WalkoutAvatarProps) {
-  const isLeft = side === "left";
-  const avatarBg = avatarPresetGradient ? parseTwGradient(avatarPresetGradient) : "";
-  const defaultGradient = isLeft
-    ? "linear-gradient(135deg, hsl(217 91% 55%), hsl(217 80% 35%))"
-    : "linear-gradient(135deg, hsl(0 75% 55%), hsl(0 65% 35%))";
-  const resolvedBg = avatarBg || defaultGradient;
-
-  const ringColor = frame?.ring || (isLeft ? "hsl(217 80% 70% / 0.5)" : "hsl(0 65% 70% / 0.5)");
-  const ringGlow = frame?.glow || `${teamColor.replace(")", " / 0.4)")}`;
-
-  return (
-    <motion.div
-      initial={{ x: isLeft ? "-120%" : "120%", opacity: 0 }}
-      animate={{
-        x: phase === "face" ? "0%" : isLeft ? "-30%" : "30%",
-        opacity: 1,
-      }}
-      transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
-      className={`absolute bottom-[30%] ${isLeft ? "left-[15%]" : "right-[15%]"} flex flex-col items-center`}
-    >
-      {/* Avatar circle */}
-      <div
-        className="w-16 h-16 rounded-full flex items-center justify-center text-3xl overflow-hidden"
-        style={{
-          background: resolvedBg,
-          boxShadow: `0 0 30px ${ringGlow}, 0 4px 20px hsl(0 0% 0% / 0.5)`,
-          border: `2px solid ${ringColor}`,
-        }}
-      >
-        {avatarUrl ? (
-          <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
-        ) : (
-          emoji
-        )}
-      </div>
-
-      {/* Cosmetic frame ring overlay */}
-      {frame && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={phase === "face" ? { opacity: 1, scale: 1 } : {}}
-          transition={{ delay: 0.1, duration: 0.5 }}
-          className="absolute top-0 w-[72px] h-[72px] rounded-full pointer-events-none"
-          style={{
-            border: `3px solid ${frame.ring}`,
-            boxShadow: `0 0 18px ${frame.glow}, inset 0 0 8px ${frame.glow}`,
-            transform: "translate(-50%, 0)",
-            left: "50%",
-          }}
-        />
-      )}
-
-      {/* Name plate */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={phase === "face" ? { opacity: 1, y: 0 } : {}}
-        transition={{ delay: 0.2, duration: 0.4 }}
-        className="mt-2 px-3 py-1 rounded-sm"
-        style={{
-          background: "hsl(0 0% 0% / 0.6)",
-          border: `1px solid ${teamColor.replace(")", " / 0.3)")}`,
-        }}
-      >
-        <span
-          className="text-[10px] font-bold tracking-[0.2em]"
-          style={{ color: "hsl(0 0% 95%)" }}
-        >
-          {name.toUpperCase()}
-        </span>
-      </motion.div>
-    </motion.div>
   );
 }
