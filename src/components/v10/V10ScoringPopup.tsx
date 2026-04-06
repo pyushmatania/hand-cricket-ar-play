@@ -143,7 +143,7 @@ function SpeedLines() {
 /* ── FOUR Popup — Wooden Signboard on Chains ─────── */
 function FourPopup({ onComplete }: { onComplete: () => void }) {
   useEffect(() => {
-    try { SFX.play("four"); } catch {}
+    try { SFX.fourHit(); } catch {}
     try { navigator.vibrate?.(40); } catch {}
     const t = setTimeout(onComplete, 2000);
     return () => clearTimeout(t);
