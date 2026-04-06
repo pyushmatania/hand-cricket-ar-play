@@ -123,7 +123,7 @@ export default function ShopItemCard({
           </div>
 
           {/* Name - scoreboard paint */}
-          <p className="font-game-card text-xs font-bold text-foreground truncate"
+          <p className="font-display text-xs font-bold text-foreground truncate"
             style={{ textShadow: "0 1px 0 hsl(25 30% 8%)" }}
           >
             {name}

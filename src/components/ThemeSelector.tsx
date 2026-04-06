@@ -133,7 +133,7 @@ export default function ThemeSelector({ currentTierIndex, selectedThemeId, onSel
                   style={{ background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 12%) 100%)" }}
                 >
                   {/* Theme name */}
-                  <span className="text-[11px] font-game-card font-bold text-foreground block leading-tight truncate">
+                  <span className="text-[11px] font-display font-bold text-foreground block leading-tight truncate">
                     {theme.name}
                   </span>
                   <span className="text-[8px] text-muted-foreground leading-none font-body block mb-1.5">

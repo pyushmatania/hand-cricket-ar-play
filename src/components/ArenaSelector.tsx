@@ -92,7 +92,7 @@ export default function ArenaSelector({ currentTierIndex, selectedArenaId, onSel
                 <div className="px-2 py-1.5"
                   style={{ background: "linear-gradient(180deg, hsl(25 18% 16%) 0%, hsl(25 15% 12%) 100%)" }}
                 >
-                  <span className="text-[10px] font-game-card font-bold text-foreground block leading-tight truncate">
+                  <span className="text-[10px] font-display font-bold text-foreground block leading-tight truncate">
                     {arena.emoji} {arena.name}
                   </span>
                   <span className="text-[8px] text-muted-foreground leading-none font-body">

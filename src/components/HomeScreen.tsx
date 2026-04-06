@@ -126,7 +126,7 @@ export default function HomeScreen({ onStart }: HomeScreenProps) {
               }}
             >
               <div className="text-2xl mb-1">{f.icon}</div>
-              <div className="text-[10px] text-foreground font-bold font-game-card">{f.label}</div>
+              <div className="text-[10px] text-foreground font-bold font-display">{f.label}</div>
               <div className="text-[8px] text-muted-foreground/60 font-body">{f.sub}</div>
             </div>
           ))}
