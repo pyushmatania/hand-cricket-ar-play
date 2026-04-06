@@ -1523,6 +1523,22 @@
   .wood-panel-full > .corner-bl { bottom: -3px; left: -3px; clip-path: polygon(0% 0%, 35% 0%, 35% 65%, 100% 65%, 100% 100%, 0% 100%); }
   .wood-panel-full > .corner-br { bottom: -3px; right: -3px; clip-path: polygon(65% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 65%, 65% 65%); }
 
+  /* V11 SHEET/DRAWER — rough wood panel for side drawers */
+  .wood-panel-sheet {
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M10,20 L25,30 L40,25 L55,40 L70,35' stroke='rgba(0,0,0,0.2)' stroke-width='0.5' fill='none'/%3E%3Cpath d='M60,10 L65,25 L80,30 L85,50' stroke='rgba(0,0,0,0.15)' stroke-width='0.4' fill='none'/%3E%3C/svg%3E"),
+      repeating-linear-gradient(88deg, transparent 0px, transparent 18px, rgba(0,0,0,0.15) 19px, rgba(0,0,0,0.25) 20px, transparent 21px, transparent 42px, rgba(0,0,0,0.10) 43px, transparent 44px),
+      repeating-linear-gradient(90deg, rgba(0,0,0,0.04) 0px, transparent 1px, transparent 3px, rgba(0,0,0,0.06) 4px, transparent 5px),
+      radial-gradient(ellipse 12px 8px at 25% 30%, rgba(0,0,0,0.35), transparent 70%),
+      radial-gradient(ellipse 8px 6px at 75% 60%, rgba(0,0,0,0.30), transparent 70%),
+      linear-gradient(180deg, #5A2E12 0%, #4A2410 40%, #3E1A08 100%);
+    border-color: #2A1408 !important;
+    box-shadow:
+      0 8px 24px rgba(0,0,0,0.7),
+      inset 0 3px 0 rgba(255,200,130,0.12),
+      inset 0 -4px 0 rgba(0,0,0,0.40);
+  }
+
   /* Legacy alias */
   .metal-corners { position: relative; overflow: visible; }
   .metal-corners::before,
