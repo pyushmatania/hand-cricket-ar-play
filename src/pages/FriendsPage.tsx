@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import stoneFriendsImg from "@/assets/ui/stone-friends.png";
+import StoneHeader from "@/components/shared/StoneHeader";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
