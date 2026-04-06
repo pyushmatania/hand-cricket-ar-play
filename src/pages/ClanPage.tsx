@@ -10,6 +10,7 @@ import ClanLeaderboard from "@/components/clan/ClanLeaderboard";
 import ClanWars from "@/components/clan/ClanWars";
 import ClanRecruitment from "@/components/clan/ClanRecruitment";
 import ClanMatchmaking from "@/components/clan/ClanMatchmaking";
+import ClanAchievements from "@/components/clan/ClanAchievements";
 import V10PlayerAvatar from "@/components/shared/V10PlayerAvatar";
 import V10Button from "@/components/shared/V10Button";
 
@@ -19,7 +20,7 @@ const ROLE_COLORS: Record<string, string> = { leader: "text-neon-cyan", co_leade
 const CLAN_EMOJIS = ["🏏", "⚡", "🔥", "💎", "🦁", "🐯", "🦅", "🐉", "⭐", "🌟", "👑", "🛡️"];
 const LEVEL_XP = [0, 100, 300, 600, 1000, 1500, 2200, 3000, 4000, 5500];
 
-type Tab = "info" | "chat" | "donate" | "war" | "ranks" | "recruit" | "match" | "browse";
+type Tab = "info" | "chat" | "donate" | "war" | "match" | "badges" | "ranks" | "recruit" | "browse";
 
 export default function ClanPage() {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ export default function ClanPage() {
     </div>
   );
 
-  const allTabs = myClan ? (["info", "chat", "donate", "war", "match", "ranks", "recruit", "browse"] as Tab[]) : (["ranks", "recruit", "browse"] as Tab[]);
+  const allTabs = myClan ? (["info", "chat", "donate", "war", "match", "badges", "ranks", "recruit", "browse"] as Tab[]) : (["ranks", "recruit", "browse"] as Tab[]);
 
   return (
     <div className="min-h-screen bg-v10-base pb-24">
@@ -82,6 +83,11 @@ export default function ClanPage() {
           {tab === "match" && myClan && (
             <motion.div key="match" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
               <ClanMatchmaking />
+            </motion.div>
+          )}
+          {tab === "badges" && myClan && (
+            <motion.div key="badges" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
+              <ClanAchievements clanId={myClan.id} />
             </motion.div>
           )}
           {tab === "recruit" && (

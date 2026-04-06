@@ -97,6 +97,30 @@ export default function ClanRecruitment() {
     setJoining(clanId);
     try {
       await joinClan(clanId);
+
+      // Notify clan leaders about the new recruit
+      if (user) {
+        const { data: leaders } = await supabase.from("clan_members")
+          .select("user_id")
+          .eq("clan_id", clanId)
+          .in("role", ["leader", "co_leader"]);
+
+        const { data: profile } = await supabase.from("profiles")
+          .select("display_name")
+          .eq("user_id", user.id)
+          .single();
+
+        if (leaders?.length) {
+          const notifications = leaders.map((l: any) => ({
+            user_id: l.user_id,
+            type: "recruitment_join",
+            title: "📋 New Recruit!",
+            message: `${profile?.display_name || "A player"} joined your clan via recruitment board!`,
+            data: { clan_id: clanId, recruit_id: user.id },
+          }));
+          await supabase.from("notifications").insert(notifications);
+        }
+      }
     } catch {}
     setJoining(null);
   };

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
 import { useClan } from "@/hooks/useClan";
 import V10Button from "@/components/shared/V10Button";
 
@@ -16,6 +17,7 @@ interface ClanProfile {
 }
 
 export default function ClanMatchmaking() {
+  const { user } = useAuth();
   const { myClan, myRole } = useClan();
   const [opponent, setOpponent] = useState<ClanProfile | null>(null);
   const [searching, setSearching] = useState(false);
@@ -77,8 +79,24 @@ export default function ClanMatchmaking() {
     // Simulate search time for drama
     await new Promise(r => setTimeout(r, 2000));
 
-    setOpponent(candidates[0] || null);
+    const matched = candidates[0] || null;
+    setOpponent(matched);
     setSearching(false);
+
+    // Notify all clan members about the match found
+    if (matched && user) {
+      const { data: clanMembers } = await supabase.from("clan_members").select("user_id").eq("clan_id", myClan.id);
+      if (clanMembers?.length) {
+        const notifications = clanMembers.map((m: any) => ({
+          user_id: m.user_id,
+          type: "matchmaking_found",
+          title: "⚔️ Opponent Found!",
+          message: `${matched.emoji} ${matched.name} (Lv.${matched.level}) has been matched for war! ${matched.war_wins}W · ${matched.total_stars}⭐`,
+          data: { clan_id: myClan.id, opponent_id: matched.id },
+        }));
+        await supabase.from("notifications").insert(notifications);
+      }
+    }
   };
 
   if (!myClan) return (

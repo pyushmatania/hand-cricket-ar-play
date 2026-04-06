@@ -193,6 +193,35 @@ export type Database = {
           },
         ]
       }
+      clan_achievements: {
+        Row: {
+          achievement_id: string
+          clan_id: string
+          id: string
+          unlocked_at: string
+        }
+        Insert: {
+          achievement_id: string
+          clan_id: string
+          id?: string
+          unlocked_at?: string
+        }
+        Update: {
+          achievement_id?: string
+          clan_id?: string
+          id?: string
+          unlocked_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clan_achievements_clan_id_fkey"
+            columns: ["clan_id"]
+            isOneToOne: false
+            referencedRelation: "clans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clan_chat: {
         Row: {
           clan_id: string
