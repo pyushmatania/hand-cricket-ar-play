@@ -6,6 +6,7 @@ import { useClan, type Clan } from "@/hooks/useClan";
 import { supabase } from "@/integrations/supabase/client";
 import TopBar from "@/components/layout/TopBar";
 import ClanDonations from "@/components/clan/ClanDonations";
+import ClanLeaderboard from "@/components/clan/ClanLeaderboard";
 import ClanWars from "@/components/clan/ClanWars";
 import V10PlayerAvatar from "@/components/shared/V10PlayerAvatar";
 import V10Button from "@/components/shared/V10Button";
