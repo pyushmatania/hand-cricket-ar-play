@@ -130,6 +130,16 @@ export default function ClanAchievements({ clanId }: { clanId: string }) {
         newlyUnlocked.forEach(id => next.add(id));
         return next;
       });
+      setNewlyUnlockedIds(newlyUnlocked);
+      // Trigger celebration sequence
+      const firstDef = ACHIEVEMENTS.find(a => a.id === newlyUnlocked[0]);
+      if (firstDef) {
+        setCelebrationAchievement(firstDef);
+        setTimeout(() => {
+          canvasConfetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ["#00e5ff", "#76ff03", "#ffd700"] });
+        }, 300);
+        setTimeout(() => setCelebrationAchievement(null), 3500);
+      }
     }
 
     setLoading(false);
