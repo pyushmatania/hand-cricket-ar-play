@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import stoneMatchHistoryImg from "@/assets/ui/stone-matchhistory.png";
 import StoneHeader from "@/components/shared/StoneHeader";
 import ScrollHint from "@/components/shared/ScrollHint";
 import { motion, AnimatePresence } from "framer-motion";
