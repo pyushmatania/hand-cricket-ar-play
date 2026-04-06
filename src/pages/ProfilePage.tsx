@@ -1185,7 +1185,7 @@ export default function ProfilePage() {
                           borderBottom: "4px solid hsl(222 12% 8%)",
                         }}
                         onClick={() => setSelectedFriend(f)}>
-                        <PlayerAvatar avatarUrl={f.avatar_url} avatarIndex={f.avatar_index ?? 0} size="sm" />
+                        <V10PlayerAvatar avatarUrl={f.avatar_url} avatarIndex={f.avatar_index ?? 0} size="sm" />
                         <div className="flex-1 min-w-0">
                           <span className="font-game-display text-[10px] font-bold text-foreground tracking-wider block truncate">{f.display_name}</span>
                           <span className="text-[7px] text-muted-foreground">{f.wins}W • {f.total_matches}G • {wr}%</span>
