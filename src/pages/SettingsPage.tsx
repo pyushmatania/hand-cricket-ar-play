@@ -502,7 +502,7 @@ export default function SettingsPage() {
                 <div className="space-y-1.5 pt-2 pb-1">
                   {user ? (
                     <>
-                      <div className="rounded-xl p-3.5 flex items-center gap-3 " className="stadium-glass">
+                      <div className="rounded-xl p-3.5 flex items-center gap-3 stadium-glass">
                         <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "hsl(207 90% 54% / 0.15)", border: "1px solid hsl(207 90% 54% / 0.3)" }}>
                           <span className="text-lg">📧</span>
                         </div>
