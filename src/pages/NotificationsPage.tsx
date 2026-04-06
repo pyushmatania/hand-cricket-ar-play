@@ -233,13 +233,18 @@ export default function NotificationsPage() {
                           animate={{ opacity: 1, x: 0 }}
                           transition={{ delay: i * 0.03, type: "spring", stiffness: 300, damping: 25 }}
                           onClick={() => !n.read && markRead(n.id)}
-                          className="rounded-xl p-3 flex items-start gap-3 cursor-pointer relative overflow-hidden"
+                          className={`rounded-xl p-3 flex items-start gap-3 cursor-pointer relative overflow-hidden transition-all duration-300 ${!n.read ? "hover:scale-[1.02] hover:-translate-y-0.5" : ""}`}
                           style={{
-                            background: V10_CARD,
-                            border: !n.read ? `2px solid ${meta.accent}35` : "2px solid hsl(220 15% 18%)",
-                            borderBottom: !n.read ? `4px solid ${meta.accent}20` : "4px solid hsl(220 15% 8%)",
-                            boxShadow: !n.read ? `0 3px 12px ${meta.accent}15` : "0 2px 4px hsl(0 0% 0% / 0.2)",
-                            opacity: n.read ? 0.6 : 1,
+                            background: !n.read
+                              ? `linear-gradient(135deg, hsl(220 15% 14%) 0%, hsl(220 12% 9%) 100%)`
+                              : V10_CARD,
+                            border: !n.read ? `2px solid ${meta.accent}50` : "2px solid hsl(220 15% 18%)",
+                            borderBottom: !n.read ? `4px solid ${meta.accent}30` : "4px solid hsl(220 15% 8%)",
+                            boxShadow: !n.read
+                              ? `0 0 12px ${meta.accent}20, 0 0 24px ${meta.accent}08, 0 4px 12px hsl(0 0% 0% / 0.3), inset 0 1px 0 hsl(220 20% 25% / 0.3)`
+                              : "0 2px 4px hsl(0 0% 0% / 0.2)",
+                            backdropFilter: !n.read ? "blur(12px)" : undefined,
+                            opacity: n.read ? 0.55 : 1,
                           }}
                         >
                           {/* Unread accent strip */}
