@@ -929,69 +929,89 @@ export default function LeaderboardPage() {
                 <>
                   <PotwWithoutConfetti player={playerOfWeek} loading={potwLoading} />
 
-                  {/* Top 3 podium — Stadium Concrete 3D */}
+                  {/* Top 3 podium — Wooden Kingdom pedestals */}
                   {top3.length >= 3 && (
-                    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="flex items-end justify-center gap-2 mb-6 pt-4">
+                    <motion.div initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="flex items-end justify-center gap-3 mb-6 pt-6">
                       {[top3[1], top3[0], top3[2]].map((p, i) => {
-                        const heights = [96, 128, 80];
+                        const heights = [100, 140, 76];
+                        const widths = ["w-[5.5rem]", "w-24", "w-[5rem]"];
                         const isMe = user && p.user_id === user.id;
                         const tier = getRankTier(p);
-                        const podiumColors = [
-                          { border: "hsl(210 10% 70%)", glow: "0 0 16px hsl(210 10% 70% / 0.2)", bg: "linear-gradient(180deg, hsl(210 10% 20%) 0%, hsl(210 10% 14%) 100%)" },
-                          { border: "hsl(43 80% 50%)", glow: "0 0 30px hsl(43 90% 50% / 0.3)", bg: "linear-gradient(180deg, hsl(43 30% 18%) 0%, hsl(43 25% 12%) 100%)" },
-                          { border: "hsl(25 60% 50%)", glow: "0 0 12px hsl(25 60% 50% / 0.15)", bg: "linear-gradient(180deg, hsl(25 30% 18%) 0%, hsl(220 12% 9%) 100%)" },
+                        const podiumStyles = [
+                          { wood: "linear-gradient(180deg, #4A3020 0%, #3A2215 60%, #2E1A0E 100%)", border: "hsl(210 10% 60%)", metalAccent: "hsl(210 15% 55%)", glow: "0 0 16px hsl(210 10% 70% / 0.15)" },
+                          { wood: "linear-gradient(180deg, #5C3A1E 0%, #4A2C14 60%, #3E2410 100%)", border: "hsl(43 80% 50%)", metalAccent: "hsl(43 90% 55%)", glow: "0 0 30px hsl(43 90% 50% / 0.25), 0 0 60px hsl(43 90% 50% / 0.1)" },
+                          { wood: "linear-gradient(180deg, #3E2812 0%, #2E1A0E 60%, #1A0E05 100%)", border: "hsl(25 60% 45%)", metalAccent: "hsl(25 70% 50%)", glow: "0 0 12px hsl(25 60% 50% / 0.12)" },
                         ];
-                        const crownSize = ["text-xl", "text-3xl", "text-lg"];
                         const crowns = ["🥈", "👑", "🥉"];
+                        const crownSizes = ["text-2xl", "text-4xl", "text-xl"];
                         return (
                           <motion.div key={p.user_id}
-                            initial={{ opacity: 0, y: 30, scale: 0.9 }}
+                            initial={{ opacity: 0, y: 40, scale: 0.85 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             transition={{ delay: 0.2 + i * 0.12, type: "spring", stiffness: 200, damping: 20 }}
                             className={`flex flex-col items-center ${mainTab === "friends" && !isMe ? "cursor-pointer active:scale-[0.97] transition-transform" : ""}`}
                             onClick={() => { if (mainTab === "friends" && !isMe) setPreviewFriendId(p.user_id); }}>
+                            {/* Crown — floating with glow */}
                             <motion.span
-                              animate={{ y: [0, -4, 0] }}
+                              animate={{ y: [0, -5, 0], rotate: i === 1 ? [0, -2, 2, 0] : [0] }}
                               transition={{ duration: 2.5, repeat: Infinity, delay: i * 0.4, ease: "easeInOut" }}
-                              className={`${crownSize[i]} mb-1 drop-shadow-lg`}>{crowns[i]}</motion.span>
-                            <div className="mb-1.5 relative">
-                              <div className="rounded-full" style={{ border: `3px solid ${podiumColors[i].border}`, boxShadow: podiumColors[i].glow }}>
-                                <PlayerAvatar avatarUrl={p.avatar_url} avatarIndex={p.avatar_index ?? 0} size="sm" />
+                              className={`${crownSizes[i]} mb-1`}
+                              style={{ filter: i === 1 ? "drop-shadow(0 0 12px hsl(43 90% 55% / 0.6))" : `drop-shadow(0 0 6px ${podiumStyles[i].metalAccent}40)` }}>
+                              {crowns[i]}
+                            </motion.span>
+                            {/* Avatar with metal ring */}
+                            <div className="mb-2 relative">
+                              <div className="rounded-full p-0.5" style={{ background: `linear-gradient(180deg, ${podiumStyles[i].metalAccent}, ${podiumStyles[i].border})`, boxShadow: podiumStyles[i].glow }}>
+                                <div className="rounded-full" style={{ border: "2px solid #1A0E05" }}>
+                                  <PlayerAvatar avatarUrl={p.avatar_url} avatarIndex={p.avatar_index ?? 0} size="sm" />
+                                </div>
                               </div>
                               {(p.current_streak ?? 0) >= 3 && (
                                 <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center"
-                                  style={{ background: "hsl(4 90% 55%)", border: "2px solid hsl(220 12% 8%)" }}>
+                                  style={{ background: "hsl(4 90% 55%)", border: "2px solid #1A0E05" }}>
                                   <span className="text-[7px]">🔥</span>
                                 </div>
                               )}
                             </div>
-                            {/* Podium pillar — Stadium Concrete */}
-                            <div className="w-[5.5rem] rounded-t-2xl flex flex-col items-center justify-center px-2 relative overflow-hidden"
+                            {/* Wooden pedestal pillar */}
+                            <div className={`${widths[i]} rounded-t-xl flex flex-col items-center justify-center px-2 relative overflow-hidden`}
                               style={{
                                 height: heights[i],
-                                background: podiumColors[i].bg,
-                                border: `2px solid ${podiumColors[i].border}`,
-                                borderBottom: `5px solid hsl(220 15% 6%)`,
-                                boxShadow: podiumColors[i].glow,
+                                background: podiumStyles[i].wood,
+                                border: `2px solid ${podiumStyles[i].border}`,
+                                borderBottom: `6px solid hsl(20 30% 6%)`,
+                                boxShadow: podiumStyles[i].glow,
                               }}>
-                              <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-                              <span className="font-display text-2xl" style={{ color: i === 1 ? "hsl(43 90% 55%)" : "hsl(0 0% 90%)", textShadow: i === 1 ? "0 0 15px hsl(43 90% 55% / 0.4)" : "none" }}>
+                              {/* Wood grain texture on pillar */}
+                              <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
+                                style={{ backgroundImage: "repeating-linear-gradient(0deg, transparent 0px, transparent 6px, hsl(30 30% 50% / 0.3) 6px, hsl(30 30% 50% / 0.3) 7px)", backgroundSize: "100% 7px" }} />
+                              {/* Metal top edge */}
+                              <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl"
+                                style={{ background: `linear-gradient(90deg, transparent 5%, ${podiumStyles[i].metalAccent}40 20%, ${podiumStyles[i].metalAccent}60 50%, ${podiumStyles[i].metalAccent}40 80%, transparent 95%)` }} />
+                              {/* Rank number plaque */}
+                              <div className="w-8 h-8 rounded-lg flex items-center justify-center mb-1 relative"
+                                style={{ background: "linear-gradient(180deg, hsl(220 10% 14%) 0%, hsl(220 10% 10%) 100%)", border: `1.5px solid ${podiumStyles[i].metalAccent}60`, boxShadow: "inset 0 1px 0 hsl(220 10% 20%)" }}>
+                                <span className="font-display text-sm font-black" style={{ color: podiumStyles[i].metalAccent }}>
+                                  {i === 0 ? "2" : i === 1 ? "1" : "3"}
+                                </span>
+                              </div>
+                              <span className="font-display text-xl font-black relative z-10" style={{ color: podiumStyles[i].metalAccent, textShadow: `0 0 12px ${podiumStyles[i].metalAccent}40` }}>
                                 {getScore(p)}
                               </span>
-                              <span className="text-[6px] text-muted-foreground font-display tracking-widest">{SORT_OPTIONS[sortBy].label}</span>
+                              <span className="text-[6px] font-display tracking-widest relative z-10" style={{ color: "hsl(30 15% 40%)" }}>{SORT_OPTIONS[sortBy].label}</span>
                               {(p.xp ?? 0) > 0 && (
-                                <span className="text-[6px] font-display mt-0.5" style={{ color: "hsl(207 90% 60%)" }}>✨{p.xp}</span>
+                                <span className="text-[6px] font-display mt-0.5 relative z-10" style={{ color: "hsl(207 90% 60%)" }}>✨{p.xp}</span>
                               )}
                             </div>
-                            {/* Name plate */}
-                            <div className="w-[5.5rem] rounded-b-xl py-1.5 text-center"
+                            {/* Name plate — hammered metal */}
+                            <div className={`${widths[i]} rounded-b-lg py-1.5 text-center`}
                               style={{
-                                borderLeft: `2px solid ${podiumColors[i].border}40`,
-                                borderRight: `2px solid ${podiumColors[i].border}40`,
-                                borderBottom: `2px solid ${podiumColors[i].border}40`,
-                                background: `${podiumColors[i].border}08`,
+                                background: "linear-gradient(180deg, hsl(220 10% 12%) 0%, hsl(220 10% 8%) 100%)",
+                                borderLeft: `2px solid ${podiumStyles[i].border}30`,
+                                borderRight: `2px solid ${podiumStyles[i].border}30`,
+                                borderBottom: `2px solid ${podiumStyles[i].border}30`,
                               }}>
-                              <span className="text-[8px] font-display font-bold block truncate px-1" style={{ color: isMe ? "hsl(207 90% 60%)" : "hsl(0 0% 90%)" }}>{p.display_name}{isMe && " ★"}</span>
+                              <span className="text-[8px] font-display font-bold block truncate px-1" style={{ color: isMe ? "hsl(207 90% 60%)" : "hsl(30 15% 80%)" }}>{p.display_name}{isMe && " ★"}</span>
                               <span className={`text-[6px] ${tier.color} font-display`}>{tier.emoji} {tier.name}</span>
                             </div>
                           </motion.div>
