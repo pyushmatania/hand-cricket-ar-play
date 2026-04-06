@@ -3,6 +3,7 @@ import playerKohli from "@/assets/player-kohli.jpg";
 import playerDhoni from "@/assets/player-dhoni.jpg";
 import playerRohit from "@/assets/player-rohit.jpg";
 import playerBumrah from "@/assets/player-bumrah.jpg";
+import { CARD_FRAMES } from "@/assets/cards";
 
 export const PLAYER_IMAGES: Record<string, string> = {
   kohli: playerKohli,
@@ -155,6 +156,7 @@ export default function PlayerCard({ player, size = "md", showStats = true, dela
   const img = PLAYER_IMAGES[player.id];
   const rarity = player.rarity || "common";
   const frame = RARITY_FRAME[rarity];
+  const frameImg = CARD_FRAMES[rarity];
 
   const sizeMap = {
     sm: { w: "w-28", imgH: "h-28", clip: "24px" },
@@ -227,6 +229,16 @@ export default function PlayerCard({ player, size = "md", showStats = true, dela
             style={{ marginTop: "-8px" }}
           />
         </div>
+
+        {/* ── Rarity Frame Image Overlay ── */}
+        {frameImg && (
+          <img
+            src={frameImg}
+            alt={`${rarity} frame`}
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none z-[15] mix-blend-screen opacity-60"
+            style={{ clipPath: shieldClip }}
+          />
+        )}
 
         {/* ── Name Ribbon Banner ── */}
         <div className="relative -mt-3 z-20 flex justify-center">

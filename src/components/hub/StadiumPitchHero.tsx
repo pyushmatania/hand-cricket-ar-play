@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import defaultPitchHero from "@/assets/stadiums/default-pitch-hero.jpg";
+import { STADIUM_PITCHES } from "@/assets/stadiums";
 
 interface StadiumPitchHeroProps {
   arenaName: string;
@@ -8,6 +8,8 @@ interface StadiumPitchHeroProps {
   nextArenaName: string;
   nextTrophies: number;
   progress: number; // 0-100
+  /** Arena key to select correct pitch image: 'gully' | 'school' | 'ipl' | 'international' | 'worldcup' */
+  arenaKey?: string;
 }
 
 export default function StadiumPitchHero({
@@ -17,7 +19,11 @@ export default function StadiumPitchHero({
   nextArenaName,
   nextTrophies,
   progress,
+  arenaKey,
 }: StadiumPitchHeroProps) {
+  // Resolve pitch image from arena key, fall back to default
+  const pitchImg = (arenaKey && STADIUM_PITCHES[arenaKey]) || STADIUM_PITCHES.default;
+
   return (
     <div className="relative w-full overflow-hidden" style={{ height: 260 }}>
       {/* Stadium image with perspective tilt */}
@@ -30,7 +36,7 @@ export default function StadiumPitchHero({
           style={{ transformOrigin: "center bottom", transform: "rotateX(5deg)" }}
         >
           <img
-            src={defaultPitchHero}
+            src={pitchImg}
             alt={arenaName}
             className="w-full h-full object-cover"
             style={{ filter: "brightness(0.85) contrast(1.1) saturate(1.2)" }}

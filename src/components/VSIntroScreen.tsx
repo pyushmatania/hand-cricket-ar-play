@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import V10PlayerAvatar from "@/components/shared/V10PlayerAvatar";
 import { SFX } from "@/lib/sounds";
-import vsBatsman from "@/assets/vs-batsman.png";
-import vsBowler from "@/assets/vs-bowler.png";
+import { CHARACTERS } from "@/assets/characters";
 import { getVSEffect } from "@/lib/cosmetics";
 
 interface Props {
@@ -13,6 +12,9 @@ interface Props {
   opponentAvatarIndex?: number;
   gameType?: string;
   equippedVSEffect?: string | null;
+  /** Player role key from CHARACTERS: 'batsman' | 'bowler' | 'allrounder' | 'keeper' | 'captain' */
+  playerCharacter?: string;
+  opponentCharacter?: string;
   onComplete: () => void;
 }
 
@@ -23,10 +25,15 @@ export default function VSIntroScreen({
   opponentAvatarIndex = 1,
   gameType = "ar",
   equippedVSEffect,
+  playerCharacter = "batsman",
+  opponentCharacter = "bowler",
   onComplete,
 }: Props) {
   const vsEffect = getVSEffect(equippedVSEffect);
   const [stage, setStage] = useState<"enter" | "vs" | "flash" | "done">("enter");
+
+  const playerImg = CHARACTERS[playerCharacter] || CHARACTERS.batsman;
+  const opponentImg = CHARACTERS[opponentCharacter] || CHARACTERS.bowler;
 
   useEffect(() => {
     try { SFX.ceremonyHorn(); } catch { /* Intentionally ignored */ }
@@ -102,7 +109,7 @@ export default function VSIntroScreen({
 
           {/* ── Characters + VS Area ── */}
           <div className="relative flex items-end justify-between w-full h-full px-2 z-10">
-            {/* Player 1 — Batsman (left) */}
+            {/* Player 1 — left */}
             <motion.div
               initial={{ x: "-100%", opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -110,8 +117,8 @@ export default function VSIntroScreen({
               className="flex-1 flex flex-col items-center justify-end pb-36 relative"
             >
               <motion.img
-                src={vsBatsman}
-                alt="Batsman"
+                src={playerImg}
+                alt="Player"
                 className="w-44 h-auto max-h-[55vh] object-contain relative z-10"
                 style={{ filter: "drop-shadow(0 0 30px hsl(217 80% 50% / 0.5))" }}
                 animate={stage === "vs" ? { y: [0, -4, 0] } : {}}
@@ -188,7 +195,7 @@ export default function VSIntroScreen({
               ))}
             </motion.div>
 
-            {/* Player 2 — Bowler (right) */}
+            {/* Player 2 — right */}
             <motion.div
               initial={{ x: "100%", opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
@@ -196,8 +203,8 @@ export default function VSIntroScreen({
               className="flex-1 flex flex-col items-center justify-end pb-36 relative"
             >
               <motion.img
-                src={vsBowler}
-                alt="Bowler"
+                src={opponentImg}
+                alt="Opponent"
                 className="w-44 h-auto max-h-[55vh] object-contain relative z-10"
                 style={{ filter: "drop-shadow(0 0 30px hsl(4 80% 50% / 0.5))" }}
                 animate={stage === "vs" ? { y: [0, -4, 0] } : {}}
