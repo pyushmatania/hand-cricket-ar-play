@@ -1,4 +1,4 @@
-import gullyIsland from "./gully-island.jpg";
+import gullyIsland from "./gully-island.png";
 import schoolIsland from "./school-island.png";
 import districtIsland from "./district-island.png";
 import ranjiIsland from "./ranji-island.png";
