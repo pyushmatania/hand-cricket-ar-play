@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 function getTimeOfDay() {
@@ -51,7 +51,13 @@ const SKY_THEMES: Record<string, { sky: string; stars: number; moon: boolean; au
 };
 
 export default function DynamicSky() {
-  const tod = useMemo(getTimeOfDay, []);
+  const [tod, setTod] = useState(getTimeOfDay);
+
+  useEffect(() => {
+    const interval = setInterval(() => setTod(getTimeOfDay()), 60_000);
+    return () => clearInterval(interval);
+  }, []);
+
   const theme = SKY_THEMES[tod];
 
   return (
