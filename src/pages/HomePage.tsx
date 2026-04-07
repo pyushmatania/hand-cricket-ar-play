@@ -260,59 +260,94 @@ export default function HomePage() {
         </motion.button>
       </motion.div>
 
-      {/* ═══ QUICK MODES ROW ═══ */}
-      <div className="flex gap-2 px-4 mb-4">
+      {/* ═══ QUICK MODES — Wooden Planks ═══ */}
+      <div className="flex gap-2.5 px-4 mb-5">
         {QUICK_MODES.map((mode, idx) => (
           <motion.button
             key={mode.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 + idx * 0.08 }}
-            whileTap={{ scale: 0.93, y: 2 }}
+            transition={{ delay: 0.5 + idx * 0.08, type: "spring", stiffness: 300 }}
+            whileTap={{ scale: 0.93, y: 3 }}
             onClick={() => handleModeSelect(mode.id)}
-            className="flex-1 flex flex-col items-center justify-center gap-1 overflow-hidden"
+            className="flex-1 flex flex-col items-center justify-center gap-1.5 relative overflow-hidden"
             style={{
-              height: 90,
-              borderRadius: 14,
-              background: "linear-gradient(180deg, rgba(30,28,24,0.9) 0%, rgba(18,16,12,0.95) 100%)",
-              border: `1.5px solid ${mode.color}20`,
-              borderBottom: `4px solid ${mode.color}30`,
+              height: 100,
+              borderRadius: 16,
+              background: `linear-gradient(180deg, hsl(30 25% 18%) 0%, hsl(25 20% 12%) 60%, hsl(20 18% 8%) 100%)`,
+              border: "2px solid hsl(35 30% 25%)",
+              borderBottom: "5px solid hsl(25 20% 8%)",
+              boxShadow: `0 4px 16px rgba(0,0,0,0.4), inset 0 1px 0 hsl(35 30% 30% / 0.4), 0 0 20px ${mode.color}15`,
             }}
           >
+            {/* Wood grain texture */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.08]"
+              style={{ backgroundImage: "repeating-linear-gradient(90deg, transparent 0px, transparent 8px, hsl(35 40% 40% / 0.3) 8px, transparent 9px)", backgroundSize: "12px 100%" }}
+            />
+            {/* Iron corner brackets */}
+            <div className="absolute top-1 left-1 w-3 h-3 pointer-events-none">
+              <div className="absolute top-0 left-0 w-full h-[2px] rounded-sm" style={{ background: "linear-gradient(90deg, hsl(35 20% 45%), hsl(35 15% 30%))" }} />
+              <div className="absolute top-0 left-0 h-full w-[2px] rounded-sm" style={{ background: "linear-gradient(180deg, hsl(35 20% 45%), hsl(35 15% 30%))" }} />
+            </div>
+            <div className="absolute top-1 right-1 w-3 h-3 pointer-events-none">
+              <div className="absolute top-0 right-0 w-full h-[2px] rounded-sm" style={{ background: "linear-gradient(270deg, hsl(35 20% 45%), hsl(35 15% 30%))" }} />
+              <div className="absolute top-0 right-0 h-full w-[2px] rounded-sm" style={{ background: "linear-gradient(180deg, hsl(35 20% 45%), hsl(35 15% 30%))" }} />
+            </div>
+            {/* Accent glow strip at top */}
+            <div className="absolute top-0 inset-x-0 h-[2px] pointer-events-none" style={{ background: `linear-gradient(90deg, transparent 10%, ${mode.color}60 50%, transparent 90%)` }} />
+            {/* Icon */}
             <motion.span
-              animate={{ scale: [1, 1.1, 1] }}
+              animate={{ scale: [1, 1.12, 1], y: [0, -2, 0] }}
               transition={{ duration: 2.5, repeat: Infinity }}
-              className="text-2xl"
-              style={{ filter: `drop-shadow(0 0 8px ${mode.color}50)` }}
+              className="text-[28px] relative z-10"
+              style={{ filter: `drop-shadow(0 2px 8px ${mode.color}60)` }}
             >
               {mode.icon}
             </motion.span>
-            <div className="text-center">
-              <div className="font-display text-[11px] font-bold" style={{ color: mode.color }}>{mode.label}</div>
-              <div className="text-[8px] text-muted-foreground font-body">{mode.sub}</div>
+            <div className="text-center relative z-10">
+              <div className="font-display text-[11px] font-bold tracking-wider" style={{ color: mode.color, textShadow: `0 0 10px ${mode.color}40` }}>{mode.label}</div>
+              <div className="text-[7px] text-muted-foreground/60 font-display tracking-widest">{mode.sub}</div>
             </div>
           </motion.button>
         ))}
       </div>
 
-      {/* ═══ CHEST SLOTS ═══ */}
-      <div className="px-4 mb-4">
-        <div className="flex items-center gap-2 mb-2 px-1">
-          <span className="text-xs">🎁</span>
-          <span className="font-display text-[10px] tracking-[2px] text-muted-foreground">CHEST SLOTS</span>
+      {/* ═══ CHEST SLOTS — Iron Cage Shelf ═══ */}
+      <div className="px-4 mb-5">
+        <div className="flex items-center gap-2 mb-2.5 px-1">
+          <div className="w-1 h-4 rounded-sm" style={{ background: "linear-gradient(180deg, hsl(43 90% 55%), hsl(35 60% 35%))" }} />
+          <span className="font-display text-[10px] tracking-[3px] text-foreground/70">TREASURE VAULT</span>
         </div>
-        <div className="flex justify-center gap-2.5">
+        <div className="flex justify-center gap-2.5 p-3 relative"
+          style={{
+            borderRadius: 16,
+            background: "linear-gradient(180deg, hsl(25 18% 14%) 0%, hsl(22 15% 9%) 100%)",
+            border: "2px solid hsl(35 25% 22%)",
+            borderBottom: "5px solid hsl(22 15% 6%)",
+            boxShadow: "inset 0 2px 8px rgba(0,0,0,0.4), 0 4px 16px rgba(0,0,0,0.3)",
+          }}
+        >
+          {/* Wood grain bg */}
+          <div className="absolute inset-0 pointer-events-none opacity-[0.06] rounded-[14px]"
+            style={{ backgroundImage: "repeating-linear-gradient(0deg, transparent 0px, transparent 12px, hsl(35 40% 40% / 0.3) 12px, transparent 13px)" }}
+          />
+          {/* Iron bracket corners */}
+          {["top-1.5 left-1.5", "top-1.5 right-1.5", "bottom-2.5 left-1.5", "bottom-2.5 right-1.5"].map((pos, i) => (
+            <div key={i} className={`absolute ${pos} w-4 h-4 pointer-events-none`}>
+              <div className="absolute rounded-full" style={{ width: 4, height: 4, background: "radial-gradient(circle, hsl(35 30% 50%), hsl(35 20% 30%))", top: 0, left: i % 2 === 0 ? 0 : "auto", right: i % 2 === 1 ? 0 : "auto" }} />
+            </div>
+          ))}
           {chestSlots.map((chest, i) => (
             <ChestSlot key={i} chest={chest} onTap={handleChestTap} tick={tick} />
           ))}
         </div>
       </div>
 
-      {/* ═══ MORE MODES GRID ═══ */}
+      {/* ═══ MORE MODES — Carved Stone Grid ═══ */}
       <div className="px-4 pb-4">
-        <div className="flex items-center gap-2 mb-2 px-1">
-          <span className="text-xs">🏟️</span>
-          <span className="font-display text-[10px] tracking-[2px] text-muted-foreground">MORE MODES</span>
+        <div className="flex items-center gap-2 mb-2.5 px-1">
+          <div className="w-1 h-4 rounded-sm" style={{ background: "linear-gradient(180deg, hsl(280 50% 55%), hsl(280 40% 35%))" }} />
+          <span className="font-display text-[10px] tracking-[3px] text-foreground/70">ARENA MODES</span>
         </div>
         <div className="grid grid-cols-5 gap-2">
           {MORE_MODES.map((mode, idx) => (
@@ -321,16 +356,28 @@ export default function HomePage() {
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.6 + idx * 0.03 }}
-              whileTap={{ scale: 0.9 }}
+              whileTap={{ scale: 0.88, y: 2 }}
               onClick={() => handleModeSelect(mode.id)}
-              className="flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl"
+              className="flex flex-col items-center justify-center gap-1 py-2.5 relative overflow-hidden"
               style={{
-                background: "linear-gradient(180deg, rgba(30,28,24,0.8) 0%, rgba(18,16,12,0.9) 100%)",
-                border: `1px solid ${mode.color}15`,
+                borderRadius: 14,
+                background: "linear-gradient(180deg, hsl(28 20% 16%) 0%, hsl(25 18% 10%) 100%)",
+                border: "1.5px solid hsl(35 25% 20%)",
+                borderBottom: "4px solid hsl(25 15% 7%)",
+                boxShadow: `inset 0 1px 0 hsl(35 25% 25% / 0.3), 0 2px 8px rgba(0,0,0,0.3)`,
               }}
             >
-              <span className="text-xl" style={{ filter: `drop-shadow(0 0 6px ${mode.color}40)` }}>{mode.icon}</span>
-              <span className="font-display text-[8px] tracking-wider" style={{ color: mode.color }}>{mode.label}</span>
+              {/* Subtle glow at bottom */}
+              <div className="absolute bottom-0 inset-x-0 h-6 pointer-events-none" style={{ background: `radial-gradient(ellipse at center bottom, ${mode.color}12, transparent 80%)` }} />
+              <motion.span
+                animate={{ scale: [1, 1.08, 1] }}
+                transition={{ duration: 3, repeat: Infinity, delay: idx * 0.1 }}
+                className="text-xl relative z-10"
+                style={{ filter: `drop-shadow(0 2px 6px ${mode.color}50)` }}
+              >
+                {mode.icon}
+              </motion.span>
+              <span className="font-display text-[7px] tracking-wider relative z-10" style={{ color: mode.color, textShadow: `0 0 6px ${mode.color}30` }}>{mode.label}</span>
             </motion.button>
           ))}
         </div>
