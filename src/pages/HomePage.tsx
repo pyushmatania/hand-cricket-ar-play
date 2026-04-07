@@ -274,13 +274,17 @@ export default function HomePage() {
       <div className="relative z-10">
       <FloatingIslandCarousel currentTrophies={currentTrophies} />
 
+      </div>
+
       {/* ═══ CRICKET PROGRESS BAR ═══ */}
+      <div className="relative z-10">
       <CricketProgressBar
         currentTrophies={currentTrophies}
         nextTrophies={nextArena.trophies}
         arenaName={currentArena.name}
         nextArenaName={nextArena.name}
       />
+      </div>
 
       {/* ═══ STATS CHIPS ═══ */}
       <motion.div
