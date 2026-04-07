@@ -130,39 +130,79 @@ export default function FloatingIslandCarousel({ currentTrophies }: Props) {
         </AnimatePresence>
       </div>
 
-      {/* Arena name badge */}
+      {/* Arena name banner — wooden plank style */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
         <motion.div
           key={activeIdx}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-2 px-5 py-2 rounded-full"
+          initial={{ opacity: 0, scale: 0.8, rotateX: 30 }}
+          animate={{ opacity: 1, scale: 1, rotateX: 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+          className="relative flex items-center gap-2.5 px-6 py-2.5"
           style={{
-            background: "linear-gradient(180deg, rgba(30,25,20,0.85) 0%, rgba(15,12,8,0.9) 100%)",
-            border: `1.5px solid ${unlocked ? activeIsland.accent + "50" : "rgba(255,255,255,0.1)"}`,
-            boxShadow: unlocked ? `0 0 20px ${activeIsland.accent}25` : "none",
+            background: "linear-gradient(180deg, hsl(30 50% 32%) 0%, hsl(28 45% 22%) 40%, hsl(25 40% 16%) 100%)",
+            border: "2px solid hsl(30 35% 28%)",
+            borderRadius: "6px",
+            boxShadow: `
+              inset 0 1px 0 rgba(255,255,255,0.08),
+              inset 0 -2px 4px rgba(0,0,0,0.4),
+              0 4px 12px rgba(0,0,0,0.6),
+              ${unlocked ? `0 0 20px ${activeIsland.accent}30` : "none"}
+            `,
           }}
         >
-          <span className="text-base">{activeIsland.emoji}</span>
-          <span className="font-display text-xs tracking-widest" style={{ color: unlocked ? activeIsland.accent : "#666" }}>
+          {/* Wood grain texture */}
+          <div className="absolute inset-0 rounded-[4px] opacity-10 pointer-events-none"
+            style={{
+              backgroundImage: "repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(255,255,255,0.06) 8px, rgba(255,255,255,0.06) 9px)",
+            }}
+          />
+          {/* Corner rivets */}
+          {[{ top: 3, left: 3 }, { top: 3, right: 3 }, { bottom: 3, left: 3 }, { bottom: 3, right: 3 }].map((pos, i) => (
+            <div key={i} className="absolute w-[5px] h-[5px] rounded-full" style={{
+              ...pos,
+              background: "radial-gradient(circle at 35% 35%, hsl(45 60% 65%), hsl(35 40% 30%))",
+              boxShadow: "inset 0 -1px 1px rgba(0,0,0,0.4), 0 0 2px rgba(0,0,0,0.3)",
+            }} />
+          ))}
+          <span className="text-lg relative z-10 drop-shadow-md">{activeIsland.emoji}</span>
+          <span className="font-display text-xs tracking-[0.2em] font-bold relative z-10" style={{
+            color: unlocked ? activeIsland.accent : "#666",
+            textShadow: unlocked ? `0 0 8px ${activeIsland.accent}40, 0 1px 2px rgba(0,0,0,0.8)` : "0 1px 2px rgba(0,0,0,0.6)",
+          }}>
             {activeIsland.name.toUpperCase()}
           </span>
+          {/* Arena level chip */}
+          {unlocked && (
+            <div className="px-1.5 py-0.5 rounded text-[8px] font-bold tracking-wider relative z-10"
+              style={{
+                background: `linear-gradient(180deg, ${activeIsland.accent}30, ${activeIsland.accent}15)`,
+                border: `1px solid ${activeIsland.accent}40`,
+                color: activeIsland.accent,
+              }}
+            >
+              ✓
+            </div>
+          )}
         </motion.div>
       </div>
 
-      {/* Dot indicators */}
-      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 z-20 flex gap-1.5">
+      {/* Dot indicators — shield pips */}
+      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 z-20 flex gap-2">
         {ARENA_ISLANDS.map((island, i) => (
           <button key={i} onClick={() => { setDirection(i > activeIdx ? 1 : -1); setActiveIdx(i); }}>
-            <div
-              className="rounded-full transition-all duration-300"
+            <motion.div
+              animate={i === activeIdx ? { scale: [1, 1.2, 1] } : {}}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="transition-all duration-300"
               style={{
-                width: i === activeIdx ? 18 : 6,
-                height: 6,
+                width: i === activeIdx ? 20 : 8,
+                height: 8,
+                borderRadius: i === activeIdx ? 4 : "50%",
                 background: i === activeIdx
-                  ? (isUnlocked(island) ? island.accent : "#555")
+                  ? `linear-gradient(90deg, ${isUnlocked(island) ? island.accent : "#555"}, ${isUnlocked(island) ? island.accent + "AA" : "#444"})`
                   : (isUnlocked(island) ? island.accent + "40" : "rgba(255,255,255,0.1)"),
-                boxShadow: i === activeIdx && isUnlocked(island) ? `0 0 10px ${island.accent}60` : "none",
+                border: i === activeIdx ? `1px solid ${isUnlocked(island) ? island.accent : "#666"}` : "1px solid transparent",
+                boxShadow: i === activeIdx && isUnlocked(island) ? `0 0 10px ${island.accent}60, 0 2px 4px rgba(0,0,0,0.4)` : "none",
               }}
             />
           </button>
