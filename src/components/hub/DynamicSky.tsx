@@ -509,6 +509,14 @@ export default function DynamicSky() {
           </div>
         </motion.div>
       ))}
+
+      {/* ═══ TIME-OF-DAY AMBIENT EFFECTS ═══ */}
+      <SunlightFlare tod={tod} />
+      <FlyingBirds tod={tod} />
+      {tod === "dusk" && <Fireflies />}
+      {tod === "dawn" && <DawnMist />}
+      {tod === "golden" && <GodRays />}
+      {tod === "night" && <NightDust />}
     </div>
   );
 }
