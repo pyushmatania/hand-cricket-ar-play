@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { ARENA_ISLANDS, type ArenaIsland } from "@/assets/islands";
 
@@ -9,7 +9,6 @@ interface Props {
 export default function FloatingIslandCarousel({ currentTrophies }: Props) {
   const [activeIdx, setActiveIdx] = useState(0);
   const [direction, setDirection] = useState(0);
-  const constraintsRef = useRef<HTMLDivElement>(null);
 
   const isUnlocked = (island: ArenaIsland) => currentTrophies >= island.trophiesRequired;
   const activeIsland = ARENA_ISLANDS[activeIdx];
@@ -31,55 +30,31 @@ export default function FloatingIslandCarousel({ currentTrophies }: Props) {
   };
 
   const variants = {
-    enter: (d: number) => ({ x: d > 0 ? 200 : -200, opacity: 0, scale: 0.85 }),
+    enter: (d: number) => ({ x: d > 0 ? 300 : -300, opacity: 0, scale: 0.7 }),
     center: { x: 0, opacity: 1, scale: 1 },
-    exit: (d: number) => ({ x: d > 0 ? -200 : 200, opacity: 0, scale: 0.85 }),
+    exit: (d: number) => ({ x: d > 0 ? -300 : 300, opacity: 0, scale: 0.7 }),
   };
 
   return (
-    <div className="relative w-full" style={{ height: 280 }}>
-      {/* Sky gradient background */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        background: "linear-gradient(180deg, hsl(210 40% 20%) 0%, hsl(220 30% 12%) 60%, hsl(220 20% 8%) 100%)",
-      }} />
-
-      {/* Clouds */}
-      {[0, 1, 2].map(i => (
-        <motion.div
-          key={i}
-          className="absolute pointer-events-none"
-          style={{
-            width: 80 + i * 40,
-            height: 20 + i * 5,
-            borderRadius: "50%",
-            background: "rgba(255,255,255,0.03)",
-            top: `${15 + i * 20}%`,
-            left: `${10 + i * 30}%`,
-            filter: "blur(8px)",
-          }}
-          animate={{ x: [0, 15, 0] }}
-          transition={{ duration: 8 + i * 3, repeat: Infinity, ease: "easeInOut" }}
-        />
-      ))}
-
+    <div className="relative w-full" style={{ height: 340 }}>
       {/* Swipe arrows */}
       <button
         onClick={() => swipe(-1)}
-        className="absolute left-2 top-1/2 -translate-y-1/2 z-30 w-8 h-8 flex items-center justify-center rounded-full"
-        style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.1)" }}
+        className="absolute left-1 top-1/2 -translate-y-1/2 z-30 w-9 h-9 flex items-center justify-center rounded-full"
+        style={{ background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.15)" }}
       >
-        <span className="text-white/70 text-sm">‹</span>
+        <span className="text-white/80 text-lg font-bold">‹</span>
       </button>
       <button
         onClick={() => swipe(1)}
-        className="absolute right-2 top-1/2 -translate-y-1/2 z-30 w-8 h-8 flex items-center justify-center rounded-full"
-        style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.1)" }}
+        className="absolute right-1 top-1/2 -translate-y-1/2 z-30 w-9 h-9 flex items-center justify-center rounded-full"
+        style={{ background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.15)" }}
       >
-        <span className="text-white/70 text-sm">›</span>
+        <span className="text-white/80 text-lg font-bold">›</span>
       </button>
 
       {/* Floating island */}
-      <div ref={constraintsRef} className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={activeIdx}
@@ -88,7 +63,7 @@ export default function FloatingIslandCarousel({ currentTrophies }: Props) {
             initial="enter"
             animate="center"
             exit="exit"
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            transition={{ type: "spring", stiffness: 260, damping: 28 }}
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.2}
@@ -98,41 +73,55 @@ export default function FloatingIslandCarousel({ currentTrophies }: Props) {
             <div className="relative">
               {/* Float animation */}
               <motion.div
-                animate={{ y: [0, -8, 0] }}
+                animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+                className="relative"
               >
-                {/* Island image */}
+                {/* Glow under island */}
+                {unlocked && (
+                  <div
+                    className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-64 h-8 rounded-full pointer-events-none"
+                    style={{
+                      background: `radial-gradient(ellipse, ${activeIsland.accent}25 0%, transparent 70%)`,
+                      filter: "blur(8px)",
+                    }}
+                  />
+                )}
+
+                {/* Island image - BIG, no box, no bg */}
                 <img
                   src={activeIsland.image}
                   alt={activeIsland.name}
-                  className="w-72 h-44 object-cover rounded-2xl"
+                  className="w-80 h-auto max-h-[280px] object-contain drop-shadow-2xl"
                   style={{
                     filter: unlocked
-                      ? `drop-shadow(0 12px 30px rgba(0,0,0,0.6)) drop-shadow(0 0 20px ${activeIsland.accent}30)`
-                      : "brightness(0.3) grayscale(0.8) drop-shadow(0 12px 30px rgba(0,0,0,0.6))",
+                      ? `drop-shadow(0 16px 40px rgba(0,0,0,0.5)) drop-shadow(0 0 30px ${activeIsland.accent}20)`
+                      : "brightness(0.25) grayscale(0.9) drop-shadow(0 16px 40px rgba(0,0,0,0.5))",
                   }}
                 />
 
                 {/* Lock overlay for locked islands */}
                 {!unlocked && (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl"
-                    style={{ background: "rgba(0,0,0,0.5)" }}
-                  >
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <motion.div
-                      animate={{ scale: [1, 1.15, 1], rotate: [0, -5, 5, 0] }}
+                      animate={{ scale: [1, 1.2, 1], rotate: [0, -5, 5, 0] }}
                       transition={{ duration: 2, repeat: Infinity }}
                     >
-                      <span className="text-4xl">🔒</span>
+                      <span className="text-5xl drop-shadow-lg">🔒</span>
                     </motion.div>
-                    <span className="font-display text-[10px] text-white/60 mt-1 tracking-wider">
+                    <span className="font-display text-xs text-white/70 mt-2 tracking-wider drop-shadow-md">
                       {activeIsland.unlockLabel}
                     </span>
                   </div>
                 )}
 
-                {/* Island shadow on ground */}
-                <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-48 h-4 rounded-full pointer-events-none"
-                  style={{ background: "radial-gradient(ellipse, rgba(0,0,0,0.4) 0%, transparent 70%)", filter: "blur(4px)" }}
+                {/* Floating shadow on "ground" */}
+                <div
+                  className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-52 h-5 rounded-full pointer-events-none"
+                  style={{
+                    background: "radial-gradient(ellipse, rgba(0,0,0,0.35) 0%, transparent 70%)",
+                    filter: "blur(6px)",
+                  }}
                 />
               </motion.div>
             </div>
@@ -141,20 +130,20 @@ export default function FloatingIslandCarousel({ currentTrophies }: Props) {
       </div>
 
       {/* Arena name badge */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20">
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
         <motion.div
           key={activeIdx}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-2 px-4 py-1.5 rounded-full"
+          className="flex items-center gap-2 px-5 py-2 rounded-full"
           style={{
-            background: "linear-gradient(180deg, rgba(30,25,20,0.9) 0%, rgba(15,12,8,0.95) 100%)",
+            background: "linear-gradient(180deg, rgba(30,25,20,0.85) 0%, rgba(15,12,8,0.9) 100%)",
             border: `1.5px solid ${unlocked ? activeIsland.accent + "50" : "rgba(255,255,255,0.1)"}`,
-            boxShadow: unlocked ? `0 0 16px ${activeIsland.accent}20` : "none",
+            boxShadow: unlocked ? `0 0 20px ${activeIsland.accent}25` : "none",
           }}
         >
-          <span className="text-sm">{activeIsland.emoji}</span>
-          <span className="font-display text-xs tracking-wider" style={{ color: unlocked ? activeIsland.accent : "#666" }}>
+          <span className="text-base">{activeIsland.emoji}</span>
+          <span className="font-display text-xs tracking-widest" style={{ color: unlocked ? activeIsland.accent : "#666" }}>
             {activeIsland.name.toUpperCase()}
           </span>
         </motion.div>
@@ -167,12 +156,12 @@ export default function FloatingIslandCarousel({ currentTrophies }: Props) {
             <div
               className="rounded-full transition-all duration-300"
               style={{
-                width: i === activeIdx ? 16 : 6,
+                width: i === activeIdx ? 18 : 6,
                 height: 6,
                 background: i === activeIdx
                   ? (isUnlocked(island) ? island.accent : "#555")
                   : (isUnlocked(island) ? island.accent + "40" : "rgba(255,255,255,0.1)"),
-                boxShadow: i === activeIdx && isUnlocked(island) ? `0 0 8px ${island.accent}60` : "none",
+                boxShadow: i === activeIdx && isUnlocked(island) ? `0 0 10px ${island.accent}60` : "none",
               }}
             />
           </button>

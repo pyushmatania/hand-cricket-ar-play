@@ -1,10 +1,10 @@
 import gullyIsland from "./gully-island.jpg";
-import schoolIsland from "./school-island.jpg";
-import districtIsland from "./district-island.jpg";
-import ranjiIsland from "./ranji-island.jpg";
-import iplIsland from "./ipl-island.jpg";
-import internationalIsland from "./international-island.jpg";
-import worldcupIsland from "./worldcup-island.jpg";
+import schoolIsland from "./school-island.png";
+import districtIsland from "./district-island.png";
+import ranjiIsland from "./ranji-island.png";
+import iplIsland from "./ipl-island.png";
+import internationalIsland from "./international-island.png";
+import worldcupIsland from "./worldcup-island.png";
 
 export interface ArenaIsland {
   id: string;
