@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { ARENA_ISLANDS, type ArenaIsland } from "@/assets/islands";
+import GullyIslandSVG from "./GullyIslandSVG";
 
 interface Props {
   currentTrophies: number;
