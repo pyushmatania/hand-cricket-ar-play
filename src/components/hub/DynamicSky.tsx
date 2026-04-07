@@ -110,6 +110,9 @@ export default function DynamicSky() {
         </>
       )}
 
+      {/* Shooting stars — night/dusk only */}
+      {theme.stars >= 0.4 && <ShootingStars />}
+
       {/* Moon */}
       {theme.moon && (
         <div className="absolute" style={{ top: "4%", right: "10%" }}>
