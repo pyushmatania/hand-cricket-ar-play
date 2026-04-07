@@ -50,6 +50,71 @@ const SKY_THEMES: Record<string, { sky: string; stars: number; moon: boolean; au
   },
 };
 
+function ShootingStars() {
+  const [stars, setStars] = useState<{ id: number; startX: number; startY: number; angle: number }[]>([]);
+
+  useEffect(() => {
+    let id = 0;
+    const spawn = () => {
+      id++;
+      const startX = Math.random() * 60 + 20; // 20-80% from left
+      const startY = Math.random() * 25 + 2;  // 2-27% from top
+      const angle = Math.random() * 20 + 25;  // 25-45 degrees
+      setStars(prev => [...prev.slice(-2), { id, startX, startY, angle }]);
+    };
+    // First one after 3-6s, then every 4-10s
+    const firstTimeout = setTimeout(spawn, 3000 + Math.random() * 3000);
+    const interval = setInterval(spawn, 4000 + Math.random() * 6000);
+    return () => { clearTimeout(firstTimeout); clearInterval(interval); };
+  }, []);
+
+  return (
+    <AnimatePresence>
+      {stars.map((s) => (
+        <motion.div
+          key={s.id}
+          className="absolute"
+          style={{
+            top: `${s.startY}%`,
+            left: `${s.startX}%`,
+            transform: `rotate(${s.angle}deg)`,
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 1, 1, 0] }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.8, times: [0, 0.1, 0.6, 1] }}
+          onAnimationComplete={() => setStars(prev => prev.filter(x => x.id !== s.id))}
+        >
+          {/* Streak line */}
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: 80 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            style={{
+              height: 2,
+              background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.9) 40%, white 100%)",
+              borderRadius: 1,
+              boxShadow: "0 0 6px rgba(255,255,255,0.6), 0 0 12px rgba(200,220,255,0.3)",
+            }}
+          />
+          {/* Bright head */}
+          <motion.div
+            className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full"
+            initial={{ scale: 0 }}
+            animate={{ scale: [0, 1.5, 1] }}
+            transition={{ duration: 0.3 }}
+            style={{
+              background: "white",
+              boxShadow: "0 0 8px rgba(255,255,255,0.9), 0 0 16px rgba(200,220,255,0.5)",
+            }}
+          />
+        </motion.div>
+      ))}
+    </AnimatePresence>
+  );
+}
+
+
 export default function DynamicSky() {
   const [tod, setTod] = useState(getTimeOfDay);
 
