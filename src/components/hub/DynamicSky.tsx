@@ -1,7 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-function getTimeOfDay() {
+type TimeOfDay = "dawn" | "morning" | "day" | "golden" | "dusk" | "night";
+
+function getTimeOfDay(): TimeOfDay {
   const h = new Date().getHours();
   if (h >= 5 && h < 7) return "dawn";
   if (h >= 7 && h < 11) return "morning";
