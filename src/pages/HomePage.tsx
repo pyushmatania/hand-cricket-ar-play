@@ -412,15 +412,16 @@ function ChestSlot({ chest, onTap, tick }: { chest: UserChest | null; onTap: (c:
 
   if (!chest) {
     return (
-      <div className="flex flex-col items-center justify-center"
+      <div className="flex flex-col items-center justify-center relative"
         style={{
-          width: 78, height: 96, borderRadius: 16,
-          background: "linear-gradient(180deg, rgba(30,28,24,0.5) 0%, rgba(18,16,12,0.6) 100%)",
-          border: "1.5px dashed rgba(255,255,255,0.06)",
+          width: 74, height: 92, borderRadius: 14,
+          background: "linear-gradient(180deg, hsl(28 15% 14%) 0%, hsl(25 12% 8%) 100%)",
+          border: "1.5px dashed hsl(35 20% 20%)",
+          borderBottom: "3px solid hsl(25 12% 6%)",
         }}
       >
-        <span className="text-lg text-white/10">+</span>
-        <span className="text-[7px] mt-0.5 text-white/15 font-display">EMPTY</span>
+        <span className="text-lg text-white/8">+</span>
+        <span className="text-[7px] mt-0.5 text-white/12 font-display tracking-wider">EMPTY</span>
       </div>
     );
   }
@@ -431,17 +432,23 @@ function ChestSlot({ chest, onTap, tick }: { chest: UserChest | null; onTap: (c:
       onClick={() => onTap(chest)}
       className="relative flex flex-col items-center justify-center overflow-hidden"
       style={{
-        width: 78, height: 96, borderRadius: 16,
-        background: "linear-gradient(180deg, rgba(30,28,24,0.9) 0%, rgba(18,16,12,0.95) 100%)",
-        border: `1.5px solid ${isReady ? tier?.color : "rgba(255,255,255,0.08)"}`,
-        boxShadow: isReady ? `0 0 24px ${tier?.color}40` : undefined,
+        width: 74, height: 92, borderRadius: 14,
+        background: "linear-gradient(180deg, hsl(28 18% 16%) 0%, hsl(25 15% 10%) 100%)",
+        border: `2px solid ${isReady ? tier?.color : "hsl(35 22% 22%)"}`,
+        borderBottom: `4px solid ${isReady ? tier?.color + "80" : "hsl(25 15% 7%)"}`,
+        boxShadow: isReady ? `0 0 20px ${tier?.color}40, inset 0 0 12px ${tier?.color}15` : "inset 0 1px 0 hsl(35 25% 25% / 0.2)",
       }}
     >
+      {/* Wood grain */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.06] rounded-[12px]"
+        style={{ backgroundImage: "repeating-linear-gradient(90deg, transparent 0px, transparent 6px, hsl(35 40% 40% / 0.4) 6px, transparent 7px)" }}
+      />
+
       {isUnlocking && (
-        <svg className="absolute inset-0 w-full h-full pointer-events-none -rotate-90" viewBox="0 0 78 96">
-          <rect x="2" y="2" width="74" height="92" rx="14" ry="14" fill="none"
-            stroke={tier?.color || "#475569"} strokeWidth="2"
-            strokeDasharray={`${progressPct * 3.32} 332`} strokeLinecap="round" opacity="0.5"
+        <svg className="absolute inset-0 w-full h-full pointer-events-none -rotate-90" viewBox="0 0 74 92">
+          <rect x="2" y="2" width="70" height="88" rx="12" ry="12" fill="none"
+            stroke={tier?.color || "#475569"} strokeWidth="2.5"
+            strokeDasharray={`${progressPct * 3.16} 316`} strokeLinecap="round" opacity="0.6"
           />
         </svg>
       )}
@@ -458,10 +465,11 @@ function ChestSlot({ chest, onTap, tick }: { chest: UserChest | null; onTap: (c:
       />
 
       <div className="absolute bottom-0 inset-x-0 py-1 text-center z-10"
-        style={{ background: "linear-gradient(0deg, rgba(0,0,0,0.7), transparent)", borderRadius: "0 0 14px 14px" }}
+        style={{ background: "linear-gradient(0deg, hsl(25 15% 6% / 0.8), transparent)", borderRadius: "0 0 12px 12px" }}
       >
-        <span className="text-[8px] font-bold block font-display" style={{
-          color: isReady ? "#FFD700" : isUnlocking ? (tier?.color || "#475569") : "#94A3B8",
+        <span className="text-[8px] font-bold block font-display tracking-wider" style={{
+          color: isReady ? "#FFD700" : isUnlocking ? (tier?.color || "#475569") : "hsl(35 20% 50%)",
+          textShadow: isReady ? "0 0 8px #FFD700" : undefined,
         }}>
           {isReady ? "OPEN!" : isUnlocking ? formatTime(remaining) : tier?.name.split(" ")[0]}
         </span>
