@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import IdentityBar from "@/components/hub/IdentityBar";
 import FloatingIslandCarousel from "@/components/hub/FloatingIslandCarousel";
 import CricketProgressBar from "@/components/hub/CricketProgressBar";
+import DynamicSky from "@/components/hub/DynamicSky";
 
 interface ProfileData {
   total_matches: number;
