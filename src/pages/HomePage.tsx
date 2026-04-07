@@ -205,7 +205,7 @@ export default function HomePage() {
       />
       </div>
 
-      {/* ═══ STATS CHIPS ═══ */}
+      {/* ═══ STATS CHIPS — Hammered Metal ═══ */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -213,19 +213,21 @@ export default function HomePage() {
         className="flex items-center justify-center gap-2 px-4 mt-4 mb-3"
       >
         {[
-          { label: "W/L", value: `${profile?.wins ?? 0}/${profile?.losses ?? 0}`, c: "#4ADE50" },
-          { label: "RATE", value: `${winRate}%`, c: "#00D4FF" },
-          { label: "BEST", value: String(profile?.high_score ?? 0), c: "#FFD700" },
-          { label: "🔥", value: String(profile?.current_streak ?? 0), c: "#FF6B35" },
+          { label: "W/L", value: `${profile?.wins ?? 0}/${profile?.losses ?? 0}`, c: "hsl(142 60% 50%)" },
+          { label: "RATE", value: `${winRate}%`, c: "hsl(195 90% 55%)" },
+          { label: "BEST", value: String(profile?.high_score ?? 0), c: "hsl(43 90% 55%)" },
+          { label: "🔥", value: String(profile?.current_streak ?? 0), c: "hsl(25 85% 55%)" },
         ].map((s, i) => (
-          <div key={i} className="flex flex-col items-center px-3 py-1.5 rounded-lg"
+          <div key={i} className="flex flex-col items-center px-3 py-1.5 rounded-lg relative overflow-hidden"
             style={{
-              background: "linear-gradient(180deg, rgba(30,28,24,0.9) 0%, rgba(18,16,12,0.95) 100%)",
-              border: "1px solid rgba(255,255,255,0.06)",
+              background: "linear-gradient(180deg, hsl(28 18% 16%) 0%, hsl(25 15% 10%) 100%)",
+              border: "1.5px solid hsl(35 22% 22%)",
+              borderBottom: "3px solid hsl(25 14% 7%)",
+              boxShadow: "inset 0 1px 0 hsl(35 25% 25% / 0.3)",
             }}
           >
-            <span className="text-[7px] text-muted-foreground font-display tracking-wider">{s.label}</span>
-            <span className="font-display text-[13px] font-bold tabular-nums" style={{ color: s.c }}>{s.value}</span>
+            <span className="text-[7px] text-muted-foreground/60 font-display tracking-wider">{s.label}</span>
+            <span className="font-display text-[13px] font-bold tabular-nums" style={{ color: s.c, textShadow: `0 0 8px ${s.c}30` }}>{s.value}</span>
           </div>
         ))}
       </motion.div>
