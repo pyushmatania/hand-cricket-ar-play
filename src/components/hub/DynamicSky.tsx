@@ -186,7 +186,6 @@ function SunlightFlare({ tod }: { tod: TimeOfDay }) {
 
 /* ── Birds (day / morning / golden) ── */
 function FlyingBirds({ tod }: { tod: TimeOfDay }) {
-  if (tod !== "day" && tod !== "morning" && tod !== "golden") return null;
   const color = tod === "golden" ? "rgba(60,30,10,0.6)" : "rgba(30,30,50,0.5)";
 
   const flocks = useMemo(() => [
@@ -194,6 +193,8 @@ function FlyingBirds({ tod }: { tod: TimeOfDay }) {
     { startY: 20, dur: 22, delay: 6, count: 5 },
     { startY: 6, dur: 16, delay: 12, count: 2 },
   ], []);
+
+  if (tod !== "day" && tod !== "morning" && tod !== "golden") return null;
 
   return (
     <>
