@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { ARENA_ISLANDS, type ArenaIsland } from "@/assets/islands";
-import GullyIslandSVG from "./GullyIslandSVG";
+
 
 interface Props {
   currentTrophies: number;
@@ -89,21 +89,17 @@ export default function FloatingIslandCarousel({ currentTrophies }: Props) {
                   />
                 )}
 
-                {/* Island visual */}
-                {activeIsland.id === "gully" ? (
-                  <GullyIslandSVG />
-                ) : (
-                  <img
-                    src={activeIsland.image}
-                    alt={activeIsland.name}
-                    className="w-80 h-auto max-h-[280px] object-contain drop-shadow-2xl"
-                    style={{
-                      filter: unlocked
-                        ? `drop-shadow(0 16px 40px rgba(0,0,0,0.5)) drop-shadow(0 0 30px ${activeIsland.accent}20)`
-                        : "brightness(0.25) grayscale(0.9) drop-shadow(0 16px 40px rgba(0,0,0,0.5))",
-                    }}
-                  />
-                )}
+                {/* Island image - BIG, no box, no bg */}
+                <img
+                  src={activeIsland.image}
+                  alt={activeIsland.name}
+                  className="w-80 h-auto max-h-[280px] object-contain drop-shadow-2xl"
+                  style={{
+                    filter: unlocked
+                      ? `drop-shadow(0 16px 40px rgba(0,0,0,0.5)) drop-shadow(0 0 30px ${activeIsland.accent}20)`
+                      : "brightness(0.25) grayscale(0.9) drop-shadow(0 16px 40px rgba(0,0,0,0.5))",
+                  }}
+                />
 
                 {/* Lock overlay for locked islands */}
                 {!unlocked && (
