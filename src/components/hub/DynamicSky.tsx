@@ -126,9 +126,14 @@ export default function DynamicSky() {
   const theme = SKY_THEMES[tod];
 
   return (
-    <div className="absolute top-0 left-0 right-0 h-[440px] pointer-events-none overflow-hidden z-0">
-      {/* Base sky gradient */}
+    <div className="absolute top-0 left-0 right-0 h-[800px] pointer-events-none overflow-hidden z-0">
+      {/* Base sky gradient — extends far down with fade */}
       <div className="absolute inset-0" style={{ background: theme.sky }} />
+      
+      {/* Decreasing intensity overlay — gradually fades sky into page bg */}
+      <div className="absolute left-0 right-0 bottom-0 h-[55%]" style={{
+        background: `linear-gradient(180deg, transparent 0%, hsl(220 20% 8% / 0.3) 25%, hsl(220 20% 8% / 0.6) 50%, hsl(220 20% 8% / 0.85) 75%, hsl(220 20% 8%) 100%)`,
+      }} />
 
       {/* Stars — visible at night/dusk/dawn */}
       {theme.stars > 0 && (
@@ -181,26 +186,17 @@ export default function DynamicSky() {
       {/* Moon */}
       {theme.moon && (
         <div className="absolute" style={{ top: "4%", right: "10%" }}>
-          {/* Outer glow */}
           <div className="absolute -inset-6 rounded-full" style={{
             background: "radial-gradient(circle, rgba(220,230,255,0.15) 0%, rgba(200,215,245,0.06) 50%, transparent 70%)",
           }} />
-          {/* Moon body */}
           <div style={{
             width: 36, height: 36, borderRadius: "50%",
             background: "radial-gradient(circle at 40% 35%, hsl(210 20% 92%) 0%, hsl(220 15% 80%) 60%, hsl(225 15% 70%) 100%)",
             boxShadow: "0 0 20px rgba(200,215,245,0.3), 0 0 60px rgba(180,200,240,0.15), inset -4px -2px 6px rgba(0,0,0,0.1)",
           }}>
-            {/* Craters */}
-            <div className="absolute rounded-full" style={{
-              top: 8, left: 10, width: 7, height: 7, background: "rgba(0,0,0,0.06)", borderRadius: "50%",
-            }} />
-            <div className="absolute rounded-full" style={{
-              top: 16, left: 20, width: 5, height: 5, background: "rgba(0,0,0,0.05)", borderRadius: "50%",
-            }} />
-            <div className="absolute rounded-full" style={{
-              top: 22, left: 8, width: 4, height: 4, background: "rgba(0,0,0,0.04)", borderRadius: "50%",
-            }} />
+            <div className="absolute rounded-full" style={{ top: 8, left: 10, width: 7, height: 7, background: "rgba(0,0,0,0.06)" }} />
+            <div className="absolute rounded-full" style={{ top: 16, left: 20, width: 5, height: 5, background: "rgba(0,0,0,0.05)" }} />
+            <div className="absolute rounded-full" style={{ top: 22, left: 8, width: 4, height: 4, background: "rgba(0,0,0,0.04)" }} />
           </div>
         </div>
       )}
@@ -241,12 +237,12 @@ export default function DynamicSky() {
         </div>
       )}
 
-      {/* Clouds — visible and opaque */}
+      {/* Clouds */}
       {[
-        { top: "30%", w: 180, h: 50, dur: 40, dir: 1, delay: 0 },
-        { top: "18%", w: 140, h: 35, dur: 50, dir: -1, delay: 5 },
-        { top: "45%", w: 220, h: 55, dur: 55, dir: 1, delay: 12 },
-        { top: "12%", w: 100, h: 30, dur: 35, dir: -1, delay: 20 },
+        { top: "18%", w: 180, h: 50, dur: 40, dir: 1, delay: 0 },
+        { top: "10%", w: 140, h: 35, dur: 50, dir: -1, delay: 5 },
+        { top: "28%", w: 220, h: 55, dur: 55, dir: 1, delay: 12 },
+        { top: "6%", w: 100, h: 30, dur: 35, dir: -1, delay: 20 },
       ].map((c, i) => (
         <motion.div
           key={i}
@@ -255,7 +251,6 @@ export default function DynamicSky() {
           animate={{ x: c.dir > 0 ? [-c.w, 420] : [420, -c.w] }}
           transition={{ duration: c.dur, repeat: Infinity, ease: "linear", delay: c.delay }}
         >
-          {/* Multi-blob cloud shape */}
           <div className="relative w-full h-full">
             <div className="absolute rounded-full" style={{
               left: "10%", top: "20%", width: "60%", height: "80%",
@@ -275,11 +270,6 @@ export default function DynamicSky() {
           </div>
         </motion.div>
       ))}
-
-      {/* Bottom fog fade to page bg */}
-      <div className="absolute bottom-0 left-0 right-0 h-40" style={{
-        background: "linear-gradient(180deg, transparent 0%, hsl(220 20% 8%) 100%)",
-      }} />
     </div>
   );
 }
