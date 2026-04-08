@@ -171,56 +171,69 @@ export async function playElevenLabsSFX(prompt: string, duration = 3): Promise<b
   }
 }
 
-// ─── Music ───────────────────────────────────────────────────────
+// ─── Music (local synthesized fallback) ─────────────────────────
 
-const musicCache = new Map<string, string>();
-let currentMusic: HTMLAudioElement | null = null;
+let currentMusic: { ctx: AudioContext; nodes: AudioNode[] } | null = null;
 
-export async function playElevenLabsMusic(prompt: string, duration = 15, loop = true): Promise<boolean> {
-  if (!elevenLabsAvailable) return false;
-
-  const key = `music:${prompt}:${duration}`;
-  let url = musicCache.get(key);
-
-  if (!url) {
-    try {
-      const response = await fetch(
-        `${SUPABASE_URL}/functions/v1/elevenlabs-sfx`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            apikey: SUPABASE_KEY,
-            Authorization: `Bearer ${SUPABASE_KEY}`,
-          },
-          body: JSON.stringify({ prompt, duration, type: "music" }),
-        }
-      );
-
-      if (!response.ok) {
-        if (response.status === 402) elevenLabsAvailable = false;
-        return false;
-      }
-
-      const blob = await response.blob();
-      url = URL.createObjectURL(blob);
-      musicCache.set(key, url);
-    } catch {
-      return false;
-    }
-  }
-
+/**
+ * Play ambient background music using the Web Audio API.
+ * This avoids the ElevenLabs Music API (paid-plan-only) entirely
+ * and synthesizes a gentle ambient loop locally.
+ */
+export async function playElevenLabsMusic(_prompt: string, _duration = 15, loop = true): Promise<boolean> {
   stopMusic();
-  currentMusic = new Audio(url);
-  currentMusic.loop = loop;
-  currentMusic.volume = 0.15;
-  return currentMusic.play().then(() => true).catch(() => false);
+  try {
+    const ctx = new AudioContext();
+    const nodes: AudioNode[] = [];
+
+    // Gentle pad chord (C major)
+    const freqs = [130.81, 164.81, 196.0, 261.63]; // C3 E3 G3 C4
+    freqs.forEach((freq) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = freq;
+      gain.gain.value = 0.015;
+      // Slow tremolo for movement
+      const lfo = ctx.createOscillator();
+      const lfoGain = ctx.createGain();
+      lfo.frequency.value = 0.3 + Math.random() * 0.4;
+      lfoGain.gain.value = 0.005;
+      lfo.connect(lfoGain);
+      lfoGain.connect(gain.gain);
+      lfo.start();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      nodes.push(osc, gain, lfo, lfoGain);
+    });
+
+    // Soft noise texture
+    const bufferSize = ctx.sampleRate * 2;
+    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = noiseBuffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.008;
+    const noise = ctx.createBufferSource();
+    noise.buffer = noiseBuffer;
+    noise.loop = true;
+    const noiseFilter = ctx.createBiquadFilter();
+    noiseFilter.type = "lowpass";
+    noiseFilter.frequency.value = 400;
+    noise.connect(noiseFilter);
+    noiseFilter.connect(ctx.destination);
+    noise.start();
+    nodes.push(noise, noiseFilter);
+
+    currentMusic = { ctx, nodes };
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export function stopMusic() {
   if (currentMusic) {
-    currentMusic.pause();
-    currentMusic.currentTime = 0;
+    currentMusic.ctx.close().catch(() => {});
     currentMusic = null;
   }
 }
