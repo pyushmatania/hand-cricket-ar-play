@@ -233,8 +233,7 @@ export async function playElevenLabsMusic(_prompt: string, _duration = 15, loop 
 
 export function stopMusic() {
   if (currentMusic) {
-    currentMusic.pause();
-    currentMusic.currentTime = 0;
+    currentMusic.ctx.close().catch(() => {});
     currentMusic = null;
   }
 }
