@@ -157,64 +157,21 @@ export default function BottomNav() {
 
   return (
     <nav className="tab-shelf" aria-label="Main navigation">
-      {/* Iron top rail with bolts */}
-      <div className="absolute top-[-7px] left-0 right-0 h-[8px] z-[5] pointer-events-none"
+      {/* Wooden top edge - natural plank lip */}
+      <div className="absolute top-[-4px] left-0 right-0 h-[6px] z-[5] pointer-events-none"
         style={{
-          background: "linear-gradient(180deg, rgba(150,155,165,0.95) 0%, rgba(90,95,105,0.95) 50%, rgba(50,53,60,1) 100%)",
-          boxShadow: "inset 0 1px 0 rgba(255,255,255,0.25), inset 0 -1px 0 rgba(0,0,0,0.5), 0 -1px 3px rgba(0,0,0,0.3)",
+          background: "linear-gradient(180deg, #8B6B3E 0%, #6D5230 40%, #5A4228 70%, #4A3520 100%)",
+          boxShadow: "inset 0 1px 0 rgba(180,140,80,0.4), inset 0 -1px 0 rgba(0,0,0,0.5), 0 -2px 4px rgba(0,0,0,0.3)",
+          borderTop: "1px solid rgba(200,160,90,0.3)",
         }}
       >
-        {/* Iron bolts */}
-        {[16, 78, 156, 234, 312, 374].map((x) => (
-          <div key={x} className="absolute" style={{
-            left: x, top: 1, width: 7, height: 7, borderRadius: "50%",
-            background: "radial-gradient(circle at 35% 30%, #BBB 0%, #888 40%, #555 70%, #333 100%)",
-            boxShadow: "inset 0 1px 0 rgba(255,255,255,0.5), inset 0 -1px 0 rgba(0,0,0,0.6), 0 1px 2px rgba(0,0,0,0.4)",
-          }}>
-            {/* Cross slot on bolt */}
-            <div className="absolute" style={{ top: 2.5, left: 1, width: 5, height: 1, background: "rgba(0,0,0,0.4)", borderRadius: 1 }} />
-            <div className="absolute" style={{ top: 1, left: 2.5, width: 1, height: 5, background: "rgba(0,0,0,0.4)", borderRadius: 1 }} />
-          </div>
-        ))}
+        <div className="absolute inset-0" style={{
+          background: "repeating-linear-gradient(90deg, transparent 0px, transparent 18px, rgba(0,0,0,0.08) 18px, rgba(0,0,0,0.08) 19px)",
+        }} />
+        <div className="absolute" style={{ left: 60, top: 1, width: 4, height: 4, borderRadius: "50%", background: "radial-gradient(circle, rgba(90,60,20,0.4), transparent)" }} />
+        <div className="absolute" style={{ left: 200, top: 0, width: 5, height: 5, borderRadius: "50%", background: "radial-gradient(circle, rgba(80,55,18,0.3), transparent)" }} />
+        <div className="absolute" style={{ left: 330, top: 1, width: 3, height: 3, borderRadius: "50%", background: "radial-gradient(circle, rgba(85,58,20,0.35), transparent)" }} />
       </div>
-
-      {/* Iron spikes protruding upward */}
-      {[48, 128, 195, 262, 342].map((x, i) => (
-        <div key={`spike-${i}`} className="absolute z-[6] pointer-events-none" style={{
-          left: x, top: -18, width: 0, height: 0,
-          borderLeft: "5px solid transparent",
-          borderRight: "5px solid transparent",
-          borderBottom: "12px solid #6B6E76",
-          filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.5))",
-        }}>
-          {/* Spike highlight */}
-          <div className="absolute" style={{
-            left: -2, top: 4, width: 2, height: 6,
-            background: "linear-gradient(180deg, rgba(180,185,195,0.6), transparent)",
-            borderRadius: 1,
-          }} />
-        </div>
-      ))}
-
-      {/* Corner iron plates with rivets */}
-      {["left", "right"].map((side) => (
-        <div key={side} className="absolute z-[5] pointer-events-none" style={{
-          [side]: 0, top: -7, width: 20, height: "calc(100% + 7px)",
-          background: "linear-gradient(180deg, rgba(120,125,135,0.6) 0%, rgba(70,75,85,0.4) 50%, rgba(50,53,60,0.3) 100%)",
-          borderRight: side === "left" ? "1px solid rgba(255,255,255,0.08)" : "none",
-          borderLeft: side === "right" ? "1px solid rgba(255,255,255,0.08)" : "none",
-        }}>
-          {/* Corner rivets */}
-          {[12, "calc(50%)", "calc(100% - 16px)"].map((top, ri) => (
-            <div key={ri} className="absolute" style={{
-              left: "50%", transform: "translateX(-50%)", top,
-              width: 6, height: 6, borderRadius: "50%",
-              background: "radial-gradient(circle at 35% 30%, #AAA 0%, #777 40%, #444 80%)",
-              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.4), 0 1px 2px rgba(0,0,0,0.5)",
-            }} />
-          ))}
-        </div>
-      ))}
 
       <div className="max-w-[430px] mx-auto w-full flex items-center justify-around relative px-7 h-full">
         {TAB_ITEMS.map((item) => {
