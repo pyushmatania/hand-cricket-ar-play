@@ -66,6 +66,7 @@ const defaults: Settings = {
   tournamentCeremoniesEnabled: true,
   dailyCeremoniesEnabled: true,
   multiplayerCeremoniesEnabled: true,
+  match3dEnabled: false,
 };
 
 const SettingsContext = createContext<SettingsContextType>({
