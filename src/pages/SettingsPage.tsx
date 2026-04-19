@@ -214,6 +214,15 @@ export default function SettingsPage() {
         { key: "multiplayerCeremoniesEnabled", icon: "🤝", label: "PVP CEREMONIES", desc: "Pre/post match for PvP", toggle: "toggleMultiplayerCeremonies" },
       ],
     },
+    {
+      title: "EXPERIMENTAL",
+      icon: "🧪",
+      accent: "hsl(280,70%,60%)",
+      toggleColor: "blue",
+      items: [
+        { key: "match3dEnabled", icon: "🏟️", label: "3D STADIUM MATCH (BETA)", desc: "Cinematic 3D arena for all modes", toggle: "toggleMatch3d" },
+      ],
+    },
   ];
 
   const cardStyle = {
