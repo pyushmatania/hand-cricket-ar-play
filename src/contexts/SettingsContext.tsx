@@ -150,6 +150,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         toggleTournamentCeremonies,
         toggleDailyCeremonies,
         toggleMultiplayerCeremonies,
+        toggleMatch3d,
       }}
     >
       {children}
