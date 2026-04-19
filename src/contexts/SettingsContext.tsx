@@ -44,6 +44,7 @@ interface SettingsContextType extends Settings {
   toggleTournamentCeremonies: () => void;
   toggleDailyCeremonies: () => void;
   toggleMultiplayerCeremonies: () => void;
+  toggleMatch3d: () => void;
 }
 
 const defaults: Settings = {
