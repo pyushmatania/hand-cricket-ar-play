@@ -171,17 +171,40 @@ export default function FloatingIslandCarousel({ currentTrophies }: Props) {
 
                 {/* Island media — animated video for islands that have one, otherwise still image */}
                 {unlocked && activeIsland.video ? (
-                  <video
-                    src={activeIsland.video}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-[26rem] h-auto max-h-[380px] object-contain drop-shadow-2xl"
-                    style={{
-                      filter: `drop-shadow(0 20px 50px rgba(0,0,0,0.6)) drop-shadow(0 0 40px ${activeIsland.accent}25)`,
-                    }}
-                  />
+                  <>
+                    {/* SVG filter to chroma-key out the green screen background */}
+                    <svg className="absolute w-0 h-0" aria-hidden>
+                      <defs>
+                        <filter id="chroma-green">
+                          {/* Knock out greens: keep R and B, drop pixels where G dominates */}
+                          <feColorMatrix
+                            type="matrix"
+                            values="1 0 0 0 0
+                                    0 1 0 0 0
+                                    0 0 1 0 0
+                                    -1 1 -1 0 0"
+                          />
+                          {/* Slight blur on alpha edges to soften halo */}
+                          <feGaussianBlur stdDeviation="0.4" />
+                          <feComponentTransfer>
+                            <feFuncA type="linear" slope="6" intercept="-1" />
+                          </feComponentTransfer>
+                          <feComposite in2="SourceGraphic" operator="in" />
+                        </filter>
+                      </defs>
+                    </svg>
+                    <video
+                      src={activeIsland.video}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-[26rem] h-auto max-h-[380px] object-contain"
+                      style={{
+                        filter: `url(#chroma-green) drop-shadow(0 20px 50px rgba(0,0,0,0.6)) drop-shadow(0 0 40px ${activeIsland.accent}25)`,
+                      }}
+                    />
+                  </>
                 ) : (
                   <img
                     src={activeIsland.image}
