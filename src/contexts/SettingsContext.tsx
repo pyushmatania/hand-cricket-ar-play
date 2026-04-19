@@ -22,6 +22,7 @@ interface Settings {
   tournamentCeremoniesEnabled: boolean;
   dailyCeremoniesEnabled: boolean;
   multiplayerCeremoniesEnabled: boolean;
+  match3dEnabled: boolean;
 }
 
 interface SettingsContextType extends Settings {
