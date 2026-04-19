@@ -126,6 +126,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const toggleTournamentCeremonies = () => setSettings((s) => ({ ...s, tournamentCeremoniesEnabled: !s.tournamentCeremoniesEnabled }));
   const toggleDailyCeremonies = () => setSettings((s) => ({ ...s, dailyCeremoniesEnabled: !s.dailyCeremoniesEnabled }));
   const toggleMultiplayerCeremonies = () => setSettings((s) => ({ ...s, multiplayerCeremoniesEnabled: !s.multiplayerCeremoniesEnabled }));
+  const toggleMatch3d = () => setSettings((s) => ({ ...s, match3dEnabled: !s.match3dEnabled }));
 
   return (
     <SettingsContext.Provider
