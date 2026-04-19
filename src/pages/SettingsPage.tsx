@@ -54,21 +54,24 @@ const PREVIEW_LINES_HI = [
 /* ──── V11 3D Game Toggle — Cricket Leather Track ──── */
 function GameToggle({ enabled, onToggle, color = "green" }: { enabled: boolean; onToggle: () => void; color?: "green" | "blue" | "gold" | "red" }) {
   return (
-    <button onClick={onToggle} className="relative w-[52px] h-[28px] rounded-[14px] transition-all duration-200"
+    <button
+      type="button"
+      onClick={(e) => { e.stopPropagation(); onToggle?.(); }}
+      className="relative w-[52px] h-[28px] rounded-[14px] transition-all duration-200 shrink-0 cursor-pointer"
       style={{
         background: enabled
-          ? "linear-gradient(180deg, #6B4423, #4A2810)"
+          ? "linear-gradient(180deg, #2E7D32, #1B5E20)"
           : "linear-gradient(180deg, #6B4423, #4A2810)",
         border: "2px solid #3E2410",
         borderBottom: "3px solid #2E1A0E",
         boxShadow: enabled
-          ? "0 3px 0 #2E1A0E, 0 4px 8px rgba(0,0,0,0.3), 0 0 10px rgba(74,222,80,0.25), inset 0 1px 0 rgba(255,255,255,0.08)"
+          ? "0 3px 0 #1B5E20, 0 4px 8px rgba(0,0,0,0.3), 0 0 10px rgba(74,222,80,0.45), inset 0 1px 0 rgba(255,255,255,0.15)"
           : "0 3px 0 #2E1A0E, 0 4px 8px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08), inset 0 -1px 0 rgba(0,0,0,0.15)",
       }}>
       <motion.div
         animate={{ x: enabled ? 22 : 1 }}
         transition={{ type: "spring", stiffness: 600, damping: 28 }}
-        className="absolute top-[1px] w-[22px] h-[22px] rounded-full"
+        className="absolute top-[1px] w-[22px] h-[22px] rounded-full pointer-events-none"
         style={enabled ? {
           background: "radial-gradient(circle at 35% 35%, #55FF99, #22C55E, #16A34A)",
           border: "1.5px solid #0D6B2E",
