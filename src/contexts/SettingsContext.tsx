@@ -89,6 +89,7 @@ const SettingsContext = createContext<SettingsContextType>({
   toggleTournamentCeremonies: () => {},
   toggleDailyCeremonies: () => {},
   toggleMultiplayerCeremonies: () => {},
+  toggleMatch3d: () => {},
 });
 
 export const useSettings = () => useContext(SettingsContext);
