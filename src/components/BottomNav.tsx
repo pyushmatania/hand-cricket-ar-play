@@ -157,21 +157,98 @@ export default function BottomNav() {
 
   return (
     <nav className="tab-shelf" aria-label="Main navigation">
-      {/* Wooden top edge - natural plank lip */}
-      <div className="absolute top-[-4px] left-0 right-0 h-[6px] z-[5] pointer-events-none"
+      {/* Wooden top edge - natural plank lip with deep grain */}
+      <div className="absolute top-[-4px] left-0 right-0 h-[6px] z-[5] pointer-events-none overflow-hidden"
         style={{
           background: "linear-gradient(180deg, #8B6B3E 0%, #6D5230 40%, #5A4228 70%, #4A3520 100%)",
-          boxShadow: "inset 0 1px 0 rgba(180,140,80,0.4), inset 0 -1px 0 rgba(0,0,0,0.5), 0 -2px 4px rgba(0,0,0,0.3)",
+          boxShadow: "inset 0 1px 0 rgba(180,140,80,0.4), inset 0 -1px 0 rgba(0,0,0,0.6), 0 -2px 4px rgba(0,0,0,0.3)",
           borderTop: "1px solid rgba(200,160,90,0.3)",
         }}
       >
+        {/* Tight vertical plank seams */}
         <div className="absolute inset-0" style={{
-          background: "repeating-linear-gradient(90deg, transparent 0px, transparent 18px, rgba(0,0,0,0.08) 18px, rgba(0,0,0,0.08) 19px)",
+          background: "repeating-linear-gradient(90deg, transparent 0px, transparent 18px, rgba(0,0,0,0.12) 18px, rgba(0,0,0,0.12) 19px)",
         }} />
-        {/* Subtle grain knots */}
-        <div className="absolute" style={{ left: 60, top: 1, width: 4, height: 4, borderRadius: "50%", background: "radial-gradient(circle, rgba(90,60,20,0.4), transparent)" }} />
-        <div className="absolute" style={{ left: 200, top: 0, width: 5, height: 5, borderRadius: "50%", background: "radial-gradient(circle, rgba(80,55,18,0.3), transparent)" }} />
-        <div className="absolute" style={{ left: 330, top: 1, width: 3, height: 3, borderRadius: "50%", background: "radial-gradient(circle, rgba(85,58,20,0.35), transparent)" }} />
+        {/* Dark horizontal grain streaks */}
+        <div className="absolute inset-0" style={{
+          background: "repeating-linear-gradient(0deg, transparent 0px, transparent 1px, rgba(40,25,10,0.18) 1px, rgba(40,25,10,0.18) 1.5px, transparent 1.5px, transparent 3px)",
+          mixBlendMode: "multiply",
+        }} />
+        {/* Long weathered streak across the plank */}
+        <div className="absolute" style={{
+          top: 2, left: "12%", width: "30%", height: "1px",
+          background: "linear-gradient(90deg, transparent, rgba(20,12,4,0.55) 40%, rgba(20,12,4,0.7) 60%, transparent)",
+        }} />
+        <div className="absolute" style={{
+          top: 4, left: "55%", width: "28%", height: "1px",
+          background: "linear-gradient(90deg, transparent, rgba(15,8,2,0.6), transparent)",
+        }} />
+        {/* Weathered scratches - diagonal */}
+        <div className="absolute" style={{
+          top: 1, left: "22%", width: 14, height: "1px", transform: "rotate(-8deg)",
+          background: "rgba(255,220,160,0.25)",
+        }} />
+        <div className="absolute" style={{
+          top: 3, left: "68%", width: 10, height: "1px", transform: "rotate(6deg)",
+          background: "rgba(0,0,0,0.5)",
+        }} />
+        <div className="absolute" style={{
+          top: 2, left: "82%", width: 8, height: "1px", transform: "rotate(-4deg)",
+          background: "rgba(255,210,150,0.2)",
+        }} />
+        {/* Grain knots - darker, more defined */}
+        <div className="absolute" style={{ left: 60, top: 1, width: 5, height: 4, borderRadius: "50%",
+          background: "radial-gradient(ellipse, rgba(30,18,6,0.7), rgba(60,40,15,0.3) 60%, transparent)" }} />
+        <div className="absolute" style={{ left: 200, top: 0, width: 6, height: 5, borderRadius: "50%",
+          background: "radial-gradient(ellipse, rgba(25,15,5,0.65), rgba(55,35,12,0.3) 60%, transparent)" }} />
+        <div className="absolute" style={{ left: 330, top: 1, width: 4, height: 3, borderRadius: "50%",
+          background: "radial-gradient(ellipse, rgba(28,16,6,0.7), transparent)" }} />
+        <div className="absolute" style={{ left: 130, top: 2, width: 3, height: 2, borderRadius: "50%",
+          background: "radial-gradient(ellipse, rgba(20,10,4,0.6), transparent)" }} />
+        <div className="absolute" style={{ left: 270, top: 3, width: 4, height: 2.5, borderRadius: "50%",
+          background: "radial-gradient(ellipse, rgba(22,12,4,0.55), transparent)" }} />
+      </div>
+
+      {/* Twisted rope accent along the top edge */}
+      <div className="absolute top-[2px] left-0 right-0 h-[4px] z-[7] pointer-events-none overflow-hidden">
+        <svg viewBox="0 0 800 4" preserveAspectRatio="none" className="w-full h-full" style={{
+          filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,0.55))",
+        }}>
+          <defs>
+            <linearGradient id="ropeStrand" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#E8C98A" />
+              <stop offset="40%" stopColor="#C19A5B" />
+              <stop offset="75%" stopColor="#8B6633" />
+              <stop offset="100%" stopColor="#5A3F1C" />
+            </linearGradient>
+            <linearGradient id="ropeShade" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="rgba(255,235,180,0.5)" />
+              <stop offset="50%" stopColor="rgba(120,80,30,0)" />
+              <stop offset="100%" stopColor="rgba(0,0,0,0.5)" />
+            </linearGradient>
+          </defs>
+          {/* Base rope body */}
+          <rect x="0" y="0.5" width="800" height="3" fill="url(#ropeStrand)" rx="1.5" />
+          {/* Twisted strand pattern - repeating diagonal slashes */}
+          {Array.from({ length: 100 }).map((_, i) => (
+            <g key={`twist-${i}`}>
+              <path
+                d={`M ${i * 8} 0 L ${i * 8 + 4} 4`}
+                stroke="rgba(40,22,8,0.55)"
+                strokeWidth="0.7"
+                fill="none"
+              />
+              <path
+                d={`M ${i * 8 + 1} 0 L ${i * 8 + 5} 4`}
+                stroke="rgba(255,220,160,0.35)"
+                strokeWidth="0.4"
+                fill="none"
+              />
+            </g>
+          ))}
+          {/* Shading overlay for 3D roundness */}
+          <rect x="0" y="0.5" width="800" height="3" fill="url(#ropeShade)" rx="1.5" />
+        </svg>
       </div>
 
       {/* Wooden dowel pegs along top edge - authentic carpentry */}
