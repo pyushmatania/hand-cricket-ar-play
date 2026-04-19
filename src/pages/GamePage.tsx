@@ -11,6 +11,7 @@ import AuctionLeagueScreen from "@/components/AuctionLeagueScreen";
 import WorldCupScreen from "@/components/WorldCupScreen";
 import AshesScreen from "@/components/AshesScreen";
 import KnockoutCupScreen from "@/components/KnockoutCupScreen";
+import ProModeScreen from "@/components/ProModeScreen";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 
 export default function GamePage() {
@@ -30,6 +31,7 @@ export default function GamePage() {
   if (mode === "worldcup") return <WorldCupScreen onHome={goHome} />;
   if (mode === "ashes") return <AshesScreen onHome={goHome} />;
   if (mode === "knockout") return <KnockoutCupScreen onHome={goHome} />;
+  if (mode === "pro") return <ProModeScreen onHome={goHome} />;
 
   return <GameScreen onHome={goHome} />;
 }
