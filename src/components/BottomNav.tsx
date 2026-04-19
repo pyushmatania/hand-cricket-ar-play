@@ -209,45 +209,85 @@ export default function BottomNav() {
           background: "radial-gradient(ellipse, rgba(22,12,4,0.55), transparent)" }} />
       </div>
 
-      {/* Twisted rope accent along the top edge */}
-      <div className="absolute top-[2px] left-0 right-0 h-[4px] z-[7] pointer-events-none overflow-hidden">
-        <svg viewBox="0 0 800 4" preserveAspectRatio="none" className="w-full h-full" style={{
-          filter: "drop-shadow(0 1px 1.5px rgba(0,0,0,0.55))",
+      {/* Twisted rope accent along the top edge - thicker with fraying & nails */}
+      <div className="absolute top-[1px] left-0 right-0 h-[10px] z-[7] pointer-events-none overflow-visible">
+        <svg viewBox="0 0 800 10" preserveAspectRatio="none" className="w-full h-full" style={{
+          filter: "drop-shadow(0 1.5px 2px rgba(0,0,0,0.7))",
         }}>
           <defs>
             <linearGradient id="ropeStrand" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#E8C98A" />
-              <stop offset="40%" stopColor="#C19A5B" />
-              <stop offset="75%" stopColor="#8B6633" />
-              <stop offset="100%" stopColor="#5A3F1C" />
+              <stop offset="0%" stopColor="#F0D499" />
+              <stop offset="25%" stopColor="#D4A968" />
+              <stop offset="55%" stopColor="#A07840" />
+              <stop offset="85%" stopColor="#6B4820" />
+              <stop offset="100%" stopColor="#3D2810" />
             </linearGradient>
             <linearGradient id="ropeShade" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="rgba(255,235,180,0.5)" />
-              <stop offset="50%" stopColor="rgba(120,80,30,0)" />
-              <stop offset="100%" stopColor="rgba(0,0,0,0.5)" />
+              <stop offset="0%" stopColor="rgba(255,240,190,0.55)" />
+              <stop offset="45%" stopColor="rgba(120,80,30,0)" />
+              <stop offset="100%" stopColor="rgba(0,0,0,0.6)" />
             </linearGradient>
+            <radialGradient id="nailHead" cx="0.35" cy="0.3" r="0.7">
+              <stop offset="0%" stopColor="#E8E8E8" />
+              <stop offset="35%" stopColor="#9A9A9A" />
+              <stop offset="70%" stopColor="#5A5A5A" />
+              <stop offset="100%" stopColor="#2A2A2A" />
+            </radialGradient>
           </defs>
-          {/* Base rope body */}
-          <rect x="0" y="0.5" width="800" height="3" fill="url(#ropeStrand)" rx="1.5" />
-          {/* Twisted strand pattern - repeating diagonal slashes */}
-          {Array.from({ length: 100 }).map((_, i) => (
+          {/* Base rope body - thicker */}
+          <rect x="0" y="1" width="800" height="7" fill="url(#ropeStrand)" rx="3.5" />
+          {/* Twisted strand pattern - prominent diagonal coils */}
+          {Array.from({ length: 70 }).map((_, i) => (
             <g key={`twist-${i}`}>
-              <path
-                d={`M ${i * 8} 0 L ${i * 8 + 4} 4`}
-                stroke="rgba(40,22,8,0.55)"
-                strokeWidth="0.7"
-                fill="none"
-              />
-              <path
-                d={`M ${i * 8 + 1} 0 L ${i * 8 + 5} 4`}
-                stroke="rgba(255,220,160,0.35)"
-                strokeWidth="0.4"
-                fill="none"
-              />
+              <path d={`M ${i * 11.5} 1 Q ${i * 11.5 + 3} 4.5 ${i * 11.5 + 6} 8`}
+                stroke="rgba(35,18,5,0.7)" strokeWidth="1.3" fill="none" />
+              <path d={`M ${i * 11.5 + 2} 1 Q ${i * 11.5 + 5} 4.5 ${i * 11.5 + 8} 8`}
+                stroke="rgba(90,60,25,0.5)" strokeWidth="0.8" fill="none" />
+              <path d={`M ${i * 11.5 + 4} 1 Q ${i * 11.5 + 7} 4.5 ${i * 11.5 + 10} 8`}
+                stroke="rgba(255,225,165,0.45)" strokeWidth="0.6" fill="none" />
             </g>
           ))}
           {/* Shading overlay for 3D roundness */}
-          <rect x="0" y="0.5" width="800" height="3" fill="url(#ropeShade)" rx="1.5" />
+          <rect x="0" y="1" width="800" height="7" fill="url(#ropeShade)" rx="3.5" />
+
+          {/* Frayed fibers sticking out top */}
+          {Array.from({ length: 60 }).map((_, i) => {
+            const x = i * 13.5 + (i % 3) * 2;
+            const len = 1.2 + (i % 4) * 0.5;
+            const angle = -15 + (i % 5) * 8;
+            return (
+              <line key={`fray-top-${i}`} x1={x} y1="1"
+                x2={x + Math.sin((angle * Math.PI) / 180) * len}
+                y2={1 - Math.cos((angle * Math.PI) / 180) * len}
+                stroke={i % 2 ? "rgba(180,135,75,0.7)" : "rgba(110,75,35,0.8)"} strokeWidth="0.4" />
+            );
+          })}
+          {/* Frayed fibers sticking out bottom */}
+          {Array.from({ length: 60 }).map((_, i) => {
+            const x = i * 13.5 + 5 + (i % 3) * 2;
+            const len = 1 + (i % 4) * 0.4;
+            const angle = -15 + (i % 5) * 8;
+            return (
+              <line key={`fray-bot-${i}`} x1={x} y1="8"
+                x2={x + Math.sin((angle * Math.PI) / 180) * len}
+                y2={8 + Math.cos((angle * Math.PI) / 180) * len}
+                stroke={i % 2 ? "rgba(140,95,45,0.7)" : "rgba(80,50,20,0.8)"} strokeWidth="0.4" />
+            );
+          })}
+
+          {/* Metal nail heads piercing the rope at intervals */}
+          {[5, 18, 31, 44, 57, 70, 83, 96].map((pct, i) => {
+            const cx = (pct / 100) * 800;
+            return (
+              <g key={`nail-${i}`}>
+                <ellipse cx={cx + 0.5} cy="5" rx="2.2" ry="2" fill="rgba(0,0,0,0.55)" />
+                <circle cx={cx} cy="4.5" r="2" fill="url(#nailHead)" stroke="#1A1A1A" strokeWidth="0.3" />
+                <line x1={cx - 1.1} y1="4.5" x2={cx + 1.1} y2="4.5" stroke="rgba(0,0,0,0.55)" strokeWidth="0.35" />
+                <line x1={cx} y1="3.4" x2={cx} y2="5.6" stroke="rgba(0,0,0,0.4)" strokeWidth="0.3" />
+                <circle cx={cx - 0.6} cy="3.9" r="0.5" fill="rgba(255,255,255,0.85)" />
+              </g>
+            );
+          })}
         </svg>
       </div>
 
