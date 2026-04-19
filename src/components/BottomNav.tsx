@@ -168,9 +168,38 @@ export default function BottomNav() {
         <div className="absolute inset-0" style={{
           background: "repeating-linear-gradient(90deg, transparent 0px, transparent 18px, rgba(0,0,0,0.08) 18px, rgba(0,0,0,0.08) 19px)",
         }} />
+        {/* Subtle grain knots */}
         <div className="absolute" style={{ left: 60, top: 1, width: 4, height: 4, borderRadius: "50%", background: "radial-gradient(circle, rgba(90,60,20,0.4), transparent)" }} />
         <div className="absolute" style={{ left: 200, top: 0, width: 5, height: 5, borderRadius: "50%", background: "radial-gradient(circle, rgba(80,55,18,0.3), transparent)" }} />
         <div className="absolute" style={{ left: 330, top: 1, width: 3, height: 3, borderRadius: "50%", background: "radial-gradient(circle, rgba(85,58,20,0.35), transparent)" }} />
+      </div>
+
+      {/* Wooden dowel pegs along top edge - authentic carpentry */}
+      <div className="absolute top-[-2px] left-0 right-0 h-[5px] z-[6] pointer-events-none">
+        <div className="max-w-[430px] mx-auto w-full h-full relative">
+          {[8, 18, 32, 46, 58, 72, 86, 92].map((pct, i) => (
+            <div
+              key={`peg-${i}`}
+              className="absolute"
+              style={{
+                left: `${pct}%`,
+                top: 0,
+                width: 5,
+                height: 5,
+                borderRadius: "50%",
+                background: "radial-gradient(circle at 35% 30%, #A8824A 0%, #7A5A2C 45%, #4A3418 80%, #2E1F0C 100%)",
+                boxShadow: "inset 0 -0.5px 0 rgba(255,220,150,0.25), inset 0 1px 1px rgba(0,0,0,0.5), 0 1px 1.5px rgba(0,0,0,0.6)",
+                border: "0.5px solid rgba(40,25,8,0.7)",
+              }}
+            >
+              {/* Tiny grain mark on peg */}
+              <div className="absolute" style={{
+                top: "40%", left: "20%", width: "60%", height: "0.5px",
+                background: "rgba(0,0,0,0.4)", borderRadius: "1px",
+              }} />
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="max-w-[430px] mx-auto w-full flex items-center justify-around relative px-7 h-full">
