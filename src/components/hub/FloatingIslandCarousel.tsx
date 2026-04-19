@@ -37,7 +37,87 @@ export default function FloatingIslandCarousel({ currentTrophies }: Props) {
   };
 
   return (
-    <div className="relative w-full" style={{ height: 340 }}>
+    <div className="relative w-full" style={{ height: 420 }}>
+      {/* Atmospheric background layers — fill the black space */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Distant mountain silhouette */}
+        <div
+          className="absolute left-0 right-0 bottom-16 h-32 opacity-30"
+          style={{
+            background: `radial-gradient(ellipse at 30% 100%, ${activeIsland.accent}25 0%, transparent 60%), radial-gradient(ellipse at 75% 100%, ${activeIsland.accent}20 0%, transparent 55%)`,
+            filter: "blur(20px)",
+          }}
+        />
+        {/* Drifting cloud 1 */}
+        <motion.div
+          className="absolute"
+          style={{
+            top: "18%", width: 180, height: 60,
+            background: "radial-gradient(ellipse, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 40%, transparent 75%)",
+            filter: "blur(12px)",
+          }}
+          animate={{ x: ["-20%", "120%"] }}
+          transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
+        />
+        {/* Drifting cloud 2 */}
+        <motion.div
+          className="absolute"
+          style={{
+            top: "55%", width: 220, height: 70,
+            background: "radial-gradient(ellipse, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 45%, transparent 75%)",
+            filter: "blur(14px)",
+          }}
+          animate={{ x: ["110%", "-25%"] }}
+          transition={{ duration: 38, repeat: Infinity, ease: "linear" }}
+        />
+        {/* Drifting cloud 3 - small, top right */}
+        <motion.div
+          className="absolute"
+          style={{
+            top: "8%", width: 120, height: 40,
+            background: "radial-gradient(ellipse, rgba(255,255,255,0.07) 0%, transparent 70%)",
+            filter: "blur(10px)",
+          }}
+          animate={{ x: ["10%", "90%"] }}
+          transition={{ duration: 22, repeat: Infinity, ease: "linear", delay: 4 }}
+        />
+        {/* Soft accent halo behind island */}
+        {unlocked && (
+          <div
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+            style={{
+              width: 480, height: 360,
+              background: `radial-gradient(ellipse, ${activeIsland.accent}22 0%, ${activeIsland.accent}08 40%, transparent 70%)`,
+              filter: "blur(30px)",
+            }}
+          />
+        )}
+        {/* Faint floating particles / dust motes */}
+        {Array.from({ length: 8 }).map((_, i) => (
+          <motion.div
+            key={`mote-${i}`}
+            className="absolute rounded-full"
+            style={{
+              left: `${(i * 13 + 7) % 90 + 5}%`,
+              top: `${(i * 19 + 12) % 80 + 10}%`,
+              width: 2.5, height: 2.5,
+              background: `${activeIsland.accent}80`,
+              boxShadow: `0 0 6px ${activeIsland.accent}`,
+            }}
+            animate={{
+              y: [0, -18, 0],
+              opacity: [0.3, 0.9, 0.3],
+            }}
+            transition={{
+              duration: 4 + (i % 3),
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.4,
+            }}
+          />
+        ))}
+      </div>
+
       {/* Swipe arrows */}
       <button
         onClick={() => swipe(-1)}
@@ -55,7 +135,7 @@ export default function FloatingIslandCarousel({ currentTrophies }: Props) {
       </button>
 
       {/* Floating island */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-visible">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={activeIdx}
@@ -74,32 +154,46 @@ export default function FloatingIslandCarousel({ currentTrophies }: Props) {
             <div className="relative">
               {/* Float animation */}
               <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+                animate={{ y: [0, -14, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
                 className="relative"
               >
                 {/* Glow under island */}
                 {unlocked && (
                   <div
-                    className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-64 h-8 rounded-full pointer-events-none"
+                    className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-80 h-10 rounded-full pointer-events-none"
                     style={{
-                      background: `radial-gradient(ellipse, ${activeIsland.accent}25 0%, transparent 70%)`,
-                      filter: "blur(8px)",
+                      background: `radial-gradient(ellipse, ${activeIsland.accent}30 0%, transparent 70%)`,
+                      filter: "blur(10px)",
                     }}
                   />
                 )}
 
-                {/* Island image - BIG, no box, no bg */}
-                <img
-                  src={activeIsland.image}
-                  alt={activeIsland.name}
-                  className="w-80 h-auto max-h-[280px] object-contain drop-shadow-2xl"
-                  style={{
-                    filter: unlocked
-                      ? `drop-shadow(0 16px 40px rgba(0,0,0,0.5)) drop-shadow(0 0 30px ${activeIsland.accent}20)`
-                      : "brightness(0.25) grayscale(0.9) drop-shadow(0 16px 40px rgba(0,0,0,0.5))",
-                  }}
-                />
+                {/* Island media — animated video for islands that have one, otherwise still image */}
+                {unlocked && activeIsland.video ? (
+                  <video
+                    src={activeIsland.video}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-[26rem] h-auto max-h-[380px] object-contain drop-shadow-2xl"
+                    style={{
+                      filter: `drop-shadow(0 20px 50px rgba(0,0,0,0.6)) drop-shadow(0 0 40px ${activeIsland.accent}25)`,
+                    }}
+                  />
+                ) : (
+                  <img
+                    src={activeIsland.image}
+                    alt={activeIsland.name}
+                    className="w-[26rem] h-auto max-h-[380px] object-contain drop-shadow-2xl"
+                    style={{
+                      filter: unlocked
+                        ? `drop-shadow(0 20px 50px rgba(0,0,0,0.6)) drop-shadow(0 0 40px ${activeIsland.accent}25)`
+                        : "brightness(0.25) grayscale(0.9) drop-shadow(0 16px 40px rgba(0,0,0,0.5))",
+                    }}
+                  />
+                )}
 
                 {/* Lock overlay for locked islands */}
                 {!unlocked && (
@@ -118,10 +212,10 @@ export default function FloatingIslandCarousel({ currentTrophies }: Props) {
 
                 {/* Floating shadow on "ground" */}
                 <div
-                  className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-52 h-5 rounded-full pointer-events-none"
+                  className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-64 h-6 rounded-full pointer-events-none"
                   style={{
-                    background: "radial-gradient(ellipse, rgba(0,0,0,0.35) 0%, transparent 70%)",
-                    filter: "blur(6px)",
+                    background: "radial-gradient(ellipse, rgba(0,0,0,0.4) 0%, transparent 70%)",
+                    filter: "blur(8px)",
                   }}
                 />
               </motion.div>
