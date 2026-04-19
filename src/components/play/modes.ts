@@ -132,6 +132,18 @@ export const MODES = [
     gradientTo: "hsl(340 60% 40%)",
   },
   {
+    id: "pro",
+    icon: "🧪",
+    title: "PRO MODE",
+    subtitle: "Stats-Driven Realism",
+    description: "Full GameplayEngine: player stats, pitch type, phase modifiers, DRS, wides & no-balls. Pick your players, then play.",
+    borderHue: 200,
+    accentHsl: "hsl(200 90% 55%)",
+    glowHsl: "hsl(200 90% 55% / 0.25)",
+    gradientFrom: "hsl(200 90% 50%)",
+    gradientTo: "hsl(260 80% 50%)",
+  },
+  {
     id: "practice",
     icon: "🎯",
     title: "PRACTICE",
