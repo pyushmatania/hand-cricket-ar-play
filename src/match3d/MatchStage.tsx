@@ -4,6 +4,7 @@ import { Sky, Stars } from "@react-three/drei";
 import Stadium from "./Stadium";
 import CameraRig from "./CameraRig";
 import Lighting from "./Lighting";
+import FieldLayout from "./FieldLayout";
 
 interface MatchStageProps {
   themeKey?: "golden_hour" | "night_lights" | "overcast" | "default";
@@ -39,6 +40,7 @@ export default function MatchStage({ themeKey = "golden_hour", standColor }: Mat
           <Lighting />
           <CameraRig />
           <Stadium themeKey={themeKey} standColor={standColor} />
+          <FieldLayout preset="balanced" />
         </Suspense>
       </Canvas>
     </div>
