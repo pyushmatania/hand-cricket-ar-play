@@ -177,9 +177,11 @@ export default function FloatingIslandCarousel({ currentTrophies }: Props) {
                     loop
                     muted
                     playsInline
-                    className="w-[26rem] h-auto max-h-[380px] object-contain drop-shadow-2xl"
+                    className="w-[26rem] h-auto max-h-[380px] object-contain"
                     style={{
-                      filter: `drop-shadow(0 20px 50px rgba(0,0,0,0.6)) drop-shadow(0 0 40px ${activeIsland.accent}25)`,
+                      // mix-blend screen makes pure black transparent against the dark hub background
+                      mixBlendMode: "screen",
+                      filter: `drop-shadow(0 20px 50px rgba(0,0,0,0.6)) drop-shadow(0 0 40px ${activeIsland.accent}30)`,
                     }}
                   />
                 ) : (
