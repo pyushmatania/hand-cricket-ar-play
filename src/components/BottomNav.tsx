@@ -349,7 +349,7 @@ export default function BottomNav() {
         </div>
       </div>
 
-      <div className="max-w-[430px] mx-auto w-full flex items-center justify-around relative px-7 h-full">
+      <div className="max-w-[430px] mx-auto w-full flex items-end justify-around relative px-5 h-full pt-3 pb-2">
         {TAB_ITEMS.map((item) => {
           const isActive =
             location.pathname === item.path ||
@@ -366,36 +366,49 @@ export default function BottomNav() {
                 try { SFX.navTap(); Haptics.navTap(); } catch { /* non-critical */ }
                 navigate(item.path);
               }}
-              className="flex flex-col items-center relative"
-              style={{ width: item.center ? 78 : 56 }}
+              className="flex flex-col items-center justify-end relative"
+              style={{ width: item.center ? 82 : 60, height: "100%" }}
               aria-label={item.label}
               aria-current={isActive ? "page" : undefined}
             >
+              {item.center && (
+                <div
+                  className="absolute left-1/2 -translate-x-1/2 rounded-full pointer-events-none"
+                  style={{
+                    bottom: 18,
+                    width: 64,
+                    height: 64,
+                    background: "radial-gradient(circle at 50% 40%, rgba(255,180,60,0.55) 0%, rgba(255,90,0,0.22) 45%, transparent 70%)",
+                    filter: "blur(2px)",
+                  }}
+                />
+              )}
+
               <motion.div
                 animate={{
-                  y: item.center ? -14 : (isActive ? -6 : 0),
-                  scale: isActive ? (item.center ? 1.1 : 1.05) : 1,
+                  y: item.center ? -18 : (isActive ? -4 : 0),
+                  scale: isActive ? (item.center ? 1.08 : 1.06) : 1,
                 }}
                 transition={{ type: "spring", stiffness: 400, damping: 18 }}
-                className="relative"
+                className="relative flex items-center justify-center"
               >
                 {isActive && (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.5 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full"
+                    className="absolute -bottom-1 left-1/2 -translate-x-1/2 rounded-full pointer-events-none"
                     style={{
-                      width: item.center ? 48 : 36,
+                      width: item.center ? 52 : 40,
                       height: 10,
-                      background: "radial-gradient(ellipse, rgba(255,200,80,0.3), transparent)",
-                      filter: "blur(4px)",
+                      background: "radial-gradient(ellipse, rgba(255,200,80,0.55), transparent 70%)",
+                      filter: "blur(5px)",
                     }}
                   />
                 )}
                 <CRIcon type={item.icon} isActive={isActive} isCenter={!!item.center} />
               </motion.div>
 
-              <span className={cn("tab-label-v11 mt-1", isActive && "active")}>
+              <span className={cn("tab-label-v11", isActive && "active")} style={{ marginTop: item.center ? 2 : 4 }}>
                 {item.label}
               </span>
             </motion.button>
