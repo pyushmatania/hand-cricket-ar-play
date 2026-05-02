@@ -12,137 +12,181 @@ const TAB_ITEMS = [
 ];
 
 function CRIcon({ type, isActive, isCenter }: { type: string; isActive: boolean; isCenter: boolean }) {
-  const size = isCenter ? 52 : 36;
+  const size = isCenter ? 56 : 42;
+  const glow = isActive ? "drop-shadow(0 0 6px rgba(255,210,120,0.55)) drop-shadow(0 3px 4px rgba(0,0,0,0.55))" : "drop-shadow(0 3px 4px rgba(0,0,0,0.55))";
 
   const icons: Record<string, React.ReactNode> = {
+    // HOME — golden cricket helmet
     chest: (
-      <div style={{ width: size, height: size, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{
-          width: size * 0.88, height: size * 0.7, borderRadius: "4px 4px 6px 6px",
-          background: "linear-gradient(180deg, #C08030 0%, #9A6020 40%, #7A4A18 70%, #5A3510 100%)",
-          border: "2px solid #3A2008", position: "relative",
-          boxShadow: `inset 0 3px 0 rgba(220,180,100,0.5), inset 0 -3px 0 rgba(0,0,0,0.4), 0 3px 8px rgba(0,0,0,0.5)`,
-        }}>
-          <div style={{
-            position: "absolute", top: 0, left: 0, right: 0, height: "42%",
-            background: "linear-gradient(180deg, #D4A04A 0%, #B07828 50%, #9A6820 100%)",
-            borderBottom: "2px solid #6A4010", borderRadius: "3px 3px 0 0",
-          }} />
-          <div style={{
-            position: "absolute", top: "32%", left: "50%", transform: "translateX(-50%)",
-            width: 10, height: 10, borderRadius: "50%",
-            background: "radial-gradient(circle at 35% 35%, #FFF, #FFD700 50%, #DAA520)",
-            border: "1px solid #8B6914", zIndex: 1,
-            boxShadow: "0 0 4px rgba(218,165,32,0.6)",
-          }} />
-          <div style={{ position: "absolute", bottom: 3, left: 4, width: 7, height: 7, borderRadius: "50%",
-            background: "radial-gradient(circle at 30% 30%, #4FC3F7, #0288D1)", boxShadow: "0 0 3px rgba(2,136,209,0.5)" }} />
-          <div style={{ position: "absolute", bottom: 4, left: 13, width: 5, height: 5, borderRadius: "2px", transform: "rotate(45deg)",
-            background: "radial-gradient(circle at 30% 30%, #EF5350, #C62828)", boxShadow: "0 0 3px rgba(198,40,40,0.5)" }} />
-          <div style={{ position: "absolute", bottom: 3, right: 5, width: 6, height: 6, borderRadius: "2px", transform: "rotate(45deg)",
-            background: "radial-gradient(circle at 30% 30%, #66BB6A, #2E7D32)", boxShadow: "0 0 3px rgba(46,125,50,0.5)" }} />
-        </div>
-      </div>
+      <svg viewBox="0 0 64 64" width={size} height={size} style={{ filter: glow }}>
+        <defs>
+          <radialGradient id="helmShell" cx="40%" cy="30%" r="75%">
+            <stop offset="0%" stopColor="#FFE9A8" />
+            <stop offset="35%" stopColor="#F5B73A" />
+            <stop offset="70%" stopColor="#B27414" />
+            <stop offset="100%" stopColor="#5C3A06" />
+          </radialGradient>
+          <linearGradient id="helmGrille" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#3A3A3A" />
+            <stop offset="100%" stopColor="#0D0D0D" />
+          </linearGradient>
+        </defs>
+        {/* Shell */}
+        <path d="M10 36 C10 18, 22 8, 34 8 C48 8, 56 20, 56 34 L56 42 L46 42 L46 36 C46 30, 42 28, 36 28 L24 28 C18 28, 14 30, 14 36 L14 44 L10 44 Z"
+              fill="url(#helmShell)" stroke="#3A1F00" strokeWidth="1.5" strokeLinejoin="round" />
+        {/* Top ridge */}
+        <path d="M14 22 Q34 6, 54 22" fill="none" stroke="#FFF6D0" strokeWidth="1.6" opacity="0.55" strokeLinecap="round" />
+        {/* Visor frame */}
+        <rect x="14" y="36" width="36" height="14" rx="2" fill="#1A1A1A" stroke="#000" strokeWidth="1" />
+        {/* Grille bars */}
+        <rect x="16" y="38" width="32" height="2" rx="1" fill="url(#helmGrille)" />
+        <rect x="16" y="42" width="32" height="2" rx="1" fill="url(#helmGrille)" />
+        <rect x="16" y="46" width="32" height="2" rx="1" fill="url(#helmGrille)" />
+        {/* Side bolts */}
+        <circle cx="13" cy="44" r="2.2" fill="#E8C260" stroke="#5C3A06" strokeWidth="0.8" />
+        <circle cx="51" cy="44" r="2.2" fill="#E8C260" stroke="#5C3A06" strokeWidth="0.8" />
+        {/* Specular */}
+        <path d="M22 14 Q28 10, 36 12" stroke="rgba(255,255,255,0.7)" strokeWidth="2" fill="none" strokeLinecap="round" />
+      </svg>
     ),
+    // FRIENDS — crossed-bats shield
     shield: (
-      <div style={{ width: size, height: size, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{
-          width: size * 0.78, height: size * 0.9,
-          background: "linear-gradient(180deg, #5C9CE6 0%, #3D7DD4 35%, #2660B0 70%, #164080 100%)",
-          clipPath: "polygon(50% 0%, 95% 15%, 95% 60%, 50% 100%, 5% 60%, 5% 15%)",
-          position: "relative", display: "flex", alignItems: "center", justifyContent: "center",
-          filter: "drop-shadow(0 3px 4px rgba(0,0,0,0.4))",
-        }}>
-          <div style={{
-            position: "absolute", inset: 0,
-            background: "linear-gradient(180deg, rgba(255,255,255,0.2) 0%, transparent 40%)",
-            clipPath: "polygon(50% 0%, 95% 15%, 95% 60%, 50% 100%, 5% 60%, 5% 15%)",
-          }} />
-          <div style={{
-            width: "72%", height: "72%",
-            background: "linear-gradient(180deg, #82B1FF 0%, #448AFF 40%, #2962FF 100%)",
-            clipPath: "polygon(50% 5%, 90% 18%, 90% 58%, 50% 95%, 10% 58%, 10% 18%)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}>
-            <span style={{ fontSize: size * 0.3, filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.4))" }}>⚔️</span>
-          </div>
-        </div>
-      </div>
+      <svg viewBox="0 0 64 64" width={size} height={size} style={{ filter: glow }}>
+        <defs>
+          <linearGradient id="shieldBlue" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#7BC4FF" />
+            <stop offset="40%" stopColor="#2C7BD9" />
+            <stop offset="100%" stopColor="#0E2F6B" />
+          </linearGradient>
+          <linearGradient id="willow" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#F0D49A" />
+            <stop offset="100%" stopColor="#9C6A28" />
+          </linearGradient>
+        </defs>
+        <path d="M32 4 L56 12 L56 32 C56 46, 46 56, 32 60 C18 56, 8 46, 8 32 L8 12 Z"
+              fill="url(#shieldBlue)" stroke="#0A1A3A" strokeWidth="2" strokeLinejoin="round" />
+        <path d="M32 4 L56 12 L56 32 C56 46, 46 56, 32 60 C18 56, 8 46, 8 32 L8 12 Z"
+              fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="1" transform="translate(0,1.5)" />
+        {/* Crossed bats */}
+        <g transform="translate(32 32) rotate(-35)">
+          <rect x="-2" y="-18" width="4" height="22" rx="1.2" fill="url(#willow)" stroke="#3A2308" strokeWidth="0.7" />
+          <rect x="-1.4" y="4" width="2.8" height="8" rx="1" fill="#1A1A1A" />
+        </g>
+        <g transform="translate(32 32) rotate(35)">
+          <rect x="-2" y="-18" width="4" height="22" rx="1.2" fill="url(#willow)" stroke="#3A2308" strokeWidth="0.7" />
+          <rect x="-1.4" y="4" width="2.8" height="8" rx="1" fill="#1A1A1A" />
+        </g>
+        {/* Ball center */}
+        <circle cx="32" cy="32" r="4.5" fill="#C42424" stroke="#3A0808" strokeWidth="0.8" />
+        <path d="M28 32 Q32 30 36 32" stroke="#FFF" strokeWidth="0.6" fill="none" />
+        <path d="M28 32 Q32 34 36 32" stroke="#FFF" strokeWidth="0.6" fill="none" />
+      </svg>
     ),
+    // BATTLE — fiery crossed swords + ball
     swords: (
-      <div style={{ width: size, height: size, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <svg viewBox="0 0 48 48" width={size} height={size} style={{ filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }}>
-          <g transform="rotate(-45, 24, 24)">
-            <rect x="22" y="4" width="4" height="28" rx="1" fill="url(#bladeL)" stroke="#999" strokeWidth="0.4" />
-            <rect x="16" y="30" width="16" height="4" rx="2" fill="#DAA520" stroke="#8B6914" strokeWidth="0.5" />
-            <rect x="21" y="34" width="6" height="10" rx="1" fill="#8B4513" stroke="#5A2D0C" strokeWidth="0.5" />
-            <circle cx="24" cy="46" r="3" fill="#DAA520" stroke="#8B6914" strokeWidth="0.5" />
-          </g>
-          <g transform="rotate(45, 24, 24)">
-            <rect x="22" y="4" width="4" height="28" rx="1" fill="url(#bladeR)" stroke="#999" strokeWidth="0.4" />
-            <rect x="16" y="30" width="16" height="4" rx="2" fill="#DAA520" stroke="#8B6914" strokeWidth="0.5" />
-            <rect x="21" y="34" width="6" height="10" rx="1" fill="#1A47B8" stroke="#0D2966" strokeWidth="0.5" />
-            <circle cx="24" cy="46" r="3" fill="#DAA520" stroke="#8B6914" strokeWidth="0.5" />
-          </g>
-          <circle cx="24" cy="24" r="3" fill="#FFF" opacity="0.7" />
-          <defs>
-            <linearGradient id="bladeL" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#E8E8E8" />
-              <stop offset="50%" stopColor="#D0D0D0" />
-              <stop offset="100%" stopColor="#B0B0B0" />
-            </linearGradient>
-            <linearGradient id="bladeR" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stopColor="#D8D8D8" />
-              <stop offset="50%" stopColor="#C0C0C0" />
-              <stop offset="100%" stopColor="#A0A0A0" />
-            </linearGradient>
-          </defs>
-        </svg>
-      </div>
+      <svg viewBox="0 0 72 72" width={size} height={size} style={{ filter: glow }}>
+        <defs>
+          <linearGradient id="bladeA" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#FFFFFF" />
+            <stop offset="50%" stopColor="#D8DEE6" />
+            <stop offset="100%" stopColor="#7C8390" />
+          </linearGradient>
+          <radialGradient id="hubGold" cx="50%" cy="40%" r="60%">
+            <stop offset="0%" stopColor="#FFF6C8" />
+            <stop offset="50%" stopColor="#F5B73A" />
+            <stop offset="100%" stopColor="#7A4A08" />
+          </radialGradient>
+          <radialGradient id="emberGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="rgba(255,180,60,0.9)" />
+            <stop offset="100%" stopColor="rgba(255,80,0,0)" />
+          </radialGradient>
+        </defs>
+        {/* ember halo */}
+        <circle cx="36" cy="36" r="30" fill="url(#emberGlow)" />
+        {/* Sword 1 (\) */}
+        <g transform="rotate(-45 36 36)">
+          <rect x="34" y="6" width="4" height="40" rx="1" fill="url(#bladeA)" stroke="#5A6068" strokeWidth="0.6" />
+          <polygon points="34,6 38,6 36,2" fill="#E8EDF3" stroke="#5A6068" strokeWidth="0.5" />
+          <rect x="26" y="46" width="20" height="4" rx="2" fill="#F5B73A" stroke="#3A2306" strokeWidth="0.6" />
+          <rect x="33" y="50" width="6" height="12" rx="1.5" fill="#5A2D0C" stroke="#2A1404" strokeWidth="0.6" />
+          <circle cx="36" cy="64" r="3.2" fill="url(#hubGold)" stroke="#3A2306" strokeWidth="0.6" />
+        </g>
+        {/* Sword 2 (/) */}
+        <g transform="rotate(45 36 36)">
+          <rect x="34" y="6" width="4" height="40" rx="1" fill="url(#bladeA)" stroke="#5A6068" strokeWidth="0.6" />
+          <polygon points="34,6 38,6 36,2" fill="#E8EDF3" stroke="#5A6068" strokeWidth="0.5" />
+          <rect x="26" y="46" width="20" height="4" rx="2" fill="#F5B73A" stroke="#3A2306" strokeWidth="0.6" />
+          <rect x="33" y="50" width="6" height="12" rx="1.5" fill="#1A47B8" stroke="#0A1F4A" strokeWidth="0.6" />
+          <circle cx="36" cy="64" r="3.2" fill="url(#hubGold)" stroke="#3A2306" strokeWidth="0.6" />
+        </g>
+        {/* Center cricket ball */}
+        <circle cx="36" cy="36" r="6" fill="#C42424" stroke="#3A0808" strokeWidth="0.9" />
+        <path d="M30.5 36 Q36 33 41.5 36" stroke="#FFF" strokeWidth="0.7" fill="none" />
+        <path d="M30.5 36 Q36 39 41.5 36" stroke="#FFF" strokeWidth="0.7" fill="none" />
+        <circle cx="34" cy="34" r="1.4" fill="rgba(255,255,255,0.6)" />
+      </svg>
     ),
+    // LEAGUE — championship trophy
     trophy: (
-      <div style={{ width: size, height: size, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ position: "relative", width: size * 0.8, height: size * 0.9, display: "flex", flexDirection: "column", alignItems: "center" }}>
-          <div style={{
-            width: "100%", height: "58%",
-            background: "linear-gradient(180deg, #FFD54F 0%, #FFC107 20%, #FFB300 50%, #FF8F00 80%, #E65100 100%)",
-            borderRadius: "4px 4px 30% 30%", border: "2px solid #BF8C00",
-            boxShadow: "inset 0 3px 0 rgba(255,255,200,0.5), inset 0 -3px 0 rgba(0,0,0,0.3), 0 3px 6px rgba(0,0,0,0.4)",
-            position: "relative",
-          }}>
-            <div style={{ position: "absolute", top: "38%", left: "50%", transform: "translate(-50%,-50%)", fontSize: 10,
-              filter: "drop-shadow(0 1px 1px rgba(0,0,0,0.3))" }}>⭐</div>
-            <div style={{ position: "absolute", left: -5, top: 4, width: 7, height: 12, borderRadius: "50%",
-              border: "2.5px solid #DAA520", borderRight: "none" }} />
-            <div style={{ position: "absolute", right: -5, top: 4, width: 7, height: 12, borderRadius: "50%",
-              border: "2.5px solid #DAA520", borderLeft: "none" }} />
-          </div>
-          <div style={{ width: 5, height: "15%", background: "linear-gradient(180deg, #DAA520, #8B6914)" }} />
-          <div style={{ width: "65%", height: "14%", background: "linear-gradient(180deg, #BF8C00, #8B6914)",
-            borderRadius: "2px", border: "1px solid #5A3A08" }} />
-          <span style={{ position: "absolute", bottom: 0, left: -2, fontSize: 9, transform: "scaleX(-1)" }}>🌿</span>
-          <span style={{ position: "absolute", bottom: 0, right: -2, fontSize: 9 }}>🌿</span>
-        </div>
-      </div>
+      <svg viewBox="0 0 64 64" width={size} height={size} style={{ filter: glow }}>
+        <defs>
+          <linearGradient id="cup" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#FFF1B0" />
+            <stop offset="35%" stopColor="#FFD24A" />
+            <stop offset="70%" stopColor="#D38B0E" />
+            <stop offset="100%" stopColor="#5C3506" />
+          </linearGradient>
+          <radialGradient id="cupShine" cx="40%" cy="30%" r="60%">
+            <stop offset="0%" stopColor="rgba(255,255,255,0.7)" />
+            <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+          </radialGradient>
+        </defs>
+        {/* Handles */}
+        <path d="M14 18 C4 18, 4 36, 18 36" fill="none" stroke="#B07A0E" strokeWidth="3.5" strokeLinecap="round" />
+        <path d="M50 18 C60 18, 60 36, 46 36" fill="none" stroke="#B07A0E" strokeWidth="3.5" strokeLinecap="round" />
+        {/* Cup body */}
+        <path d="M14 10 L50 10 L48 36 C48 44, 40 48, 32 48 C24 48, 16 44, 16 36 Z"
+              fill="url(#cup)" stroke="#3A2306" strokeWidth="1.6" strokeLinejoin="round" />
+        <path d="M14 10 L50 10 L48 36 C48 44, 40 48, 32 48 C24 48, 16 44, 16 36 Z"
+              fill="url(#cupShine)" />
+        {/* Star plaque */}
+        <polygon points="32,18 34.4,24 41,24 35.5,28 37.5,34 32,30 26.5,34 28.5,28 23,24 29.6,24"
+                 fill="#FFFFFF" stroke="#7A4A08" strokeWidth="0.6" />
+        {/* Stem */}
+        <rect x="29" y="48" width="6" height="6" fill="#B07A0E" stroke="#3A2306" strokeWidth="0.8" />
+        {/* Base */}
+        <rect x="20" y="54" width="24" height="5" rx="1" fill="url(#cup)" stroke="#3A2306" strokeWidth="1.2" />
+        <rect x="17" y="58" width="30" height="3" rx="1" fill="#7A4A08" stroke="#2A1404" strokeWidth="0.8" />
+      </svg>
     ),
+    // PROFILE — premium player card
     card: (
-      <div style={{ width: size, height: size, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{
-          width: size * 0.65, height: size * 0.85, borderRadius: "5px",
-          background: "linear-gradient(135deg, #CE93D8 0%, #AB47BC 30%, #8E24AA 60%, #6A1B9A 100%)",
-          border: "3px solid #F5A623", position: "relative",
-          boxShadow: "inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.3), 0 3px 6px rgba(0,0,0,0.4)",
-        }}>
-          <div style={{ position: "absolute", inset: 3, border: "1.5px solid rgba(255,215,0,0.5)", borderRadius: "2px" }} />
-          <div style={{
-            position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%) rotate(45deg)",
-            width: 10, height: 10, background: "linear-gradient(135deg, #FFD700, #FFA000)",
-            boxShadow: "0 0 4px rgba(255,215,0,0.5)",
-          }} />
-          <div style={{ position: "absolute", top: 3, right: 3, width: 5, height: 5, borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(255,255,230,0.9), rgba(255,200,0,0.4), transparent)" }} />
-        </div>
-      </div>
+      <svg viewBox="0 0 64 64" width={size} height={size} style={{ filter: glow }}>
+        <defs>
+          <linearGradient id="cardBg" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#9B5BD8" />
+            <stop offset="50%" stopColor="#6A1B9A" />
+            <stop offset="100%" stopColor="#2E0A4A" />
+          </linearGradient>
+          <linearGradient id="cardFrame" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#FFE08A" />
+            <stop offset="100%" stopColor="#B07A0E" />
+          </linearGradient>
+        </defs>
+        <rect x="14" y="6" width="36" height="52" rx="5" fill="url(#cardBg)" stroke="url(#cardFrame)" strokeWidth="2.5" />
+        <rect x="17" y="9" width="30" height="46" rx="3" fill="none" stroke="rgba(255,215,120,0.5)" strokeWidth="0.8" />
+        {/* Portrait silhouette */}
+        <circle cx="32" cy="22" r="6" fill="#FFE0B0" stroke="#3A2306" strokeWidth="0.8" />
+        <path d="M22 38 C22 30, 42 30, 42 38 L42 44 L22 44 Z" fill="#FFE0B0" stroke="#3A2306" strokeWidth="0.8" />
+        {/* Rating star */}
+        <polygon points="20,12 21.5,15 25,15 22.2,17 23.4,20 20,18 16.6,20 17.8,17 15,15 18.5,15"
+                 fill="#FFD24A" stroke="#5C3506" strokeWidth="0.5" />
+        {/* Bottom badge */}
+        <rect x="20" y="46" width="24" height="6" rx="1" fill="#1A1A1A" stroke="#FFD24A" strokeWidth="0.8" />
+        <text x="32" y="50.6" textAnchor="middle" fontSize="4.5" fontWeight="700" fill="#FFD24A" fontFamily="Arial">PRO</text>
+        {/* Corner shine */}
+        <path d="M16 8 L24 8 L16 16 Z" fill="rgba(255,255,255,0.18)" />
+      </svg>
     ),
   };
 
