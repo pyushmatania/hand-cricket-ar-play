@@ -38,118 +38,83 @@ export default function FloatingIslandCarousel({ currentTrophies }: Props) {
 
   return (
     <div className="relative w-full" style={{ height: 420 }}>
-      {/* Surreal night atmosphere — transparent so DynamicSky shows through */}
-      <div className="absolute inset-0 overflow-visible pointer-events-none">
-        {/* Moonbeam halo — soft cool light bathing the island */}
+      {/* Atmospheric background layers — fill the black space */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Distant mountain silhouette */}
+        <div
+          className="absolute left-0 right-0 bottom-16 h-32 opacity-30"
+          style={{
+            background: `radial-gradient(ellipse at 30% 100%, ${activeIsland.accent}25 0%, transparent 60%), radial-gradient(ellipse at 75% 100%, ${activeIsland.accent}20 0%, transparent 55%)`,
+            filter: "blur(20px)",
+          }}
+        />
+        {/* Drifting cloud 1 */}
+        <motion.div
+          className="absolute"
+          style={{
+            top: "18%", width: 180, height: 60,
+            background: "radial-gradient(ellipse, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.04) 40%, transparent 75%)",
+            filter: "blur(12px)",
+          }}
+          animate={{ x: ["-20%", "120%"] }}
+          transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
+        />
+        {/* Drifting cloud 2 */}
+        <motion.div
+          className="absolute"
+          style={{
+            top: "55%", width: 220, height: 70,
+            background: "radial-gradient(ellipse, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 45%, transparent 75%)",
+            filter: "blur(14px)",
+          }}
+          animate={{ x: ["110%", "-25%"] }}
+          transition={{ duration: 38, repeat: Infinity, ease: "linear" }}
+        />
+        {/* Drifting cloud 3 - small, top right */}
+        <motion.div
+          className="absolute"
+          style={{
+            top: "8%", width: 120, height: 40,
+            background: "radial-gradient(ellipse, rgba(255,255,255,0.07) 0%, transparent 70%)",
+            filter: "blur(10px)",
+          }}
+          animate={{ x: ["10%", "90%"] }}
+          transition={{ duration: 22, repeat: Infinity, ease: "linear", delay: 4 }}
+        />
+        {/* Soft accent halo behind island */}
         {unlocked && (
-          <>
-            <motion.div
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-              style={{
-                width: 520, height: 420,
-                background: `radial-gradient(ellipse, hsla(210,80%,75%,0.18) 0%, hsla(220,70%,65%,0.08) 35%, transparent 70%)`,
-                filter: "blur(40px)",
-              }}
-              animate={{ opacity: [0.7, 1, 0.7] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            />
-            {/* Accent color halo — subtle arena tint */}
-            <div
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-              style={{
-                width: 380, height: 280,
-                background: `radial-gradient(ellipse, ${activeIsland.accent}18 0%, transparent 65%)`,
-                filter: "blur(24px)",
-              }}
-            />
-          </>
-        )}
-
-        {/* Twinkling stars right around the island */}
-        {Array.from({ length: 14 }).map((_, i) => {
-          const seed = i * 37;
-          const left = (seed * 7) % 95 + 2;
-          const top = (seed * 13) % 70 + 3;
-          const size = 1.5 + ((seed * 3) % 20) / 10;
-          return (
-            <motion.div
-              key={`star-${i}`}
-              className="absolute rounded-full"
-              style={{
-                left: `${left}%`,
-                top: `${top}%`,
-                width: size, height: size,
-                background: "white",
-                boxShadow: `0 0 ${size * 3}px white, 0 0 ${size * 6}px hsla(210,100%,80%,0.6)`,
-              }}
-              animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.3, 0.8] }}
-              transition={{
-                duration: 2 + (i % 4) * 0.5,
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: (i * 0.3) % 3,
-              }}
-            />
-          );
-        })}
-
-        {/* Fireflies — warm glowing motes drifting around the island */}
-        {Array.from({ length: 12 }).map((_, i) => {
-          const startLeft = ((i * 23) % 90) + 5;
-          const startTop = ((i * 41) % 60) + 25;
-          return (
-            <motion.div
-              key={`firefly-${i}`}
-              className="absolute rounded-full"
-              style={{
-                left: `${startLeft}%`,
-                top: `${startTop}%`,
-                width: 3, height: 3,
-                background: "hsl(50,100%,75%)",
-                boxShadow: "0 0 8px hsl(45,100%,70%), 0 0 16px hsla(40,100%,60%,0.6)",
-              }}
-              animate={{
-                x: [0, 30, -20, 15, 0],
-                y: [0, -25, -10, -35, 0],
-                opacity: [0, 1, 0.4, 1, 0],
-              }}
-              transition={{
-                duration: 8 + (i % 4),
-                repeat: Infinity,
-                ease: "easeInOut",
-                delay: i * 0.6,
-              }}
-            />
-          );
-        })}
-
-        {/* Silhouette birds drifting across — V shapes */}
-        {Array.from({ length: 3 }).map((_, i) => (
-          <motion.div
-            key={`bird-${i}`}
-            className="absolute"
+          <div
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
             style={{
-              top: `${10 + i * 8}%`,
-              fontSize: 10 + i * 2,
-              color: "hsla(220,30%,75%,0.5)",
-              textShadow: "0 0 4px hsla(220,40%,80%,0.3)",
+              width: 480, height: 360,
+              background: `radial-gradient(ellipse, ${activeIsland.accent}22 0%, ${activeIsland.accent}08 40%, transparent 70%)`,
+              filter: "blur(30px)",
             }}
-            animate={{ x: ["-10%", "110%"] }}
+          />
+        )}
+        {/* Faint floating particles / dust motes */}
+        {Array.from({ length: 8 }).map((_, i) => (
+          <motion.div
+            key={`mote-${i}`}
+            className="absolute rounded-full"
+            style={{
+              left: `${(i * 13 + 7) % 90 + 5}%`,
+              top: `${(i * 19 + 12) % 80 + 10}%`,
+              width: 2.5, height: 2.5,
+              background: `${activeIsland.accent}80`,
+              boxShadow: `0 0 6px ${activeIsland.accent}`,
+            }}
+            animate={{
+              y: [0, -18, 0],
+              opacity: [0.3, 0.9, 0.3],
+            }}
             transition={{
-              duration: 35 + i * 8,
+              duration: 4 + (i % 3),
               repeat: Infinity,
-              ease: "linear",
-              delay: i * 12,
+              ease: "easeInOut",
+              delay: i * 0.4,
             }}
-          >
-            <motion.span
-              animate={{ y: [0, -3, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-              style={{ display: "inline-block" }}
-            >
-              ︵
-            </motion.span>
-          </motion.div>
+          />
         ))}
       </div>
 
@@ -212,8 +177,10 @@ export default function FloatingIslandCarousel({ currentTrophies }: Props) {
                     loop
                     muted
                     playsInline
-                    className="w-[26rem] h-auto max-h-[380px] object-contain rounded-2xl"
+                    className="w-[26rem] h-auto max-h-[380px] object-contain"
                     style={{
+                      // mix-blend screen makes pure black transparent against the dark hub background
+                      mixBlendMode: "screen",
                       filter: `drop-shadow(0 20px 50px rgba(0,0,0,0.6)) drop-shadow(0 0 40px ${activeIsland.accent}30)`,
                     }}
                   />

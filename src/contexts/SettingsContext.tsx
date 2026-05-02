@@ -22,7 +22,6 @@ interface Settings {
   tournamentCeremoniesEnabled: boolean;
   dailyCeremoniesEnabled: boolean;
   multiplayerCeremoniesEnabled: boolean;
-  match3dEnabled: boolean;
 }
 
 interface SettingsContextType extends Settings {
@@ -44,7 +43,6 @@ interface SettingsContextType extends Settings {
   toggleTournamentCeremonies: () => void;
   toggleDailyCeremonies: () => void;
   toggleMultiplayerCeremonies: () => void;
-  toggleMatch3d: () => void;
 }
 
 const defaults: Settings = {
@@ -66,7 +64,6 @@ const defaults: Settings = {
   tournamentCeremoniesEnabled: true,
   dailyCeremoniesEnabled: true,
   multiplayerCeremoniesEnabled: true,
-  match3dEnabled: false,
 };
 
 const SettingsContext = createContext<SettingsContextType>({
@@ -89,7 +86,6 @@ const SettingsContext = createContext<SettingsContextType>({
   toggleTournamentCeremonies: () => {},
   toggleDailyCeremonies: () => {},
   toggleMultiplayerCeremonies: () => {},
-  toggleMatch3d: () => {},
 });
 
 export const useSettings = () => useContext(SettingsContext);
@@ -126,7 +122,6 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const toggleTournamentCeremonies = () => setSettings((s) => ({ ...s, tournamentCeremoniesEnabled: !s.tournamentCeremoniesEnabled }));
   const toggleDailyCeremonies = () => setSettings((s) => ({ ...s, dailyCeremoniesEnabled: !s.dailyCeremoniesEnabled }));
   const toggleMultiplayerCeremonies = () => setSettings((s) => ({ ...s, multiplayerCeremoniesEnabled: !s.multiplayerCeremoniesEnabled }));
-  const toggleMatch3d = () => setSettings((s) => ({ ...s, match3dEnabled: !s.match3dEnabled }));
 
   return (
     <SettingsContext.Provider
@@ -150,7 +145,6 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         toggleTournamentCeremonies,
         toggleDailyCeremonies,
         toggleMultiplayerCeremonies,
-        toggleMatch3d,
       }}
     >
       {children}

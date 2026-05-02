@@ -1,8 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import GameScreen from "@/components/GameScreen";
-import GameScreen3D from "@/components/GameScreen3D";
 import TapGameScreen from "@/components/TapGameScreen";
-import { useSettings } from "@/contexts/SettingsContext";
 import PracticeScreen from "@/components/PracticeScreen";
 import MultiplayerScreen from "@/components/MultiplayerScreen";
 import TournamentScreen from "@/components/TournamentScreen";
@@ -13,18 +11,13 @@ import AuctionLeagueScreen from "@/components/AuctionLeagueScreen";
 import WorldCupScreen from "@/components/WorldCupScreen";
 import AshesScreen from "@/components/AshesScreen";
 import KnockoutCupScreen from "@/components/KnockoutCupScreen";
-import ProModeScreen from "@/components/ProModeScreen";
 import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
 
 export default function GamePage() {
   usePerformanceMonitor(true);
   const { mode } = useParams<{ mode: string }>();
   const navigate = useNavigate();
-  const { match3dEnabled } = useSettings();
   const goHome = () => navigate("/play");
-
-  // Phase 1: 3D stadium toggle — applies to all modes when enabled
-  if (match3dEnabled) return <GameScreen3D onHome={goHome} />;
 
   if (mode === "tap") return <TapGameScreen onHome={goHome} />;
   if (mode === "practice") return <PracticeScreen onHome={goHome} />;
@@ -37,7 +30,6 @@ export default function GamePage() {
   if (mode === "worldcup") return <WorldCupScreen onHome={goHome} />;
   if (mode === "ashes") return <AshesScreen onHome={goHome} />;
   if (mode === "knockout") return <KnockoutCupScreen onHome={goHome} />;
-  if (mode === "pro") return <ProModeScreen onHome={goHome} />;
 
   return <GameScreen onHome={goHome} />;
 }
