@@ -169,33 +169,19 @@ export default function FloatingIslandCarousel({ currentTrophies }: Props) {
                   />
                 )}
 
-                {/* Island media — animated video for islands that have one, otherwise still image */}
-                {unlocked && activeIsland.video ? (
-                  <video
-                    src={activeIsland.video}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-[26rem] h-auto max-h-[380px] object-contain"
-                    style={{
-                      // mix-blend screen makes pure black transparent against the dark hub background
-                      mixBlendMode: "screen",
-                      filter: `drop-shadow(0 20px 50px rgba(0,0,0,0.6)) drop-shadow(0 0 40px ${activeIsland.accent}30)`,
-                    }}
-                  />
-                ) : (
-                  <img
-                    src={activeIsland.image}
-                    alt={activeIsland.name}
-                    className="w-[26rem] h-auto max-h-[380px] object-contain drop-shadow-2xl"
-                    style={{
-                      filter: unlocked
-                        ? `drop-shadow(0 20px 50px rgba(0,0,0,0.6)) drop-shadow(0 0 40px ${activeIsland.accent}25)`
-                        : "brightness(0.25) grayscale(0.9) drop-shadow(0 16px 40px rgba(0,0,0,0.5))",
-                    }}
-                  />
-                )}
+                {/* Island — transparent 3D PNG asset */}
+                <img
+                  src={activeIsland.image}
+                  alt={activeIsland.name}
+                  width={1024}
+                  height={1024}
+                  className="w-[26rem] h-auto max-h-[380px] object-contain drop-shadow-2xl"
+                  style={{
+                    filter: unlocked
+                      ? `drop-shadow(0 20px 50px rgba(0,0,0,0.6)) drop-shadow(0 0 40px ${activeIsland.accent}25)`
+                      : "brightness(0.25) grayscale(0.9) drop-shadow(0 16px 40px rgba(0,0,0,0.5))",
+                  }}
+                />
 
                 {/* Lock overlay for locked islands */}
                 {!unlocked && (
